@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Asociația Avans Proiect (AVAPRO) / AVans Proiect Association (AVAPRO)</title>
+    <meta name="description" content="Asociația Avans Proiect (AVAPRO) — Sibiu, România. Alegeți limba / Choose your language." />
+	<meta name="google-site-verification" content="The domain avansproiect.online is owned and operated by the nonprofit organization ASOCIATIA AVANS PROIECT for its official activities. This is confirmed by the domain registration (WHOIS) and the nonprofit's legal status." />
+	<meta name="google-site-verification" content="Domeniul avansproiect.online este deținut și operat de organizația nonprofit ASOCIATIA AVANS PROIECT pentru activitățile sale oficiale. Acest lucru este confirmat de înregistrarea domeniului (WHOIS) și de statutul legal al ONG-ului." />
+    <link rel="canonical" href="https://avansproiect.online/" />
+    <link rel="alternate" hreflang="ro" href="https://avansproiect.online/index_RO.html" />
+    <link rel="alternate" hreflang="en" href="https://avansproiect.online/index_EN.html" />
+    <link rel="alternate" hreflang="x-default" href="https://avansproiect.online/" />
+
+    <link href="avapro.css" rel="stylesheet" />
+
+    <style>
+        /* ── Splash-specific layout ── */
+        body {
+            background: var(--gradient-hero);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Fundal decorativ */
+        .bg-orbs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+        .bg-orbs span {
+            position: absolute;
+            border-radius: 50%;
+            animation: drift ease-in-out infinite;
+        }
+        .bg-orbs span:nth-child(1) { width:200px; height:200px; top:6%;  left:7%;  background:rgba(61,139,55,0.12); animation-duration:20s; }
+        .bg-orbs span:nth-child(2) { width:140px; height:140px; top:72%; left:83%; background:rgba(197,160,33,0.08); animation-duration:26s; animation-delay:-9s; }
+        .bg-orbs span:nth-child(3) { width:260px; height:260px; top:82%; left:4%;  background:rgba(30,77,158,0.08); animation-duration:30s; animation-delay:-13s; }
+        .bg-orbs span:nth-child(4) { width: 80px; height: 80px; top:35%; left:91%; background:rgba(95,173,65,0.10); animation-duration:17s; animation-delay:-5s; }
+
+        @keyframes drift {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%       { transform: translateY(-28px) scale(1.05); }
+        }
+
+        /* Card principal */
+        .splash-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 24px;
+            padding: 3rem 3.5rem 3.5rem;
+            max-width: 540px;
+            width: calc(100% - 2rem);
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.06);
+        }
+
+        /* Logo */
+        .splash-logo {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 1.5rem;
+            filter: drop-shadow(0 8px 24px rgba(95,173,65,0.40));
+            animation: float 5s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-10px); }
+        }
+
+        /* Titlu */
+        .splash-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+        .splash-name em {
+            font-style: normal;
+            color: var(--color-green-accent);
+        }
+
+        .splash-tagline {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 0.92rem;
+            color: var(--color-gold);
+            margin-top: 0.4rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Separator */
+        .splash-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.4rem;
+        }
+        .splash-divider::before,
+        .splash-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+        .splash-divider span {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            white-space: nowrap;
+        }
+
+        /* Butoane limbă */
+        .lang-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .lang-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 1.35rem 1rem;
+            border-radius: var(--radius-card);
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.07);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.25s ease,
+                        border-color 0.25s ease,
+                        background 0.25s ease;
+        }
+        .lang-btn:hover {
+            background: var(--gradient-green);
+            border-color: var(--color-green-accent);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: var(--shadow-green), 0 12px 30px rgba(0,0,0,0.25);
+        }
+        .lang-btn:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+        /* Hint vizual pentru preferința anterioară — fără redirect */
+        .lang-btn.prev-choice {
+            border-color: rgba(123,199,77,0.45);
+            background: rgba(123,199,77,0.10);
+        }
+
+        .lang-flag { font-size: 2.4rem; line-height: 1; }
+        .lang-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.04em;
+        }
+        .lang-hint {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.45);
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* Footer */
+        .splash-foot {
+            margin-top: 2rem;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.28);
+        }
+        .splash-foot a {
+            color: rgba(255,255,255,0.35);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .splash-foot a:hover { color: var(--color-green-accent); }
+
+        @media (max-width: 480px) {
+            .splash-card  { padding: 2rem 1.5rem 2.5rem; }
+            .splash-name  { font-size: 1.3rem; }
+            .splash-logo  { width: 100px; height: 100px; }
+            .lang-flag    { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-orbs" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="splash-card">
+
+        <img
+            src="imagini/siglaavapro.png"
+            alt="Logo AVAPRO"
+            class="splash-logo"
+            onerror="this.style.display='none'"
+        />
+
+        <div class="splash-name">Asociația <em>Avans Proiect</em></div>
+        <div class="splash-tagline">Evoluăm împreună. În profunzime, cu sens.</div>
+
+        <div class="splash-divider">
+            <span>Alegeți limba &nbsp;/&nbsp; Choose language</span>
+        </div>
+
+        <div class="lang-grid">
+            <a href="index_RO.html" class="lang-btn" id="btn-ro" onclick="saveLang('ro')">
+                <span class="lang-flag">🇷🇴</span>
+                <span class="lang-name">Română</span>
+                <span class="lang-hint">Versiunea română</span>
+            </a>
+            <a href="index_EN.html" class="lang-btn" id="btn-en" onclick="saveLang('en')">
+                <span class="lang-flag">🇬🇧</span>
+                <span class="lang-name">English</span>
+                <span class="lang-hint">English version</span>
+            </a>
+        </div>
+
+        <p class="splash-foot">
+            &copy; <script>document.write(new Date().getFullYear())</script>
+            Domain ownership verification: </strong> The domain <strong>avansproiect.online</strong> and this website are officially owned and operated by ASOCIAȚIA AVANS PROIECT a Romanian NGO legal entity · CIF: 54392841 · NGO No. 18/I/A/2026. WHOIS registration and the founding documents confirm this ownership.</p>
+        </div>&mdash;
+            <a href="mailto:office@avansproiect.online">office@avansproiect.online</a>
+        </p>
+
+    </div>
+
+    <script>
+        function saveLang(lang) {
+            try { localStorage.setItem('avapro_lang', lang); } catch(e) {}
+        }
+
+        /* Marchează vizual preferința anterioară — fără redirecționare automată */
+        (function() {
+            var saved;
+            try { saved = localStorage.getItem('avapro_lang'); } catch(e) {}
+            if (saved === 'ro') document.getElementById('btn-ro').classList.add('prev-choice');
+            if (saved === 'en') document.getElementById('btn-en').classList.add('prev-choice');
+        })();
+    </script>
+
+</body>
+</html>
