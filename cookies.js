@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    AVAPRO — Cookie Consent & Tracking Manager
-   avansproiect.online
+   avansproiect.ro
    ═══════════════════════════════════════════════════════════════════════════
    
    INSTALARE:
-   1. Urcă acest fișier pe server: https://avansproiect.online/cookies.js
-   2. Adaugă în FIECARE pagină HTML (index_RO.html, index_EN.html etc.),
+   1. Urcă acest fișier pe server: https://avansproiect.ro/cookies.js
+   2. Adaugă în FIECARE pagină HTML (index.html, index_EN.html etc.),
       imediat înainte de </body>:
-      <script src="https://avansproiect.online/cookies.js"></script>
+      <script src="https://avansproiect.ro/cookies.js"></script>
    3. ȘTERGE din <head> scripturile vechi de GA4 (dacă există):
       <script async src="...gtag/js?id=G-6F5QQZ0C1C"></script>
       <script>window.dataLayer=...gtag('config','G-6F5QQZ0C1C');</script>
@@ -33,7 +33,7 @@ var CONFIG = {
     COOKIE_NAME: 'avapro_consent',
     COOKIE_DAYS: 365,
     // Pagini pe care apare bannerul automat (la prima vizită)
-    HOMEPAGE_PATHS: ['/', '/index.html', '/index_RO.html', '/index_EN.html']
+    HOMEPAGE_PATHS: ['/', '/index.html', '/index_EN.html']
 };
 
 
@@ -352,7 +352,7 @@ function injectHTML() {
     <div class="ncc-body">\
         Folosim cookies analitice pentru a înțelege cum este utilizat site-ul nostru \
         și pentru a-l îmbunătăți continuu. Poți alege ce permiți. \
-        <a href="#" onclick="event.preventDefault();">Politica de confidențialitate</a>\
+        <a href="confidentialitate.html" target="_blank">Politica de confidențialitate</a>\
     </div>\
     <div class="ncc-cats" id="nccCats">\
         <div class="ncc-cat">\
@@ -360,21 +360,21 @@ function injectHTML() {
                 <span class="ncc-cat-name">Esențiale</span>\
                 <span class="ncc-cat-desc">Funcționarea corectă a site-ului</span>\
             </div>\
-            <label class="ncc-toggle"><input type="checkbox" checked disabled><span class="ncc-toggle-sl"></span></label>\
+            <label class="ncc-toggle"><input type="checkbox" checked disabled aria-label="Cookie-uri esențiale (mereu active)"><span class="ncc-toggle-sl"></span></label>\
         </div>\
         <div class="ncc-cat">\
             <div class="ncc-cat-info">\
                 <span class="ncc-cat-name">Analitice</span>\
                 <span class="ncc-cat-desc">Google Analytics — cine vizitează, de unde, ce pagini</span>\
             </div>\
-            <label class="ncc-toggle"><input type="checkbox" id="nccAnalytics"><span class="ncc-toggle-sl"></span></label>\
+            <label class="ncc-toggle"><input type="checkbox" id="nccAnalytics" aria-label="Cookie-uri analitice"><span class="ncc-toggle-sl"></span></label>\
         </div>\
         <div class="ncc-cat">\
             <div class="ncc-cat-info">\
                 <span class="ncc-cat-name">Marketing</span>\
                 <span class="ncc-cat-desc">Facebook Pixel — retargeting & urmărire conversii</span>\
             </div>\
-            <label class="ncc-toggle"><input type="checkbox" id="nccMarketing"><span class="ncc-toggle-sl"></span></label>\
+            <label class="ncc-toggle"><input type="checkbox" id="nccMarketing" aria-label="Cookie-uri marketing"><span class="ncc-toggle-sl"></span></label>\
         </div>\
     </div>\
     <div class="ncc-actions">\
@@ -503,7 +503,8 @@ function init() {
     var consent = getCookie(CONFIG.COOKIE_NAME);
 
     if (!consent) {
-        // Niciun consimțământ — arată bannerul pe ORICE pagină
+        // Niciun consimțământ — arată bannerul automat DOAR pe pagina principală
+        if (!isHomepage()) return;
         setTimeout(showBanner, 900);
     } else {
         // Consimțământ existent: încarcă tracking-ul pe ORICE pagină
@@ -521,15 +522,3 @@ if (document.readyState === 'loading') {
 }
 
 })();
-
-
-
-
-
-
-
-
-
-
-
-
