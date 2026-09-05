@@ -262,65 +262,17 @@
 <!-- ================================================
      FOOTER (mirrors index_EN.html, plus Privacy Policy link)
      ================================================ -->
-<footer class="site-footer" role="contentinfo">
-    <div class="footer-inner">
-        <div class="footer-grid">
+<div id="footer-placeholder" style="min-height:300px;"></div>
 
-            <div class="footer-brand">
-               <img src="https://avansproiect.ro/imagini/siglaavapro.webp"
-                     alt="AVAPRO — Avans Proiect Association logo"
-                     width="60" height="60"
-                     onerror="this.style.display='none'" />
-                <p>
-                    <strong style="color:#ecf0f1;">Avans Proiect</strong> Association — non-profit
-                    organization dedicated to education, personal development, and social
-                    inclusion. We create real impact in our community!
-                </p>
-                <p style="margin-top:0.75rem; font-size:0.8rem; color:rgba(255,255,255,0.4);">
-                    <em>"One, deeply with purpose, we evolve."</em>
-                </p>
-            </div>
-
-            <div class="footer-col">
-                <h5>Association</h5>
-                <ul class="footer-links">
-                    <li><a href="index_EN.html#despre">About Us</a></li>
-                    <li><a href="index_EN.html#valori">AVAPRO values</a></li>
-                    <li><a href="index_EN.html#scop">Purpose &amp; mission</a></li>
-                    <li><a href="index_EN.html#obiective">Objectives</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h5>Activity</h5>
-                <ul class="footer-links">
-                    <li><a href="index_EN.html#activitati">Activities</a></li>
-                    <li><a href="index_EN.html#domenii">Thematic areas</a></li>
-                    <li><a href="index_EN.html#programe">Programs</a></li>
-                    <li><a href="index_EN.html#parteneriate">Partnerships</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h5>Community</h5>
-                <ul class="footer-links">
-                    <li><a href="index_EN.html#membri">Join us</a></li>
-                    <li><a href="index_EN.html#contact">Contact</a></li>
-                    <li><a href="mailto:radu@avansproiect.ro">Email</a></li>
-                    <li><a href="tel:+40770276406">Phone</a></li>
-                    <li><a href="confidentialitate_EN.html">Privacy Policy</a></li>
-                    <li><a href="confidentialitate.html">🇷🇴 Versiunea română</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="footer-legal">
-            <p>This website and the avansproiect.ro domain are officially owned and operated by ASOCIAȚIA AVANS PROIECT · CIF: 54392841 · NGO No. 18/I/A/2026</p>
-        </div>
-    </div>
-    <div class="footer-green-strip"></div>
-</footer>
+<script>
+    fetch('https://avansproiect.ro/footer_EN.html')
+        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+        .then(data => {
+            const c = document.getElementById('footer-placeholder');
+            if (c) c.innerHTML = data;
+        })
+        .catch(err => console.error('Footer error:', err));
+</script>
 
 <!-- ================================================
      JAVASCRIPT — mobile menu only (no contact modal on this page)

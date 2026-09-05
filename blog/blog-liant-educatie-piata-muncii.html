@@ -71,20 +71,17 @@
 </article>
 </main>
 
-<footer class="site-footer" role="contentinfo">
-    <div class="footer-inner">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <img src="https://avansproiect.ro/imagini/siglaavapro.webp" alt="Sigla Asociația Avans Proiect AVAPRO" width="60" height="60" onerror="this.style.display='none'" />
-                <p>Asociația <strong style="color:#ecf0f1;">Avans Proiect</strong> — organizație non-profit dedicată educației, dezvoltării personale și incluziunii sociale.</p>
-            </div>
-            <div class="footer-col"><h5>Asociația</h5><ul class="footer-links"><li><a href="../index.html#despre">Despre noi</a></li><li><a href="index.html">Blog</a></li></ul></div>
-            <div class="footer-col"><h5>Comunitate</h5><ul class="footer-links"><li><a href="../index.html#contact">Contact</a></li><li><a href="../confidentialitate.html">Politica de confidențialitate</a></li></ul></div>
-        </div>
-        <div class="footer-legal"><p>© 2026 Asociația AVANS PROIECT · CIF 54392841 · Reg. ONG nr. 18/I/A/2026</p></div>
-    </div>
-    <div class="footer-green-strip"></div>
-</footer>
+<div id="footer-placeholder" style="min-height:300px;"></div>
+
+<script>
+    fetch('https://avansproiect.ro/footer.html')
+        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+        .then(data => {
+            const c = document.getElementById('footer-placeholder');
+            if (c) c.innerHTML = data;
+        })
+        .catch(err => console.error('Eroare footer:', err));
+</script>
 
 <script>
     const menuBtn = document.getElementById('mobileMenuBtn');
