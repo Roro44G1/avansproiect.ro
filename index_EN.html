@@ -109,7 +109,9 @@
             <a href="#programe" role="menuitem">Programs</a>
             <a href="#parteneriate" role="menuitem">Partnerships</a>
             <a href="#membri" role="menuitem">Join Us</a>
+            <a href="blog/index.html" role="menuitem">Blog</a>
             <a href="index.html" role="menuitem" title="Versiunea română">🇷🇴 RO</a>
+            <a href="https://www.paypal.com/ncp/payment/H4KKENYNBZKRW" target="_blank" rel="noopener" role="menuitem" style="color:var(--color-gold); font-weight:800;">💛 Donate</a>
             <a class="nav-cta" href="#contact" role="menuitem">Contact</a>
         </div>
     </nav>
@@ -854,6 +856,32 @@
 </section>
 
 <!-- ================================================
+     DONATIONS
+     ================================================ -->
+<section class="section" id="donate">
+    <div class="container-main">
+        <div class="section-header-center">
+            <span class="section-label" style="background:rgba(197,160,33,0.15); color:var(--color-gold); border-color:rgba(197,160,33,0.3);">💛 Support us</span>
+            <h2 class="section-title center">Support our mission</h2>
+            <div class="title-underline"></div>
+            <p class="section-desc center">
+                Every donation helps us continue our educational and social programs
+                for the Sibiu community — RADAR AI, ACTIV AI, and the projects ahead.
+            </p>
+        </div>
+        <div style="text-align:center; margin-top:1.5rem;">
+            <a href="https://www.paypal.com/ncp/payment/H4KKENYNBZKRW" target="_blank" rel="noopener"
+               class="btn-navy" style="background:var(--color-gold); box-shadow:0 3px 0 #8a7318; font-size:1rem; padding:0.9rem 2.2rem;">
+                💛 Donate via PayPal
+            </a>
+            <p style="margin-top:1rem; font-size:0.8rem; color:var(--color-text-light);">
+                Secure payment, processed entirely by PayPal. We never store your card details.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
      CONTACT
      ================================================ -->
 <section class="contact-section" id="contact" aria-labelledby="contactTitle">
@@ -1228,7 +1256,7 @@ textarea.f-input { resize:vertical; min-height:100px; }
             <div class="f-gdpr" id="gdprRow" style="display:none;">
                 <input type="checkbox" id="gdprCheck" name="GDPR" value="GDPR consent given" required />
                 <label for="gdprCheck">
-                    I agree to the processing of my personal data by Avans Proiect Association for the purpose of handling this request, in accordance with the <a href="confidentialitate_EN.html" target="_blank">Privacy Policy</a>. Data will not be shared with third parties.
+                    I agree to the processing of my personal data by Avans Proiect Association for the purpose of handling this request, in accordance with the <a href="confidentialitate_EN.html" target="_blank" data-privacy-modal="en">Privacy Policy</a>. Data will not be shared with third parties.
                 </label>
             </div>
             <button type="submit" class="f-submit" id="submitBtn" style="display:none;">Submit request →</button>
@@ -1250,54 +1278,17 @@ textarea.f-input { resize:vertical; min-height:100px; }
 <!-- ================================================
      FOOTER
      ================================================ -->
-<footer class="site-footer" role="contentinfo">
-    <div class="footer-inner">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <img src="https://avansproiect.ro/imagini/siglaavapro.webp" alt="AVAPRO — Avans Proiect Association logo" width="60" height="60" onerror="this.style.display='none'" />
-                <p>
-                    Association <strong style="color:#ecf0f1;">Avans Proiect</strong> — non-profit organization dedicated to education, personal development, and social inclusion. We create real impact in our community.
-                </p>
-                <p style="margin-top:0.75rem; font-size:0.8rem; color:rgba(255,255,255,0.4);">
-                    <em>"One, deeply with purpose, we evolve."</em>
-                </p>
-            </div>
-            <div class="footer-col">
-                <h5>Association</h5>
-                <ul class="footer-links">
-                    <li><a href="#despre">About Us</a></li>
-                    <li><a href="#valori">AVAPRO values</a></li>
-                    <li><a href="#scop">Purpose &amp; mission</a></li>
-                    <li><a href="#obiective">Objectives</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h5>Activity</h5>
-                <ul class="footer-links">
-                    <li><a href="#activitati">Activities</a></li>
-                    <li><a href="#domenii">Thematic areas</a></li>
-                    <li><a href="#programe">Programs</a></li>
-                    <li><a href="#parteneriate">Partnerships</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h5>Community</h5>
-                <ul class="footer-links">
-                    <li><a href="#membri">Join us</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="/cdn-cgi/l/email-protection#16757978627775625677607778656664797f7375623879787a7f7873">Email</a></li>
-                    <li><a href="tel:+40770276406">Phone</a></li>
-                    <li><a href="index_RO.html">🇷🇴 Versiunea română</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-legal">
-            <p>This website and the avansproiect.ro domain are officially owned and operated by ASOCIATIA AVANS PROIECT · CIF: 54392841 · NGO No. 18/I/A/2026</p>
-			<p><strong>Domain ownership verification:</strong> The domain <strong>avansproiect.ro</strong> is solely owned and operated by the nonprofit organization <strong>Asociatia Avans Proiect</strong>, a Romanian legal entity. WHOIS registration and the founding documents confirm this ownership.</p>
-        </div>
-    </div>
-    <div class="footer-green-strip"></div>
-</footer>
+<div id="footer-placeholder" style="min-height:300px;"></div>
+
+<script>
+    fetch('https://avansproiect.ro/footer_EN.html')
+        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+        .then(data => {
+            const c = document.getElementById('footer-placeholder');
+            if (c) c.innerHTML = data;
+        })
+        .catch(err => console.error('Footer error:', err));
+</script>
 
 <!-- ================================================
      JAVASCRIPT

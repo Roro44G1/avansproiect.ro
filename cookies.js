@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    AVAPRO — Cookie Consent & Tracking Manager
-   avansproiect.online
+   avansproiect.ro
    ═══════════════════════════════════════════════════════════════════════════
    
    INSTALARE:
-   1. Urcă acest fișier pe server: https://avansproiect.online/cookies.js
-   2. Adaugă în FIECARE pagină HTML (index_RO.html, index_EN.html etc.),
+   1. Urcă acest fișier pe server: https://avansproiect.ro/cookies.js
+   2. Adaugă în FIECARE pagină HTML (index.html, index_EN.html etc.),
       imediat înainte de </body>:
-      <script src="https://avansproiect.online/cookies.js"></script>
+      <script src="https://avansproiect.ro/cookies.js"></script>
    3. ȘTERGE din <head> scripturile vechi de GA4 (dacă există):
       <script async src="...gtag/js?id=G-6F5QQZ0C1C"></script>
       <script>window.dataLayer=...gtag('config','G-6F5QQZ0C1C');</script>
@@ -33,7 +33,7 @@ var CONFIG = {
     COOKIE_NAME: 'avapro_consent',
     COOKIE_DAYS: 365,
     // Pagini pe care apare bannerul automat (la prima vizită)
-    HOMEPAGE_PATHS: ['/', '/index.html', '/index_RO.html', '/index_EN.html']
+    HOMEPAGE_PATHS: ['/', '/index.html', '/index_EN.html']
 };
 
 
@@ -352,7 +352,7 @@ function injectHTML() {
     <div class="ncc-body">\
         Folosim cookies analitice pentru a înțelege cum este utilizat site-ul nostru \
         și pentru a-l îmbunătăți continuu. Poți alege ce permiți. \
-        <a href="#" onclick="event.preventDefault();">Politica de confidențialitate</a>\
+        <a href="confidentialitate.html" target="_blank" data-privacy-modal="ro">Politica de confidențialitate</a>\
     </div>\
     <div class="ncc-cats" id="nccCats">\
         <div class="ncc-cat">\
@@ -360,21 +360,21 @@ function injectHTML() {
                 <span class="ncc-cat-name">Esențiale</span>\
                 <span class="ncc-cat-desc">Funcționarea corectă a site-ului</span>\
             </div>\
-            <label class="ncc-toggle"><input type="checkbox" checked disabled><span class="ncc-toggle-sl"></span></label>\
+            <label class="ncc-toggle"><input type="checkbox" checked disabled aria-label="Cookie-uri esențiale (mereu active)"><span class="ncc-toggle-sl"></span></label>\
         </div>\
         <div class="ncc-cat">\
             <div class="ncc-cat-info">\
                 <span class="ncc-cat-name">Analitice</span>\
                 <span class="ncc-cat-desc">Google Analytics — cine vizitează, de unde, ce pagini</span>\
             </div>\
-            <label class="ncc-toggle"><input type="checkbox" id="nccAnalytics"><span class="ncc-toggle-sl"></span></label>\
+            <label class="ncc-toggle"><input type="checkbox" id="nccAnalytics" aria-label="Cookie-uri analitice"><span class="ncc-toggle-sl"></span></label>\
         </div>\
         <div class="ncc-cat">\
             <div class="ncc-cat-info">\
                 <span class="ncc-cat-name">Marketing</span>\
                 <span class="ncc-cat-desc">Facebook Pixel — retargeting & urmărire conversii</span>\
             </div>\
-            <label class="ncc-toggle"><input type="checkbox" id="nccMarketing"><span class="ncc-toggle-sl"></span></label>\
+            <label class="ncc-toggle"><input type="checkbox" id="nccMarketing" aria-label="Cookie-uri marketing"><span class="ncc-toggle-sl"></span></label>\
         </div>\
     </div>\
     <div class="ncc-actions">\
@@ -493,17 +493,152 @@ function isHomepage() {
 
 
 /* ┌──────────────────────────────────────────────────────────┐
+   │  MODAL POLITICA DE CONFIDENȚIALITATE                     │
+   └──────────────────────────────────────────────────────────┘ */
+
+var privacyContentCache = {};
+
+var PRIVACY_URLS = {
+    ro: 'https://avansproiect.ro/confidentialitate-continut.html',
+    en: 'https://avansproiect.ro/confidentialitate-continut_EN.html'
+};
+
+var PRIVACY_LABELS = {
+    ro: { title: '🔒 Politica de Confidențialitate', loading: 'Se încarcă…', error: 'Nu am putut încărca politica de confidențialitate. ', errorLink: 'Deschide pagina completă →', close: 'Închide' },
+    en: { title: '🔒 Privacy Policy', loading: 'Loading…', error: 'We could not load the privacy policy. ', errorLink: 'Open full page →', close: 'Close' }
+};
+
+function injectPrivacyModalCSS() {
+    if (document.getElementById('pm-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'pm-styles';
+    style.textContent = '\
+.pm-overlay {\
+    position:fixed;inset:0;background:rgba(0,0,0,0.55);\
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);\
+    z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s ease;\
+    display:flex;align-items:center;justify-content:center;padding:20px;\
+}\
+.pm-overlay.pm-active { opacity:1;pointer-events:auto; }\
+.pm-box {\
+    background:#fff;border-radius:var(--radius-card, 14px);\
+    max-width:720px;width:100%;max-height:85vh;\
+    display:flex;flex-direction:column;\
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);\
+    transform:translateY(16px);transition:transform .3s ease;\
+    font-family:"Inter",sans-serif;\
+}\
+.pm-overlay.pm-active .pm-box { transform:translateY(0); }\
+.pm-head {\
+    display:flex;align-items:center;justify-content:space-between;\
+    padding:1.1rem 1.4rem;border-bottom:1px solid var(--color-border, #e5e7eb);\
+    flex-shrink:0;\
+}\
+.pm-head h2 {\
+    font-family:"Lora",serif;font-size:1.15rem;margin:0;\
+    color:var(--color-navy, #1B2A4A);\
+}\
+.pm-close {\
+    border:none;background:var(--color-pearl, #F8FAFC);width:34px;height:34px;\
+    border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--color-text-medium, #374151);\
+    transition:background .15s;flex-shrink:0;\
+}\
+.pm-close:hover { background:var(--color-border, #e5e7eb); }\
+.pm-body { padding:1.4rem 1.6rem 2rem;overflow-y:auto; }\
+.pm-body h2 { font-size:1.05rem; }\
+.pm-body p, .pm-body li { font-size:0.92rem; }\
+.pm-loading { text-align:center;padding:3rem 1rem;color:var(--color-text-light, #4b5563); }\
+';
+    document.head.appendChild(style);
+}
+
+function injectPrivacyModalHTML() {
+    if (document.getElementById('pmOverlay')) return;
+    var overlay = document.createElement('div');
+    overlay.className = 'pm-overlay';
+    overlay.id = 'pmOverlay';
+    overlay.innerHTML = '\
+<div class="pm-box" role="dialog" aria-modal="true" aria-labelledby="pmTitle">\
+    <div class="pm-head">\
+        <h2 id="pmTitle"></h2>\
+        <button class="pm-close" id="pmClose" aria-label="Închide">✕</button>\
+    </div>\
+    <div class="pm-body" id="pmBody"></div>\
+</div>';
+    document.body.appendChild(overlay);
+
+    document.getElementById('pmClose').addEventListener('click', closePrivacyModal);
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closePrivacyModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('pm-active')) closePrivacyModal();
+    });
+}
+
+function closePrivacyModal() {
+    var overlay = document.getElementById('pmOverlay');
+    if (overlay) overlay.classList.remove('pm-active');
+}
+
+function openPrivacyModal(lang) {
+    lang = (lang === 'en') ? 'en' : 'ro';
+    injectPrivacyModalCSS();
+    injectPrivacyModalHTML();
+
+    var overlay = document.getElementById('pmOverlay');
+    var body = document.getElementById('pmBody');
+    var title = document.getElementById('pmTitle');
+    var labels = PRIVACY_LABELS[lang];
+
+    title.textContent = labels.title;
+    overlay.classList.add('pm-active');
+
+    if (privacyContentCache[lang]) {
+        body.innerHTML = privacyContentCache[lang];
+        return;
+    }
+
+    body.innerHTML = '<p class="pm-loading">' + labels.loading + '</p>';
+
+    fetch(PRIVACY_URLS[lang])
+        .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+        .then(function(html) {
+            privacyContentCache[lang] = html;
+            body.innerHTML = html;
+        })
+        .catch(function(err) {
+            console.error('[AVAPRO] Eroare încărcare politică confidențialitate:', err);
+            var fallbackUrl = lang === 'en' ? 'https://avansproiect.ro/confidentialitate_EN.html' : 'https://avansproiect.ro/confidentialitate.html';
+            body.innerHTML = '<p>' + labels.error + '<a href="' + fallbackUrl + '" target="_blank" rel="noopener">' + labels.errorLink + '</a></p>';
+        });
+}
+window.openPrivacyModal = openPrivacyModal;
+
+function initPrivacyModalTriggers() {
+    document.addEventListener('click', function(e) {
+        var trigger = e.target.closest('[data-privacy-modal]');
+        if (!trigger) return;
+        e.preventDefault();
+        openPrivacyModal(trigger.getAttribute('data-privacy-modal'));
+    });
+}
+
+
+/* ┌──────────────────────────────────────────────────────────┐
    │  INIȚIALIZARE                                            │
    └──────────────────────────────────────────────────────────┘ */
 
 function init() {
     injectCSS();
     injectHTML();
+    initPrivacyModalTriggers();
 
     var consent = getCookie(CONFIG.COOKIE_NAME);
 
     if (!consent) {
-        // Niciun consimțământ — arată bannerul pe ORICE pagină
+        // Niciun consimțământ — arată bannerul automat DOAR pe pagina principală
+        if (!isHomepage()) return;
         setTimeout(showBanner, 900);
     } else {
         // Consimțământ existent: încarcă tracking-ul pe ORICE pagină
@@ -521,15 +656,3 @@ if (document.readyState === 'loading') {
 }
 
 })();
-
-
-
-
-
-
-
-
-
-
-
-
