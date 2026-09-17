@@ -615,12 +615,76 @@ function openPrivacyModal(lang) {
 }
 window.openPrivacyModal = openPrivacyModal;
 
+var ORG_INFO_HTML = {
+    ro: '\
+<p><strong>Date oficiale</strong></p>\
+<p><strong>ASOCIAȚIA AVANS PROIECT</strong><br>\
+Organizație neguvernamentală, independentă, apolitică și nonprofit</p>\
+<p>CIF: 54392841<br>\
+Registrul Național ONG: nr. 18/I/A/2026<br>\
+Sediul social: Strada Podului, nr. 44G, Ap. 1, Sibiu, județul Sibiu, 550263, România<br>\
+Telefon: +40 770 276 406<br>\
+E-mail: radu@avansproiect.ro<br>\
+Website oficial: https://avansproiect.ro</p>\
+<p>Domeniul avansproiect.ro este deținut și administrat de ASOCIAȚIA AVANS PROIECT și\
+reprezintă domeniul principal și site-ul oficial al organizației.</p>',
+    en: '\
+<p><strong>Official organization details</strong></p>\
+<p><strong>ASOCIATIA AVANS PROIECT</strong><br>\
+Independent, non-political, non-governmental, and nonprofit organization</p>\
+<p>Tax identification number: 54392841<br>\
+National NGO Registry: No. 18/I/A/2026<br>\
+Registered office: Str. Podului, No. 44G, Ap. 1, Sibiu, Sibiu County, 550263, Romania<br>\
+Telephone: +40 770 276 406<br>\
+Email: radu@avansproiect.ro<br>\
+Official website: https://avansproiect.ro</p>\
+<p>The avansproiect.ro domain is owned and administered by ASOCIATIA AVANS PROIECT and is\
+the organization\u2019s primary domain and official website.</p>'
+};
+var ORG_INFO_TITLE = { ro: '🏛️ Date oficiale', en: '🏛️ Official Details' };
+
+function openOrgInfoModal(lang) {
+    lang = (lang === 'en') ? 'en' : 'ro';
+    injectPrivacyModalCSS();
+    injectPrivacyModalHTML();
+
+    var overlay = document.getElementById('pmOverlay');
+    var body = document.getElementById('pmBody');
+    var title = document.getElementById('pmTitle');
+
+    title.textContent = ORG_INFO_TITLE[lang];
+    body.innerHTML = ORG_INFO_HTML[lang];
+    overlay.classList.add('pm-active');
+}
+window.openOrgInfoModal = openOrgInfoModal;
+
+function initOrgInfoModalTriggers() {
+    document.addEventListener('click', function(e) {
+        var trigger = e.target.closest('[data-org-info-modal]');
+        if (!trigger) return;
+        e.preventDefault();
+        openOrgInfoModal(trigger.getAttribute('data-org-info-modal'));
+    });
+}
+
 function initPrivacyModalTriggers() {
     document.addEventListener('click', function(e) {
         var trigger = e.target.closest('[data-privacy-modal]');
         if (!trigger) return;
         e.preventDefault();
         openPrivacyModal(trigger.getAttribute('data-privacy-modal'));
+    });
+}
+
+function initDonateTracking() {
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href*="paypal.com"]');
+        if (!link) return;
+        var c = getCookie(CONFIG.COOKIE_NAME);
+        if (c && c.analytics && window.gtag) {
+            gtag('event', 'donate_click', { event_category: 'donatie', event_label: 'paypal_button' });
+        }
+        console.log('[AVAPRO Cookies] 💛 Click pe butonul de donație');
     });
 }
 
@@ -633,6 +697,8 @@ function init() {
     injectCSS();
     injectHTML();
     initPrivacyModalTriggers();
+    initOrgInfoModalTriggers();
+    initDonateTracking();
 
     var consent = getCookie(CONFIG.COOKIE_NAME);
 
