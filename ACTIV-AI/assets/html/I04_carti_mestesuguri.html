@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Breslele Sibiului</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;--zid:#F5F1EA;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+  --ch:clamp(340px,calc((100vh - 300px) / 2),460px);
+  --cw:clamp(300px,calc((100vw - 2 * var(--pad) - 60px) / 3),560px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.4;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,1.8vw,34px) 0 clamp(8px,.8vw,16px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+.tools{display:flex;gap:12px;flex-wrap:wrap}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn:disabled{opacity:.5;cursor:default}
+@media (hover:hover){.btn:hover:not(:disabled){background:var(--petrol2)}.btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--ocru)}.btn.accent:hover:not(:disabled){background:#efb944}}
+
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--ceata);margin-bottom:clamp(8px,.9vw,18px)}
+.bar b{color:var(--var)}
+.grid{flex:1;display:grid;grid-template-columns:repeat(3,var(--cw));grid-auto-rows:var(--ch);gap:clamp(14px,1.3vw,26px);justify-content:center;align-content:center;padding-bottom:clamp(8px,.8vw,16px);position:relative}
+
+/* carte */
+.card{position:relative;width:100%;height:100%;perspective:1600px;border:0;padding:0;background:transparent;cursor:pointer;font:inherit;color:inherit;text-align:left;touch-action:manipulation;border-radius:22px}
+.card:focus-visible{outline:3px solid var(--ocru);outline-offset:4px}
+.inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.3,.7,.2,1.05)}
+.card.flipped .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 16px 36px rgba(0,0,0,.45)}
+.back{background:#1B2733 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 2 L24 13 L13 24 L2 13Z' fill='none' stroke='%232E4153' stroke-width='1.5'/%3E%3Ccircle cx='13' cy='13' r='1.7' fill='%236E56CF'/%3E%3C/svg%3E");border:2px solid #2E4153}
+.frame{position:absolute;inset:14px;border:3px solid var(--ocru);border-radius:14px;box-shadow:inset 0 0 0 7px rgba(27,39,51,.85),inset 0 0 0 8px rgba(226,166,43,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4%}
+.ros{height:66%;width:auto;aspect-ratio:1;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.bt{font-family:var(--serif);font-weight:700;font-size:clamp(18px,1.35vw,28px);color:var(--var);background:#1B2733;padding:.1em .7em;border-radius:99px}
+.dm{position:absolute;width:16px;height:16px;background:var(--ocru);transform:rotate(45deg)}
+.d1{top:16px;left:16px}.d2{top:16px;right:16px}.d3{bottom:16px;left:16px}.d4{bottom:16px;right:16px}
+.front{transform:rotateY(180deg);background:var(--zid);color:#0F1720;border:6px solid var(--acc);display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto 1fr auto;column-gap:clamp(12px,1vw,20px);row-gap:clamp(5px,.45vw,9px);padding:clamp(12px,.85vw,16px)}
+.head{display:contents}
+.head .art{grid-row:1 / span 2;align-self:start;flex:none;width:clamp(88px,7.4vw,150px);aspect-ratio:1;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 2px rgba(15,23,32,.08);display:grid;place-items:center}
+.head .art svg{width:88%;height:88%}
+.head h2{font-family:var(--serif);font-size:clamp(24px,1.6vw,34px);margin:0;line-height:1.05}
+.head .guild{color:#4A5562;font-size:.92em;margin-top:.2em}
+.head .idx{font-family:var(--serif);font-weight:700;color:var(--acc);font-size:.95em;letter-spacing:.06em}
+.pw{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:4px}
+.lbl{font-size:.8em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4A5562;margin:0}
+.powers{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.powers li{display:flex;align-items:center;gap:.6em;font-weight:600}
+.powers li span.v{flex:none;min-width:2.4em;text-align:center;background:var(--acc);color:#fff;border-radius:8px;padding:.05em .35em;font-weight:700}
+.fact{grid-column:1 / span 2;grid-row:3;background:#FFF8E6;border:2px solid #E9D39B;border-radius:14px;padding:.55em .75em}
+.fact .lbl{color:#9C7420}
+.fact p{margin:.15em 0 0;font-size:.95em;line-height:1.35}
+.fact small{color:#6B7684}
+
+.note{color:var(--ceata);font-size:.92em;text-align:center;margin:0 0 6px}
+.deal{animation:deal .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes deal{from{opacity:0;transform:translateY(40px) rotate(-4deg) scale(.92)}to{opacity:1;transform:none}}
+
+@media (max-width:1240px){.grid{grid-template-columns:repeat(2,var(--cw))}}
+@media (max-width:1240px){:root{--cw:clamp(300px,calc((100vw - 2 * var(--pad) - 30px) / 2),560px)}}
+@media (max-width:820px){
+  :root{--cw:min(420px,calc(100vw - 32px));--ch:400px}
+  .grid{grid-template-columns:var(--cw)}
+  .top{display:grid;grid-template-columns:1fr}
+  .tools .btn{padding:.4em .8em}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I04</span><h1>Breslele Sibiului · cărți de joc</h1></div>
+    <div class="tools">
+      <button class="btn accent" id="shuffle" type="button">⤨ Amestecă</button>
+      <button class="btn ghost" id="flipAll" type="button">Întoarce toate</button>
+      <button class="btn ghost" id="restart" type="button">↺ Începe din nou</button>
+    </div>
+  </header>
+  <main>
+    <div class="bar"><span><b>Atinge o carte</b> ca s-o întorci și să-i descoperi meșteșugul.</span><span id="counter">Cărți întoarse: 0 din 6</span></div>
+    <div class="grid" id="grid" aria-label="Cărțile breslelor"></div>
+    <p class="note">Puterile și valorile sunt inventate, doar pentru joc. „Faptul adevărat” de pe fiecare carte provine din fișa de fapte verificate a proiectului.</p>
+  </main>
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+/* ---------- Ilustrații (viewBox 120×120) ---------- */
+var ART={
+ pielar:'<path d="M28 22 C44 14 76 14 92 22 C100 40 94 56 100 74 C96 92 80 100 60 104 C40 100 24 92 20 74 C26 56 20 40 28 22Z" fill="#B9583A"/><path d="M34 30 C48 24 72 24 86 30 C92 44 88 58 92 72 C88 86 76 92 60 95 C44 92 32 86 28 72 C32 58 28 44 34 30Z" fill="none" stroke="#F5F1EA" stroke-width="2.5" stroke-dasharray="5 5"/><g transform="rotate(-35 60 60)"><rect x="54" y="66" width="12" height="34" rx="5" fill="#6B4A32"/><path d="M60 66 V22" stroke="#4A5562" stroke-width="4" stroke-linecap="round"/></g>',
+ macelar:'<g transform="rotate(-20 60 60)"><path d="M30 30 H82 Q88 30 88 36 V64 Q88 70 82 70 H30Z" fill="#A9B4C0"/><circle cx="76" cy="40" r="4" fill="#F5F1EA"/><rect x="18" y="44" width="16" height="12" rx="3" fill="#6B4A32"/><rect x="4" y="46" width="18" height="8" rx="4" fill="#6B4A32"/></g><g fill="#6E56CF"><ellipse cx="38" cy="92" rx="16" ry="10"/><ellipse cx="66" cy="96" rx="16" ry="10"/><ellipse cx="94" cy="90" rx="16" ry="10"/></g><g fill="#F5F1EA" opacity=".6"><circle cx="34" cy="90" r="2"/><circle cx="64" cy="94" r="2"/><circle cx="92" cy="88" r="2"/></g>',
+ brutar:'<ellipse cx="54" cy="74" rx="40" ry="26" fill="#C98A4B"/><path d="M30 66 l10 16 M48 60 l10 18 M66 60 l10 18" stroke="#8F5A2E" stroke-width="4" stroke-linecap="round"/><path d="M84 30 c-16 -10 -30 4 -18 16 c6 6 18 2 18 -8 c0 10 12 14 18 8 c12 -12 -2 -26 -18 -16z" fill="none" stroke="#E2A62B" stroke-width="7" stroke-linecap="round"/><g stroke="#E2A62B" stroke-width="3" fill="none"><path d="M18 38 V12"/><path d="M18 18 l-6 -6 M18 18 l6 -6 M18 26 l-6 -6 M18 26 l6 -6 M18 34 l-6 -6 M18 34 l6 -6"/></g>',
+ aurar:'<path d="M70 18 H104 L100 40 C98 52 92 58 87 60 V82 H96 V90 H78 V82 H87" fill="#E2A62B"/><path d="M70 18 L74 40 C76 52 82 58 87 60" fill="#C68F1E"/><rect x="74" y="88" width="26" height="6" rx="2" fill="#C68F1E"/><circle cx="40" cy="74" r="24" fill="none" stroke="#E2A62B" stroke-width="9"/><path d="M30 46 L40 34 L50 46 L40 54Z" fill="#6E56CF"/><path d="M40 34 L40 54 M30 46 H50" stroke="#F5F1EA" stroke-width="1.5" opacity=".7"/><g fill="#E2A62B"><path d="M100 104 l3 -7 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3z"/><path d="M14 26 l2 -5 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2z"/></g>',
+ croitor:'<g stroke="#0E7C86" stroke-width="6" fill="none"><circle cx="30" cy="88" r="12"/><circle cx="56" cy="96" r="12"/></g><path d="M38 80 L92 20 M50 86 L96 34" stroke="#4A5562" stroke-width="6" stroke-linecap="round"/><rect x="76" y="62" width="30" height="40" rx="4" fill="#E2A62B"/><rect x="72" y="58" width="38" height="8" rx="3" fill="#C68F1E"/><rect x="72" y="98" width="38" height="8" rx="3" fill="#C68F1E"/><g stroke="#B9583A" stroke-width="2"><path d="M78 72 H104 M78 78 H104 M78 84 H104 M78 90 H104"/></g><path d="M20 20 L56 50" stroke="#A9B4C0" stroke-width="3" stroke-linecap="round"/><path d="M56 50 C70 60 62 70 76 62" fill="none" stroke="#B9583A" stroke-width="2"/>',
+ barbier:'<path d="M14 86 Q60 112 106 86 L100 78 H20Z" fill="#12A594"/><ellipse cx="60" cy="78" rx="40" ry="8" fill="#0E7C86"/><ellipse cx="60" cy="76" rx="30" ry="5" fill="#F5F1EA"/><g transform="rotate(-30 60 40)"><rect x="34" y="34" width="54" height="14" rx="3" fill="#A9B4C0"/><path d="M34 48 H88" stroke="#4A5562" stroke-width="2"/><rect x="86" y="36" width="26" height="10" rx="5" fill="#6B4A32"/></g><g transform="translate(82 46)"><rect x="-5" y="0" width="10" height="22" rx="4" fill="#6B4A32"/><path d="M-9 0 Q0 -22 9 0Z" fill="#F5F1EA"/></g>'
+};
+function backSVG(){
+  var s='<div class="frame"><svg class="ros" viewBox="-82 -82 164 164" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle r="80" fill="#0F1720"/><circle r="72" fill="none" stroke="#E2A62B" stroke-width="2"/>';
+  for(var i=0;i<8;i++){s+='<g transform="rotate('+(i*45)+')"><path d="M0 -10 C14 -26 14 -46 0 -60 C-14 -46 -14 -26 0 -10Z" fill="'+(i%2?'#B9583A':'#E2A62B')+'"/><circle cx="0" cy="-67" r="3" fill="#E2A62B"/></g>';}
+  s+='<circle r="12" fill="#0E7C86"/><circle r="5" fill="#F3EFE6"/></svg><span class="bt">Breslele Sibiului</span><i class="dm d1"></i><i class="dm d2"></i><i class="dm d3"></i><i class="dm d4"></i></div>';
+  return s;
+}
+/* ---------- Date (puteri inventate; fapte din fișa verificată) ---------- */
+var CARDS=[
+ {id:'pielar',name:'Pielarul',guild:'Breasla pielarilor',acc:'#B9583A',powers:[['Tăbăcire răbdătoare','+2'],['Curea de rezervă','+1'],['Talpă de drum lung','+1']],fact:'1367: prima mențiune a unei bresle la Sibiu – breasla pielarilor.',src:'capitalcultural.ro'},
+ {id:'macelar',name:'Măcelarul',guild:'Breasla măcelarilor',acc:'#6E56CF',powers:[['Cuțit ascuțit','+3'],['Afumătoarea','×2'],['Strigăt de piață','+1']],fact:'Strada Măcelarilor este singura stradă cu nume de breaslă din Orașul de Sus.'},
+ {id:'brutar',name:'Brutarul',guild:'Breasla brutarilor',acc:'#C98A4B',powers:[['Aluat dospit','×2'],['Cuptor încins','+2'],['Colac pentru vecini','+1']],fact:'În Sibiu există Strada Brutarilor. În 1376, 25 de meserii erau grupate în 19 bresle.'},
+ {id:'aurar',name:'Aurarul',guild:'Breasla aurarilor',acc:'#C68F1E',powers:[['Ochi de lupă','+2'],['Filigran fin','+3'],['Sclipire orbitoare','−1']],fact:'Piața Aurarilor poartă numele acestei meserii. În 1719, la Sibiu existau 26 de bresle.'},
+ {id:'croitor',name:'Croitorul',guild:'Breasla croitorilor',acc:'#0E7C86',powers:[['Măsură dreaptă','+2'],['Ac iute','+1'],['Haina potrivită','×2']],fact:'Strada Croitorilor amintește de această meserie. În 1810, la Sibiu erau 52 de meserii.'},
+ {id:'barbier',name:'Bărbierul',guild:'Breasla bărbierilor',acc:'#12A594',powers:[['Brici liniștit','+2'],['Vorbă bună','+1'],['Oglinda','×2']],fact:'Strada Bărbierilor păstrează numele meseriei. Breslele au fost desființate oficial la 18 aprilie 1875.'}
+];
+var ROMAN=['I','II','III','IV','V','VI'];
+var grid=$('grid'),els=[],busy=false,reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function cardEl(c,i){
+  var b=document.createElement('button');b.type='button';b.className='card';b.dataset.id=c.id;
+  b.style.setProperty('--acc',c.acc);
+  b.setAttribute('aria-pressed','false');b.setAttribute('aria-label','Carte: '+c.name+'. Atinge pentru a întoarce.');
+  var front='<div class="face front"><div class="head"><div class="art"><svg viewBox="0 0 120 120" aria-hidden="true">'+ART[c.id]+'</svg></div><div class="ttl"><div class="idx">'+ROMAN[i]+' · BRESLE</div><h2>'+c.name+'</h2><div class="guild">'+c.guild+'</div></div></div>'+
+   '<div class="pw"><p class="lbl">Puteri de joc · inventate</p><ul class="powers">'+c.powers.map(function(p){return '<li><span class="v">'+p[1]+'</span><span>'+p[0]+'</span></li>';}).join('')+'</ul></div>'+
+   '<div class="fact"><p class="lbl">★ Fapt adevărat</p><p>'+c.fact+(c.src?' <small>('+c.src+')</small>':'')+'</p></div></div>';
+  b.innerHTML='<div class="inner"><div class="face back">'+backSVG()+'</div>'+front+'</div>';
+  b.addEventListener('click',function(){if(busy)return;setFlip(b,!b.classList.contains('flipped'));});
+  return b;
+}
+function setFlip(b,on){b.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on?'true':'false');count();}
+function count(){var n=grid.querySelectorAll('.card.flipped').length;$('counter').textContent='Cărți întoarse: '+n+' din 6';$('flipAll').textContent=n===6?'Ascunde toate':'Întoarce toate';}
+function build(order){
+  grid.innerHTML='';els=[];
+  order.forEach(function(ci,k){var e=cardEl(CARDS[ci],ci);e.classList.add('deal');e.style.animationDelay=(k*70)+'ms';grid.appendChild(e);els.push(e);});
+  setTimeout(function(){els.forEach(function(e){e.classList.remove('deal');e.style.animationDelay='';});},1200);
+  count();
+}
+function shuffleArr(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function shuffle(){
+  if(busy)return;busy=true;$('shuffle').disabled=true;
+  var cards=[].slice.call(grid.children),anyUp=cards.some(function(c){return c.classList.contains('flipped');});
+  cards.forEach(function(c){setFlip(c,false);});
+  setTimeout(function(){
+    var g=grid.getBoundingClientRect(),cx=g.left+g.width/2,cy=g.top+g.height/2;
+    var first=cards.map(function(c){return c.getBoundingClientRect();});
+    var gather=cards.map(function(c,i){var r=first[i];return c.animate([{transform:'none'},{transform:'translate('+(cx-r.left-r.width/2)+'px,'+(cy-r.top-r.height/2)+'px) rotate('+((i%3)-1)*5+'deg)'}],{duration:reduced?1:380,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'});});
+    gather[gather.length-1].onfinish=function(){
+      var order;do{order=shuffleArr(cards);}while(order.every(function(c,i){return c===cards[i];}));
+      order.forEach(function(c){grid.appendChild(c);});
+      gather.forEach(function(a){a.cancel();});
+      order.forEach(function(c,k){var r=c.getBoundingClientRect();
+        c.animate([{transform:'translate('+(cx-r.left-r.width/2)+'px,'+(cy-r.top-r.height/2)+'px) rotate('+((k%3)-1)*5+'deg)'},{transform:'none'}],{duration:reduced?1:620,delay:reduced?0:k*60,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'});});
+      setTimeout(function(){busy=false;$('shuffle').disabled=false;},reduced?20:620+6*60);
+    };
+  },anyUp&&!reduced?650:0);
+}
+$('shuffle').addEventListener('click',shuffle);
+$('flipAll').addEventListener('click',function(){if(busy)return;var cards=[].slice.call(grid.children),allUp=cards.every(function(c){return c.classList.contains('flipped');});cards.forEach(function(c,i){setTimeout(function(){setFlip(c,!allUp);},reduced?0:i*90);});});
+$('restart').addEventListener('click',function(){if(busy)return;build([0,1,2,3,4,5]);});
+build([0,1,2,3,4,5]);
+window.__cards={order:function(){return [].map.call(grid.children,function(c){return c.dataset.id;});},busy:function(){return busy;}};
+})();
+</script>
+</body>
+</html>

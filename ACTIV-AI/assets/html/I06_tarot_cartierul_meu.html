@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tarotul cartierului</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+  --cw:clamp(52px,min(13.8vw,calc((100vh - 600px) * .6)),264px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;background:radial-gradient(1200px 700px at 50% 20%,#1A2140 0%,var(--bg) 70%) fixed}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,1.8vw,34px) 0 clamp(8px,.8vw,16px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.warn{display:inline-flex;align-items:center;gap:.5em;background:rgba(226,166,43,.14);border:2px solid var(--ocru);color:var(--ocru);font-weight:700;border-radius:99px;padding:.4em 1em}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.2em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn.violet{background:var(--violet)}
+.btn:disabled{opacity:.4;cursor:default}
+@media (hover:hover){.btn:hover:not(:disabled){background:var(--petrol2)}.btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--ocru)}.btn.accent:hover:not(:disabled){background:#efb944}.btn.violet:hover:not(:disabled){background:#7d67da}}
+
+.screen{flex:1;display:none;min-height:0}
+.screen.on{display:flex;animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* cărți */
+.tcard{width:var(--cw);aspect-ratio:200/330;perspective:1400px;position:relative}
+.tin{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,.7,.2,1.05)}
+.tcard.flipped .tin{transform:rotateY(180deg)}
+.tf{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:calc(var(--cw) * .07);overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.5)}
+.tf svg{display:block;width:100%;height:100%}
+.tfront{transform:rotateY(180deg)}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px)}
+.fan{flex:1.05;position:relative;height:min(62vh,640px);min-height:300px;display:flex;align-items:center;justify-content:center}
+.fan .tcard{position:absolute;--cw:clamp(110px,11vw,230px);transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.intro{flex:1;max-width:760px}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,64px);line-height:1.08;margin:0 0 .4em}
+.intro p{color:var(--ceata);margin:0 0 .9em;max-width:34em}
+.origin{background:var(--surf);border-left:5px solid var(--petrol);border-radius:14px;padding:14px 18px;color:var(--var)!important}
+.origin small{color:var(--ceata)}
+
+/* masa */
+#table{flex-direction:column;gap:clamp(10px,1.2vw,22px);padding-bottom:clamp(6px,.6vw,12px)}
+.row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,1.4vw,28px)}
+.deckwrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-right:clamp(4px,1.6vw,36px)}
+.deck{position:relative;width:var(--cw);aspect-ratio:200/330}
+.deck .tcard{position:absolute;left:0;top:0}
+.deck.shuffling .tcard:nth-child(odd){animation:rifL .9s ease-in-out}
+.deck.shuffling .tcard:nth-child(even){animation:rifR .9s ease-in-out}
+@keyframes rifL{0%,100%{transform:none}35%{transform:translateX(-62%) rotate(-10deg)}65%{transform:translateX(-30%) rotate(-4deg)}}
+@keyframes rifR{0%,100%{transform:none}35%{transform:translateX(62%) rotate(10deg)}65%{transform:translateX(30%) rotate(4deg)}}
+.lab{color:var(--ceata);font-size:.88em;text-align:center;line-height:1.25;min-height:2.6em;max-width:calc(var(--cw) + 30px)}
+.lab b{display:block;color:var(--var);font-family:var(--serif)}
+.slot{display:flex;flex-direction:column;align-items:center;gap:8px}
+.sbox{position:relative;width:var(--cw);aspect-ratio:200/330;border:2px dashed var(--line);border-radius:calc(var(--cw) * .07)}
+.sbox .tcard{position:absolute;inset:-2px;width:auto}
+.slot.cur .sbox{border-color:var(--ocru)}
+.slot.cur .lab b{color:var(--ocru)}
+.panel{flex:1;min-height:0;display:flex;gap:clamp(14px,2vw,40px);align-items:center;background:var(--surf);border:1px solid var(--line);border-radius:22px;padding:clamp(14px,1.5vw,30px)}
+.panel .txt{flex:1;min-width:0}
+.panel h3{font-family:var(--serif);font-size:clamp(22px,2.1vw,44px);margin:0 0 .3em;line-height:1.15}
+.panel .pos{color:var(--ocru);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.85em;margin:0 0 .4em}
+.panel p{margin:0 0 .5em;max-width:52em;font-size:1.1em}
+.panel .q{color:var(--ceata);font-style:italic}
+.panel .acts{display:flex;flex-direction:column;gap:12px;flex:none}
+.txt.fade{animation:fadeIn .5s ease both}
+
+/* citire finală */
+.final{position:absolute;inset:0;background:rgba(15,23,32,.94);backdrop-filter:blur(6px);border-radius:22px;display:none;flex-direction:column;padding:clamp(14px,1.6vw,32px);gap:clamp(8px,.9vw,16px);overflow:auto;z-index:5}
+.final.on{display:flex;animation:fadeIn .5s ease both}
+.final h2{font-family:var(--serif);font-size:clamp(28px,2.6vw,54px);margin:0}
+.reading{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(10px,1.1vw,22px)}
+.ritem{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:clamp(10px,.9vw,18px);display:flex;flex-direction:column;gap:.5em;align-items:flex-start}
+.ritem .mini{width:clamp(60px,5vw,96px);aspect-ratio:200/330;border-radius:8px;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,.4)}
+.ritem .mini svg{width:100%;height:100%;display:block}
+.ritem .pos{color:var(--ocru);font-weight:700;font-size:.85em;letter-spacing:.08em;text-transform:uppercase}
+.ritem p{margin:0;font-family:var(--serif)}
+.closing{font-family:var(--serif);font-size:1.15em;color:var(--var);margin:0;max-width:60em}
+.final .row2{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+@media (max-width:1000px){
+  #start{flex-direction:column;align-items:stretch}
+  .fan{flex:none;height:300px;overflow:hidden}
+  .fan .tcard{--cw:110px}
+  .panel{flex-direction:column;align-items:stretch}
+  .panel .acts{flex-direction:row;flex-wrap:wrap}
+  .reading{grid-template-columns:1fr}
+  .ritem{flex-direction:row;align-items:center}
+  .ritem .mini{flex:none}
+}
+@media (max-width:700px){
+  :root{--cw:calc((100vw - 32px - 5 * 6px) / 6.4)}
+  .top{display:grid;grid-template-columns:1fr}
+  .row{gap:6px}
+  .deckwrap{margin-right:2px}
+  .lab{font-size:.68em;min-height:3.2em}
+  .lab span{display:none}
+  .tools .btn{padding:.4em .8em}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I06</span><h1>Tarotul cartierului: Lazaret</h1></div>
+    <div class="tools">
+      <span class="warn" role="note">⚠ Joc creativ, nu predicție</span>
+      <button class="btn ghost" id="restart" type="button">↺ Începe din nou</button>
+    </div>
+  </header>
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="fan" id="fan" aria-hidden="true"></div>
+      <div class="intro">
+        <p class="kicker">5 cărți · o citire despre comunitate</p>
+        <h2>Ce poveste spune cartierul tău?</h2>
+        <p>Cinci cărți inventate, inspirate din istoria numelui Lazaret și din viața de zi cu zi a unui cartier. Amestecă pachetul, trage cărțile una câte una și citește-le ca pe un poem despre oameni și locuri.</p>
+        <p class="origin">De unde vine numele? Lazaret amintește de o fostă leprozerie, amenajată în clădirile unei mănăstiri dominicane, în zona actualei autogări. <small>(turnulsfatului.ro, 2014)</small></p>
+        <p><button class="btn big accent" id="go" type="button">Amestecă pachetul →</button></p>
+        <p>Cărțile nu ghicesc viitorul: sunt un exercițiu de imaginație și de reflecție despre comunitate.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="table" aria-label="Masa de joc">
+      <div class="row" id="row">
+        <div class="deckwrap"><div class="deck" id="deck" aria-label="Pachetul"></div><div class="lab"><b id="deckLbl">Pachetul</b><span id="deckCnt">5 cărți</span></div></div>
+      </div>
+      <div class="panel">
+        <div class="txt" id="ptxt" aria-live="polite"></div>
+        <div class="acts">
+          <button class="btn big accent" id="draw" type="button">Trage o carte (1/5)</button>
+          <button class="btn big violet" id="readBtn" type="button" hidden>✦ Citirea finală</button>
+        </div>
+      </div>
+      <div class="final" id="final" role="dialog" aria-label="Citirea finală">
+        <p class="kicker" style="margin:0">Joc creativ, nu predicție</p>
+        <h2>Citirea finală: cartierul Lazaret</h2>
+        <div class="reading" id="reading"></div>
+        <p class="closing">Aceasta nu este o prezicere, ci o invitație: privește-ți cartierul cu atenție și alege tu ce poveste continui.</p>
+        <div class="row2"><button class="btn big accent" id="again" type="button">↺ Începe din nou</button><button class="btn ghost" id="back" type="button">Înapoi la cărți</button></div>
+      </div>
+    </section>
+  </main>
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+/* ---------- Cărțile (arcane inventate) ---------- */
+var CARDS=[
+ {id:'manastirea',num:'I',name:'Mănăstirea',sub:'Temelia',g:['#2B2350','#121A2A'],
+  m:'Sub pașii de azi stau ziduri vechi. Mănăstirea dominicană din povestea numelui amintește că orice cartier începe cu oameni care construiesc ceva împreună, piatră lângă piatră. Temelia nu se vede, dar ține totul.',
+  kw:'temelia pusă de cei dinaintea noastră'},
+ {id:'leprozeria',num:'II',name:'Leprozeria',sub:'Vindecarea',g:['#123A40','#0F1720'],
+  m:'Aici au fost îngrijiți, odinioară, oameni pe care alții îi ocoleau. Cartea vorbește despre grijă: o comunitate e puternică atunci când nu lasă pe nimeni la margine. Vindecarea începe cu cineva care rămâne alături.',
+  kw:'grija pentru cei lăsați la margine'},
+ {id:'autogara',num:'III',name:'Autogara',sub:'Plecările',g:['#3B2E50','#8A3F4A'],
+  m:'De aici pleacă drumuri spre alte locuri. Plecările nu sunt doar despărțiri, ci și promisiuni de întoarcere. Fiecare om care pleacă duce cu el o bucată de cartier – și o poate aduce înapoi, mai bogată.',
+  kw:'curajul de a pleca și de a te întoarce'},
+ {id:'pragul',num:'IV',name:'Pragul',sub:'Sosirile',g:['#2B2350','#0F1720'],
+  m:'Pentru fiecare plecare există o sosire. Pragul întreabă: cum îi primim pe cei noi? Un salut, o ușă deschisă, un nume ținut minte – din lucruri mici se face „acasă”.',
+  kw:'pragul deschis pentru cei care sosesc'},
+ {id:'felinarul',num:'V',name:'Felinarul',sub:'Vegherea',g:['#0F1720','#1F2A44'],
+  m:'Seara, ferestrele se aprind una câte una. Felinarul e vecinul care observă când ceva nu e în regulă și întreabă: „Ești bine?”. O comunitate veghează fără să judece.',
+  kw:'lumina vecinilor care au grijă unii de alții'}
+];
+var POS=[
+ {n:'Rădăcina',s:'ce ne ține împreună',t:'La rădăcina cartierului stă {kw}.',q:'Ce lucru vechi din cartier ai vrea să rămână?'},
+ {n:'Prezentul',s:'ce trăim acum',t:'Prezentul îți vorbește despre {kw}.',q:'Unde vezi asta în jurul tău, chiar azi?'},
+ {n:'Provocarea',s:'ce ne cere curaj',t:'Provocarea ține de {kw}.',q:'Ce ai putea face, concret, săptămâna aceasta?'},
+ {n:'Sprijinul',s:'pe ce ne putem baza',t:'Sprijinul vine din {kw}.',q:'Pe cine te poți baza – și cine se poate baza pe tine?'},
+ {n:'Drumul',s:'încotro putem merge',t:'Drumul înainte trece prin {kw}.',q:'Cum ar arăta cartierul dacă ai urma această carte?'}
+];
+/* ---------- Ilustrații SVG (200×330) ---------- */
+function stars(n,seed){var s='<g fill="#F3EFE6">';for(var i=0;i<n;i++){var x=(seed*37+i*53)%170+15,y=(seed*19+i*41)%90+50;s+='<circle cx="'+x+'" cy="'+y+'" r="'+(i%3?0.9:1.5)+'" opacity="'+(i%2?.5:.85)+'"/>';}return s+'</g>';}
+var ILL={
+ manastirea:stars(9,1)+'<circle cx="150" cy="78" r="12" fill="#E2A62B" opacity=".85"/><polygon points="34,146 100,106 166,146" fill="#B9583A"/><rect x="40" y="144" width="120" height="80" fill="#3A4F66"/><g fill="#0F1720"><path d="M52 224 v-42 a12 12 0 0 1 24 0 v42z"/><path d="M88 224 v-42 a12 12 0 0 1 24 0 v42z"/><path d="M124 224 v-42 a12 12 0 0 1 24 0 v42z"/></g><rect x="88" y="72" width="24" height="40" fill="#3A4F66"/><polygon points="84,74 100,50 116,74" fill="#B9583A"/><circle cx="100" cy="90" r="5" fill="#E2A62B"/><g fill="#E2A62B"><rect x="30" y="226" width="44" height="12" rx="2"/><rect x="78" y="226" width="44" height="12" rx="2"/><rect x="126" y="226" width="44" height="12" rx="2"/><rect x="52" y="240" width="44" height="10" rx="2" opacity=".75"/><rect x="100" y="240" width="44" height="10" rx="2" opacity=".75"/></g>',
+ leprozeria:'<g opacity=".9"><circle cx="100" cy="150" r="74" fill="#12A594" opacity=".12"/><circle cx="100" cy="150" r="48" fill="#12A594" opacity=".18"/></g><g stroke="#E2A62B" stroke-width="2" opacity=".6" stroke-linecap="round"><path d="M100 64 v14"/><path d="M48 92 l10 10"/><path d="M152 92 l-10 10"/><path d="M30 150 h14"/><path d="M156 150 h14"/></g><path d="M100 196 C100 170 98 150 100 120" stroke="#12A594" stroke-width="4" fill="none"/><ellipse cx="86" cy="150" rx="16" ry="7" transform="rotate(-30 86 150)" fill="#12A594"/><ellipse cx="114" cy="136" rx="16" ry="7" transform="rotate(30 114 136)" fill="#12A594"/><ellipse cx="100" cy="116" rx="7" ry="13" fill="#5fd3c4"/><path d="M42 186 C48 224 82 240 100 232 C118 240 152 224 158 186 C144 202 122 208 100 206 C78 208 56 202 42 186Z" fill="#E9C8A8"/><g stroke="#B98F6E" stroke-width="2" fill="none" opacity=".8"><path d="M56 200 q6 10 4 22"/><path d="M70 206 q4 10 2 22"/><path d="M144 200 q-6 10 -4 22"/><path d="M130 206 q-4 10 -2 22"/></g>',
+ autogara:'<circle cx="100" cy="150" r="30" fill="#F3C25A"/><rect x="14" y="150" width="172" height="100" fill="#2C2340"/><polygon points="40,250 160,250 106,152 94,152" fill="#3A3448"/><g stroke="#E2A62B" stroke-width="3"><path d="M100 160 v8"/><path d="M100 180 v10"/><path d="M100 202 v12"/></g><g transform="translate(100 214)"><rect x="-34" y="-46" width="68" height="50" rx="8" fill="#E2A62B"/><rect x="-26" y="-40" width="52" height="20" rx="4" fill="#172431"/><rect x="-30" y="-14" width="10" height="6" rx="2" fill="#E5484D"/><rect x="20" y="-14" width="10" height="6" rx="2" fill="#E5484D"/><rect x="-18" y="-6" width="36" height="6" rx="2" fill="#C68F1E"/><rect x="-30" y="4" width="12" height="10" rx="3" fill="#172431"/><rect x="18" y="4" width="12" height="10" rx="3" fill="#172431"/></g><g stroke="#F3EFE6" stroke-width="2" fill="none" opacity=".8"><path d="M50 90 l6 5 l6 -5"/><path d="M66 78 l5 4 l5 -4"/><path d="M134 98 l5 4 l5 -4"/></g>',
+ pragul:stars(6,3)+'<rect x="28" y="84" width="144" height="160" fill="#3A4F66"/><path d="M64 244 V136 a36 36 0 0 1 72 0 V244Z" fill="#F3C25A"/><path d="M64 244 V136 a36 36 0 0 1 8 -22 L50 104 V254Z" fill="#6B4A32"/><circle cx="56" cy="186" r="3" fill="#E2A62B"/><polygon points="64,244 136,244 176,300 24,300" fill="#F3C25A" opacity=".28"/><rect x="72" y="244" width="56" height="8" rx="2" fill="#B9583A"/><g fill="#0F1720" opacity=".55"><ellipse cx="90" cy="276" rx="5" ry="8"/><ellipse cx="108" cy="290" rx="5" ry="8"/></g><path d="M86 120 h28" stroke="#B9583A" stroke-width="3"/>',
+ felinarul:stars(10,5)+'<circle cx="152" cy="76" r="14" fill="#F3EFE6" opacity=".9"/><circle cx="158" cy="72" r="12" fill="#121A2A"/><rect x="14" y="140" width="52" height="110" fill="#22304A"/><rect x="134" y="120" width="54" height="130" fill="#22304A"/>'+(function(){var s='';var w=[[22,150],[44,150],[22,176],[44,202],[142,132],[164,132],[142,158],[164,184],[142,210]];for(var i=0;i<w.length;i++)s+='<rect x="'+w[i][0]+'" y="'+w[i][1]+'" width="12" height="16" rx="2" fill="#E2A62B" opacity="'+(i%3===1?.35:.9)+'"/>';return s;})()+'<circle cx="100" cy="122" r="48" fill="#E2A62B" opacity=".1"/><circle cx="100" cy="122" r="26" fill="#E2A62B" opacity=".18"/><rect x="97" y="134" width="6" height="112" fill="#A9B4C0"/><path d="M84 104 h32 l-6 26 h-20z" fill="#E2A62B"/><path d="M82 104 h36 l-18 -14z" fill="#A9B4C0"/><rect x="88" y="244" width="24" height="6" rx="2" fill="#A9B4C0"/><g fill="#F3EFE6" opacity=".7"><circle cx="76" cy="100" r="1.6"/><circle cx="126" cy="112" r="1.4"/><circle cx="120" cy="92" r="1.2"/></g>'
+};
+function faceSVG(c){
+  return '<svg viewBox="0 0 200 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+c.num+' · '+c.name+' – '+c.sub+'"><defs><linearGradient id="tg_'+c.id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c.g[0]+'"/><stop offset="1" stop-color="'+c.g[1]+'"/></linearGradient></defs>'+
+   '<rect width="200" height="330" fill="url(#tg_'+c.id+')"/>'+ILL[c.id]+
+   '<rect x="8" y="8" width="184" height="314" rx="10" fill="none" stroke="#E2A62B" stroke-width="2.5"/><rect x="14" y="14" width="172" height="302" rx="7" fill="none" stroke="#E2A62B" stroke-width="1" opacity=".55"/>'+
+   '<circle cx="100" cy="34" r="17" fill="#0F1720" stroke="#E2A62B" stroke-width="2"/><text x="100" y="40" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="16" fill="#E2A62B">'+c.num+'</text>'+
+   '<rect x="20" y="258" width="160" height="52" rx="8" fill="#0F1720" opacity=".82"/><text x="100" y="281" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="17" letter-spacing="1" fill="#F3EFE6">'+c.name.toUpperCase()+'</text><text x="100" y="301" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#E2A62B">'+c.sub+'</text></svg>';
+}
+function backSVG(){
+  var s='<svg viewBox="0 0 200 330" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="200" height="330" fill="#1B1F3A"/>';
+  s+='<g fill="#6E56CF" opacity=".55">';for(var y=24;y<320;y+=22)for(var x=(y%44?20:31);x<190;x+=22)s+='<path d="M'+x+' '+(y-3)+' l3 3 l-3 3 l-3 -3z"/>';s+='</g>';
+  s+='<rect x="8" y="8" width="184" height="314" rx="10" fill="none" stroke="#E2A62B" stroke-width="2.5"/><rect x="14" y="14" width="172" height="302" rx="7" fill="none" stroke="#E2A62B" stroke-width="1" opacity=".55"/>';
+  s+='<g transform="translate(100 165)"><circle r="58" fill="#0F1720"/><g stroke="#E2A62B" stroke-width="2" stroke-linecap="round">';for(var i=0;i<12;i++){var a=i*30*Math.PI/180;s+='<path d="M'+(Math.cos(a)*44).toFixed(1)+' '+(Math.sin(a)*44).toFixed(1)+' L'+(Math.cos(a)*54).toFixed(1)+' '+(Math.sin(a)*54).toFixed(1)+'"/>';}
+  s+='</g><path d="M-36 8 Q0 -40 36 8 Q0 22 -36 8Z" fill="#B9583A"/><path d="M-26 6 Q0 -24 26 6 Q0 14 -26 6Z" fill="#0F1720"/><circle cx="0" cy="0" r="8" fill="#E2A62B"/><circle cx="0" cy="0" r="3" fill="#0F1720"/></g>';
+  s+='<text x="100" y="270" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="15" letter-spacing="3" fill="#E2A62B">LAZARET</text></svg>';
+  return s;
+}
+function cardEl(c,flipped){
+  var d=document.createElement('div');d.className='tcard'+(flipped?' flipped':'');
+  d.innerHTML='<div class="tin"><div class="tf tback">'+backSVG()+'</div><div class="tf tfront">'+(c?faceSVG(c):'')+'</div></div>';
+  return d;
+}
+/* ---------- Start: evantai ---------- */
+var fan=$('fan');
+CARDS.forEach(function(c,i){var e=cardEl(c,true);var a=(i-2)*13,dx=(i-2)*58,dy=Math.abs(i-2)*16;e.style.transform='translate('+dx+'%, '+dy+'px) rotate('+a+'deg)';e.style.zIndex=10-Math.abs(i-2);fan.appendChild(e);});
+
+/* ---------- Joc ---------- */
+var order=[],drawn=0,busy=false,reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shuffleArr(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function setupTable(){
+  var row=$('row');
+  [].slice.call(row.querySelectorAll('.slot')).forEach(function(s){s.remove();});
+  POS.forEach(function(p,i){var s=document.createElement('div');s.className='slot';s.innerHTML='<div class="sbox"></div><div class="lab"><b>'+(i+1)+' · '+p.n+'</b><span>'+p.s+'</span></div>';row.appendChild(s);});
+  var deck=$('deck');deck.innerHTML='';for(var k=0;k<5;k++){var e=cardEl(null,false);e.style.transform='translate('+(-k*2)+'px,'+(-k*2)+'px)';deck.appendChild(e);}
+  $('deckLbl').textContent='Pachetul';$('deckCnt').textContent='5 cărți';
+  drawn=0;order=shuffleArr([0,1,2,3,4]);
+  $('draw').hidden=false;$('draw').disabled=true;$('draw').textContent='Se amestecă…';$('readBtn').hidden=true;$('final').classList.remove('on');
+  setText('<p class="pos">Pregătire</p><h3>Pachetul se amestecă…</h3><p>Respiră adânc și gândește-te la cartierul tău: la străzi, la vecini, la locurile în care te simți acasă.</p>');
+  deck.classList.remove('shuffling');void deck.offsetWidth;deck.classList.add('shuffling');
+  setTimeout(function(){deck.classList.remove('shuffling');$('draw').disabled=false;$('draw').textContent='Trage o carte (1/5)';
+    setText('<p class="pos">Gata</p><h3>Pachetul e amestecat</h3><p>Trage cele cinci cărți, una câte una. Fiecare poziție are un rol: rădăcina, prezentul, provocarea, sprijinul și drumul.</p><p class="q">Amintește-ți: e un joc creativ, nu o predicție.</p>');
+    $('draw').focus({preventScroll:true});
+  },reduced?10:1000);
+}
+function setText(h){var t=$('ptxt');t.classList.remove('fade');void t.offsetWidth;t.innerHTML=h;t.classList.add('fade');}
+function draw(){
+  if(busy||drawn>=5)return;busy=true;$('draw').disabled=true;
+  var i=drawn,c=CARDS[order[i]],deck=$('deck'),top=deck.lastElementChild;
+  var dr=top.getBoundingClientRect();top.remove();
+  var slots=document.querySelectorAll('.slot');[].forEach.call(slots,function(s){s.classList.remove('cur');});
+  var slot=slots[i];slot.classList.add('cur');
+  var box=slot.querySelector('.sbox'),e=cardEl(c,false);box.appendChild(e);
+  var sr=e.getBoundingClientRect(),dx=dr.left-sr.left,dy=dr.top-sr.top;
+  var dur=reduced?1:650;
+  var anim=e.animate([{transform:'translate('+dx+'px,'+dy+'px) rotate(-8deg)'},{transform:'translate('+(dx*.4)+'px,'+(dy*.4-30)+'px) rotate(4deg)',offset:.5},{transform:'none'}],{duration:dur,easing:'cubic-bezier(.3,.7,.2,1)'});
+  anim.onfinish=function(){
+    e.classList.add('flipped');
+    setTimeout(function(){
+      var p=POS[i];
+      setText('<p class="pos">Poziția '+(i+1)+' · '+p.n+' – '+p.s+'</p><h3>'+c.num+' · '+c.name+' – '+c.sub+'</h3><p>'+c.m+'</p><p class="q">'+p.t.replace('{kw}',c.kw)+' Întrebare pentru tine: '+p.q+'</p>');
+      drawn++;busy=false;
+      $('deckLbl').textContent=drawn<5?'Pachetul':'Pachet gol';var left=5-drawn;$('deckCnt').textContent=left===1?'o carte':(left===0?'nicio carte':left+' cărți');
+      if(drawn<5){$('draw').disabled=false;$('draw').textContent='Trage o carte ('+(drawn+1)+'/5)';}
+      else{$('draw').hidden=true;$('readBtn').hidden=false;$('readBtn').focus({preventScroll:true});}
+    },reduced?10:620);
+  };
+}
+function showFinal(){
+  var r=$('reading');r.innerHTML='';
+  for(var i=0;i<5;i++){var c=CARDS[order[i]],p=POS[i];
+    var d=document.createElement('div');d.className='ritem';
+    d.innerHTML='<div class="mini">'+faceSVG(c)+'</div><div><div class="pos">'+(i+1)+' · '+p.n+'</div><p>'+p.t.replace('{kw}',c.kw)+'</p></div>';
+    r.appendChild(d);}
+  $('final').classList.add('on');$('again').focus({preventScroll:true});
+}
+function show(id){['start','table'].forEach(function(s){$(s).classList.toggle('on',s===id);});}
+$('go').addEventListener('click',function(){show('table');setupTable();});
+$('draw').addEventListener('click',draw);
+$('readBtn').addEventListener('click',showFinal);
+$('back').addEventListener('click',function(){$('final').classList.remove('on');});
+$('again').addEventListener('click',function(){show('start');});
+$('restart').addEventListener('click',function(){busy=false;$('final').classList.remove('on');show('start');});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')$('final').classList.remove('on');});
+window.__tarot={drawn:function(){return drawn;},order:function(){return order.slice();}};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terezian, Sibiu</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+.tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.seg button{font:inherit;font-weight:700;min-height:52px;min-width:64px;padding:0 .9em;background:transparent;color:var(--ceata);border:0;cursor:pointer;letter-spacing:.06em;touch-action:manipulation}
+.seg button[aria-pressed="true"]{background:var(--ocru);color:var(--bg)}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.seg button:focus-visible,.dot:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default}
+@media (hover:hover){.btn:hover:not(:disabled){background:var(--petrol2)}.btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--ocru)}.btn.accent:hover{background:#efb944}}
+
+/* deck */
+.deck{flex:1;position:relative;overflow:hidden;min-height:0;touch-action:pan-y;border-radius:24px;display:flex}
+.track{display:flex;width:100%;transition:transform .65s cubic-bezier(.2,.75,.2,1);will-change:transform}
+.slide{flex:0 0 100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,80px);align-items:center;padding:clamp(8px,1.2vw,24px) 0;overflow:hidden}
+.slide.full{grid-template-columns:1fr;align-content:center}
+.slide .txt>*{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.slide.active .txt>*{opacity:1;transform:none}
+.slide.active .txt>*:nth-child(2){transition-delay:.08s}.slide.active .txt>*:nth-child(3){transition-delay:.16s}.slide.active .txt>*:nth-child(4){transition-delay:.24s}.slide.active .txt>*:nth-child(5){transition-delay:.32s}.slide.active .txt>*:nth-child(6){transition-delay:.4s}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.slide h2{font-family:var(--serif);font-size:clamp(28px,3.5vw,72px);line-height:1.1;margin:0 0 .45em}
+.slide p{margin:0 0 .8em;max-width:32em;font-size:1.2em}
+.slide p.muted{color:var(--ceata);font-size:1em}
+.slide .src{color:var(--ceata);font-size:.95em;font-style:italic;margin-top:.6em}
+.ill{border-radius:24px;overflow:hidden;background:#172431;box-shadow:0 18px 40px rgba(0,0,0,.35);opacity:0;transform:scale(.96);transition:opacity .7s ease .1s,transform .7s ease .1s}
+.slide.active .ill{opacity:1;transform:none}
+.ill svg{display:block;width:100%;height:auto}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.2vw,22px)}
+.tile{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:clamp(14px,1.3vw,26px)}
+.tile b{display:block;font-family:var(--serif);font-size:clamp(26px,2.6vw,52px);color:var(--ocru);line-height:1.1;margin-bottom:.15em;overflow-wrap:anywhere}
+.tile span{color:var(--var);font-size:1.08em}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(10px,1.1vw,20px)}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:clamp(14px,1.2vw,24px);display:flex;flex-direction:column;gap:.5em}
+.card svg{width:clamp(48px,4.2vw,80px);height:auto}
+.card h3{font-family:var(--serif);margin:0;font-size:1.25em}
+.card p{font-size:1.02em;margin:0;color:var(--var)}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:clamp(8px,.9vw,16px)}
+.list li{display:flex;gap:.9em;align-items:flex-start;background:var(--surf);border-radius:16px;padding:.7em 1em;border:1px solid var(--line);font-size:1.1em}
+.list li .y{flex:none;font-family:var(--serif);font-weight:700;color:var(--ocru);min-width:3.2em;font-size:1.1em}
+.list li .h{flex:none;color:var(--chip);font-size:1.2em;line-height:1.2}
+.badge{display:inline-block;background:var(--violet);color:var(--var);font-weight:700;border-radius:99px;padding:.3em .9em;font-size:.9em}
+.slide p.big{max-width:none;font-family:var(--serif);font-weight:700;font-size:clamp(54px,7vw,140px);line-height:1;color:var(--ocru);margin:0 0 .15em;letter-spacing:-.02em}
+
+/* nav */
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:clamp(8px,1vw,18px) 0}
+.dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+.dot{width:48px;height:48px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;padding:0;touch-action:manipulation}
+.dot i{width:14px;height:14px;border-radius:50%;background:var(--line);transition:background .3s,transform .3s}
+.dot[aria-current="true"] i{background:var(--ocru);transform:scale(1.35)}
+.mid{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap}
+.count{color:var(--ceata);min-width:4em;text-align:center}
+.hint{color:var(--ceata);font-size:.9em}
+
+@media (max-width:1000px){
+  .slide{grid-template-columns:1fr;align-content:start;overflow-y:auto;gap:16px}
+  .slide .ill{max-width:520px;order:-1}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr}
+  .tools .btn{padding:.4em .8em}
+  .dot{width:22px;height:44px}
+  .dot i{width:10px;height:10px}
+  .count{display:none}
+  .nav .btn{padding:.4em .8em}
+  .nav .lbl{display:none}
+  .cards{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I03</span><h1 id="htitle">Terezian, Sibiu</h1></div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Language / Limba">
+        <button type="button" id="lang-en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" id="lang-ro" aria-pressed="false" lang="ro">RO</button>
+      </div>
+      <button class="btn ghost" id="restart" type="button">↺ Start over</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="deck" id="deck" aria-roledescription="carousel">
+      <div class="track" id="track"></div>
+    </div>
+    <nav class="nav" aria-label="Slides">
+      <button class="btn ghost" id="prev" type="button">‹ <span class="lbl" id="prevLbl">Back</span></button>
+      <div class="mid"><div class="dots" id="dots"></div><span class="count" id="count">1 / 10</span></div>
+      <button class="btn" id="next" type="button"><span class="lbl" id="nextLbl">Next</span> ›</button>
+    </nav>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI<span id="footEn"> · AI-generated model artefact</span></span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ---------- Ilustrații SVG (600×450) ---------- */
+function eye(x,y,w){var h=w*.34;return '<path d="M'+x+' '+y+' q'+(w/2)+' '+(-h*2)+' '+w+' 0 q'+(-w/2)+' '+(h*.7)+' '+(-w)+' 0z" fill="#0F1720"/><circle cx="'+(x+w/2)+'" cy="'+(y-h*.45)+'" r="'+(h*.38)+'" fill="#E2A62B" opacity=".85"/>';}
+function house(x,base,w,h,wall,roof,eyes){var rh=w*.8,s='<rect x="'+x+'" y="'+(base-h)+'" width="'+w+'" height="'+h+'" fill="'+wall+'"/><polygon points="'+(x-6)+','+(base-h+2)+' '+(x+w/2)+','+(base-h-rh)+' '+(x+w+6)+','+(base-h+2)+'" fill="'+roof+'"/>';if(eyes)s+=eye(x+w/2-w*.15,base-h-rh*.32,w*.3);for(var r=0;r<Math.floor((h-30)/50);r++)for(var c=0;c<2;c++){s+='<rect x="'+(x+w*(c+1)/3-8)+'" y="'+(base-h+20+r*50)+'" width="16" height="24" rx="3" fill="#172431" opacity=".85"/>';}return s;}
+function church(x,base,k,col){k=k||1;col=col||'#E9E2D3';return '<g transform="translate('+x+' '+base+') scale('+k+')"><rect x="-90" y="-120" width="180" height="120" fill="'+col+'"/><polygon points="-100,-118 0,-180 100,-118" fill="#B9583A"/><rect x="-30" y="-250" width="60" height="140" fill="'+col+'"/><path d="M-36 -250 Q0 -300 36 -250Z" fill="#0E7C86"/><path d="M-14 -290 Q0 -330 14 -290 Z" fill="#0E7C86"/><path d="M0 -330 v-30 M-10 -348 h20" stroke="#E2A62B" stroke-width="5"/><circle cx="0" cy="-210" r="14" fill="#E2A62B"/><path d="M-20 0 v-50 a20 20 0 0 1 40 0 v50z" fill="#4C3A2A"/><g fill="#172431" opacity=".8"><path d="M-70 -40 v-40 a12 12 0 0 1 24 0 v40z"/><path d="M46 -40 v-40 a12 12 0 0 1 24 0 v40z"/><path d="M-10 -150 v-30 a10 10 0 0 1 20 0 v30z"/></g></g>';}
+function crown(x,y,k){k=k||1;return '<g transform="translate('+x+' '+y+') scale('+k+')"><path d="M-60 20 L-70 -40 L-35 -10 L0 -55 L35 -10 L70 -40 L60 20Z" fill="#E2A62B"/><rect x="-62" y="18" width="124" height="18" rx="4" fill="#C68F1E"/><circle cx="-70" cy="-44" r="7" fill="#E2A62B"/><circle cx="0" cy="-60" r="8" fill="#E2A62B"/><circle cx="70" cy="-44" r="7" fill="#E2A62B"/><circle cx="0" cy="0" r="8" fill="#B9583A"/><circle cx="-34" cy="6" r="6" fill="#0E7C86"/><circle cx="34" cy="6" r="6" fill="#6E56CF"/></g>';}
+var ILL={
+ hero:'<rect width="600" height="450" fill="#172431"/><circle cx="470" cy="100" r="54" fill="#E2A62B" opacity=".9"/><path d="M-10 250 L90 170 L170 220 L270 140 L360 210 L450 160 L610 240 V450 H-10Z" fill="#22344A"/><path d="M270 140 L296 162 L278 160 L262 170 L248 160Z" fill="#F3EFE6" opacity=".8"/>'+
+  crown(300,120,.55)+church(300,380,.82)+house(20,380,110,150,'#E2A62B','#9C4A31',true)+house(140,380,90,120,'#6E56CF','#B9583A',true)+house(400,380,96,130,'#0E7C86','#9C4A31',true)+house(506,380,100,160,'#E9E2D3','#B9583A',true)+'<rect x="0" y="380" width="600" height="70" fill="#1E3040"/><path d="M0 410 H600" stroke="#2E4153" stroke-width="4" stroke-dasharray="20 14"/>',
+ crown:'<rect width="600" height="450" fill="#172431"/><circle cx="300" cy="200" r="170" fill="#6E56CF" opacity=".16"/><circle cx="300" cy="200" r="120" fill="#6E56CF" opacity=".16"/>'+crown(300,170,1.6)+'<g transform="translate(300 330)"><rect x="-150" y="-30" width="300" height="90" rx="10" fill="#E9E2D3"/><path d="M-120 -6 H100 M-120 14 H80 M-120 34 H60" stroke="#A9B4C0" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="40" r="26" fill="#B9583A"/><circle cx="110" cy="40" r="12" fill="#9C4A31"/></g>',
+ church:'<rect width="600" height="450" fill="#172431"/><circle cx="300" cy="150" r="140" fill="#0E7C86" opacity=".14"/>'+church(300,360,1)+'<rect x="0" y="360" width="600" height="90" fill="#1E3040"/><path d="M90 410 H510" stroke="#E2A62B" stroke-width="6" stroke-linecap="round"/><circle cx="90" cy="410" r="14" fill="#E2A62B"/><circle cx="510" cy="410" r="14" fill="#E2A62B"/><text x="90" y="444" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" fill="#F3EFE6">1767</text><text x="510" y="444" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" fill="#F3EFE6">1771</text>',
+ names:'<rect width="600" height="450" fill="#172431"/>'+(function(){var n=[['Lazaret',120,90,'#0E7C86'],['Turnișor',330,70,'#6E56CF'],['Țiglari',490,130,'#B9583A'],['Hipodrom',110,220,'#0E7C86'],['Ștrand',470,250,'#6E56CF'],['Valea Aurie',150,360,'#B9583A'],['Vasile Aaron',420,370,'#0E7C86'],['Josefin',300,150,'#2E4153'],['Trei Stejari',300,400,'#2E4153']],s='<g stroke="#2E4153" stroke-width="3">';for(var i=0;i<n.length;i++)s+='<path d="M300 250 L'+n[i][1]+' '+n[i][2]+'"/>';s+='</g>';for(var j=0;j<n.length;j++){var w=n[j][0].length*11+40;s+='<rect x="'+(n[j][1]-w/2)+'" y="'+(n[j][2]-22)+'" width="'+w+'" height="44" rx="22" fill="'+n[j][3]+'"/><text x="'+n[j][1]+'" y="'+(n[j][2]+7)+'" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="19" fill="#F3EFE6">'+n[j][0]+'</text>';}return s;})()+'<circle cx="300" cy="250" r="78" fill="#E2A62B"/><text x="300" y="258" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="26" fill="#0F1720">Terezian</text>',
+ love:'<rect width="600" height="450" fill="#172431"/><circle cx="300" cy="140" r="80" fill="#D6409F" opacity=".18"/><path d="M300 210 C230 160 220 100 262 86 C284 78 298 94 300 106 C302 94 316 78 338 86 C380 100 370 160 300 210Z" fill="#D6409F"/>'+house(30,390,110,140,'#E9E2D3','#B9583A',false)+house(150,390,100,170,'#E2A62B','#9C4A31',false)+house(350,390,100,150,'#0E7C86','#B9583A',false)+house(460,390,110,130,'#6E56CF','#9C4A31',false)+'<rect x="0" y="390" width="600" height="60" fill="#1E3040"/>'+'<g fill="#0F1720"><circle cx="276" cy="330" r="12"/><path d="M262 392 l3 -50 q11 -8 22 0 l3 50z"/><circle cx="318" cy="340" r="10"/><path d="M306 392 l3 -42 q9 -7 18 0 l3 42z"/><circle cx="296" cy="360" r="8"/><path d="M287 392 l2 -26 q7 -6 14 0 l2 26z"/></g>',
+ firsts:'<rect width="600" height="450" fill="#172431"/>'+
+  '<g transform="translate(110 120)"><path d="M-40 60 L-30 -10 H30 L40 60Z" fill="#E2A62B"/><ellipse cx="0" cy="-10" rx="32" ry="8" fill="#C68F1E"/><rect x="2" y="-60" width="12" height="70" rx="6" transform="rotate(24 8 -25)" fill="#E9E2D3"/></g>'+
+  '<g transform="translate(300 120)"><path d="M-60 -50 H60 V60 H-60Z" fill="#B9583A"/><path d="M-60 -50 C-20 -10 -20 30 -60 60Z M60 -50 C20 -10 20 30 60 60Z" fill="#9C4A31"/><circle cx="-12" cy="0" r="16" fill="#F3EFE6"/><circle cx="16" cy="10" r="16" fill="#6E56CF"/></g>'+
+  '<g transform="translate(490 120)"><path d="M-60 -20 L0 -60 L60 -20Z" fill="#E2A62B"/><rect x="-60" y="-20" width="120" height="80" fill="#2C3E50"/><g fill="#4C6479"><rect x="-48" y="-14" width="12" height="74"/><rect x="-18" y="-14" width="12" height="74"/><rect x="12" y="-14" width="12" height="74"/><rect x="42" y="-14" width="12" height="74"/></g></g>'+
+  '<g transform="translate(190 320)"><path d="M-90 30 Q0 -60 90 30" fill="none" stroke="#0E7C86" stroke-width="12"/><path d="M-90 -10 H90" stroke="#0E7C86" stroke-width="6"/><g stroke="#0E7C86" stroke-width="4"><path d="M-60 -10 V14"/><path d="M-30 -10 V-10"/><path d="M0 -10 V-16"/><path d="M30 -10 V-6"/><path d="M60 -10 V14"/></g><rect x="-26" y="6" width="52" height="18" rx="3" fill="#0F1720"/><text x="0" y="20" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="#E2A62B">1859</text></g>'+
+  '<g transform="translate(420 330)"><path d="M-90 50 L-30 -40 L10 10 L50 -50 L100 50Z" fill="#33475A"/><path d="M50 -50 L66 -26 L52 -30 L40 -20 L34 -28Z M-30 -40 L-16 -20 L-28 -24 L-40 -14Z" fill="#F3EFE6"/><path d="M-70 50 l14 -36 l14 36z M70 50 l12 -30 l12 30z" fill="#0E7C86"/></g>',
+ eyes:'<rect width="600" height="450" fill="#1F3A52"/><circle cx="500" cy="80" r="40" fill="#E2A62B" opacity=".85"/><polygon points="-20,450 300,40 620,450" fill="#B9583A"/><g stroke="#9C4A31" stroke-width="3" opacity=".7">'+(function(){var s='';for(var y=90;y<450;y+=26){var half=(y-40)*320/410;s+='<path d="M'+(300-half)+' '+y+' H'+(300+half)+'"/>';}return s;})()+'</g>'+eye(240,170,120)+eye(150,330,110)+eye(340,330,110)+'<path d="M232 172 q68 -78 136 0" fill="none" stroke="#9C4A31" stroke-width="8" stroke-linecap="round"/><path d="M142 332 q63 -72 126 0 M332 332 q63 -72 126 0" fill="none" stroke="#9C4A31" stroke-width="8" stroke-linecap="round"/>',
+ welcome:'<rect width="600" height="450" fill="#22203A"/><defs><linearGradient id="wsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B2350"/><stop offset=".6" stop-color="#8A3F4A"/><stop offset="1" stop-color="#E2A62B"/></linearGradient></defs><rect width="600" height="450" fill="url(#wsky)"/><circle cx="300" cy="300" r="90" fill="#F3C25A"/>'+church(300,390,.72,'#3B2E50')+house(20,390,110,150,'#2C2340','#3B2E50',true)+house(140,390,90,110,'#2C2340','#3B2E50',true)+house(410,390,96,120,'#2C2340','#3B2E50',true)+house(510,390,100,160,'#2C2340','#3B2E50',true)+'<rect x="0" y="390" width="600" height="60" fill="#1A1630"/><g fill="#F3EFE6" opacity=".7"><circle cx="80" cy="60" r="2"/><circle cx="200" cy="40" r="1.6"/><circle cx="520" cy="70" r="2"/></g>'
+};
+var ICON={
+ crown:'<svg viewBox="0 0 80 80"><rect width="80" height="80" rx="18" fill="#0F1720"/><path d="M14 54 L10 24 L28 38 L40 18 L52 38 L70 24 L66 54Z" fill="#E2A62B"/></svg>',
+ cross:'<svg viewBox="0 0 80 80"><rect width="80" height="80" rx="18" fill="#0F1720"/><path d="M20 62 V34 a20 20 0 0 1 40 0 V62Z" fill="#6E56CF"/><path d="M40 30 V52 M30 40 H50" stroke="#F3EFE6" stroke-width="6" stroke-linecap="round"/></svg>',
+ tile:'<svg viewBox="0 0 80 80"><rect width="80" height="80" rx="18" fill="#0F1720"/><g fill="#B9583A"><path d="M12 30 q14 -14 28 0 v14 q-14 -14 -28 0z"/><path d="M40 30 q14 -14 28 0 v14 q-14 -14 -28 0z"/><path d="M26 50 q14 -14 28 0 v14 q-14 -14 -28 0z"/></g></svg>',
+ wave:'<svg viewBox="0 0 80 80"><rect width="80" height="80" rx="18" fill="#0F1720"/><g fill="none" stroke="#12A594" stroke-width="5" stroke-linecap="round"><path d="M12 34 q7 -8 14 0 t14 0 t14 0 t14 0"/><path d="M12 48 q7 -8 14 0 t14 0 t14 0 t14 0"/><path d="M12 62 q7 -8 14 0 t14 0 t14 0 t14 0"/></g><circle cx="58" cy="18" r="7" fill="#E2A62B"/></svg>',
+ oak:'<svg viewBox="0 0 80 80"><rect width="80" height="80" rx="18" fill="#0F1720"/><rect x="36" y="44" width="8" height="24" fill="#6B4A32"/><g fill="#0E7C86"><circle cx="40" cy="28" r="14"/><circle cx="26" cy="38" r="11"/><circle cx="54" cy="38" r="11"/></g><circle cx="20" cy="62" r="4" fill="#E2A62B"/><circle cx="60" cy="62" r="4" fill="#E2A62B"/></svg>'
+};
+
+/* ---------- Conținut bilingv (fapte doar din fișa verificată) ---------- */
+var SL=[
+ {type:'split',ill:'hero',
+  en:{k:'ACTIV AI · Sibiu, Romania',h:'Terezian: a neighbourhood with an empress’s name',p:['A short interactive tour for international friends – from the story behind the name to the small things that make a neighbourhood feel like home.'],m:'Use the arrows, swipe, or tap the dots below.'},
+  ro:{k:'ACTIV AI · Sibiu, România',h:'Terezian: un cartier cu nume de împărăteasă',p:['Un scurt tur interactiv pentru prieteni din toată lumea – de la povestea numelui până la lucrurile mărunte care fac dintr-un cartier un loc numit „acasă”.'],m:'Folosește săgețile, glisează sau atinge punctele de mai jos.'}},
+ {type:'tiles',
+  en:{k:'Context',h:'Sibiu at a glance',tiles:[['1191','first documentary mention (Cibinium)'],['134,309','residents, 2021 census'],['2007','European Capital of Culture, together with Luxembourg'],['2019','European Region of Gastronomy'],['415 m','altitude, on the Cibin, a tributary of the Olt'],['Hermannstadt','the city’s German name; in Hungarian, Nagyszeben']],src:'Sources: en.wikipedia.org/wiki/Sibiu; ACTIV AI verified fact sheet.'},
+  ro:{k:'Context',h:'Sibiul pe scurt',tiles:[['1191','prima atestare documentară (Cibinium)'],['134.309','locuitori, Recensământul din 2021'],['2007','Capitală Culturală Europeană, împreună cu Luxemburg'],['2019','Regiune Gastronomică Europeană'],['415 m','altitudine, pe Cibin, afluent al Oltului'],['Hermannstadt','numele german al orașului; în maghiară, Nagyszeben']],src:'Surse: en.wikipedia.org/wiki/Sibiu; fișa de fapte verificate ACTIV AI.'}},
+ {type:'split',ill:'names',
+  en:{k:'Where?',h:'One of many neighbourhoods',p:['Sibiu has a historic centre – the Upper Town and the Lower Town – and many other neighbourhoods, such as Lazaret, Turnișor, Țiglari, Hipodrom, Ștrand, Valea Aurie, Vasile Aaron and, of course, Terezian.','Many of these names hide a story. Terezian’s begins in the 18th century.'],m:'The drawing is a word map, not a geographic map.'},
+  ro:{k:'Unde?',h:'Unul dintre multele cartiere',p:['Sibiul are un centru istoric – Orașul de Sus și Orașul de Jos – și multe alte cartiere, precum Lazaret, Turnișor, Țiglari, Hipodrom, Ștrand, Valea Aurie, Vasile Aaron și, desigur, Terezian.','Multe dintre aceste nume ascund o poveste. Cea a Terezianului începe în secolul al XVIII-lea.'],m:'Desenul este o hartă a numelor, nu o hartă geografică.'}},
+ {type:'split',ill:'crown',
+  en:{k:'The name',h:'Named after Empress Maria Theresa',p:['The neighbourhood takes its name from Empress Maria Theresa, who funded a Roman Catholic orphanage and a church.','So whenever someone says “Terezian”, they are – perhaps without knowing it – telling a story that is more than 250 years old.'],src:'Source: turnulsfatului.ro (2014).'},
+  ro:{k:'Numele',h:'Numele vine de la împărăteasa Maria Tereza',p:['Cartierul își trage numele de la împărăteasa Maria Tereza, care a finanțat un orfelinat romano-catolic și o biserică.','Așa că ori de câte ori cineva spune „Terezian”, spune – poate fără să știe – o poveste de peste 250 de ani.'],src:'Sursa: turnulsfatului.ro (2014).'}},
+ {type:'split',ill:'church',
+  en:{k:'Timeline',big:'1767–1771',h:'An orphanage and St. Elisabeth’s Church',p:['The orphanage complex and the Church of St. Elisabeth were built between 1767 and 1771.'],m:'Illustration: a stylised church, not an exact drawing of the building.',src:'Source: turnulsfatului.ro (2014).'},
+  ro:{k:'Cronologie',big:'1767–1771',h:'Un orfelinat și biserica Sf. Elisabeta',p:['Complexul orfelinatului și biserica Sf. Elisabeta au fost construite între 1767 și 1771.'],m:'Ilustrație: o biserică stilizată, nu un desen exact al clădirii.',src:'Sursa: turnulsfatului.ro (2014).'}},
+ {type:'cards',
+  en:{k:'Neighbours',h:'Names that tell stories',cards:[['crown','Josefin','Named after Emperor Joseph II: the land was divided into plots by his order, and the first street bore his name.'],['cross','Lazaret','A former leprosarium, set up in the buildings of a Dominican monastery, near today’s bus station.'],['tile','Țiglari','After Gustav Binder’s 19th-century tile factory; its workers settled in the area.'],['wave','Ștrand','In the 1920s, Sibiu’s only open-air swimming pool was built here.'],['oak','Trei Stejari','“Three Oaks” – after old oak trees at a crossroads.']],src:'Source: turnulsfatului.ro (2014).'},
+  ro:{k:'Vecini',h:'Nume care spun povești',cards:[['crown','Josefin','După împăratul Iosif al II-lea: terenul a fost parcelat din ordinul său, iar prima stradă i-a purtat numele.'],['cross','Lazaret','O fostă leprozerie, amenajată în clădirile unei mănăstiri dominicane, în zona actualei autogări.'],['tile','Țiglari','După fabrica de țiglă a lui Gustav Binder, din secolul al XIX-lea; muncitorii s-au așezat în zonă.'],['wave','Ștrand','În anii 1920, aici s-a construit singurul ștrand al Sibiului.'],['oak','Trei Stejari','După stejarii bătrâni de la o răscruce.']],src:'Sursa: turnulsfatului.ro (2014).'}},
+ {type:'split',ill:'love',
+  en:{k:'Our view',h:'What we love about it',badge:'Personal impressions – not statistics',list:['A name whose story you can follow back more than two and a half centuries.','Everyday life at walking pace: a morning stroll, a chat at the gate, children on their way to school.','The feeling that stories from different times share the same streets.','Neighbours who know your name – the smallest unit of a community.']},
+  ro:{k:'Ce simțim',h:'Ce ne place aici',badge:'Impresii personale – nu statistici',list:['Un nume a cărui poveste o poți urmări peste două secole și jumătate.','Viața de zi cu zi, în ritm de plimbare: un drum de dimineață, o vorbă la poartă, copii în drum spre școală.','Senzația că pe aceleași străzi locuiesc povești din vremuri diferite.','Vecini care îți știu numele – cea mai mică unitate a unei comunități.']}},
+ {type:'split',ill:'firsts',
+  en:{k:'Did you know?',h:'Sibiu firsts',years:[['1494','the first pharmacy on the territory of today’s Romania'],['1788','the first theatre building on the territory of today’s Romania'],['1817','the Brukenthal Museum – the first museum in Romania'],['1859','the first cast-iron bridge: the Bridge of Lies'],['1894','Păltiniș – the first mountain resort in Romania']],src:'According to patrimoniu.sibiu.ro.'},
+  ro:{k:'Știați?',h:'Premiere sibiene',years:[['1494','prima farmacie de pe actualul teritoriu al României'],['1788','prima clădire de teatru de pe actualul teritoriu al României'],['1817','Muzeul Brukenthal – primul muzeu din România'],['1859','primul pod din fontă turnată: Podul Minciunilor'],['1894','Păltiniș – prima stațiune montană din România']],src:'Conform patrimoniu.sibiu.ro.'}},
+ {type:'split',ill:'eyes',
+  en:{k:'Look up!',h:'The eyes of Sibiu',p:['Many roofs in Sibiu have small, eyelid-shaped dormers – the “eyes of Sibiu”. Their real job is to ventilate the attics. Some date from the 15th century; most are from the 19th.','Tip for visitors: as you walk through Sibiu, look up at the roofs – and count the eyes looking back at you.']},
+  ro:{k:'Privește în sus!',h:'Ochii Sibiului',p:['Multe acoperișuri din Sibiu au lucarne mici, în formă de pleoapă – „ochii Sibiului”. Rolul lor real este aerisirea podurilor. Unele sunt din secolul al XV-lea, cele mai multe din secolul al XIX-lea.','Sfat pentru vizitatori: când te plimbi prin Sibiu, privește acoperișurile – și numără ochii care te privesc.']}},
+ {type:'split',ill:'welcome',end:true,
+  en:{k:'Thank you!',h:'Welcome to Terezian',p:['Come for the story behind the name – stay for the people who keep it alive.'],m:'Sources: turnulsfatului.ro (2014) · en.wikipedia.org/wiki/Sibiu · patrimoniu.sibiu.ro · ACTIV AI verified fact sheet. AI-generated model presentation for the ACTIV AI project.'},
+  ro:{k:'Mulțumim!',h:'Bine ați venit în Terezian',p:['Veniți pentru povestea numelui – rămâneți pentru oamenii care o țin vie.'],m:'Surse: turnulsfatului.ro (2014) · en.wikipedia.org/wiki/Sibiu · patrimoniu.sibiu.ro · fișa de fapte verificate ACTIV AI. Prezentare-model generată cu AI pentru proiectul ACTIV AI.'}}
+];
+var UI={
+ en:{restart:'↺ Start over',prev:'Back',next:'Next',again:'↺ Start over',foot:' · AI-generated model artefact',slide:'Slide',title:'Terezian, Sibiu'},
+ ro:{restart:'↺ Începe din nou',prev:'Înapoi',next:'Înainte',again:'↺ Începe din nou',foot:'',slide:'Diapozitivul',title:'Terezian, Sibiu'}
+};
+var lang='en',cur=0,N=SL.length;
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function slideHTML(s,i){
+  var c=s[lang],h='';
+  if(s.type==='tiles'){
+    h='<div class="txt"><p class="kicker">'+esc(c.k)+'</p><h2>'+esc(c.h)+'</h2><div class="tiles">'+c.tiles.map(function(t){return '<div class="tile"><b>'+esc(t[0])+'</b><span>'+esc(t[1])+'</span></div>';}).join('')+'</div><p class="src">'+esc(c.src)+'</p></div>';
+    return h;
+  }
+  if(s.type==='cards'){
+    h='<div class="txt"><p class="kicker">'+esc(c.k)+'</p><h2>'+esc(c.h)+'</h2><div class="cards">'+c.cards.map(function(t){return '<div class="card">'+ICON[t[0]]+'<h3>'+esc(t[1])+'</h3><p>'+esc(t[2])+'</p></div>';}).join('')+'</div><p class="src">'+esc(c.src)+'</p></div>';
+    return h;
+  }
+  h='<div class="txt"><p class="kicker">'+esc(c.k)+'</p>';
+  if(c.big)h+='<p class="big">'+esc(c.big)+'</p>';
+  h+='<h2>'+esc(c.h)+'</h2>';
+  if(c.badge)h+='<p><span class="badge">'+esc(c.badge)+'</span></p>';
+  if(c.p)h+=c.p.map(function(p){return '<p>'+esc(p)+'</p>';}).join('');
+  if(c.list)h+='<ul class="list">'+c.list.map(function(t){return '<li><span class="h">♥</span><span>'+esc(t)+'</span></li>';}).join('')+'</ul>';
+  if(c.years)h+='<ul class="list">'+c.years.map(function(t){return '<li><span class="y">'+esc(t[0])+'</span><span>'+esc(t[1])+'</span></li>';}).join('')+'</ul>';
+  if(c.m)h+='<p class="muted">'+esc(c.m)+'</p>';
+  if(c.src)h+='<p class="src">'+esc(c.src)+'</p>';
+  if(s.end)h+='<p><button class="btn accent" type="button" data-again>'+UI[lang].again+'</button></p>';
+  h+='</div><div class="ill" aria-hidden="true"><svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">'+ILL[s.ill]+'</svg></div>';
+  return h;
+}
+function build(){
+  var tr=$('track');tr.innerHTML='';
+  SL.forEach(function(s,i){
+    var d=document.createElement('section');
+    d.className='slide'+(s.type!=='split'?' full':'');
+    d.setAttribute('role','group');d.setAttribute('aria-roledescription','slide');
+    d.setAttribute('aria-label',UI[lang].slide+' '+(i+1)+' / '+N);
+    d.lang=lang;
+    d.innerHTML=slideHTML(s,i);
+    tr.appendChild(d);
+  });
+  var again=tr.querySelector('[data-again]');if(again)again.addEventListener('click',function(){goTo(0);});
+  var dots=$('dots');dots.innerHTML='';
+  for(var i=0;i<N;i++){(function(i){var b=document.createElement('button');b.type='button';b.className='dot';b.innerHTML='<i></i>';b.setAttribute('aria-label',UI[lang].slide+' '+(i+1));b.addEventListener('click',function(){goTo(i);});dots.appendChild(b);})(i);}
+  $('restart').textContent=UI[lang].restart;$('prevLbl').textContent=UI[lang].prev;$('nextLbl').textContent=UI[lang].next;
+  $('footEn').textContent=UI[lang].foot;
+  document.documentElement.lang=lang;
+  $('lang-en').setAttribute('aria-pressed',lang==='en');$('lang-ro').setAttribute('aria-pressed',lang==='ro');
+  update(true);
+}
+function update(instant){
+  var tr=$('track');
+  if(instant){tr.style.transition='none';}
+  tr.style.transform='translateX('+(-cur*100)+'%)';
+  if(instant){void tr.offsetWidth;tr.style.transition='';}
+  var slides=tr.children;
+  for(var i=0;i<slides.length;i++){slides[i].classList.toggle('active',i===cur);slides[i].setAttribute('aria-hidden',i!==cur);slides[i].inert=(i!==cur);}
+  var dots=$('dots').children;for(var j=0;j<dots.length;j++){dots[j].setAttribute('aria-current',j===cur?'true':'false');}
+  $('count').textContent=(cur+1)+' / '+N;
+  $('prev').disabled=cur===0;$('next').disabled=cur===N-1;
+}
+function goTo(i){cur=Math.max(0,Math.min(N-1,i));update(false);}
+function setLang(l){if(l===lang)return;lang=l;build();}
+$('prev').addEventListener('click',function(){goTo(cur-1);});
+$('next').addEventListener('click',function(){goTo(cur+1);});
+$('lang-en').addEventListener('click',function(){setLang('en');});
+$('lang-ro').addEventListener('click',function(){setLang('ro');});
+$('restart').addEventListener('click',function(){goTo(0);});
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key==='PageDown'){goTo(cur+1);e.preventDefault();}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){goTo(cur-1);e.preventDefault();}
+  else if(e.key==='Home'){goTo(0);}else if(e.key==='End'){goTo(N-1);}
+});
+/* swipe */
+var deck=$('deck'),sx=null,sy=null,st=0;
+deck.addEventListener('pointerdown',function(e){sx=e.clientX;sy=e.clientY;st=Date.now();});
+deck.addEventListener('pointerup',function(e){
+  if(sx===null)return;var dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3&&Date.now()-st<900){goTo(cur+(dx<0?1:-1));}
+});
+deck.addEventListener('pointercancel',function(){sx=null;});
+window.addEventListener('resize',function(){update(true);});
+build();
+window.__deck={go:goTo,cur:function(){return cur;},n:N,lang:function(){return lang;}};
+})();
+</script>
+</body>
+</html>

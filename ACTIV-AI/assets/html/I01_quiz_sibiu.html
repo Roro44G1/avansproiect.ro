@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz Sibiu</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.3em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru)}.btn.accent:hover{background:#efb944}.opt:hover:not(:disabled){border-color:var(--petrol2);background:var(--surf2)}}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.25em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.screen{flex:1;display:none;min-height:0;animation:fadeIn .45s ease both}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.ill{border-radius:24px;overflow:hidden;background:#172431;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.ill svg{display:block;width:100%;height:auto}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(8px,1.5vw,30px) 0}
+#start .ill{flex:1.1;max-width:860px}
+#start .intro{flex:1;max-width:760px}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.4vw,68px);line-height:1.08;margin:0 0 .45em}
+.intro p{color:var(--ceata);margin:0 0 1em;max-width:34em}
+.intro .note{font-size:.95em;color:var(--ceata);margin-top:1.2em;display:flex;gap:.6em;align-items:flex-start}
+.intro .note b{color:var(--var)}
+
+/* question */
+#quiz{flex-direction:column;gap:clamp(12px,1.4vw,26px);padding-bottom:clamp(8px,1vw,18px)}
+.progress{display:flex;align-items:center;gap:20px;color:var(--ceata)}
+.progress .bar{flex:1;height:12px;border-radius:99px;background:var(--surf);overflow:hidden}
+.progress .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--petrol),var(--violet));border-radius:99px;transition:width .5s ease}
+.progress .score{color:var(--ocru);font-weight:700;white-space:nowrap}
+.qgrid{flex:1;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(20px,3vw,60px);align-items:center;min-height:0}
+.qart{display:flex;flex-direction:column;gap:14px}
+.theme{display:inline-flex;align-self:flex-start;gap:.5em;align-items:center;background:var(--surf);border:1px solid var(--line);color:var(--ceata);padding:.35em .9em;border-radius:99px;font-size:.92em}
+.theme::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--ocru)}
+.qtext{font-family:var(--serif);font-weight:700;font-size:clamp(23px,2vw,42px);line-height:1.22;margin:0 0 clamp(14px,1.4vw,26px)}
+.opts{display:grid;gap:clamp(10px,.8vw,16px)}
+.opt{font:inherit;text-align:left;min-height:64px;padding:.6em 1em;border-radius:16px;background:var(--surf);color:var(--var);border:2px solid var(--line);display:flex;align-items:center;gap:.9em;cursor:pointer;transition:background .2s,border-color .2s,opacity .3s,transform .15s;touch-action:manipulation}
+.opt:active:not(:disabled){transform:scale(.99)}
+.opt .k{flex:none;width:1.9em;height:1.9em;border-radius:10px;display:grid;place-items:center;background:var(--bg);color:var(--ocru);font-weight:700}
+.opt:disabled{cursor:default}
+.opt.right{background:rgba(14,124,134,.28);border-color:#19a5b0}
+.opt.right .k{background:var(--petrol);color:var(--var)}
+.opt.wrong{background:rgba(185,88,58,.22);border-color:var(--tigla)}
+.opt.wrong .k{background:var(--tigla);color:var(--var)}
+.opt.dim{opacity:.45}
+.feedback{margin-top:clamp(12px,1.2vw,22px);background:var(--surf);border-left:6px solid var(--petrol);border-radius:14px;padding:clamp(12px,1vw,20px) clamp(14px,1.3vw,24px);display:none;gap:clamp(12px,1.4vw,28px);align-items:center;animation:fadeIn .35s ease both}
+.feedback.on{display:flex}
+.feedback.bad{border-left-color:var(--tigla)}
+.feedback .txt{flex:1}
+.feedback .verdict{font-weight:700;font-size:1.08em;margin:0 0 .2em}
+.feedback .verdict.ok{color:#3cc4cf}
+.feedback .verdict.no{color:#E7895F}
+.feedback p{margin:0;color:var(--var)}
+.feedback .src{color:var(--ceata);font-style:italic}
+
+/* result */
+#result{align-items:center;justify-content:center;gap:clamp(24px,5vw,90px);padding:20px 0}
+.ring{width:clamp(220px,22vw,420px);flex:none}
+.ring svg{width:100%;height:auto;display:block}
+.ring circle.val{transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
+.res h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,64px);line-height:1.1;margin:0 0 .4em}
+.res p{color:var(--ceata);max-width:30em;margin:0 0 1.2em}
+.res .row{display:flex;gap:16px;flex-wrap:wrap}
+
+@media (max-width:700px){.top{position:relative;padding-right:0}.top .brand{padding-right:0}#restart{position:absolute;right:0;top:10px;padding:.4em .9em}.top h1{width:100%;margin-top:6px}}
+@media (max-width:900px){
+  #start{flex-direction:column;align-items:stretch}
+  #start .ill{flex:none}
+  .qgrid{grid-template-columns:1fr;align-items:start;gap:14px}
+  .qart .ill{max-width:340px}
+  .qart{flex-direction:row;align-items:center}
+  .qart .ill{width:42%;flex:none}
+  #result{flex-direction:column;text-align:center}
+  .res .row{justify-content:center}
+  .feedback.on{flex-direction:column;align-items:stretch}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I01</span><h1>Quiz: cât de bine cunoști Sibiul?</h1></div>
+    <button class="btn ghost" id="restart" type="button" aria-label="Începe din nou">↺ Începe din nou</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="ill" id="startArt"></div>
+      <div class="intro">
+        <p class="kicker">15 întrebări · 4 variante</p>
+        <h2>Sibiul în 15 întrebări</h2>
+        <p>Spitale, farmacii, cărți, poduri, turnuri și cartiere: pune-ți la încercare cunoștințele despre istoria și cultura orașului.</p>
+        <p>După fiecare răspuns afli explicația și sursa informației.</p>
+        <button class="btn big accent" id="go" type="button">Începe quiz-ul →</button>
+        <p class="note"><span aria-hidden="true">✦</span><span><b>Ordinea întrebărilor se schimbă</b> la fiecare joc. Toate informațiile provin din fișa de fapte verificate a proiectului ACTIV AI.</span></p>
+      </div>
+    </section>
+
+    <section class="screen" id="quiz" aria-label="Întrebare">
+      <div class="progress">
+        <span id="qnum">Întrebarea 1 din 15</span>
+        <div class="bar" aria-hidden="true"><i id="qbar"></i></div>
+        <span class="score" id="qscore">Scor: 0</span>
+      </div>
+      <div class="qgrid">
+        <div class="qart">
+          <div class="ill" id="qill"></div>
+          <span class="theme" id="qtheme">Premiere</span>
+        </div>
+        <div class="qbody">
+          <h2 class="qtext" id="qtext"></h2>
+          <div class="opts" id="opts" role="group" aria-label="Variante de răspuns"></div>
+          <div class="feedback" id="fb" aria-live="polite">
+            <div class="txt">
+              <p class="verdict" id="fbv"></p>
+              <p><span id="fbt"></span> <span class="src" id="fbs"></span></p>
+            </div>
+            <button class="btn" id="next" type="button">Următoarea întrebare →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="result" aria-label="Rezultat">
+      <div class="ring">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="92" fill="none" stroke="#1B2733" stroke-width="18"/>
+          <circle class="val" id="ringVal" cx="110" cy="110" r="92" fill="none" stroke="#E2A62B" stroke-width="18" stroke-linecap="round" transform="rotate(-90 110 110)" stroke-dasharray="578.05" stroke-dashoffset="578.05"/>
+          <text x="110" y="118" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="56" fill="#F3EFE6" id="ringTxt">0</text>
+          <text x="110" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" fill="#A9B4C0">din 15</text>
+        </svg>
+      </div>
+      <div class="res">
+        <p class="kicker">Rezultatul tău</p>
+        <h2 id="resTitle"></h2>
+        <p id="resMsg"></p>
+        <div class="row">
+          <button class="btn big accent" id="again" type="button">Joacă din nou</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Ilustrații SVG (viewBox 480×360) ---------- */
+var BG = '<rect width="480" height="360" fill="#172431"/>';
+function stars(){return '<g fill="#F3EFE6" opacity=".65"><circle cx="70" cy="52" r="2"/><circle cx="140" cy="34" r="1.6"/><circle cx="214" cy="62" r="1.8"/><circle cx="300" cy="28" r="1.5"/><circle cx="440" cy="140" r="1.6"/><circle cx="40" cy="120" r="1.4"/></g>';}
+function eyeDormer(x,y,w){var h=w*0.32;return '<path d="M'+x+' '+y+' q'+(w/2)+' '+(-h*2)+' '+w+' 0 z" fill="#0F1720"/><path d="M'+(x+w*0.2)+' '+(y-1)+' q'+(w*0.3)+' '+(-h*0.9)+' '+(w*0.6)+' 0" fill="none" stroke="#E2A62B" stroke-width="3" stroke-linecap="round"/>';}
+var ILL = {
+cetate: BG+stars()+
+ '<circle cx="372" cy="84" r="34" fill="#E2A62B"/><circle cx="388" cy="74" r="30" fill="#172431"/>'+
+ '<path d="M0 250 Q120 205 240 238 T480 228 V360 H0Z" fill="#1E3040"/>'+
+ '<rect x="30" y="222" width="420" height="92" fill="#2C3E50"/>'+
+ (function(){var s='';for(var x=30;x<450;x+=30){s+='<rect x="'+x+'" y="207" width="18" height="17" fill="#2C3E50"/>';}return s;})()+
+ '<rect x="62" y="150" width="70" height="164" fill="#3A5064"/><polygon points="54,152 97,90 140,152" fill="#B9583A"/><rect x="88" y="186" width="18" height="28" rx="9" fill="#E2A62B"/>'+
+ '<rect x="196" y="108" width="88" height="206" fill="#3A5064"/><polygon points="186,110 240,30 294,110" fill="#B9583A"/><rect x="231" y="138" width="18" height="30" rx="9" fill="#E2A62B"/>'+
+ '<path d="M212 314 V266 a28 28 0 0 1 56 0 V314Z" fill="#0F1720"/><path d="M220 314 V268 a20 20 0 0 1 40 0 V314" fill="none" stroke="#4C6479" stroke-width="3"/>'+
+ '<rect x="348" y="160" width="70" height="154" fill="#3A5064"/><polygon points="340,162 383,102 426,162" fill="#B9583A"/><rect x="374" y="194" width="18" height="28" rx="9" fill="#E2A62B"/>'+
+ '<rect x="0" y="312" width="480" height="48" fill="#0E7C86" opacity=".35"/>',
+oameni: BG+
+ '<circle cx="90" cy="80" r="40" fill="#E2A62B" opacity=".9"/>'+
+ '<path d="M0 230 Q160 190 300 220 T480 210 V360 H0Z" fill="#1E3040"/>'+
+ '<rect x="20" y="190" width="120" height="130" fill="#F3EFE6" opacity=".92"/><polygon points="12,192 80,96 148,192" fill="#B9583A"/>'+eyeDormer(62,166,36)+
+ '<rect x="146" y="170" width="110" height="150" fill="#E2A62B" opacity=".85"/><polygon points="138,172 201,70 264,172" fill="#9C4A31"/>'+eyeDormer(183,140,36)+eyeDormer(183,110,34)+
+ '<rect x="262" y="200" width="100" height="120" fill="#6E56CF" opacity=".75"/><polygon points="254,202 312,120 370,202" fill="#B9583A"/>'+eyeDormer(294,178,36)+
+ '<rect x="368" y="182" width="96" height="138" fill="#0E7C86" opacity=".85"/><polygon points="360,184 416,100 472,184" fill="#9C4A31"/>'+eyeDormer(398,158,36)+
+ (function(){var s='',xs=[40,70,100,166,196,226,282,322,388,428];for(var i=0;i<xs.length;i++){s+='<rect x="'+xs[i]+'" y="'+(i%2?246:270)+'" width="18" height="24" rx="3" fill="#172431" opacity=".75"/>';}return s;})()+
+ '<g fill="#0F1720"><circle cx="120" cy="318" r="9"/><rect x="112" y="327" width="16" height="33" rx="7"/><circle cx="240" cy="312" r="10"/><rect x="231" y="322" width="18" height="38" rx="8"/><circle cx="350" cy="320" r="8"/><rect x="343" y="328" width="14" height="32" rx="6"/></g>',
+farmacie: BG+
+ '<rect x="40" y="70" width="400" height="10" rx="5" fill="#4C6479"/><rect x="40" y="160" width="400" height="10" rx="5" fill="#4C6479"/>'+
+ (function(){var s='',c=['#0E7C86','#6E56CF','#E2A62B','#B9583A','#0E7C86','#6E56CF'];for(var i=0;i<6;i++){var x=58+i*64;s+='<rect x="'+x+'" y="'+(i%2?24:30)+'" width="44" height="'+(i%2?46:40)+'" rx="8" fill="'+c[i]+'" opacity=".9"/><rect x="'+(x+6)+'" y="'+(i%2?16:22)+'" width="32" height="10" rx="3" fill="#F3EFE6" opacity=".8"/>';}for(var j=0;j<5;j++){var x2=70+j*76;s+='<rect x="'+x2+'" y="'+(j%2?110:118)+'" width="50" height="'+(j%2?50:42)+'" rx="10" fill="'+c[(j+2)%6]+'" opacity=".85"/><rect x="'+(x2+10)+'" y="'+(j%2?126:132)+'" width="30" height="14" rx="3" fill="#F3EFE6" opacity=".85"/>';}return s;})()+
+ '<rect x="0" y="300" width="480" height="60" fill="#22303D"/>'+
+ '<path d="M170 300 L190 214 H290 L310 300Z" fill="#E2A62B"/><path d="M180 222 H300" stroke="#9C7420" stroke-width="6"/><ellipse cx="240" cy="214" rx="52" ry="12" fill="#C68F1E"/>'+
+ '<rect x="250" y="150" width="18" height="92" rx="9" transform="rotate(28 259 196)" fill="#F3EFE6"/>'+
+ '<g stroke="#0E7C86" stroke-width="4" fill="none" stroke-linecap="round"><path d="M360 300 C360 260 380 236 400 220"/><path d="M380 262 q20 -6 26 -24"/><path d="M372 280 q-20 -6 -28 -22"/></g>'+
+ '<g fill="#12A594"><ellipse cx="404" cy="216" rx="12" ry="6" transform="rotate(-35 404 216)"/><ellipse cx="408" cy="236" rx="10" ry="5" transform="rotate(-60 408 236)"/><ellipse cx="342" cy="256" rx="10" ry="5" transform="rotate(40 342 256)"/></g>',
+carte: BG+
+ '<circle cx="240" cy="170" r="130" fill="#6E56CF" opacity=".18"/><circle cx="240" cy="170" r="90" fill="#6E56CF" opacity=".18"/>'+
+ '<path d="M240 110 C200 92 130 92 80 108 V280 C130 264 200 264 240 282Z" fill="#F3EFE6"/><path d="M240 110 C280 92 350 92 400 108 V280 C350 264 280 264 240 282Z" fill="#E9E2D3"/>'+
+ '<path d="M240 110 V282" stroke="#B9583A" stroke-width="4"/>'+
+ '<g stroke="#A9B4C0" stroke-width="5" stroke-linecap="round"><path d="M104 140 H214"/><path d="M104 162 H214"/><path d="M104 184 H200"/><path d="M104 206 H214"/><path d="M104 228 H180"/><path d="M266 140 H376"/><path d="M266 162 H376"/><path d="M266 184 H360"/><path d="M266 206 H376"/></g>'+
+ '<path d="M118 120 h30" stroke="#B9583A" stroke-width="8" stroke-linecap="round"/>'+
+ '<path d="M372 60 C330 110 310 160 300 224" stroke="#E2A62B" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M372 60 C390 90 384 120 352 150 C346 120 352 90 372 60Z" fill="#E2A62B"/>'+
+ '<rect x="0" y="312" width="480" height="48" fill="#0E7C86" opacity=".3"/>',
+racheta: BG+stars()+
+ '<g fill="#F3EFE6" opacity=".5"><circle cx="380" cy="80" r="2"/><circle cx="420" cy="220" r="1.5"/><circle cx="100" cy="230" r="1.5"/></g>'+
+ '<path d="M30 330 h170 a10 10 0 0 0 10 -10 v-110 a10 10 0 0 0 -10 -10 h-170Z" fill="#E9E2D3" opacity=".9"/>'+
+ '<g stroke="#A9B4C0" stroke-width="4" stroke-linecap="round"><path d="M50 226 H180"/><path d="M50 246 H170"/><path d="M50 266 H180"/><path d="M50 286 H150"/></g>'+
+ '<g transform="rotate(32 320 180)">'+
+ '<path d="M320 30 C346 60 352 90 352 110 H288 C288 90 294 60 320 30Z" fill="#E2A62B"/>'+
+ '<rect x="290" y="110" width="60" height="64" fill="#F3EFE6"/><rect x="286" y="172" width="68" height="10" fill="#0E7C86"/>'+
+ '<rect x="284" y="182" width="72" height="64" fill="#F3EFE6" opacity=".92"/><rect x="280" y="244" width="80" height="10" fill="#6E56CF"/>'+
+ '<rect x="278" y="254" width="84" height="54" fill="#F3EFE6" opacity=".85"/>'+
+ '<circle cx="320" cy="140" r="12" fill="#0E7C86"/>'+
+ '<path d="M278 270 L250 318 H278Z M362 270 L390 318 H362Z" fill="#B9583A"/>'+
+ '<path d="M296 308 C300 340 312 352 320 372 C328 352 340 340 344 308Z" fill="#E2A62B"/><path d="M306 308 C310 330 316 338 320 352 C324 338 330 330 334 308Z" fill="#F3EFE6"/>'+
+ '</g>',
+pod: BG+
+ '<circle cx="390" cy="70" r="30" fill="#E2A62B" opacity=".9"/>'+
+ '<rect x="0" y="40" width="70" height="320" fill="#2C3E50"/><polygon points="0,40 35,0 70,40" fill="#B9583A"/><rect x="410" y="60" width="70" height="300" fill="#2C3E50"/><polygon points="410,60 445,20 480,60" fill="#9C4A31"/>'+
+ '<rect x="18" y="80" width="16" height="24" rx="8" fill="#E2A62B" opacity=".9"/><rect x="430" y="100" width="16" height="24" rx="8" fill="#E2A62B" opacity=".9"/>'+
+ '<path d="M50 190 H430 V214 H50Z" fill="#3A5064"/>'+
+ '<path d="M60 214 Q240 120 420 214" fill="none" stroke="#4C6479" stroke-width="14"/>'+
+ '<path d="M60 214 Q240 140 420 214" fill="none" stroke="#0E7C86" stroke-width="5"/>'+
+ '<g stroke="#0E7C86" stroke-width="4">'+(function(){var s='';for(var x=80;x<=400;x+=20){s+='<path d="M'+x+' 150 V190"/>';}return s;})()+'</g>'+
+ '<path d="M60 150 H420" stroke="#0E7C86" stroke-width="6"/>'+
+ '<g fill="none" stroke="#12A594" stroke-width="3">'+(function(){var s='';for(var x=90;x<=390;x+=40){s+='<circle cx="'+x+'" cy="170" r="9"/>';}return s;})()+'</g>'+
+ '<rect x="196" y="194" width="88" height="16" rx="3" fill="#172431"/><text x="240" y="207" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="#E2A62B">1859</text>'+
+ '<path d="M70 360 V250 H410 V360" fill="#1E3040"/><path d="M190 360 V290 a50 50 0 0 1 100 0 V360" fill="#0F1720"/>'+
+ '<g fill="#F3EFE6"><rect x="120" y="96" width="6" height="54"/><circle cx="123" cy="92" r="9" fill="#E2A62B"/><rect x="354" y="96" width="6" height="54"/><circle cx="357" cy="92" r="9" fill="#E2A62B"/></g>',
+munte: BG+
+ '<circle cx="360" cy="90" r="44" fill="#E2A62B"/>'+
+ '<path d="M-10 290 L120 110 L200 210 L290 80 L420 250 L490 180 V360 H-10Z" fill="#2C3E50"/>'+
+ '<path d="M120 110 L150 150 L130 145 L110 160 L95 145Z M290 80 L326 128 L300 120 L282 138 L262 118Z" fill="#F3EFE6"/>'+
+ '<path d="M-10 320 Q140 250 300 300 T490 280 V360 H-10Z" fill="#1E3040"/>'+
+ (function(){var s='',t=[[40,300,1],[80,312,.8],[350,296,1],[400,306,.85],[440,292,1.1]];for(var i=0;i<t.length;i++){var x=t[i][0],y=t[i][1],k=t[i][2];s+='<path d="M'+x+' '+(y-70*k)+' L'+(x+22*k)+' '+(y-20*k)+' H'+(x-22*k)+'Z M'+x+' '+(y-50*k)+' L'+(x+28*k)+' '+y+' H'+(x-28*k)+'Z" fill="#0E7C86"/><rect x="'+(x-3)+'" y="'+y+'" width="6" height="'+(12*k)+'" fill="#4C3A2A"/>';}return s;})()+
+ '<rect x="196" y="266" width="80" height="50" fill="#E9E2D3"/><polygon points="188,268 236,232 284,268" fill="#B9583A"/><rect x="226" y="288" width="20" height="28" fill="#6E56CF"/><rect x="204" y="278" width="14" height="14" fill="#E2A62B"/>',
+muzeu: BG+
+ '<path d="M60 130 L240 60 L420 130Z" fill="#E2A62B"/><rect x="60" y="130" width="360" height="16" fill="#C68F1E"/>'+
+ '<rect x="60" y="146" width="360" height="160" fill="#2C3E50"/>'+
+ (function(){var s='';for(var i=0;i<6;i++){var x=82+i*60;s+='<rect x="'+x+'" y="150" width="18" height="156" fill="#3A5064"/><rect x="'+(x-4)+'" y="146" width="26" height="8" fill="#4C6479"/>';}return s;})()+
+ '<rect x="112" y="178" width="38" height="50" fill="#6E56CF"/><rect x="118" y="184" width="26" height="38" fill="#B9583A"/>'+
+ '<rect x="220" y="174" width="40" height="56" fill="#E2A62B"/><circle cx="240" cy="196" r="10" fill="#172431"/><path d="M226 224 q14 -20 28 0" fill="#172431"/>'+
+ '<rect x="330" y="178" width="38" height="50" fill="#0E7C86"/><path d="M334 220 l10 -16 l8 10 l6 -8 l8 14Z" fill="#F3EFE6"/>'+
+ '<rect x="40" y="306" width="400" height="14" fill="#4C6479"/><rect x="24" y="320" width="432" height="14" fill="#3A5064"/>'+
+ '<rect x="0" y="334" width="480" height="26" fill="#0E7C86" opacity=".3"/>',
+teatru: BG+
+ '<rect x="40" y="40" width="400" height="22" rx="4" fill="#E2A62B"/>'+
+ '<path d="M40 62 H200 C190 160 150 240 60 300 H40Z" fill="#B9583A"/><path d="M440 62 H280 C290 160 330 240 420 300 H440Z" fill="#B9583A"/>'+
+ '<g stroke="#9C4A31" stroke-width="4" fill="none"><path d="M80 62 C80 150 70 230 50 290"/><path d="M130 62 C125 150 110 220 80 280"/><path d="M400 62 C400 150 410 230 430 290"/><path d="M350 62 C355 150 370 220 400 280"/></g>'+
+ '<rect x="20" y="300" width="440" height="20" fill="#4C6479"/><rect x="0" y="320" width="480" height="40" fill="#22303D"/>'+
+ '<g transform="translate(176 120) rotate(-12)"><path d="M0 0 H70 V40 C70 80 50 100 35 100 C20 100 0 80 0 40Z" fill="#F3EFE6"/><path d="M14 34 q8 -8 16 0 M40 34 q8 -8 16 0" stroke="#172431" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M18 62 q17 18 34 0" stroke="#172431" stroke-width="5" fill="none" stroke-linecap="round"/></g>'+
+ '<g transform="translate(238 140) rotate(12)"><path d="M0 0 H70 V40 C70 80 50 100 35 100 C20 100 0 80 0 40Z" fill="#6E56CF"/><path d="M14 30 q8 8 16 0 M40 30 q8 8 16 0" stroke="#F3EFE6" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M18 74 q17 -16 34 0" stroke="#F3EFE6" stroke-width="5" fill="none" stroke-linecap="round"/></g>',
+breasla: BG+
+ '<rect x="0" y="0" width="480" height="40" fill="#22303D"/><rect x="0" y="36" width="480" height="8" fill="#4C3A2A"/>'+
+ '<path d="M90 70 C150 60 210 76 230 110 C250 150 230 200 240 250 C200 270 150 262 110 270 C100 230 70 200 80 160 C86 130 70 100 90 70Z" fill="#B9583A"/>'+
+ '<path d="M100 84 C150 76 200 90 216 116" fill="none" stroke="#E2A62B" stroke-width="3" stroke-dasharray="6 6"/>'+
+ '<path d="M300 120 h52 v86 l50 20 c16 6 20 18 20 30 v14 h-122Z" fill="#6E56CF"/><path d="M300 270 h122 v10 h-122Z" fill="#E2A62B"/><path d="M300 150 h52" stroke="#F3EFE6" stroke-width="4"/>'+
+ '<g transform="rotate(-30 150 300)"><rect x="140" y="250" width="16" height="70" rx="4" fill="#E2A62B"/><path d="M148 250 V200" stroke="#F3EFE6" stroke-width="5" stroke-linecap="round"/></g>'+
+ '<g transform="rotate(20 380 90)"><rect x="370" y="70" width="18" height="44" rx="4" fill="#4C3A2A"/><path d="M379 70 C360 50 362 30 379 20 C396 30 398 50 379 70Z" fill="#F3EFE6"/></g>'+
+ '<rect x="0" y="320" width="480" height="40" fill="#22303D"/>',
+cartier: BG+
+ '<g stroke="#2E4153" stroke-width="18" stroke-linecap="round" fill="none"><path d="M-10 120 H500"/><path d="M-10 250 C120 230 300 280 500 240"/><path d="M150 -10 V380"/><path d="M340 -10 C330 120 360 240 330 380"/></g>'+
+ '<g stroke="#4C6479" stroke-width="2" stroke-dasharray="8 8" fill="none"><path d="M-10 120 H500"/><path d="M150 -10 V380"/></g>'+
+ (function(){var s='',h=[[40,40,'#F3EFE6'],[80,160,'#E2A62B'],[200,40,'#0E7C86'],[230,160,'#6E56CF'],[390,40,'#B9583A'],[390,160,'#F3EFE6'],[60,290,'#0E7C86'],[230,300,'#E2A62B'],[400,290,'#6E56CF']];for(var i=0;i<h.length;i++){var x=h[i][0],y=h[i][1];s+='<rect x="'+x+'" y="'+(y+18)+'" width="54" height="40" fill="'+h[i][2]+'" opacity=".9"/><polygon points="'+(x-4)+','+(y+20)+' '+(x+27)+','+y+' '+(x+58)+','+(y+20)+'" fill="#9C4A31"/>';}return s;})()+
+ '<g transform="translate(250 196)"><path d="M0 0 C-30 -30 -30 -70 0 -80 C30 -70 30 -30 0 0Z" fill="#D6409F"/><circle cx="0" cy="-50" r="12" fill="#F3EFE6"/></g>',
+tramvai: BG+
+ '<path d="M0 60 H480" stroke="#4C6479" stroke-width="3"/>'+
+ '<path d="M190 60 L220 110 M290 60 L260 110" stroke="#A9B4C0" stroke-width="4"/>'+
+ '<rect x="80" y="110" width="320" height="140" rx="22" fill="#E2A62B"/><rect x="80" y="200" width="320" height="14" fill="#B9583A"/>'+
+ '<rect x="96" y="104" width="288" height="12" rx="6" fill="#C68F1E"/>'+
+ (function(){var s='';for(var i=0;i<5;i++){s+='<rect x="'+(102+i*56)+'" y="130" width="44" height="54" rx="8" fill="#172431"/><rect x="'+(106+i*56)+'" y="134" width="36" height="20" rx="5" fill="#2C3E50"/>';}return s;})()+
+ '<rect x="380" y="140" width="10" height="40" rx="4" fill="#C68F1E"/>'+
+ '<circle cx="140" cy="262" r="20" fill="#2C3E50"/><circle cx="140" cy="262" r="8" fill="#A9B4C0"/><circle cx="340" cy="262" r="20" fill="#2C3E50"/><circle cx="340" cy="262" r="8" fill="#A9B4C0"/>'+
+ '<rect x="0" y="282" width="480" height="8" fill="#A9B4C0"/><rect x="0" y="290" width="480" height="70" fill="#1E3040"/>'+
+ (function(){var s='';for(var x=10;x<480;x+=40){s+='<rect x="'+x+'" y="292" width="24" height="8" fill="#2E4153"/>';}return s;})()+
+ '<circle cx="410" cy="226" r="9" fill="#F3EFE6"/>'
+};
+var START = '<rect width="480" height="360" fill="#172431"/>'+
+ '<circle cx="380" cy="78" r="38" fill="#E2A62B" opacity=".95"/>'+
+ '<g fill="#F3EFE6" opacity=".6"><circle cx="60" cy="40" r="1.8"/><circle cx="130" cy="70" r="1.4"/><circle cx="250" cy="30" r="1.6"/><circle cx="450" cy="150" r="1.4"/><circle cx="300" cy="96" r="1.2"/></g>'+
+ '<path d="M-10 210 L60 150 L110 185 L190 120 L260 175 L330 130 L410 190 L490 150 V360 H-10Z" fill="#22344A"/>'+
+ '<path d="M190 120 L210 136 L196 134 L184 142 L172 134Z M330 130 L350 146 L336 144 L322 152 L312 142Z" fill="#F3EFE6" opacity=".8"/>'+
+ /* catedrala */
+ '<rect x="70" y="120" width="36" height="150" fill="#33475A"/><polygon points="64,122 88,34 112,122" fill="#0E7C86"/>'+
+ '<polygon points="64,122 70,104 76,122" fill="#0E7C86"/><polygon points="100,122 106,104 112,122" fill="#0E7C86"/>'+
+ '<rect x="82" y="150" width="12" height="22" rx="6" fill="#E2A62B"/>'+
+ /* Turnul Sfatului */
+ '<rect x="222" y="104" width="44" height="170" fill="#3A5064"/><polygon points="214,106 244,30 274,106" fill="#B9583A"/>'+
+ '<rect x="236" y="128" width="16" height="22" rx="8" fill="#E2A62B"/><rect x="236" y="170" width="16" height="16" rx="3" fill="#172431"/>'+
+ /* case cu ochi */
+ '<rect x="0" y="230" width="90" height="130" fill="#E9E2D3"/><polygon points="-8,232 45,168 98,232" fill="#B9583A"/>'+eyeDormer(30,212,30)+
+ '<rect x="96" y="214" width="96" height="146" fill="#E2A62B" opacity=".9"/><polygon points="88,216 144,140 200,216" fill="#9C4A31"/>'+eyeDormer(128,194,32)+eyeDormer(130,168,28)+
+ '<rect x="290" y="222" width="92" height="138" fill="#6E56CF" opacity=".85"/><polygon points="282,224 336,150 390,224" fill="#B9583A"/>'+eyeDormer(320,202,32)+
+ '<rect x="388" y="236" width="92" height="124" fill="#0E7C86" opacity=".9"/><polygon points="380,238 434,170 488,238" fill="#9C4A31"/>'+eyeDormer(418,218,32)+
+ '<rect x="196" y="262" width="90" height="98" fill="#2C3E50"/><path d="M220 360 V318 a21 21 0 0 1 42 0 V360Z" fill="#0F1720"/>'+
+ (function(){var s='',w=[[20,262],[56,262],[20,302],[56,302],[112,248],[150,248],[112,290],[150,290],[306,256],[344,256],[306,300],[344,300],[404,268],[442,268],[404,308],[442,308]];for(var i=0;i<w.length;i++){s+='<rect x="'+w[i][0]+'" y="'+w[i][1]+'" width="16" height="22" rx="3" fill="#172431" opacity=".8"/>';}return s;})()+
+ /* semne de întrebare */
+ '<g font-family="Noto Serif, Georgia, serif" font-weight="700" fill="#E2A62B"><text x="150" y="104" font-size="44" opacity=".9">?</text><text x="300" y="70" font-size="30" opacity=".7">?</text><text x="420" y="140" font-size="26" fill="#D6409F">?</text></g>';
+function svg(key){return '<svg viewBox="0 0 480 360" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+ILL[key]+'</svg>';}
+
+/* ---------- Întrebări (exclusiv din fișa de fapte verificate) ---------- */
+var Q = [
+ {ill:'cetate',tema:'Date generale',q:'În ce an apare prima atestare documentară a Sibiului, sub numele Cibinium?',o:['1191','1091','1291','1391'],e:'Prima atestare documentară a Sibiului datează din 1191 (Cibinium / Cipin). În 2021, orașul a împlinit 830 de ani.',s:'en.wikipedia.org/wiki/Sibiu; oradesibiu.ro'},
+ {ill:'oameni',tema:'Date generale',q:'Câți locuitori (populație rezidentă) au fost înregistrați la Sibiu la Recensământul din 2021?',o:['134.309','84.309','194.309','254.309'],e:'Recensământul din 2021 a înregistrat 134.309 locuitori. Statistica după domiciliu, calculată diferit, indica 162.142 de persoane în 2024.',s:'en.wikipedia.org/wiki/Sibiu; INS, via oradesibiu.ro'},
+ {ill:'farmacie',tema:'Premiere',q:'Ce a funcționat la Sibiu în 1494, în premieră pe actualul teritoriu al României?',o:['O farmacie','O tipografie','O grădină zoologică','Un teatru'],e:'Conform sursei, în 1494 este atestată la Sibiu prima farmacie de pe actualul teritoriu al României. Teatrul (1788) și grădina zoologică (1929) au venit mult mai târziu.',s:'patrimoniu.sibiu.ro'},
+ {ill:'carte',tema:'Premiere',q:'Ce premieră din 1544 este legată de Sibiu?',o:['Prima carte în limba română de pe actualul teritoriu al României','Primul ziar în limba română','Prima fotografie a orașului','Primul tramvai'],e:'Conform sursei, în 1544 a apărut la Sibiu prima carte în limba română de pe actualul teritoriu al României.',s:'patrimoniu.sibiu.ro'},
+ {ill:'racheta',tema:'Premiere',q:'Ce descrie manuscrisul lui Conrad Haas, păstrat la Sibiu?',o:['O rachetă în trepte','Un tren cu aburi','Un avion cu reacție','Un submarin electric'],e:'Conform sursei, manuscrisul lui Conrad Haas descrie, în 1555, prima rachetă în trepte. Manuscrisul este păstrat la Sibiu.',s:'patrimoniu.sibiu.ro'},
+ {ill:'pod',tema:'Monumente',q:'Podul Minciunilor este primul pod din România realizat dintr-un anumit material. Care?',o:['Fontă turnată','Piatră','Lemn','Beton armat'],e:'Conform sursei, în 1859 a fost realizat la Sibiu primul pod din fontă turnată: Podul Minciunilor. Legenda spune că se prăbușește dacă cineva minte pe el.',s:'patrimoniu.sibiu.ro'},
+ {ill:'munte',tema:'Premiere',q:'Care este, conform sursei, prima stațiune montană din România (1894)?',o:['Păltiniș','Sinaia','Predeal','Poiana Brașov'],e:'Conform sursei, Păltiniș este prima stațiune montană din România, din 1894.',s:'patrimoniu.sibiu.ro'},
+ {ill:'muzeu',tema:'Monumente',q:'În ce an s-a deschis oficial Muzeul Brukenthal, primul muzeu din România?',o:['1817','1717','1867','1917'],e:'Muzeul Brukenthal s-a deschis oficial în 1817 și este primul muzeu din România. Poartă numele lui Samuel von Brukenthal (1721–1803), guvernator al Transilvaniei între 1777 și 1787.',s:'patrimoniu.sibiu.ro'},
+ {ill:'teatru',tema:'Premiere',q:'Ce clădire a apărut la Sibiu în 1788, în premieră pe actualul teritoriu al României?',o:['O clădire de teatru','O gară','Un aeroport','Un stadion de fotbal'],e:'Conform sursei, în 1788 a apărut la Sibiu prima clădire de teatru de pe actualul teritoriu al României.',s:'patrimoniu.sibiu.ro'},
+ {ill:'breasla',tema:'Bresle și meșteșuguri',q:'Ce meșteșugari formau breasla cu cea mai veche mențiune la Sibiu (1367)?',o:['Pielarii','Aurarii','Brutarii','Croitorii'],e:'Prima mențiune a unei bresle, în 1367, îi privește pe pielari. Prima reglementare a breslelor datează din 1376.',s:'capitalcultural.ro; patrimoniu.sibiu.ro'},
+ {ill:'cetate',tema:'Fortificații',q:'Câte turnuri aveau fortificațiile Sibiului, organizate în trei inele de ziduri?',o:['39','9','19','99'],e:'Fortificațiile orașului aveau trei inele de ziduri, 39 de turnuri și mai multe porți mari.',s:'de.wikipedia.org – Hermannstadt'},
+ {ill:'cartier',tema:'Cartiere',q:'De unde vine numele cartierului Lazaret?',o:['De la o fostă leprozerie','De la un lac din apropiere','De la numele unui negustor','De la o cazarmă'],e:'Lazaret amintește de o fostă leprozerie, amenajată în clădirile unei mănăstiri dominicane, în zona actualei autogări.',s:'turnulsfatului.ro, 2014'},
+ {ill:'cartier',tema:'Cartiere',q:'După cine își poartă numele cartierul Terezian?',o:['Împărăteasa Maria Tereza','Împăratul Iosif al II-lea','Sfânta Elisabeta','Un meșter țiglar'],e:'Cartierul poartă numele împărătesei Maria Tereza, care a finanțat un orfelinat romano-catolic și o biserică; complexul orfelinatului și biserica Sf. Elisabeta au fost construite între 1767 și 1771. Numele lui Iosif al II-lea îl poartă cartierul Josefin.',s:'turnulsfatului.ro, 2014'},
+ {ill:'tramvai',tema:'Transport',q:'În ce an a pornit la Sibiu prima linie de tramvai electric?',o:['1905','1865','1935','1955'],e:'Pe 9 august 1905 a fost inaugurată prima linie de tramvai electric, între gară și spitalul militar. Tramvaiul urban a fost oprit în 1966–1967.',s:'tribuna.ro'},
+ {ill:'carte',tema:'Premiere',q:'Ce este atestat la Sibiu în 1380, în premieră pe actualul teritoriu al României?',o:['O școală','O tipografie','Un cinematograf','O stație de radio'],e:'Conform sursei, în 1380 este atestată la Sibiu prima școală de pe actualul teritoriu al României.',s:'patrimoniu.sibiu.ro'}
+];
+
+var $=function(id){return document.getElementById(id);};
+var order=[],idx=0,score=0,answered=false,current=null;
+var KEYS=['A','B','C','D'];
+
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function show(id){['start','quiz','result'].forEach(function(s){$(s).classList.toggle('on',s===id);});}
+
+function startQuiz(){
+  order=shuffle(Q.map(function(_,i){return i;}));
+  idx=0;score=0;show('quiz');renderQ();
+}
+function renderQ(){
+  answered=false;
+  var item=Q[order[idx]];
+  current={item:item,opts:shuffle(item.o.map(function(t,i){return {t:t,ok:i===0};}))};
+  $('qnum').textContent='Întrebarea '+(idx+1)+' din '+Q.length;
+  $('qbar').style.width=(idx/Q.length*100)+'%';
+  $('qscore').textContent='Scor: '+score;
+  $('qill').innerHTML=svg(item.ill);
+  $('qtheme').textContent=item.tema;
+  $('qtext').textContent=item.q;
+  var box=$('opts');box.innerHTML='';
+  current.opts.forEach(function(o,i){
+    var b=document.createElement('button');
+    b.type='button';b.className='opt';
+    b.innerHTML='<span class="k">'+KEYS[i]+'</span><span class="t"></span>';
+    b.querySelector('.t').textContent=o.t;
+    b.addEventListener('click',function(){answer(i);});
+    box.appendChild(b);
+  });
+  $('fb').classList.remove('on','bad');
+  var q=$('quiz');q.style.animation='none';void q.offsetWidth;q.style.animation='';
+}
+function answer(i){
+  if(answered)return;answered=true;
+  var ok=current.opts[i].ok;if(ok)score++;
+  var btns=$('opts').querySelectorAll('.opt');
+  btns.forEach(function(b,j){
+    b.disabled=true;
+    if(current.opts[j].ok)b.classList.add('right');
+    else if(j===i)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  $('qscore').textContent='Scor: '+score;
+  $('qbar').style.width=((idx+1)/Q.length*100)+'%';
+  var fb=$('fb');
+  $('fbv').textContent=ok?'Corect!':'Nu chiar.';
+  $('fbv').className='verdict '+(ok?'ok':'no');
+  $('fbt').textContent=current.item.e;
+  $('fbs').textContent='('+current.item.s+')';
+  $('next').textContent=idx<Q.length-1?'Următoarea întrebare →':'Vezi rezultatul →';
+  fb.classList.toggle('bad',!ok);fb.classList.add('on');
+  setTimeout(function(){$('next').focus({preventScroll:true});if(window.innerWidth<900)fb.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
+}
+function next(){
+  if(!answered)return;
+  if(idx<Q.length-1){idx++;renderQ();}
+  else showResult();
+}
+function showResult(){
+  show('result');
+  var n=Q.length,t,m;
+  if(score>=13){t='Excelent!';m='Cunoști Sibiul foarte bine – ai putea să-i arăți orașul unui prieten venit din altă parte.';}
+  else if(score>=9){t='Foarte bine!';m='Ai o bază solidă. Câteva povești te așteaptă la următoarea plimbare prin oraș.';}
+  else if(score>=5){t='Un început bun!';m='Sibiul are multe povești ascunse în ziduri, poduri și cartiere. Merită descoperite!';}
+  else{t='Fiecare întrebare e o poveste nouă.';m='Acum știi mai mult decât la început. Încearcă din nou și vei vedea cât de repede înveți.';}
+  $('resTitle').textContent=t;
+  $('resMsg').textContent='Ai răspuns corect la '+score+' din '+n+' întrebări. '+m;
+  $('ringTxt').textContent=score;
+  var c=$('ringVal'),L=578.05;
+  c.style.transition='none';c.setAttribute('stroke-dashoffset',L);void c.getBoundingClientRect();
+  c.style.transition='';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){c.setAttribute('stroke-dashoffset',L*(1-score/n));});});
+}
+function restart(){show('start');}
+
+$('startArt').innerHTML='<svg viewBox="0 0 480 360" role="img" aria-label="Ilustrație: acoperișuri cu „ochi”, turnuri și munți, la Sibiu" xmlns="http://www.w3.org/2000/svg">'+START+'</svg>';
+$('go').addEventListener('click',startQuiz);
+$('again').addEventListener('click',startQuiz);
+$('next').addEventListener('click',next);
+$('restart').addEventListener('click',restart);
+document.addEventListener('keydown',function(e){
+  if(!$('quiz').classList.contains('on'))return;
+  var k=e.key.toUpperCase();var map={'1':0,'2':1,'3':2,'4':3,'A':0,'B':1,'C':2,'D':3};
+  if(!answered&&k in map){answer(map[k]);e.preventDefault();}
+  else if(answered&&(e.key==='Enter'||e.key==='ArrowRight')&&document.activeElement!==$('next')){next();e.preventDefault();}
+});
+window.__quiz={count:Q.length};
+})();
+</script>
+</body>
+</html>

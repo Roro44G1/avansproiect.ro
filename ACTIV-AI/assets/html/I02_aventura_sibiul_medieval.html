@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ucenicul din Hermannstadt</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px);position:relative}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+.tools{display:flex;gap:12px;flex-wrap:wrap}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.25em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.toggle[aria-pressed="true"]{border-color:var(--ocru);color:var(--ocru)}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.choice:hover:not(:disabled){border-color:var(--ocru);background:var(--surf2)}}
+
+.screen{flex:1;display:none;min-height:0}
+.screen.on{display:flex;animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* scenă */
+.stage{position:relative;border-radius:24px;overflow:hidden;background:#172431;box-shadow:0 18px 44px rgba(0,0,0,.4);aspect-ratio:8/5;width:100%}
+.stage .layer{position:absolute;inset:0;opacity:0;transition:opacity 1s ease}
+.stage .layer.show{opacity:1}
+.stage svg{display:block;width:100%;height:100%;animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{from{transform:scale(1.035) translate(0,0)}to{transform:scale(1) translate(-6px,3px)}}
+.caption{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;color:var(--ceata);flex-wrap:wrap}
+.caption b{color:var(--var);font-family:var(--serif)}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(6px,1vw,20px) 0}
+#start .left{flex:1.15;min-width:0}
+#start .intro{flex:1;max-width:760px}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.3vw,66px);line-height:1.08;margin:0 0 .4em}
+.intro p{color:var(--ceata);margin:0 0 .9em;max-width:34em}
+.intro .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:1.2em}
+.fict{margin-top:1.4em;padding:14px 18px;border-radius:14px;background:var(--surf);border-left:5px solid var(--violet);color:var(--ceata)}
+.fict b{color:var(--var)}
+
+/* joc */
+#game{gap:clamp(18px,2.6vw,52px);align-items:stretch;padding-bottom:clamp(6px,.8vw,16px)}
+#game .left{flex:1.12;min-width:0;display:flex;flex-direction:column;justify-content:center}
+#game .panel{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surf);border-radius:24px;padding:clamp(16px,1.8vw,36px);border:1px solid var(--line)}
+.place{display:flex;align-items:center;gap:.6em;color:var(--ocru);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.88em;margin:0 0 .8em}
+.place::before{content:"";width:.7em;height:.7em;border-radius:50%;background:var(--ocru)}
+.story{font-family:var(--serif);font-size:1.1em;line-height:1.55;cursor:pointer;min-height:6em}
+.story p{margin:0 0 .75em}
+.caret{display:inline-block;width:.5em;height:1.05em;margin-left:2px;vertical-align:-.15em;background:var(--ocru);animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.skiphint{color:var(--ceata);font-size:.88em;margin:.2em 0 .6em;min-height:1.4em}
+.choices{display:grid;gap:12px;margin-top:auto;padding-top:10px}
+.choice{font:inherit;text-align:left;min-height:62px;padding:.6em 1em;border-radius:16px;background:var(--bg);color:var(--var);border:2px solid var(--line);cursor:pointer;display:flex;align-items:center;gap:.8em;opacity:0;transform:translateY(8px);animation:rise .4s ease forwards;transition:border-color .2s,background .2s;touch-action:manipulation}
+.choice .arr{color:var(--ocru);font-weight:700;flex:none}
+.choice small{display:block;color:var(--ceata);font-size:.85em;margin-top:2px}
+.choice:disabled{cursor:not-allowed;opacity:.5!important;border-style:dashed}
+@keyframes rise{to{opacity:1;transform:none}}
+.inv{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.inv .lbl{color:var(--ceata);font-size:.9em;margin-right:4px}
+.item{display:inline-flex;align-items:center;gap:.45em;background:var(--surf);border:1px solid var(--line);border-radius:99px;padding:.3em .8em .3em .4em;font-size:.9em;animation:pop .45s ease}
+.item svg{width:1.6em;height:1.6em;flex:none}
+.item.empty{color:var(--ceata);padding-left:.8em}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:none;opacity:1}}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--ocru);color:var(--bg);font-weight:700;padding:.7em 1.3em;border-radius:14px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:20}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* final */
+.endbox{margin-top:auto}
+.endbadge{display:inline-flex;gap:.5em;align-items:center;background:var(--violet);color:var(--var);font-weight:700;padding:.35em .9em;border-radius:99px;margin-bottom:.6em;font-size:.92em}
+.found{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:.5em 0 1em}
+.found div{border:2px dashed var(--line);border-radius:12px;padding:.45em .6em;color:var(--ceata);font-size:.85em;text-align:center;min-height:3.2em;display:grid;place-items:center}
+.found div.got{border-style:solid;border-color:var(--ocru);color:var(--var);background:rgba(226,166,43,.1)}
+details.truth{background:var(--bg);border-radius:14px;padding:.6em 1em;margin-bottom:1em;border:1px solid var(--line)}
+details.truth summary{cursor:pointer;font-weight:700;color:var(--ocru);min-height:44px;display:flex;align-items:center}
+details.truth ul{margin:.3em 0 .4em;padding-left:1.2em;color:var(--ceata);font-size:.92em}
+details.truth li{margin:.25em 0}
+
+@media (max-width:1000px){
+  #start,#game{flex-direction:column;align-items:stretch}
+  #start .left,#game .left{flex:none}
+  #game .panel{flex:none}
+  .story{min-height:0}
+  .found{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr;gap:10px}
+  .tools .btn{padding:.4em .8em;font-size:.92em}
+  .toast{bottom:24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.choice{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I02</span><h1>Ucenicul din Hermannstadt</h1></div>
+    <div class="tools">
+      <button class="btn ghost toggle" id="instant" type="button" aria-pressed="false" title="Afișează textul dintr-odată, fără efectul de mașină de scris">⌨ Text instant: oprit</button>
+      <button class="btn ghost" id="restart" type="button">↺ Începe din nou</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="left">
+        <div class="stage" id="startStage"></div>
+        <div class="caption"><span><b>Hermannstadt</b> · numele german al Sibiului</span><span>pe la anul 1500</span></div>
+      </div>
+      <div class="intro">
+        <p class="kicker">Joc de text · alege-ți aventura</p>
+        <h2>O zi din viața unui ucenic, în Sibiul medieval</h2>
+        <p>E toamnă, pe la anul 1500. Ești Toma, ucenic într-un atelier de pielărie. Ai o scrisoare de dus, un leac de găsit și un oraș întreg de străbătut: ulițe, spițeria, piața, Turnul Sfatului și porțile cetății.</p>
+        <p>Fiecare alegere te duce pe alt drum. Există patru finaluri diferite – le poți descoperi pe toate?</p>
+        <div class="row"><button class="btn big accent" id="go" type="button">Începe aventura →</button></div>
+        <div class="fict"><b>Personaje și întâmplări fictive.</b> Decorurile se sprijină pe fapte verificate; la final afli ce e adevărat în poveste.</div>
+      </div>
+    </section>
+
+    <section class="screen" id="game" aria-label="Joc">
+      <div class="left">
+        <div class="stage" id="stage"></div>
+        <div class="caption"><span id="capPlace"><b>Atelierul</b></span><span id="capTime">dimineață de toamnă</span></div>
+        <div class="inv" id="inv" aria-label="Traista ta"></div>
+      </div>
+      <div class="panel">
+        <p class="place" id="place">Atelierul</p>
+        <div class="story" id="story" aria-live="off"></div>
+        <div class="skiphint" id="skip"></div>
+        <div class="choices" id="choices" role="group" aria-label="Alegeri"></div>
+        <div class="endbox" id="endbox" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ================= ILUSTRAȚII SVG (800×500) ================= */
+var SKY={
+  dimineata:['#22344D','#4E5F78','#D99A45'],
+  zi:['#1F3A52','#2F5A72','#5F8FA3'],
+  apus:['#2B2350','#8A3F4A','#E2A62B'],
+  noapte:['#0A111B','#121E2C','#1B2A3A']
+};
+function sky(k){var c=SKY[k];return '<defs><linearGradient id="sky_'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset=".6" stop-color="'+c[1]+'"/><stop offset="1" stop-color="'+c[2]+'"/></linearGradient></defs><rect width="800" height="500" fill="url(#sky_'+k+')"/>';}
+function starsN(){var s='<g fill="#F3EFE6">',p=[[60,40],[140,90],[230,30],[320,70],[420,26],[520,80],[610,40],[700,96],[760,30],[90,150],[380,130],[660,160],[480,150]];for(var i=0;i<p.length;i++){s+='<circle cx="'+p[i][0]+'" cy="'+p[i][1]+'" r="'+(i%3?1.4:2.2)+'" opacity="'+(i%2?.6:.9)+'"/>';}return s+'</g>';}
+function eye(x,y,w){var h=w*.34;return '<path d="M'+x+' '+y+' q'+(w/2)+' '+(-h*2)+' '+w+' 0 q'+(-w/2)+' '+(h*.7)+' '+(-w)+' 0z" fill="#0F1720"/><circle cx="'+(x+w/2)+'" cy="'+(y-h*.45)+'" r="'+(h*.38)+'" fill="#E2A62B" opacity=".85"/>';}
+function house(x,base,w,h,wall,roof,opt){
+  opt=opt||{};var rh=w*.85,s='';
+  s+='<rect x="'+x+'" y="'+(base-h)+'" width="'+w+'" height="'+h+'" fill="'+wall+'"/>';
+  s+='<polygon points="'+(x-6)+','+(base-h+2)+' '+(x+w/2)+','+(base-h-rh)+' '+(x+w+6)+','+(base-h+2)+'" fill="'+roof+'"/>';
+  if(opt.eyes!==false){s+=eye(x+w/2-w*.14,base-h-rh*.32,w*.28);if(w>110)s+=eye(x+w/2-w*.11,base-h-rh*.62,w*.22);}
+  var win=opt.win||'#172431',cols=w>120?3:2,rows=Math.max(1,Math.floor((h-50)/56));
+  for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){var wx=x+w*(c+1)/(cols+1)-9,wy=base-h+24+r*56;s+='<rect x="'+wx+'" y="'+wy+'" width="18" height="28" rx="3" fill="'+win+'" opacity="'+(opt.lit&&((r+c)%2===0)?1:.85)+'"/>';}
+  if(opt.door)s+='<path d="M'+(x+w/2-16)+' '+base+' v-38 a16 16 0 0 1 32 0 v38z" fill="#2A1F19"/>';
+  return s;
+}
+function person(x,y,k,col){k=k||1;col=col||'#0F1720';return '<g fill="'+col+'"><circle cx="'+x+'" cy="'+(y-58*k)+'" r="'+(9*k)+'"/><path d="M'+(x-13*k)+' '+y+' L'+(x-10*k)+' '+(y-44*k)+' Q'+x+' '+(y-52*k)+' '+(x+10*k)+' '+(y-44*k)+' L'+(x+13*k)+' '+y+'Z"/></g>';}
+function cobbles(y0,col){var s='<g fill="'+(col||'#2A3644')+'">';for(var y=y0+10,r=0;y<500;y+=22,r++)for(var x=(r%2?20:0);x<820;x+=44){s+='<ellipse cx="'+x+'" cy="'+y+'" rx="18" ry="7"/>';}return s+'</g>';}
+
+function sceneAtelier(seara){
+  var s='<rect width="800" height="500" fill="'+(seara?'#241B17':'#3B2E28')+'"/>';
+  s+='<rect x="0" y="0" width="800" height="44" fill="#1E1611"/><rect x="110" y="0" width="26" height="420" fill="#2A1F19"/><rect x="660" y="0" width="26" height="420" fill="#2A1F19"/>';
+  /* fereastră */
+  s+='<path d="M520 270 V140 a80 80 0 0 1 160 0 V270Z" fill="'+(seara?'#16243A':'#9EC3CF')+'"/><path d="M600 60 V270 M520 180 H680" stroke="#2A1F19" stroke-width="8"/>';
+  if(seara)s+='<circle cx="640" cy="120" r="18" fill="#F3EFE6" opacity=".9"/>'+'<g fill="#F3EFE6" opacity=".7"><circle cx="550" cy="150" r="1.6"/><circle cx="570" cy="220" r="1.4"/><circle cx="650" cy="230" r="1.4"/></g>';
+  else s+='<polygon points="520,270 680,270 560,500 260,500" fill="#E2A62B" opacity=".12"/>';
+  s+='<path d="M512 272 H688" stroke="#2A1F19" stroke-width="12"/>';
+  /* piei atârnate */
+  s+='<path d="M160 108 H470" stroke="#6B4A32" stroke-width="8" stroke-linecap="round"/>';
+  s+='<path d="M180 110 C170 150 196 190 176 240 C210 250 250 246 262 236 C246 190 270 150 258 110Z" fill="#B9583A"/>';
+  s+='<path d="M286 110 C280 160 300 200 286 260 C320 268 350 262 366 254 C352 200 372 150 362 110Z" fill="#9C4A31"/>';
+  s+='<path d="M392 110 C386 150 404 180 394 220 C420 226 446 222 458 216 C448 180 462 146 452 110Z" fill="#C9774F"/>';
+  /* masă de lucru */
+  s+='<rect x="0" y="400" width="800" height="100" fill="#2A201B"/>'+'<g stroke="#1E1611" stroke-width="3"><path d="M0 430 H800"/><path d="M0 466 H800"/></g>';
+  s+='<rect x="140" y="318" width="440" height="26" rx="4" fill="#6B4A32"/><rect x="160" y="344" width="18" height="70" fill="#4C3A2A"/><rect x="544" y="344" width="18" height="70" fill="#4C3A2A"/>';
+  s+='<path d="M220 318 v-50 h34 v34 l42 10 c10 2 12 6 12 10 v-4Z" fill="#4C3A2A"/><path d="M220 318 v-50 h34 v34 l44 12 v4Z" fill="#3A2B20"/>';
+  s+='<rect x="340" y="306" width="60" height="8" rx="3" fill="#A9B4C0" transform="rotate(-8 370 310)"/><rect x="396" y="300" width="22" height="12" rx="3" fill="#6B4A32" transform="rotate(-8 407 306)"/>';
+  s+='<circle cx="470" cy="306" r="12" fill="#E2A62B"/><circle cx="470" cy="306" r="4" fill="#6B4A32"/>';
+  /* lumânare */
+  s+='<rect x="520" y="284" width="14" height="34" fill="#F3EFE6"/><path d="M527 270 c-6 8 -4 14 0 14 c4 0 6 -6 0 -14z" fill="#E2A62B"/>';
+  if(seara)s+='<circle cx="527" cy="280" r="90" fill="#E2A62B" opacity=".12"/><circle cx="527" cy="280" r="40" fill="#E2A62B" opacity=".16"/><rect x="560" y="296" width="30" height="22" rx="4" fill="#A9B4C0"/><path d="M570 290 q-6 -10 0 -18 M580 290 q6 -10 0 -18" stroke="#A9B4C0" stroke-width="2" fill="none" opacity=".7"/>';
+  /* unelte pe perete */
+  s+='<g fill="#A9B4C0" opacity=".8"><rect x="36" y="150" width="8" height="70" rx="3"/><rect x="24" y="140" width="32" height="16" rx="3"/><path d="M64 160 l20 60 l-6 2 l-20 -60z"/><circle cx="62" cy="156" r="8" fill="none" stroke="#A9B4C0" stroke-width="4"/></g>';
+  return s;
+}
+function sceneUlita(){
+  var s=sky('zi');
+  s+='<circle cx="660" cy="80" r="40" fill="#F3EFE6" opacity=".25"/>';
+  s+=house(-20,390,150,210,'#E9E2D3','#B9583A',{door:true})+house(136,390,120,240,'#E2A62B','#9C4A31',{door:true})+house(262,390,140,190,'#7C6AC9','#B9583A',{door:true})+house(408,390,120,230,'#0E7C86','#9C4A31',{door:true})+house(534,390,150,200,'#E9D8BE','#B9583A',{door:true})+house(690,390,130,236,'#C98A4B','#9C4A31',{door:true});
+  s+='<rect x="0" y="390" width="800" height="110" fill="#334250"/>'+cobbles(390,'#2A3644');
+  /* firme de breaslă */
+  function sign(x,y,icon){return '<path d="M'+x+' '+y+' h44" stroke="#2A1F19" stroke-width="5"/><path d="M'+(x+40)+' '+y+' v10" stroke="#2A1F19" stroke-width="3"/><circle cx="'+(x+40)+'" cy="'+(y+34)+'" r="24" fill="#E2A62B"/>'+icon;}
+  s+=sign(130,250,'<path d="M161 270 v14 h12 l10 4 v4 h-22z" fill="#2A1F19"/>');
+  s+=sign(400,236,'<path d="M430 262 c-10 -10 6 -18 10 -6 c4 -12 20 -4 10 6 c-4 6 -16 10 -20 0z" fill="none" stroke="#2A1F19" stroke-width="4"/>');
+  s+=sign(684,246,'<g stroke="#2A1F19" stroke-width="4" fill="none"><circle cx="716" cy="290" r="5"/><circle cx="732" cy="290" r="5"/><path d="M719 286 l14 -18 M729 286 l-14 -18"/></g>');
+  s+=person(250,470,1.15)+person(300,476,1.2)+'<ellipse cx="320" cy="410" rx="22" ry="10" fill="#C9A26A"/>'+person(560,462,1.05)+person(600,470,1.1);
+  s+='<rect x="316" y="396" width="8" height="18" fill="#0F1720"/>';
+  return s;
+}
+function sceneFarmacie(seara){
+  var s='<rect width="800" height="500" fill="'+(seara?'#1A2430':'#22303D')+'"/>';
+  s+='<path d="M560 300 V150 a70 70 0 0 1 140 0 V300Z" fill="'+(seara?'#16243A':'#6FA3B5')+'"/><path d="M630 80 V300 M560 200 H700" stroke="#172431" stroke-width="7"/>';
+  var c=['#0E7C86','#6E56CF','#E2A62B','#B9583A','#12A594','#6E56CF','#E2A62B'];
+  for(var r=0;r<3;r++){var y=70+r*90;s+='<rect x="40" y="'+(y+62)+'" width="470" height="10" rx="5" fill="#4C6479"/>';for(var i=0;i<7;i++){var x=56+i*64,h=40+((i+r)%3)*8;s+='<rect x="'+x+'" y="'+(y+62-h)+'" width="44" height="'+h+'" rx="9" fill="'+c[(i+r)%7]+'" opacity=".9"/><rect x="'+(x+7)+'" y="'+(y+62-h-8)+'" width="30" height="10" rx="3" fill="#E9E2D3" opacity=".8"/><rect x="'+(x+9)+'" y="'+(y+62-h/2-6)+'" width="26" height="12" rx="2" fill="#F3EFE6" opacity=".85"/>';}}
+  /* ierburi atârnate */
+  for(var k=0;k<4;k++){var hx=570+k*40;s+='<path d="M'+hx+' 44 v30" stroke="#6B4A32" stroke-width="2"/><path d="M'+hx+' 74 l-12 40 h24z" fill="'+(k%2?'#12A594':'#6E8B3D')+'"/>';}
+  s+='<rect x="0" y="360" width="800" height="140" fill="#4C3A2A"/><rect x="0" y="340" width="800" height="26" fill="#6B4A32"/>';
+  for(var q=0;q<5;q++){s+='<rect x="'+(30+q*156)+'" y="384" width="132" height="92" rx="6" fill="none" stroke="#3A2B20" stroke-width="5"/><circle cx="'+(96+q*156)+'" cy="430" r="6" fill="#C68F1E"/>';}
+  s+='<path d="M300 340 L318 262 H402 L420 340Z" fill="#C68F1E"/><ellipse cx="360" cy="262" rx="44" ry="10" fill="#9C7420"/><rect x="368" y="200" width="16" height="84" rx="8" transform="rotate(26 376 242)" fill="#E9E2D3"/>';
+  s+='<path d="M520 340 v-80 M480 260 h80" stroke="#A9B4C0" stroke-width="4"/><path d="M470 260 l10 30 h20 l10 -30" fill="none" stroke="#A9B4C0" stroke-width="3"/><path d="M550 260 l10 24 h20 l10 -24" fill="none" stroke="#A9B4C0" stroke-width="3" transform="translate(-20 0)"/>';
+  s+='<rect x="120" y="318" width="90" height="24" rx="4" fill="#E9E2D3"/><path d="M130 326 h70 M130 334 h50" stroke="#A9B4C0" stroke-width="3"/>';
+  if(seara)s+='<rect x="230" y="300" width="12" height="40" fill="#F3EFE6"/><path d="M236 286 c-6 8 -4 14 0 14 c4 0 6 -6 0 -14z" fill="#E2A62B"/><circle cx="236" cy="296" r="80" fill="#E2A62B" opacity=".1"/>';
+  return s;
+}
+function scenePiata(){
+  var s=sky('zi');
+  s+='<rect x="352" y="96" width="76" height="250" fill="#4C6479"/><polygon points="342,98 390,10 438,98" fill="#B9583A"/><rect x="380" y="130" width="20" height="30" rx="10" fill="#E2A62B"/><rect x="380" y="190" width="20" height="26" rx="3" fill="#172431"/><rect x="380" y="240" width="20" height="26" rx="3" fill="#172431"/>';
+  s+=house(-10,340,120,150,'#E9E2D3','#B9583A',{eyes:true})+house(116,340,110,170,'#E2A62B','#9C4A31')+house(232,340,110,140,'#7C6AC9','#B9583A')+house(440,340,110,160,'#0E7C86','#9C4A31')+house(556,340,120,140,'#E9D8BE','#B9583A')+house(682,340,128,170,'#C98A4B','#9C4A31');
+  s+='<rect x="0" y="340" width="800" height="160" fill="#3B4A57"/>'+cobbles(340,'#33414E');
+  function stall(x,a,b,goods){var r='<rect x="'+x+'" y="380" width="150" height="14" fill="#6B4A32"/><rect x="'+(x+8)+'" y="394" width="10" height="56" fill="#4C3A2A"/><rect x="'+(x+132)+'" y="394" width="10" height="56" fill="#4C3A2A"/><rect x="'+(x+4)+'" y="318" width="6" height="64" fill="#4C3A2A"/><rect x="'+(x+140)+'" y="318" width="6" height="64" fill="#4C3A2A"/>';for(var i=0;i<5;i++){r+='<path d="M'+(x-6+i*32)+' 312 h32 v26 q-16 12 -32 0z" fill="'+(i%2?a:b)+'"/>';}return r+goods;}
+  s+=stall(60,'#E2A62B','#F3EFE6','<g fill="#B9583A"><circle cx="90" cy="372" r="9"/><circle cx="110" cy="372" r="9"/><circle cx="100" cy="362" r="9"/></g><g fill="#6E8B3D"><circle cx="160" cy="372" r="9"/><circle cx="178" cy="372" r="9"/></g>');
+  s+=stall(330,'#0E7C86','#F3EFE6','<rect x="350" y="356" width="40" height="24" fill="#6E56CF"/><rect x="396" y="350" width="44" height="30" fill="#B9583A"/><rect x="446" y="360" width="20" height="20" fill="#E2A62B"/>');
+  s+=stall(590,'#B9583A','#F3EFE6','<path d="M612 380 v-20 h30 v20z M650 380 v-28 h22 l14 6 v22z" fill="#6B4A32"/><circle cx="710" cy="368" r="12" fill="#C9A26A"/>');
+  s+=person(250,480,1.2)+person(520,486,1.25)+person(560,470,1.05)+person(780,480,1.2);
+  return s;
+}
+function sceneTurn(){
+  var s='<rect width="800" height="500" fill="#2C3640"/>';
+  for(var y=0,r=0;y<500;y+=40,r++)for(var x=(r%2?-40:0);x<800;x+=80){s+='<rect x="'+(x+3)+'" y="'+(y+3)+'" width="74" height="34" rx="4" fill="#33404B"/>';}
+  s+='<path d="M520 230 V120 a50 50 0 0 1 100 0 V230Z" fill="#6FA3B5"/><path d="M520 230 V120 a50 50 0 0 1 100 0 V230Z" fill="none" stroke="#1E2830" stroke-width="10"/>';
+  s+='<path d="M380 0 V300" stroke="#C9A26A" stroke-width="5"/><path d="M380 300 q-6 14 0 24 q6 -10 0 -24" fill="#C9A26A"/>';
+  s+='<polygon points="0,500 0,430 120,430 120,380 240,380 240,330 360,330 360,280 440,280 440,500" fill="#6B4A32"/><g stroke="#4C3A2A" stroke-width="4"><path d="M0 430 H120 V380 H240 V330 H360 V280 H440"/></g>';
+  function sack(x,y,w){return '<path d="M'+x+' '+y+' q-6 -60 '+(w*.2)+' -80 q'+(w*.3)+' -10 '+(w*.6)+' 0 q'+(w*.26)+' 20 '+(w*.2)+' 80z" fill="#C9B48A"/><path d="M'+(x+w*.2)+' '+(y-78)+' q'+(w*.3)+' -14 '+(w*.6)+' 0" stroke="#8F7A50" stroke-width="5" fill="none"/>';}
+  s+=sack(560,470,110)+sack(660,480,120)+sack(610,400,90)+'<rect x="440" y="470" width="360" height="30" fill="#232C34"/>';
+  s+=person(400,280,1.1,'#1A222B');
+  return s;
+}
+function sceneTurnSus(alarm){
+  var s=sky('zi');
+  s+='<g opacity=".9">';
+  var cols=['#B9583A','#9C4A31','#C9774F'];
+  for(var row=0;row<3;row++){var by=250+row*55;for(var i=0;i<16;i++){var x=-20+i*56+(row%2?28:0),w=50+(i*7%20),h=40+(i*13%30);s+='<rect x="'+x+'" y="'+(by-h*.4)+'" width="'+w+'" height="'+(h*.4+70)+'" fill="'+(row===2?'#E9E2D3':'#C9B9A0')+'" opacity="'+(.55+row*.2)+'"/><polygon points="'+(x-3)+','+(by-h*.4)+' '+(x+w/2)+','+(by-h)+' '+(x+w+3)+','+(by-h*.4)+'" fill="'+cols[(i+row)%3]+'"/>';}}
+  s+='</g>';
+  s+='<path d="M0 232 H800" stroke="#4C6479" stroke-width="8" opacity=".6"/><path d="M0 300 H800" stroke="#4C6479" stroke-width="8" opacity=".7"/>';
+  if(!alarm)s+='<g fill="#20262E" opacity=".92"><circle cx="520" cy="226" r="16"/><circle cx="528" cy="196" r="24"/><circle cx="512" cy="160" r="30"/><circle cx="536" cy="120" r="36"/><circle cx="508" cy="80" r="40"/><circle cx="540" cy="46" r="38"/></g><circle cx="520" cy="236" r="12" fill="#E2A62B"/><circle cx="520" cy="236" r="26" fill="#E5484D" opacity=".35"/>';
+  else s+='<g fill="#5B6570" opacity=".5"><circle cx="620" cy="210" r="12"/><circle cx="628" cy="186" r="16"/></g>';
+  /* rama ferestrei de piatră */
+  s+='<path fill="#26303A" fill-rule="evenodd" d="M0 0 H800 V500 H0Z M120 500 V200 a280 170 0 0 1 560 0 V500Z"/>';
+  s+='<path d="M120 500 V200 a280 170 0 0 1 560 0 V500" fill="none" stroke="#3A4652" stroke-width="16"/>';
+  s+='<rect x="100" y="452" width="600" height="48" fill="#3A4652"/>';
+  if(alarm){s+='<path d="M400 0 V40" stroke="#6B4A32" stroke-width="8"/><g transform="rotate(-14 400 40)"><path d="M352 140 C352 90 370 52 400 52 C430 52 448 90 448 140 L460 150 H340Z" fill="#E2A62B"/><circle cx="400" cy="160" r="12" fill="#C68F1E"/></g><g fill="none" stroke="#E2A62B" stroke-width="5" stroke-linecap="round" opacity=".8"><path d="M300 80 q-20 40 0 80"/><path d="M270 60 q-30 60 0 120"/><path d="M500 80 q20 40 0 80"/><path d="M530 60 q30 60 0 120"/></g>';}
+  return s;
+}
+function sceneOrasJos(){
+  var s=sky('zi');
+  s+=house(400,330,140,170,'#E9E2D3','#B9583A',{door:false})+house(546,330,130,150,'#E2A62B','#9C4A31')+house(680,330,140,180,'#7C6AC9','#B9583A');
+  s+='<rect x="0" y="60" width="300" height="440" fill="#4C5A68"/><path d="M60 500 V300 a90 90 0 0 1 180 0 V500Z" fill="#2C3640"/>';
+  s+='<polygon points="40,500 40,470 90,470 90,440 140,440 140,410 190,410 190,380 240,380 240,500" fill="#6B7884"/>';
+  s+='<rect x="300" y="330" width="500" height="170" fill="#3B4A57"/>'+'<g>'+cobbles(330,'#33414E').replace('<g fill','<g clip-path="url(#cj)" fill')+'</g><defs><clipPath id="cj"><rect x="300" y="330" width="500" height="170"/></clipPath></defs>';
+  s+='<rect x="430" y="250" width="110" height="80" fill="#2A1F19"/><rect x="450" y="270" width="70" height="60" fill="#B9583A" opacity=".6"/>';
+  s+='<path d="M560 420 h90 v-14 h-20 v-16 h-50 v16 h-20z" fill="#2A3138"/>';
+  s+='<g fill="#A9B4C0" opacity=".35"><circle cx="480" cy="230" r="20"/><circle cx="500" cy="196" r="26"/><circle cx="470" cy="160" r="30"/><circle cx="500" cy="118" r="34"/></g>';
+  s+='<rect x="530" y="440" width="24" height="34" rx="4" fill="#6B7884"/><path d="M530 446 h24" stroke="#4C5A68" stroke-width="3"/>'+person(620,470,1.1)+person(690,476,1.15)+person(740,466,1.05);
+  return s;
+}
+function sceneBreasla(){
+  var s='<rect width="800" height="500" fill="#2B2733"/>';
+  s+='<rect x="0" y="0" width="800" height="36" fill="#1E1A24"/>';
+  for(var i=0;i<2;i++){var x=i?600:80;s+='<path d="M'+x+' 280 V140 a60 60 0 0 1 120 0 V280Z" fill="#3C4F66"/><path d="M'+(x+60)+' 80 V280 M'+x+' 190 H'+(x+120)+'" stroke="#1E1A24" stroke-width="6"/><polygon points="'+x+',280 '+(x+120)+',280 '+(x+160)+',420 '+(x-40)+',420" fill="#E2A62B" opacity=".06"/>';}
+  s+='<path d="M310 50 H490 V290 L400 250 L310 290Z" fill="#B9583A"/><path d="M322 62 H478 V272 L400 238 L322 272Z" fill="none" stroke="#E2A62B" stroke-width="3"/>';
+  s+='<path d="M366 120 h30 v52 l44 14 c10 3 12 9 12 14 v8 h-86z" fill="#E2A62B"/><path d="M366 136 h30" stroke="#B9583A" stroke-width="4"/>';
+  s+='<path d="M300 50 H500" stroke="#6B4A32" stroke-width="8" stroke-linecap="round"/>';
+  s+='<rect x="0" y="420" width="800" height="80" fill="#1E1A24"/>';
+  s+='<rect x="120" y="340" width="560" height="26" rx="4" fill="#6B4A32"/><rect x="150" y="366" width="18" height="70" fill="#4C3A2A"/><rect x="632" y="366" width="18" height="70" fill="#4C3A2A"/>';
+  s+='<rect x="340" y="326" width="90" height="16" rx="2" fill="#E9E2D3"/><path d="M385 326 v16" stroke="#A9B4C0" stroke-width="2"/>';
+  for(var k=0;k<3;k++){var cx=200+k*200;if(k===1)cx=520;s+='<rect x="'+(cx-6)+'" y="300" width="12" height="40" fill="#F3EFE6"/><path d="M'+cx+' 286 c-6 8 -4 14 0 14 c4 0 6 -6 0 -14z" fill="#E2A62B"/><circle cx="'+cx+'" cy="296" r="46" fill="#E2A62B" opacity=".1"/>';}
+  s+=person(470,420,1.5,'#15121A');
+  return s;
+}
+function scenePoarta(skyK,deschisa){
+  var noapte=skyK==='noapte';
+  var s=sky(skyK);
+  if(skyK==='dimineata')s+='<circle cx="580" cy="150" r="40" fill="#F3C25A" opacity=".9"/><circle cx="580" cy="150" r="70" fill="#F3C25A" opacity=".12"/>';
+  if(noapte)s+=starsN()+'<circle cx="660" cy="80" r="26" fill="#F3EFE6" opacity=".9"/>';
+  s+='<path d="M0 360 Q200 330 400 350 T800 340 V500 H0Z" fill="'+(noapte?'#15211E':'#2E4A3A')+'"/>';
+  s+='<rect x="0" y="210" width="800" height="170" fill="'+(noapte?'#2A3540':'#56687A')+'"/>';
+  for(var x=0;x<800;x+=36)s+='<rect x="'+x+'" y="194" width="22" height="18" fill="'+(noapte?'#2A3540':'#56687A')+'"/>';
+  function tw(x,w,h,col){return '<rect x="'+x+'" y="'+(380-h)+'" width="'+w+'" height="'+h+'" fill="'+col+'"/><polygon points="'+(x-8)+','+(382-h)+' '+(x+w/2)+','+(300-h)+' '+(x+w+8)+','+(382-h)+'" fill="#9C4A31"/><rect x="'+(x+w/2-8)+'" y="'+(410-h)+'" width="16" height="24" rx="8" fill="'+(noapte?'#E2A62B':'#172431')+'"/>';}
+  s+=tw(60,80,230,noapte?'#33404B':'#647789')+tw(660,80,220,noapte?'#33404B':'#647789');
+  s+='<rect x="300" y="90" width="200" height="290" fill="'+(noapte?'#36434F':'#6B7E90')+'"/><polygon points="290,92 400,-10 510,92" fill="#B9583A"/><rect x="390" y="120" width="20" height="30" rx="10" fill="'+(noapte?'#E2A62B':'#172431')+'"/>';
+  s+='<path d="M340 380 V270 a60 60 0 0 1 120 0 V380Z" fill="'+(deschisa?(noapte?'#0B111A':'#9EC3CF'):'#4C3A2A')+'"/>';
+  if(!deschisa)s+='<path d="M400 212 V380" stroke="#2A1F19" stroke-width="6"/><g stroke="#2A1F19" stroke-width="5"><path d="M340 290 H460"/><path d="M340 340 H460"/></g><circle cx="388" cy="320" r="5" fill="#C68F1E"/><circle cx="412" cy="320" r="5" fill="#C68F1E"/>';
+  else s+='<path d="M340 270 a60 60 0 0 1 120 0" fill="none" stroke="#2C3640" stroke-width="10"/><g stroke="#2C3640" stroke-width="4">'+(function(){var r='';for(var i=0;i<5;i++)r+='<path d="M'+(352+i*24)+' 220 V250"/>';return r;})()+'</g>';
+  s+='<polygon points="350,500 450,500 430,380 370,380" fill="'+(noapte?'#2A2A2A':'#8A7A62')+'" opacity=".8"/>';
+  s+=person(500,410,1.2,'#0F1720')+'<path d="M520 418 V316" stroke="#0F1720" stroke-width="4"/><path d="M514 318 l6 -18 l6 18z" fill="#A9B4C0"/>';
+  if(noapte)s+='<circle cx="300" cy="300" r="60" fill="#E2A62B" opacity=".08"/><rect x="296" y="290" width="8" height="24" fill="#4C3A2A"/><path d="M300 270 c-8 10 -6 20 0 20 c6 0 8 -10 0 -20z" fill="#E2A62B"/>';
+  return s;
+}
+function cityRings(cols,lit){
+  var s='';
+  for(var r=0;r<3;r++){var y=250+r*34,c=cols[r];
+    s+='<rect x="0" y="'+y+'" width="800" height="'+(70)+'" fill="'+c+'"/>';
+    for(var x=(r*23)%60;x<800;x+=26)s+='<rect x="'+x+'" y="'+(y-10)+'" width="14" height="12" fill="'+c+'"/>';
+    for(var t=0;t<6;t++){var tx=40+t*140+(r*47)%90,th=40+((t+r)*17)%30;s+='<rect x="'+tx+'" y="'+(y-th)+'" width="30" height="'+(th+10)+'" fill="'+c+'"/><polygon points="'+(tx-5)+','+(y-th)+' '+(tx+15)+','+(y-th-28)+' '+(tx+35)+','+(y-th)+'" fill="'+c+'"/>';if(lit&&(t+r)%2===0)s+='<rect x="'+(tx+11)+'" y="'+(y-th+12)+'" width="8" height="12" fill="#E2A62B" opacity=".9"/>';}
+  }
+  return s;
+}
+function sceneAfara(){
+  var s=sky('apus');
+  s+='<circle cx="560" cy="250" r="70" fill="#F3C25A" opacity=".95"/>';
+  s+='<rect x="380" y="70" width="30" height="190" fill="#3A2C4E"/><polygon points="372,72 395,8 418,72" fill="#3A2C4E"/><rect x="250" y="120" width="26" height="140" fill="#3A2C4E"/><polygon points="244,122 263,70 282,122" fill="#3A2C4E"/>';
+  s+=cityRings(['#4B3A62','#3B2E50','#2C2340'],false);
+  s+='<path d="M0 380 Q200 350 420 372 T800 360 V500 H0Z" fill="#1E3A36"/><path d="M380 500 Q420 440 470 372" stroke="#C9A26A" stroke-width="26" fill="none" opacity=".5"/>';
+  var f='';for(var i=0;i<40;i++){var x=(i*97)%800,y=400+(i*53)%95;f+='<g><circle cx="'+x+'" cy="'+y+'" r="7" fill="#F3EFE6"/><circle cx="'+x+'" cy="'+y+'" r="3" fill="#E2A62B"/></g>';}
+  s+=f+person(250,470,1.2,'#14261F');
+  return s;
+}
+function sceneNoapte(felinar){
+  var s=sky('noapte')+starsN()+'<circle cx="640" cy="90" r="30" fill="#F3EFE6" opacity=".9"/><circle cx="652" cy="82" r="28" fill="#0E1622"/>';
+  s+=cityRings(['#1D2A38','#18232F','#131C26'],true);
+  s+='<path d="M0 380 Q220 356 430 372 T800 360 V500 H0Z" fill="#0F1A17"/>';
+  s+='<rect x="120" y="250" width="24" height="170" fill="#1A120D"/><circle cx="132" cy="220" r="80" fill="#0E1913"/><circle cx="80" cy="260" r="50" fill="#0E1913"/><circle cx="190" cy="250" r="56" fill="#0E1913"/>';
+  if(felinar){s+='<circle cx="230" cy="420" r="130" fill="#E2A62B" opacity=".1"/><circle cx="230" cy="420" r="60" fill="#E2A62B" opacity=".15"/><rect x="220" y="404" width="20" height="30" rx="4" fill="#E2A62B"/><path d="M222 404 h16 l-8 -10z" fill="#6B4A32"/>'+person(270,470,1.15,'#0A0F14');}
+  else s+='<g fill="#0A0F14"><circle cx="170" cy="400" r="12"/><path d="M150 440 q20 -40 40 0z"/></g>';
+  return s;
+}
+var SCENES={
+  atelier:function(){return sceneAtelier(false);}, acasa:function(){return sceneAtelier(true);},
+  ulita:sceneUlita, farmacie:function(){return sceneFarmacie(false);}, farmacieSeara:function(){return sceneFarmacie(true);},
+  piata:scenePiata, turn:sceneTurn, turnSus:function(){return sceneTurnSus(false);}, clopot:function(){return sceneTurnSus(true);},
+  orasJos:sceneOrasJos, breasla:sceneBreasla, poarta:function(){return scenePoarta('zi',true);}, poartaInchisa:function(){return scenePoarta('noapte',false);},
+  afara:sceneAfara, noapte:function(){return sceneNoapte(false);}, noapteFelinar:function(){return sceneNoapte(true);},
+  start:function(){return scenePoarta('dimineata',true);}
+};
+function sceneSVG(k,label){return '<svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+(label||'Ilustrație')+'">'+SCENES[k]()+'</svg>';}
+
+/* ================= ICONIȚE INVENTAR ================= */
+var ICONS={
+  scrisoare:'<svg viewBox="0 0 32 32"><rect x="4" y="8" width="24" height="16" rx="2" fill="#E9E2D3"/><path d="M4 9 L16 18 L28 9" fill="none" stroke="#A9B4C0" stroke-width="2"/><circle cx="16" cy="19" r="4" fill="#B9583A"/></svg>',
+  monede:'<svg viewBox="0 0 32 32"><circle cx="13" cy="17" r="9" fill="#C68F1E"/><circle cx="19" cy="14" r="9" fill="#E2A62B"/><circle cx="19" cy="14" r="5" fill="none" stroke="#9C7420" stroke-width="2"/></svg>',
+  curele:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#9C4A31" stroke-width="5"/><rect x="21" y="12" width="8" height="8" rx="1" fill="none" stroke="#E2A62B" stroke-width="2"/></svg>',
+  leac:'<svg viewBox="0 0 32 32"><path d="M8 12 h16 l-2 14 h-12z" fill="#E9E2D3"/><path d="M8 12 q8 -6 16 0" stroke="#6B4A32" stroke-width="2" fill="none"/><path d="M16 12 v-6 M12 7 q4 2 4 5 M20 7 q-4 2 -4 5" stroke="#12A594" stroke-width="2" fill="none"/></svg>',
+  felinar:'<svg viewBox="0 0 32 32"><rect x="10" y="10" width="12" height="16" rx="2" fill="#E2A62B"/><path d="M10 10 h12 l-6 -5z" fill="#6B4A32"/><rect x="9" y="25" width="14" height="3" fill="#6B4A32"/><circle cx="16" cy="18" r="3" fill="#F3EFE6"/></svg>',
+  musetel:'<svg viewBox="0 0 32 32"><path d="M16 18 v12" stroke="#12A594" stroke-width="2"/><g fill="#F3EFE6"><circle cx="16" cy="9" r="4"/><circle cx="22" cy="14" r="4"/><circle cx="10" cy="14" r="4"/><circle cx="19" cy="20" r="4"/><circle cx="13" cy="20" r="4"/></g><circle cx="16" cy="15" r="3.6" fill="#E2A62B"/></svg>',
+  sigiliu:'<svg viewBox="0 0 32 32"><rect x="6" y="6" width="20" height="22" rx="2" fill="#E9E2D3"/><path d="M10 12 h12 M10 16 h10" stroke="#A9B4C0" stroke-width="2"/><circle cx="20" cy="23" r="5" fill="#B9583A"/><circle cx="20" cy="23" r="2" fill="#9C4A31"/></svg>'
+};
+var NAMES={scrisoare:'Scrisoare sigilată',monede:'Monede',curele:'Două curele',leac:'Leacul spițerului',felinar:'Felinar',musetel:'Mușețel',sigiliu:'Răspunsul breslei'};
+
+/* ================= POVESTEA ================= */
+function has(s,k){return (s.inv[k]||0)>0;}
+var HOME={t:'Pornește spre casă, la meșterul Lorenz',go:'final_calfa',show:function(s){return has(s,'leac')||has(s,'sigiliu');},req:function(s){return has(s,'leac')&&has(s,'sigiliu');},hint:function(s){return !has(s,'leac')?'îți lipsește leacul':'îți lipsește răspunsul breslei';}};
+var N={
+ start:{scene:'atelier',place:'Atelierul meșterului Lorenz',time:'dimineață de toamnă',enter:{add:{scrisoare:1,monede:3,curele:1}},
+  text:['Hermannstadt, o dimineață de toamnă, pe la anul 1500. Te numești Toma și ești ucenic în atelierul meșterului Lorenz, pielar. Miroase a piele tăbăcită și a fum de lemne.',
+        'Meșterul tușește și îți întinde o scrisoare sigilată: „Du-o starostelui breslei până diseară. Și, dacă poți, adu-mi un leac de la spițerie – tusea asta nu-mi dă pace.”',
+        'Îți mai dă trei monede de argint și două curele lucrate chiar de tine, ca să le vinzi în piață.'],
+  choices:[{t:'Întreabă-l unde găsești casa breslei',go:'sfat'},{t:'Ieși pe uliță',go:'ulita'}]},
+ sfat:{scene:'atelier',place:'Atelierul meșterului Lorenz',time:'dimineață de toamnă',
+  text:['„Lângă piață, unde atârnă stindardul cu cizma brodată”, spune meșterul. Apoi ridică un deget: „Și ține minte: o piele bună se îngrijește cu răbdare și cu grăsime, departe de foc. Starostele are obiceiul să-i încerce pe ucenici cu întrebări.”',
+        'Dai din cap și îți potrivești traista pe umăr.'],
+  choices:[{t:'Ieși pe uliță',go:'ulita'}]},
+ ulita:{scene:'ulita',place:'Ulițele meșteșugarilor',time:'dimineața',
+  text:['Ulițele sunt pline de viață. Un măcelar își strigă marfa, un brutar trece cu un coș de pâine caldă, iar un croitor ridică o stofă la lumină ca să-i vadă culoarea. Fiecare meserie are breasla ei, cu reguli stricte.',
+        'De aici, drumurile se despart: spre spițerie, spre piața mare sau spre porțile orașului.'],
+  again:['Ești din nou pe ulița meșteșugarilor. Încotro o iei?'],
+  choices:[{t:'Spre spițerie',go:'farmacie'},{t:'Spre piața mare',go:'piata'},{t:'Spre porțile orașului',go:'poarta'},HOME]},
+ farmacie:{scene:'farmacie',place:'Spițeria',time:'ziua',
+  text:['Spițeria e încă o noutate pentru oraș: funcționează de prin 1494, de doar câțiva ani. Pe rafturi stau borcane cu ierburi uscate, rădăcini și semințe, fiecare cu eticheta lui.',
+        'Spițerul pisează ceva într-un mojar de bronz. „Un leac pentru tuse? Două monede”, spune el, fără să ridice privirea.'],
+  again:['Spițerul te recunoaște și îți face semn din cap, fără să se oprească din pisat.'],
+  choices:[{t:'Plătește două monede',go:'farmacie_plata',show:function(s){return !has(s,'leac');},req:function(s){return (s.inv.monede||0)>=2;},hint:function(){return 'ai nevoie de două monede';}},
+           {t:'Oferă-te să-l ajuți la mojar, în schimbul leacului',go:'farmacie_ajutor',show:function(s){return !has(s,'leac');}},
+           {t:'Spre piața mare',go:'piata'},{t:'Înapoi pe uliță',go:'ulita'}]},
+ farmacie_plata:{scene:'farmacie',place:'Spițeria',time:'ziua',enter:{add:{leac:1,monede:-2}},
+  text:['Spițerul cântărește ierburile pe o balanță mică, le învelește în hârtie și le leagă cu sfoară. „Fierte în apă, seara și dimineața.”','Pui leacul cu grijă în traistă.'],
+  choices:[{t:'Spre piața mare',go:'piata'},{t:'Spre casa breslei',go:'breasla'},HOME]},
+ farmacie_ajutor:{scene:'farmacie',place:'Spițeria',time:'ziua',enter:{add:{leac:1}},
+  text:['Pisezi semințe și frunze până te dor brațele. Spițerul te urmărește cu coada ochiului și, la sfârșit, îți întinde un pachețel legat cu sfoară: „Ai mână sigură. Leacul e al tău – l-ai câștigat.”',
+        'Apoi adaugă, mai încet: „Dacă te saturi vreodată de piei, la mine e loc de ucenic.”'],
+  choices:[{t:'Mulțumește-i și pleacă spre piață',go:'piata'},{t:'Rămâi să înveți tainele ierburilor',go:'final_spiter'},HOME]},
+ piata:{scene:'piata',place:'Piața mare',time:'ziua',
+  text:['Piața e un furnicar: negustori, căruțe, coșuri cu mere și găini scăpate din cuști. Deasupra tuturor se înalță Turnul Sfatului. Acolo se păstrează grâne, iar de sus străjerii pândesc fumul incendiilor.',
+        'La o tarabă, un negustor venit de departe îți măsoară curelele din priviri.'],
+  again:['Ești din nou în piață. Turnul Sfatului veghează deasupra mulțimii.'],
+  choices:[{t:'Arată-i negustorului curelele',go:'negustor',show:function(s){return has(s,'curele');}},{t:'Urcă în Turnul Sfatului',go:'turn'},{t:'Mergi la casa breslei',go:'breasla'},{t:'Înapoi pe uliță',go:'ulita'},HOME]},
+ negustor:{scene:'piata',place:'Taraba negustorului',time:'ziua',
+  text:['Negustorul pipăie pielea, o miroase, o îndoaie între degete. „Lucru bun, cusătură dreaptă. Îți dau două monede… sau felinarul ăsta, care arde toată noaptea.”'],
+  choices:[{t:'Ia cele două monede',go:'piata',fx:{curele:-1,monede:2},toast:'Ai primit: două monede'},{t:'Ia felinarul',go:'piata',fx:{curele:-1,felinar:1},toast:'Ai primit: un felinar'},{t:'Păstrează curelele deocamdată',go:'piata'}]},
+ turn:{scene:'turn',place:'Turnul Sfatului',time:'ziua',
+  text:['Urci treptele înguste ale Turnului Sfatului, printre saci de grâne care miros a pâine încă nefăcută. Sus, lângă o fereastră îngustă, străjerul Matei moțăie cu bărbia în piept.',
+        'Te aude și tresare: „Ucenicule! Stai tu de veghe cât îmi mănânc pâinea? Ochii tăi sunt mai tineri decât ai mei.”'],
+  again:['Străjerul Matei își mănâncă liniștit pâinea. Fereastra turnului te așteaptă.'],
+  choices:[{t:'Rămâi de veghe',go:'turn_veghe'},{t:'Coboară în piață',go:'piata'}]},
+ turn_veghe:{scene:'turnSus',place:'Sus, în Turnul Sfatului',time:'aproape de amiază',
+  text:['De sus, orașul arată ca o hartă: acoperișuri roșii, ulițe subțiri ca niște fire și ziduri care îl strâng în inele de piatră.',
+        'Deodată, dincolo de acoperișuri, spre Orașul de Jos, se ridică un fir de fum. Se îngroașă. E negru – prea negru pentru un cuptor de pâine.'],
+  choices:[{t:'Trage clopotul de alarmă!',go:'final_strajer'},{t:'Coboară în fugă să vezi ce arde',go:'orasJos'}]},
+ orasJos:{scene:'orasJos',place:'Orașul de Jos',time:'după-amiază',
+  text:['Cobori treptele în fugă, spre Orașul de Jos. Fumul vine din atelierul unui fierar: o grămadă de cărbuni s-a aprins, dar fierarul și calfele lui au stins deja focul cu găleți de apă. Râd, negri de funingine.',
+        'Ai alergat degeaba, iar soarele a trecut de amiază.'],
+  choices:[{t:'Grăbește-te spre casa breslei',go:'breasla'},{t:'Ia-o spre poarta cea mai apropiată',go:'poarta'}]},
+ breasla:{scene:'breasla',place:'Casa breslei',time:'după-amiază',
+  text:['În casa breslei, sub stindardul cu o cizmă brodată în fir galben, starostele te așteaptă cu brațele încrucișate. Breslele au reguli vechi și scrise: prima lor reglementare datează din 1376.',
+        '„Ai ceva pentru mine, ucenicule?”'],
+  again:['Starostele ridică privirea din registrele lui. „Iar tu?”'],
+  choices:[{t:'Înmânează scrisoarea',go:'breasla_proba',show:function(s){return has(s,'scrisoare');}},{t:'Înapoi în piață',go:'piata'},HOME]},
+ breasla_proba:{scene:'breasla',place:'Casa breslei',time:'după-amiază',
+  text:['Starostele rupe sigiliul și citește. Colțul gurii i se ridică, abia vizibil. „Meșterul tău vrea să te facă, în curând, calfă. Să vedem dacă meriți.”','„Spune-mi: cum se păstrează o piele bună?”'],
+  again:['Starostele te privește din nou, așteptând. „Deci, cum se păstrează o piele bună?”'],
+  choices:[{t:'Cu răbdare și cu grăsime, departe de foc',go:'breasla_reusita'},{t:'Se usucă repede, lângă vatră',go:'breasla_gresit'},{t:'Se lasă în ploaie, ca să se înmoaie',go:'breasla_gresit'}]},
+ breasla_gresit:{scene:'breasla',place:'Casa breslei',time:'după-amiază',
+  text:['Starostele clatină din cap. „Așa se strică pielea, nu se păstrează. Gândește-te la ce te-a învățat meșterul.”','Nu te alungă, însă. Așteaptă, răbdător, un alt răspuns.'],
+  choices:[{t:'Încearcă din nou',go:'breasla_proba'}]},
+ breasla_reusita:{scene:'breasla',place:'Casa breslei',time:'după-amiază',enter:{add:{scrisoare:-1,sigiliu:1}},
+  text:['„Bine spus!” Starostele scrie câteva rânduri, toarnă ceară roșie și apasă pecetea breslei. „Du-i asta meșterului Lorenz.”','Ai primit răspunsul breslei, cu sigiliu.'],
+  choices:[{t:'Pornește spre casă, la meșterul Lorenz',go:'final_calfa',req:function(s){return has(s,'leac');},hint:function(){return 'îți lipsește leacul';}},{t:'Treci pe la spițerie',go:'farmacie',show:function(s){return !has(s,'leac');}},{t:'Ieși în piață',go:'piata'}]},
+ poarta:{scene:'poarta',place:'Poarta orașului',time:'după-amiază',
+  text:['Ajungi la una dintre porțile mari ale orașului. Zidurile groase se întind în ambele părți, cu turnuri din loc în loc. Paznicul te măsoară din priviri.',
+        '„Ieși, dacă vrei, dar ține minte: la apus porțile se închid. Pentru toată lumea.”'],
+  again:['Paznicul porții te recunoaște: „Tot tu? Ține minte, la apus se închide.”'],
+  choices:[{t:'Ieși să culegi mușețel pentru meșter',go:'afara'},{t:'Întoarce-te pe uliță',go:'ulita'}]},
+ afara:{scene:'afara',place:'Dincolo de ziduri',time:'apus',enter:{add:{musetel:1}},
+  text:['Dincolo de ziduri, câmpul miroase a fân. Culegi mușețel și te tot apleci după încă o floare, și încă una…',
+        'Când ridici ochii, soarele e deja jos. Orașul arată ca o coroană de piatră: trei inele de ziduri și zeci de turnuri, aurite de apus.'],
+  choices:[{t:'Aleargă spre poartă!',go:'afara_poarta'}]},
+ afara_poarta:{scene:'poartaInchisa',place:'Poarta orașului',time:'după apus',
+  text:['Ajungi gâfâind exact când porțile grele se închid cu un bubuit. „Prea târziu, ucenicule!” strigă paznicul de sus, de pe zid.','Se lasă întunericul.'],
+  choices:[{t:'Aprinde felinarul și caută o portiță',go:'afara_felinar',req:function(s){return has(s,'felinar');},hint:function(){return 'ai nevoie de un felinar';}},{t:'Rămâi lângă zid până dimineață',go:'final_noapte'}]},
+ afara_felinar:{scene:'noapteFelinar',place:'Lângă zidurile cetății',time:'noaptea',
+  text:['În lumina felinarului găsești, lângă un turn, o portiță joasă. Străjerul de acolo ridică felinarul spre fața ta și te recunoaște: te-a văzut azi în piață, la taraba negustorului.',
+        '„Intră repede și să nu te mai prind pe-afară noaptea!” Ești din nou în oraș.'],
+  choices:[{t:'Fugi la casa breslei – poate starostele e încă acolo',go:'breasla',show:function(s){return has(s,'scrisoare');}},{t:'Fugi pe uliță',go:'ulita'},HOME]},
+ final_calfa:{scene:'acasa',place:'Acasă, în atelier',time:'seara',end:{id:'calfa',title:'Calfa cea nouă'},
+  text:['Meșterul Lorenz bea leacul fierbinte, apoi rupe sigiliul și citește. Pentru prima dată azi, zâmbește larg.',
+        '„Starostele scrie că ai cap limpede și mâini sigure. La primăvară, vei fi calfă.” Afară, peste acoperișuri, se aprind primele lumini. Ziua ta s-a încheiat cu bine.']},
+ final_strajer:{scene:'clopot',place:'Turnul Sfatului',time:'amiază',end:{id:'strajer',title:'Ochiul cetății'},
+  text:['Tragi de frânghie cu toată puterea. Clopotul bubuie peste oraș, iar în câteva clipe ulițele se umplu de oameni cu găleți. Focul e stins înainte să se întindă.',
+        'Seara, străjerul Matei te laudă în fața oamenilor sfatului: „Ochi ca ai lui rar am văzut.” Scrisoarea ajunge la staroste abia a doua zi, dar meșterul Lorenz te iartă zâmbind: poate că locul tău e aici, sus, de veghe peste oraș.']},
+ final_spiter:{scene:'farmacieSeara',place:'Spițeria',time:'seara',end:{id:'spiter',title:'Mojarul de bronz'},
+  text:['Rămâi la spițerie până se întunecă. Înveți numele a zeci de ierburi și afli că orice leac cere măsură și răbdare.',
+        'Seara, îi duci meșterului leacul și îi spui adevărul: ierburile te cheamă mai tare decât pieile. Meșterul oftează, apoi zâmbește: „Mâine ducem scrisoarea împreună la staroste. Și vorbim cu spițerul.”']},
+ final_noapte:{scene:'noapte',place:'Dincolo de ziduri',time:'noaptea',end:{id:'noapte',title:'Noaptea de dincolo de ziduri'},
+  text:['Îți faci culcuș lângă zid, la rădăcina unui nuc bătrân. Stelele sunt mai multe decât ai văzut vreodată din curtea atelierului.',
+        'Dimineața, când porțile se deschid, intri primul – ud de rouă, cu mușețelul strivit în traistă și cu o lecție învățată: în Hermannstadt, porțile nu așteaptă pe nimeni.']}
+};
+var ENDINGS=[{id:'calfa',title:'Calfa cea nouă'},{id:'strajer',title:'Ochiul cetății'},{id:'spiter',title:'Mojarul de bronz'},{id:'noapte',title:'Noaptea de dincolo de ziduri'}];
+var TRUTH=['Spițeria: conform patrimoniu.sibiu.ro, în 1494 este atestată la Sibiu prima farmacie de pe actualul teritoriu al României.',
+ 'Breslele: prima mențiune a unei bresle – a pielarilor – datează din 1367 (capitalcultural.ro); prima reglementare a breslelor, din 1376 (patrimoniu.sibiu.ro).',
+ 'Turnul Sfatului, între Piața Mare și Piața Mică, a fost folosit ca depozit de grâne și ca punct de observație pentru incendii.',
+ 'Fortificațiile: trei inele de ziduri, 39 de turnuri și mai multe porți mari (de.wikipedia.org – Hermannstadt).',
+ 'Hermannstadt este numele german al Sibiului. Centrul istoric are un Oraș de Sus și un Oraș de Jos.',
+ 'Ficțiune: Toma, meșterul Lorenz, spițerul, străjerul Matei, paznicul, negustorul și starostele sunt personaje fictive, iar întâmplările sunt inventate.'];
+
+/* ================= MOTOR ================= */
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var instant=false,typing=null,S=null,found={},curScene=null;
+function newState(){return {inv:{},visited:{},node:null};}
+function addInv(fx){for(var k in fx){S.inv[k]=Math.max(0,(S.inv[k]||0)+fx[k]);}}
+function setScene(k,stageId,label){
+  var st=$(stageId||'stage');
+  if(st===$('stage')&&curScene===k)return;
+  if(st===$('stage'))curScene=k;
+  var d=document.createElement('div');d.className='layer';d.innerHTML=sceneSVG(k,label);st.appendChild(d);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){d.classList.add('show');});});
+  var old=st.querySelectorAll('.layer');
+  setTimeout(function(){for(var i=0;i<old.length-1;i++){if(old[i].parentNode)old[i].parentNode.removeChild(old[i]);}},1100);
+}
+function renderInv(){
+  var box=$('inv'),keys=['scrisoare','sigiliu','monede','curele','leac','felinar','musetel'],h='<span class="lbl">Traista ta:</span>',any=false;
+  keys.forEach(function(k){var n=S.inv[k]||0;if(n>0){any=true;h+='<span class="item" data-k="'+k+'">'+ICONS[k]+NAMES[k]+(k==='monede'?': '+n:'')+'</span>';}});
+  if(!any)h+='<span class="item empty">goală</span>';
+  box.innerHTML=h;
+}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('on');},1800);}
+function typeText(paras,done){
+  var box=$('story');box.innerHTML='';box.setAttribute('aria-busy','true');
+  var els=paras.map(function(){var p=document.createElement('p');box.appendChild(p);return p;});
+  function finish(){if(typing){cancelAnimationFrame(typing.raf);}typing=null;els.forEach(function(p,i){p.textContent=paras[i];});box.setAttribute('aria-busy','false');$('skip').textContent='';done();}
+  if(instant||reduced){typing=null;finish();return;}
+  var pi=0,ci=0,last=performance.now(),acc=0,CPS=62,caret=document.createElement('span');caret.className='caret';
+  $('skip').textContent='Atinge textul pentru a-l afișa complet.';
+  function step(now){
+    acc+=(now-last)/1000*CPS;last=now;var n=Math.floor(acc);acc-=n;
+    while(n-->0&&pi<paras.length){ci++;if(ci>paras[pi].length){els[pi].textContent=paras[pi];pi++;ci=0;}}
+    if(pi>=paras.length){finish();return;}
+    els[pi].textContent=paras[pi].slice(0,ci);els[pi].appendChild(caret);
+    typing.raf=requestAnimationFrame(step);
+  }
+  typing={finish:finish,raf:requestAnimationFrame(step)};
+}
+function go(id){
+  var n=N[id];if(!n)return;
+  var first=!S.visited[id];S.visited[id]=true;S.node=id;
+  if(n.enter&&first){addInv(n.enter.add||{});}
+  renderInv();
+  setScene(n.scene,'stage',n.place);
+  $('place').textContent=n.place;
+  $('capPlace').innerHTML='<b></b>';$('capPlace').firstChild.textContent=n.place;
+  $('capTime').textContent=n.time;
+  $('choices').innerHTML='';$('endbox').hidden=true;$('endbox').innerHTML='';
+  var paras=(!first&&n.again)?n.again:n.text;
+  typeText(paras,function(){ n.end?renderEnd(n):renderChoices(n); });
+}
+function renderChoices(n){
+  var box=$('choices');box.innerHTML='';
+  var list=(n.choices||[]).filter(function(c){return !c.show||c.show(S);});
+  list.forEach(function(c,i){
+    var ok=!c.req||c.req(S);
+    var b=document.createElement('button');b.type='button';b.className='choice';b.style.animationDelay=(i*80)+'ms';
+    b.innerHTML='<span class="arr">›</span><span><span class="t"></span>'+(ok?'':'<small></small>')+'</span>';
+    b.querySelector('.t').textContent=c.t;
+    if(!ok){b.disabled=true;b.querySelector('small').textContent='('+c.hint(S)+')';}
+    b.addEventListener('click',function(){
+      if(c.fx){addInv(c.fx);}
+      if(c.toast)toast(c.toast);
+      go(c.go);
+    });
+    box.appendChild(b);
+  });
+  var f=box.querySelector('.choice:not(:disabled)');if(f&&window.innerWidth>1000)f.focus({preventScroll:true});
+}
+function renderEnd(n){
+  found[n.end.id]=true;
+  var idx=ENDINGS.map(function(e){return e.id;}).indexOf(n.end.id)+1,cnt=Object.keys(found).length;
+  var h='<span class="endbadge">★ Final '+idx+' din 4 · '+n.end.title+'</span>';
+  h+='<div class="found" aria-label="Finaluri descoperite">'+ENDINGS.map(function(e){return '<div class="'+(found[e.id]?'got':'')+'">'+(found[e.id]?e.title:'final nedescoperit')+'</div>';}).join('')+'</div>';
+  h+='<p style="margin:0 0 .8em;color:var(--ceata)">Ai descoperit '+cnt+' din 4 finaluri.'+(cnt<4?' Încearcă alte alegeri!':' Felicitări, le-ai găsit pe toate!')+'</p>';
+  h+='<details class="truth"><summary>Ce e adevărat în poveste?</summary><ul>'+TRUTH.map(function(t){return '<li>'+t+'</li>';}).join('')+'</ul></details>';
+  h+='<button class="btn big accent" type="button" id="again">Joacă din nou</button>';
+  var eb=$('endbox');eb.innerHTML=h;eb.hidden=false;
+  $('again').addEventListener('click',newGame);
+}
+function newGame(){
+  if(typing){typing=null;}
+  S=newState();curScene=null;$('stage').innerHTML='';
+  showScreen('game');go('start');
+}
+function showScreen(id){['start','game'].forEach(function(s){$(s).classList.toggle('on',s===id);});}
+function restart(){
+  if(typing){cancelAnimationFrame(typing.raf);typing=null;}
+  showScreen('start');
+}
+$('story').addEventListener('click',function(){if(typing)typing.finish();});
+$('instant').addEventListener('click',function(){
+  instant=!instant;this.setAttribute('aria-pressed',instant);this.textContent='⌨ Text instant: '+(instant?'pornit':'oprit');
+  if(instant&&typing)typing.finish();
+});
+$('go').addEventListener('click',newGame);
+$('restart').addEventListener('click',restart);
+document.addEventListener('keydown',function(e){
+  if(!$('game').classList.contains('on'))return;
+  if(typing&&(e.key===' '||e.key==='Enter')){typing.finish();e.preventDefault();return;}
+  var n=parseInt(e.key,10);if(n>=1&&n<=9){var b=$('choices').querySelectorAll('.choice')[n-1];if(b&&!b.disabled){b.click();e.preventDefault();}}
+});
+setScene('start','startStage','Ilustrație: poarta cetății Hermannstadt în zori');
+window.__adv={nodes:N,count:Object.keys(N).length,state:function(){return S;},scene:sceneSVG,scenes:Object.keys(SCENES)};
+})();
+</script>
+</body>
+</html>

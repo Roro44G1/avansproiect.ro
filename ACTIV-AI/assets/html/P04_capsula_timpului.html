@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capsula timpului</title>
+<style>
+:root {
+  --noapte:#0F1720; --ardezie:#1B2733; --petrol:#0E7C86; --violet:#6E56CF; --ocru:#E2A62B;
+  --tigla:#B9583A; --var:#F3EFE6; --ceata:#A9B4C0; --zid:#F5F1EA; --identitate:#F76B15;
+  --serif:"Noto Serif", Georgia, serif; --sans:"Inter", system-ui, sans-serif;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; }
+body { background:var(--noapte); color:var(--var); font-family:var(--sans); font-size:22px; line-height:1.45;
+  display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; -webkit-tap-highlight-color:transparent; }
+header { padding:24px clamp(16px,4vw,80px) 6px; }
+.chip { display:inline-block; background:var(--identitate); color:var(--noapte); font-weight:700; letter-spacing:2px;
+  font-size:18px; padding:8px 20px; border-radius:22px; }
+h1 { font-family:var(--serif); font-weight:700; font-size:clamp(30px,3.4vw,58px); line-height:1.12; margin:12px 0 2px; }
+.lead { color:var(--ceata); margin:0; font-size:clamp(20px,1.4vw,24px); }
+main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px clamp(16px,4vw,80px); }
+.stage { position:relative; width:min(100%, calc((100vh - 372px) * 2)); min-width:280px; aspect-ratio:2 / 1;
+  background:radial-gradient(ellipse at 50% 78%, rgba(110,86,207,.22), transparent 60%), var(--ardezie);
+  border-radius:24px; overflow:hidden; }
+.stars { position:absolute; inset:0; background-image:radial-gradient(rgba(243,239,230,.5) 1.2px, transparent 1.6px);
+  background-size:46px 46px; opacity:.25; }
+.beam { position:absolute; left:50%; bottom:23.5%; width:80%; height:78%; transform:translateX(-50%) scaleY(.2); clip-path:polygon(44.6% 100%, 55.4% 100%, 100% 0, 0 0);
+  transform-origin:50% 100%; background:linear-gradient(to top, rgba(255,213,138,.55), rgba(226,166,43,.18) 45%, rgba(110,86,207,0) 100%);
+  opacity:0; transition:opacity .8s ease, transform .9s cubic-bezier(.2,.8,.2,1); pointer-events:none; }
+.capsule { position:absolute; left:50%; bottom:-2%; width:15%; transform:translateX(-50%); border:0; padding:0; background:none;
+  cursor:pointer; }
+.capsule svg { width:100%; height:auto; display:block; overflow:visible; }
+#lid { transition:transform 1s cubic-bezier(.3,1.4,.4,1); transform-box:view-box; }
+.open #lid { transform:translate(150px,-70px) rotate(32deg); transform-origin:150px 92px; }
+.glowin { opacity:0; transition:opacity .6s ease .3s; }
+.open .glowin { opacity:1; }
+.open .beam { opacity:1; transform:translateX(-50%) scaleY(1); }
+.obj { position:absolute; left:50%; top:74%; width:clamp(84px,9.5%,170px); transform:translate(-50%,-50%) scale(.2);
+  opacity:0; pointer-events:none; border:0; background:none; color:var(--var); font-family:var(--sans); cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; padding:0; transition:left .9s cubic-bezier(.2,.9,.25,1) var(--d),
+  top .9s cubic-bezier(.2,.9,.25,1) var(--d), transform .9s cubic-bezier(.2,.9,.25,1) var(--d), opacity .5s ease var(--d); }
+.open .obj { left:var(--x); top:var(--y); transform:translate(-50%,-30%) scale(1); opacity:1; pointer-events:auto; }
+.bubble { width:100%; aspect-ratio:1; border-radius:50%; background:var(--noapte); border:4px solid var(--c);
+  display:grid; place-items:center; box-shadow:0 10px 26px rgba(0,0,0,.45); transition:transform .2s ease, box-shadow .2s ease; }
+.obj-big .bubble { border-width:6px; transform:scale(1.12); }
+.bubble svg { width:82%; height:82%; }
+.obj:hover .bubble, .obj:focus-visible .bubble { transform:scale(1.08); box-shadow:0 0 0 6px rgba(226,166,43,.35), 0 10px 26px rgba(0,0,0,.45); }
+.obj.seen .bubble::after { content:""; }
+.obj.seen .lbl::after { content:" ✓"; color:var(--ocru); }
+.lbl { margin-top:10px; font-weight:700; font-size:clamp(18px,1.25vw,24px); line-height:1.15; white-space:nowrap; text-shadow:0 2px 6px rgba(0,0,0,.6); }
+.sub { font-size:clamp(15px,1vw,20px); color:var(--ceata); white-space:nowrap; text-shadow:0 2px 6px rgba(0,0,0,.6); }
+.controls { display:flex; gap:16px; align-items:center; flex-wrap:wrap; justify-content:center; margin:14px 0 4px; }
+.btn { min-height:64px; min-width:56px; padding:0 30px; border-radius:32px; border:0; font:700 24px var(--sans); cursor:pointer;
+  background:var(--ocru); color:var(--noapte); box-shadow:0 6px 18px rgba(0,0,0,.35); }
+.btn.ghost { background:transparent; color:var(--var); border:2px solid var(--ceata); }
+.btn:focus-visible, .obj:focus-visible, .capsule:focus-visible, .close:focus-visible { outline:4px solid var(--ocru); outline-offset:4px; }
+.status { color:var(--ceata); font-size:22px; min-height:32px; text-align:center; }
+.overlay { position:fixed; inset:0; background:rgba(5,8,12,.72); display:flex; align-items:center; justify-content:center;
+  padding:16px; z-index:10; opacity:0; pointer-events:none; transition:opacity .3s ease; }
+.overlay.show { opacity:1; pointer-events:auto; }
+.card { position:relative; width:min(860px,100%); max-height:calc(100vh - 32px); overflow:auto; background:var(--ardezie);
+  border-radius:24px; padding:36px clamp(20px,4vw,48px) 32px; border-top:8px solid var(--c, var(--ocru));
+  transform:translateY(20px) scale(.97); transition:transform .35s cubic-bezier(.2,.9,.25,1); }
+.overlay.show .card { transform:none; }
+.card .ic { flex:none; width:110px; height:110px; background:var(--noapte); border-radius:50%; display:grid; place-items:center; border:4px solid var(--c, var(--ocru)); }
+.card .ic svg { width:84%; height:84%; }
+.card h2 { font-family:var(--serif); font-size:clamp(28px,2.4vw,42px); margin:0 0 4px; line-height:1.2; }
+.card .s { color:var(--ocru); font-weight:600; margin:0 0 18px; }
+.card p { font-size:clamp(20px,1.35vw,24px); margin:0 0 14px; }
+.card.letter { background:var(--zid); color:#1B2733; border-top-color:var(--violet);
+  background-image:repeating-linear-gradient(transparent 0 43px, rgba(14,124,134,.12) 43px 44px); }
+.card.letter h2 { color:#1B2733; }
+.card.letter p { font-family:var(--serif); font-size:clamp(20px,1.3vw,24px); line-height:1.75; }
+.card.letter .greet { font-style:italic; color:var(--violet); font-weight:700; }
+.card.letter .sign { text-align:right; font-family:var(--serif); font-style:italic; }
+.card.letter .note { font-family:var(--sans); font-size:20px; color:#4A5562; }
+.close { position:absolute; top:14px; right:14px; width:60px; height:60px; border-radius:50%; border:0; cursor:pointer;
+  background:var(--noapte); color:var(--var); font:700 30px var(--sans); line-height:1; }
+.card.letter .close { background:#1B2733; }
+.card .ic + h2 { padding-right:0; }
+.cardhead { display:flex; gap:22px; align-items:center; padding-right:70px; margin-bottom:18px; }
+.cardhead .s { margin:0; }
+footer { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; border-top:2px solid var(--ardezie);
+  margin:0 clamp(16px,4vw,80px); padding:12px 0 16px; color:var(--ceata); font-size:20px; }
+footer b { color:var(--ocru); font-weight:600; }
+@media (max-width: 1100px), (max-height: 830px), (max-aspect-ratio: 1/1) {
+  .stage { aspect-ratio:auto; width:100%; display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:22px 12px; padding:20px 16px 26px; align-items:start; }
+  .beam { display:none; }
+  .capsule { position:relative; left:auto; bottom:auto; transform:none; grid-column:1 / -1; width:min(40%, 150px); justify-self:center; order:-2; }
+  .obj { position:static; transform:none; width:auto; opacity:1; display:none; pointer-events:auto; transition:none; }
+  .open .obj { display:flex; transform:none; animation:pop .55s cubic-bezier(.2,.9,.25,1) both; animation-delay:var(--d); }
+  .bubble { width:clamp(84px, 9vw, 120px); }
+  .lbl { font-size:19px; white-space:normal; text-align:center; }
+  .sub { font-size:16px; white-space:normal; text-align:center; }
+}
+@media (max-height: 830px) and (min-width: 761px) {
+  header { padding-top:14px; }
+  h1 { font-size:36px; margin:8px 0 0; }
+  .lead { font-size:19px; }
+  .chip { font-size:16px; padding:6px 16px; }
+}
+@media (max-width: 760px) {
+  .stage { grid-template-columns:repeat(2, 1fr); padding:20px 12px 26px; }
+  .capsule { width:min(46%, 200px); }
+  .obj-big { grid-column:1 / -1; order:-1; }
+  .bubble { width:clamp(84px, 26vw, 120px); }
+  .card .ic { width:76px; height:76px; }
+  .cardhead { gap:14px; padding-right:58px; }
+  .close { width:56px; height:56px; top:10px; right:10px; }
+}
+@keyframes pop { from { opacity:0; transform:translateY(24px) scale(.6); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <span class="chip">IDENTITATE · P04</span>
+  <h1>Capsula timpului digitală</h1>
+  <p class="lead">Ce las eu Sibiului peste 20 de ani · deschide capsula și atinge fiecare obiect</p>
+</header>
+<main>
+  <div class="stage" id="stage">
+    <div class="stars"></div>
+    <div class="beam"></div>
+    <button class="obj" type="button" data-id="foto" style="--x:11%;--y:70%;--mx:18%;--my:66%;--d:0.15s;--c:#E2A62B" aria-label="Fotografie: Piața Mare la apus" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><g transform="rotate(-8 60 60)">
+<rect x="22" y="14" width="76" height="92" rx="3" fill="#F5F1EA"/>
+<rect x="29" y="21" width="62" height="58" fill="#E9A86A"/>
+<rect x="29" y="21" width="62" height="24" fill="#B96A6A"/>
+<circle cx="74" cy="44" r="9" fill="#FFD58A"/>
+<path d="M29,79 L29,58 L40,46 L51,58 L51,52 L63,40 L76,54 L76,50 L91,60 L91,79 Z" fill="#B9583A"/>
+<path d="M36,62 q4,-6 8,0 Z M64,56 q4,-6 8,0 Z" fill="#0F1720"/>
+<rect x="29" y="70" width="62" height="9" fill="#E9D7B8"/>
+<rect x="34" y="88" width="40" height="5" rx="2" fill="#A9B4C0"/></g></svg></span>
+      <span class="lbl">Fotografie</span><span class="sub">Piața Mare la apus</span>
+    </button><button class="obj" type="button" data-id="harta" style="--x:21%;--y:41%;--mx:18%;--my:42%;--d:0.24s;--c:#0E7C86" aria-label="Hartă desenată: drumul meu spre școală" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><path d="M16,30 L44,22 L76,32 L104,24 L104,94 L76,102 L44,92 L16,100 Z" fill="#F5F1EA"/>
+<path d="M44,22 L44,92 L76,102 L76,32 Z" fill="#E4DCCD"/>
+<path d="M26,82 C40,74 40,58 56,60 S72,46 92,40" fill="none" stroke="#B9583A" stroke-width="4" stroke-dasharray="6 6" stroke-linecap="round"/>
+<path d="M92,26 c-9,0 -14,7 -14,13 c0,9 14,22 14,22 c0,0 14,-13 14,-22 c0,-6 -5,-13 -14,-13 Z" fill="#0E7C86"/>
+<circle cx="92" cy="39" r="5" fill="#F5F1EA"/>
+<circle cx="26" cy="82" r="5" fill="#6E56CF"/></svg></span>
+      <span class="lbl">Hartă desenată</span><span class="sub">drumul meu spre școală</span>
+    </button><button class="obj" type="button" data-id="frunza" style="--x:35%;--y:21%;--mx:30%;--my:18%;--d:0.33s;--c:#B9583A" aria-label="Frunză presată: din Pădurea Dumbrava" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><path d="M60,104 C60,96 60,90 58,84" stroke="#8A5A2B" stroke-width="5" stroke-linecap="round"/>
+<path d="M58,86 C26,80 16,48 30,18 C52,26 96,30 96,58 C96,82 76,92 58,86 Z" fill="#E2A62B"/>
+<path d="M58,86 C26,80 16,48 30,18 C40,40 50,62 58,86 Z" fill="#B9583A" opacity="0.55"/>
+<path d="M58,86 C52,62 42,40 30,18" fill="none" stroke="#8A5A2B" stroke-width="3"/>
+<path d="M50,64 L70,56 M44,50 L66,40 M54,76 L78,72 M40,38 L56,30" stroke="#8A5A2B" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+      <span class="lbl">Frunză presată</span><span class="sub">din Pădurea Dumbrava</span>
+    </button><button class="obj obj-big" type="button" data-id="scrisoare" style="--x:50%;--y:13%;--mx:50%;--my:8%;--d:0.42s;--c:#6E56CF" aria-label="Scrisoarea: către Sibiul din 2046" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><rect x="18" y="20" width="84" height="82" rx="4" fill="#F5F1EA"/>
+<path d="M30,38 h60 M30,50 h60 M30,62 h60 M30,74 h40" stroke="#A9B4C0" stroke-width="4" stroke-linecap="round"/>
+<circle cx="84" cy="86" r="16" fill="#B9583A"/>
+<circle cx="84" cy="86" r="11" fill="none" stroke="#8E3F27" stroke-width="2"/>
+<path d="M84,77 L90,86 L84,95 L78,86 Z" fill="#8E3F27"/>
+<text x="30" y="31" font-family="Noto Serif" font-weight="700" font-size="11" fill="#6E56CF">2046</text></svg></span>
+      <span class="lbl">Scrisoarea</span><span class="sub">către Sibiul din 2046</span>
+    </button><button class="obj" type="button" data-id="lucarna" style="--x:65%;--y:21%;--mx:70%;--my:18%;--d:0.51s;--c:#E2A62B" aria-label="Schița unei lucarne: „ochii Sibiului”" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><rect x="14" y="22" width="84" height="78" rx="3" fill="#F5F1EA" transform="rotate(4 56 61)"/>
+<path d="M22,52 Q56,46 92,52 M22,66 Q56,60 92,66 M22,80 h70 M22,92 h70" fill="none" stroke="#8C8476" stroke-width="2"/>
+<path d="M28,78 C34,42 80,42 86,78 Z" fill="#F5F1EA" stroke="#2B3541" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M38,77 C46,62 68,62 76,77 Z" fill="#2B3541"/>
+<path d="M57,46 v-8 M44,50 l-4,-7 M70,50 l4,-7" stroke="#2B3541" stroke-width="3" stroke-linecap="round"/>
+<g transform="rotate(38 94 66)"><rect x="88" y="26" width="12" height="62" rx="2" fill="#E2A62B"/><path d="M88,88 L94,102 L100,88 Z" fill="#E9D7B8"/><path d="M92,96 L94,102 L96,96 Z" fill="#0F1720"/><rect x="88" y="26" width="12" height="8" fill="#B9583A"/></g></svg></span>
+      <span class="lbl">Schița unei lucarne</span><span class="sub">„ochii Sibiului”</span>
+    </button><button class="obj" type="button" data-id="semn" style="--x:79%;--y:41%;--mx:82%;--my:42%;--d:0.60s;--c:#0E7C86" aria-label="Semn de carte: cusut cu cruciulițe" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><path d="M42,14 L78,14 L78,104 L60,92 L42,104 Z" fill="#F5F1EA"/>
+<path d="M42,14 L78,14 L78,18 L42,18 Z" fill="#0E7C86"/>
+<rect x="58" y="24" width="5" height="5" fill="#B9583A"/><rect x="52" y="30" width="5" height="5" fill="#B9583A"/><rect x="64" y="30" width="5" height="5" fill="#B9583A"/><rect x="46" y="36" width="5" height="5" fill="#B9583A"/><rect x="58" y="36" width="5" height="5" fill="#B9583A"/><rect x="70" y="36" width="5" height="5" fill="#B9583A"/><rect x="52" y="42" width="5" height="5" fill="#B9583A"/><rect x="64" y="42" width="5" height="5" fill="#B9583A"/><rect x="58" y="48" width="5" height="5" fill="#B9583A"/><rect x="58" y="54" width="5" height="5" fill="#6E56CF"/><rect x="52" y="60" width="5" height="5" fill="#6E56CF"/><rect x="64" y="60" width="5" height="5" fill="#6E56CF"/><rect x="46" y="66" width="5" height="5" fill="#6E56CF"/><rect x="58" y="66" width="5" height="5" fill="#6E56CF"/><rect x="70" y="66" width="5" height="5" fill="#6E56CF"/><rect x="52" y="72" width="5" height="5" fill="#6E56CF"/><rect x="64" y="72" width="5" height="5" fill="#6E56CF"/><rect x="58" y="78" width="5" height="5" fill="#6E56CF"/><rect x="58" y="84" width="5" height="5" fill="#B9583A"/><rect x="52" y="90" width="5" height="5" fill="#B9583A"/><rect x="64" y="90" width="5" height="5" fill="#B9583A"/><rect x="46" y="96" width="5" height="5" fill="#B9583A"/><rect x="58" y="96" width="5" height="5" fill="#B9583A"/><rect x="70" y="96" width="5" height="5" fill="#B9583A"/><rect x="52" y="102" width="5" height="5" fill="#B9583A"/><rect x="64" y="102" width="5" height="5" fill="#B9583A"/><rect x="58" y="108" width="5" height="5" fill="#B9583A"/>
+<path d="M60,14 C66,4 76,4 80,8" fill="none" stroke="#E2A62B" stroke-width="3"/>
+<path d="M80,8 l6,14 l-8,-2 Z" fill="#E2A62B"/></svg></span>
+      <span class="lbl">Semn de carte</span><span class="sub">cusut cu cruciulițe</span>
+    </button><button class="obj" type="button" data-id="usb" style="--x:89%;--y:70%;--mx:82%;--my:66%;--d:0.69s;--c:#B9583A" aria-label="Stick USB: playlistul verii 2026" tabindex="-1">
+      <span class="bubble"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><g transform="rotate(-30 60 60)">
+<rect x="40" y="38" width="40" height="64" rx="8" fill="#6E56CF"/>
+<rect x="46" y="16" width="28" height="24" rx="2" fill="#A9B4C0"/>
+<rect x="52" y="22" width="6" height="6" fill="#0F1720"/><rect x="62" y="22" width="6" height="6" fill="#0F1720"/>
+<circle cx="60" cy="88" r="5" fill="#F3EFE6"/></g>
+<g transform="translate(78,64)"><ellipse cx="0" cy="22" rx="8" ry="6" fill="#E2A62B"/><rect x="6" y="-4" width="4" height="26" fill="#E2A62B"/><path d="M6,-4 q14,4 14,18" fill="none" stroke="#E2A62B" stroke-width="4"/></g></svg></span>
+      <span class="lbl">Stick USB</span><span class="sub">playlistul verii 2026</span>
+    </button>
+    <button class="capsule" id="capsule" type="button" aria-label="Deschide capsula timpului">
+      <svg viewBox="-20 -40 340 420" aria-hidden="true"><defs>
+<linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#5B6B7A"/><stop offset="0.28" stop-color="#C9D2DA"/>
+  <stop offset="0.5" stop-color="#9AA9B6"/><stop offset="1" stop-color="#3A4654"/>
+</linearGradient>
+<linearGradient id="metalShade" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#FFD58A" stop-opacity="0.35"/><stop offset="0.3" stop-color="#FFD58A" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="beamG" x1="0" y1="1" x2="0" y2="0">
+  <stop offset="0" stop-color="#FFD58A" stop-opacity="0.55"/>
+  <stop offset="0.5" stop-color="#E2A62B" stop-opacity="0.16"/>
+  <stop offset="1" stop-color="#6E56CF" stop-opacity="0"/>
+</linearGradient>
+</defs>
+        <rect x="52" y="92" width="196" height="260" fill="url(#metal)"/>
+        <ellipse cx="150" cy="352" rx="98" ry="26" fill="#3A4654"/>
+        <rect x="52" y="92" width="196" height="260" fill="url(#metalShade)"/>
+        <rect x="52" y="128" width="196" height="10" fill="#2B3541" opacity="0.55"/>
+        <rect x="52" y="300" width="196" height="10" fill="#2B3541" opacity="0.55"/>
+        <text x="150" y="196" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="34" fill="#1B2733">2026</text>
+        <text x="150" y="272" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="34" fill="#1B2733">2046</text>
+        <path d="M140,206 L150,218 L160,206" fill="none" stroke="#1B2733" stroke-width="4"/>
+        <ellipse cx="150" cy="92" rx="98" ry="26" fill="#05080C"/>
+        <ellipse class="glowin" cx="150" cy="92" rx="80" ry="18" fill="#FFD58A"/>
+        <g id="lid">
+          <path d="M48,92 L48,74 A102,27 0 0 1 252,74 L252,92 A102,27 0 0 1 48,92 Z" fill="#5B6B7A"/>
+          <ellipse cx="150" cy="74" rx="102" ry="27" fill="#9AA9B6"/>
+          <ellipse cx="150" cy="74" rx="40" ry="10" fill="none" stroke="#5B6B7A" stroke-width="4"/>
+          <circle cx="150" cy="70" r="7" fill="#E2A62B"/>
+        </g>
+      </svg>
+    </button>
+  </div>
+  <div class="controls">
+    <button class="btn" id="toggle" type="button">Deschide capsula</button>
+    <span class="status" id="status" aria-live="polite">Capsula a fost sigilată în 2026.</span>
+  </div>
+</main>
+<footer><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI · autor fictiv</span><b>#SibiulMeu</b></footer>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="card" id="card" role="dialog" aria-modal="true" aria-labelledby="cardTitle" tabindex="-1">
+    <button class="close" id="close" type="button" aria-label="Închide">×</button>
+    <div id="cardBody"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var DATA = {"foto": {"nume": "Fotografie", "sub": "Piața Mare la apus", "text": "O fotografie făcută dintr-un colț al Pieței Mari, când lumina de seară aprinde țigla acoperișurilor. Am ales-o pentru că arată orașul într-un moment obișnuit: oameni care trec, ferestre care se luminează. Peste 20 de ani, poate veți compara fațadele cu cele de azi.", "col": "#E2A62B"}, "harta": {"nume": "Hartă desenată", "sub": "drumul meu spre școală", "text": "O hartă desenată de mână, fără scară și fără GPS: străzile pe care merg zilnic, colțul unde mă întâlnesc cu prietenii, banca de unde se văd munții. E harta mea, nu a orașului – și tocmai de aceea contează.", "col": "#0E7C86"}, "frunza": {"nume": "Frunză presată", "sub": "din Pădurea Dumbrava", "text": "O frunză culeasă într-o plimbare de toamnă și presată între paginile unui caiet. Sper ca în 2046 pădurea să fie la fel de verde, iar cineva să culeagă o frunză din același loc și să le pună una lângă alta.", "col": "#B9583A"}, "scrisoare": {"nume": "Scrisoarea", "sub": "către Sibiul din 2046", "text": null, "col": "#6E56CF"}, "lucarna": {"nume": "Schița unei lucarne", "sub": "„ochii Sibiului”", "text": "O schiță în creion a unei lucarne în formă de pleoapă. Lumea le spune „ochii Sibiului”; rolul lor real este să aerisească podurile caselor. Unele sunt din secolul al XV-lea, cele mai multe din secolul al XIX-lea. Vreau ca și peste 20 de ani orașul să ne privească la fel.", "col": "#E2A62B"}, "semn": {"nume": "Semn de carte", "sub": "cusut cu cruciulițe", "text": "Un semn de carte cusut în cruciulițe, cu romburi ca pe ștergarele vechi din casă. L-am pus în capsulă ca să nu uităm că tradiția încape și în lucrurile mici pe care le folosim în fiecare zi.", "col": "#0E7C86"}, "usb": {"nume": "Stick USB", "sub": "playlistul verii 2026", "text": "Un stick USB cu melodiile pe care le-am ascultat în vara lui 2026 – pe munte, în parc sau seara, cu prietenii. Poate că în 2046 nu va mai exista niciun port în care să-l introduceți. Atunci păstrați-l ca pe o curiozitate de muzeu.", "col": "#B9583A"}};
+  var ICONS = {"foto": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><g transform=\"rotate(-8 60 60)\">\n<rect x=\"22\" y=\"14\" width=\"76\" height=\"92\" rx=\"3\" fill=\"#F5F1EA\"/>\n<rect x=\"29\" y=\"21\" width=\"62\" height=\"58\" fill=\"#E9A86A\"/>\n<rect x=\"29\" y=\"21\" width=\"62\" height=\"24\" fill=\"#B96A6A\"/>\n<circle cx=\"74\" cy=\"44\" r=\"9\" fill=\"#FFD58A\"/>\n<path d=\"M29,79 L29,58 L40,46 L51,58 L51,52 L63,40 L76,54 L76,50 L91,60 L91,79 Z\" fill=\"#B9583A\"/>\n<path d=\"M36,62 q4,-6 8,0 Z M64,56 q4,-6 8,0 Z\" fill=\"#0F1720\"/>\n<rect x=\"29\" y=\"70\" width=\"62\" height=\"9\" fill=\"#E9D7B8\"/>\n<rect x=\"34\" y=\"88\" width=\"40\" height=\"5\" rx=\"2\" fill=\"#A9B4C0\"/></g></svg>", "harta": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M16,30 L44,22 L76,32 L104,24 L104,94 L76,102 L44,92 L16,100 Z\" fill=\"#F5F1EA\"/>\n<path d=\"M44,22 L44,92 L76,102 L76,32 Z\" fill=\"#E4DCCD\"/>\n<path d=\"M26,82 C40,74 40,58 56,60 S72,46 92,40\" fill=\"none\" stroke=\"#B9583A\" stroke-width=\"4\" stroke-dasharray=\"6 6\" stroke-linecap=\"round\"/>\n<path d=\"M92,26 c-9,0 -14,7 -14,13 c0,9 14,22 14,22 c0,0 14,-13 14,-22 c0,-6 -5,-13 -14,-13 Z\" fill=\"#0E7C86\"/>\n<circle cx=\"92\" cy=\"39\" r=\"5\" fill=\"#F5F1EA\"/>\n<circle cx=\"26\" cy=\"82\" r=\"5\" fill=\"#6E56CF\"/></svg>", "frunza": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M60,104 C60,96 60,90 58,84\" stroke=\"#8A5A2B\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n<path d=\"M58,86 C26,80 16,48 30,18 C52,26 96,30 96,58 C96,82 76,92 58,86 Z\" fill=\"#E2A62B\"/>\n<path d=\"M58,86 C26,80 16,48 30,18 C40,40 50,62 58,86 Z\" fill=\"#B9583A\" opacity=\"0.55\"/>\n<path d=\"M58,86 C52,62 42,40 30,18\" fill=\"none\" stroke=\"#8A5A2B\" stroke-width=\"3\"/>\n<path d=\"M50,64 L70,56 M44,50 L66,40 M54,76 L78,72 M40,38 L56,30\" stroke=\"#8A5A2B\" stroke-width=\"2.5\" stroke-linecap=\"round\"/></svg>", "scrisoare": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"18\" y=\"20\" width=\"84\" height=\"82\" rx=\"4\" fill=\"#F5F1EA\"/>\n<path d=\"M30,38 h60 M30,50 h60 M30,62 h60 M30,74 h40\" stroke=\"#A9B4C0\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n<circle cx=\"84\" cy=\"86\" r=\"16\" fill=\"#B9583A\"/>\n<circle cx=\"84\" cy=\"86\" r=\"11\" fill=\"none\" stroke=\"#8E3F27\" stroke-width=\"2\"/>\n<path d=\"M84,77 L90,86 L84,95 L78,86 Z\" fill=\"#8E3F27\"/>\n<text x=\"30\" y=\"31\" font-family=\"Noto Serif\" font-weight=\"700\" font-size=\"11\" fill=\"#6E56CF\">2046</text></svg>", "lucarna": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"14\" y=\"22\" width=\"84\" height=\"78\" rx=\"3\" fill=\"#F5F1EA\" transform=\"rotate(4 56 61)\"/>\n<path d=\"M22,52 Q56,46 92,52 M22,66 Q56,60 92,66 M22,80 h70 M22,92 h70\" fill=\"none\" stroke=\"#8C8476\" stroke-width=\"2\"/>\n<path d=\"M28,78 C34,42 80,42 86,78 Z\" fill=\"#F5F1EA\" stroke=\"#2B3541\" stroke-width=\"3.5\" stroke-linejoin=\"round\"/>\n<path d=\"M38,77 C46,62 68,62 76,77 Z\" fill=\"#2B3541\"/>\n<path d=\"M57,46 v-8 M44,50 l-4,-7 M70,50 l4,-7\" stroke=\"#2B3541\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n<g transform=\"rotate(38 94 66)\"><rect x=\"88\" y=\"26\" width=\"12\" height=\"62\" rx=\"2\" fill=\"#E2A62B\"/><path d=\"M88,88 L94,102 L100,88 Z\" fill=\"#E9D7B8\"/><path d=\"M92,96 L94,102 L96,96 Z\" fill=\"#0F1720\"/><rect x=\"88\" y=\"26\" width=\"12\" height=\"8\" fill=\"#B9583A\"/></g></svg>", "semn": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M42,14 L78,14 L78,104 L60,92 L42,104 Z\" fill=\"#F5F1EA\"/>\n<path d=\"M42,14 L78,14 L78,18 L42,18 Z\" fill=\"#0E7C86\"/>\n<rect x=\"58\" y=\"24\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"52\" y=\"30\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"64\" y=\"30\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"46\" y=\"36\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"58\" y=\"36\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"70\" y=\"36\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"52\" y=\"42\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"64\" y=\"42\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"58\" y=\"48\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"58\" y=\"54\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"52\" y=\"60\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"64\" y=\"60\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"46\" y=\"66\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"58\" y=\"66\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"70\" y=\"66\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"52\" y=\"72\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"64\" y=\"72\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"58\" y=\"78\" width=\"5\" height=\"5\" fill=\"#6E56CF\"/><rect x=\"58\" y=\"84\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"52\" y=\"90\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"64\" y=\"90\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"46\" y=\"96\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"58\" y=\"96\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"70\" y=\"96\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"52\" y=\"102\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"64\" y=\"102\" width=\"5\" height=\"5\" fill=\"#B9583A\"/><rect x=\"58\" y=\"108\" width=\"5\" height=\"5\" fill=\"#B9583A\"/>\n<path d=\"M60,14 C66,4 76,4 80,8\" fill=\"none\" stroke=\"#E2A62B\" stroke-width=\"3\"/>\n<path d=\"M80,8 l6,14 l-8,-2 Z\" fill=\"#E2A62B\"/></svg>", "usb": "<svg viewBox=\"0 0 120 120\" aria-hidden=\"true\" focusable=\"false\"><g transform=\"rotate(-30 60 60)\">\n<rect x=\"40\" y=\"38\" width=\"40\" height=\"64\" rx=\"8\" fill=\"#6E56CF\"/>\n<rect x=\"46\" y=\"16\" width=\"28\" height=\"24\" rx=\"2\" fill=\"#A9B4C0\"/>\n<rect x=\"52\" y=\"22\" width=\"6\" height=\"6\" fill=\"#0F1720\"/><rect x=\"62\" y=\"22\" width=\"6\" height=\"6\" fill=\"#0F1720\"/>\n<circle cx=\"60\" cy=\"88\" r=\"5\" fill=\"#F3EFE6\"/></g>\n<g transform=\"translate(78,64)\"><ellipse cx=\"0\" cy=\"22\" rx=\"8\" ry=\"6\" fill=\"#E2A62B\"/><rect x=\"6\" y=\"-4\" width=\"4\" height=\"26\" fill=\"#E2A62B\"/><path d=\"M6,-4 q14,4 14,18\" fill=\"none\" stroke=\"#E2A62B\" stroke-width=\"4\"/></g></svg>"};
+  var LETTER_GREET = "Dragă Sibiule din 2046,";
+  var LETTER_HTML = "<p>Îți scriu din toamna lui 2026, dintr-un oraș pomenit pentru prima dată în documente în 1191. Azi, liceenii trec pe lângă ziduri cu căștile pe urechi, se întâlnesc în Piața Mare și fotografiază acoperișurile cu „ochi” – lucarnele care, de fapt, aerisesc podurile caselor.</p><p>Am pus în capsulă câteva lucruri mici: o fotografie, o hartă desenată de mână, o frunză, un playlist. Nu sunt prețioase, dar spun cum arăta o zi obișnuită. Poate că tu ai alte clădiri, alte meserii și alte obiceiuri; mă întreb dacă le vei recunoaște pe ale noastre.</p><p>Te rog să ai grijă de străzile înguste și de copacii din parcuri. Sper că oamenii încă se opresc pe Podul Minciunilor ca să-și spună adevărul. Și sper că tehnologia te-a ajutat să rămâi un oraș din care tinerii nu vor să plece, ci în care vor să se întoarcă.</p>";
+  var SIGN_HTML = "Cu drag,<br>un elev din 2026<br>(personaj fictiv · text-model)";
+  var stage = document.getElementById("stage");
+  var toggle = document.getElementById("toggle");
+  var capsule = document.getElementById("capsule");
+  var status = document.getElementById("status");
+  var overlay = document.getElementById("overlay");
+  var card = document.getElementById("card");
+  var cardBody = document.getElementById("cardBody");
+  var closeBtn = document.getElementById("close");
+  var objs = Array.prototype.slice.call(document.querySelectorAll(".obj"));
+  var seen = {};
+  var lastFocus = null;
+
+  function updateStatus() {
+    var n = Object.keys(seen).length;
+    if (!stage.classList.contains("open")) { status.textContent = "Capsula a fost sigilată în 2026."; return; }
+    status.textContent = n === objs.length ? "Ai descoperit toate cele 7 obiecte. Mulțumim!" : "Obiecte descoperite: " + n + " din " + objs.length;
+  }
+  function setOpen(open) {
+    stage.classList.toggle("open", open);
+    toggle.textContent = open ? "Închide capsula" : "Deschide capsula";
+    capsule.setAttribute("aria-label", open ? "Închide capsula timpului" : "Deschide capsula timpului");
+    objs.forEach(function (b) { b.tabIndex = open ? 0 : -1; });
+    updateStatus();
+  }
+  toggle.addEventListener("click", function () { setOpen(!stage.classList.contains("open")); });
+  capsule.addEventListener("click", function () { setOpen(!stage.classList.contains("open")); });
+
+  function openCard(id) {
+    var d = DATA[id];
+    lastFocus = document.activeElement;
+    card.style.setProperty("--c", d.col);
+    if (id === "scrisoare") {
+      card.classList.add("letter");
+      cardBody.innerHTML = '<div class="cardhead"><h2 id="cardTitle">Scrisoare către Sibiul din 2046</h2></div>' +
+        '<p class="greet">' + LETTER_GREET + '</p>' + LETTER_HTML +
+        '<p class="sign">' + SIGN_HTML + '</p>' +
+        '<p class="note">Text-model generat cu AI; autorul este un personaj fictiv.</p>';
+    } else {
+      card.classList.remove("letter");
+      cardBody.innerHTML = '<div class="cardhead"><span class="ic">' + ICONS[id] + '</span><div><h2 id="cardTitle">' + d.nume +
+        '</h2><p class="s">' + d.sub + '</p></div></div><p>' + d.text + '</p>';
+    }
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden", "false");
+    seen[id] = true;
+    document.querySelector('.obj[data-id="' + id + '"]').classList.add("seen");
+    updateStatus();
+    setTimeout(function () { closeBtn.focus(); }, 50);
+  }
+  function closeCard() {
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden", "true");
+    if (lastFocus) lastFocus.focus();
+  }
+  objs.forEach(function (b) { b.addEventListener("click", function () { openCard(b.getAttribute("data-id")); }); });
+  closeBtn.addEventListener("click", closeCard);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeCard(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && overlay.classList.contains("show")) closeCard();
+  });
+})();
+</script>
+</body>
+</html>
