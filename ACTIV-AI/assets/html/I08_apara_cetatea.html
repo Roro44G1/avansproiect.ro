@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Apără cetatea</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px);position:relative}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.choice:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.25em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.choice:hover:not(:disabled){border-color:var(--ocru);background:var(--surf2)}}
+
+.screen{flex:1;display:none;min-height:0}
+.screen.on{display:flex;animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.stage{position:relative;border-radius:24px;overflow:hidden;background:#101a26;box-shadow:0 18px 44px rgba(0,0,0,.4);aspect-ratio:2/1;width:100%}
+.stage svg{display:block;width:100%;height:100%}
+.flame{transform-origin:center bottom;animation:flick 1.1s ease-in-out infinite alternate}
+.flame.b{animation-duration:.9s;animation-delay:.3s}
+@keyframes flick{from{transform:scaleY(1) scaleX(1)}to{transform:scaleY(1.18) scaleX(.9)}}
+.wave{animation:wave 2.4s ease-in-out infinite alternate;transform-origin:left center}
+@keyframes wave{from{transform:skewY(0deg)}to{transform:skewY(5deg)}}
+.smoke{animation:rise 4s linear infinite}
+@keyframes rise{from{transform:translateY(0);opacity:.5}to{transform:translateY(-40px);opacity:0}}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(6px,1vw,20px) 0}
+#start .left{flex:1.15;min-width:0}
+#start .intro{flex:1;max-width:760px}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.3vw,66px);line-height:1.08;margin:0 0 .4em}
+.intro p{color:var(--ceata);margin:0 0 .9em;max-width:34em}
+.intro .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:1.2em}
+.fict{margin-top:1.4em;padding:14px 18px;border-radius:14px;background:var(--surf);border-left:5px solid var(--violet);color:var(--ceata)}
+.fict b{color:var(--var)}
+
+/* joc */
+#game{gap:clamp(18px,2.6vw,52px);align-items:stretch;padding-bottom:clamp(6px,.8vw,16px)}
+#game .left{flex:1.12;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px}
+#game .panel{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surf);border-radius:24px;padding:clamp(16px,1.8vw,36px);border:1px solid var(--line)}
+.bars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.bar{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:10px 14px}
+.bar .lbl{display:flex;justify-content:space-between;align-items:center;font-size:.9em;color:var(--ceata);margin-bottom:6px}
+.bar .lbl b{color:var(--var);font-weight:700}
+.bar .lbl .d{font-weight:700;min-width:2.6em;text-align:right}
+.bar .lbl .d.up{color:#3cc4cf}.bar .lbl .d.dn{color:#E7895F}
+.bar .trk{height:14px;border-radius:99px;background:var(--bg);overflow:hidden}
+.bar .trk i{display:block;height:100%;width:60%;border-radius:99px;transition:width .7s cubic-bezier(.2,.8,.2,1),background .5s}
+.bar.moral .trk i{background:var(--ocru)}.bar.prov .trk i{background:var(--petrol2)}.bar.vig .trk i{background:var(--violet)}
+.bar .trk i.low{background:var(--tigla)!important}
+.place{display:flex;align-items:center;gap:.6em;color:var(--ocru);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.88em;margin:0 0 .8em}
+.place::before{content:"";width:.7em;height:.7em;border-radius:50%;background:var(--ocru)}
+.nights{display:flex;gap:6px;margin-left:auto}
+.nights i{width:.8em;height:.8em;border-radius:50%;border:2px solid var(--line);display:block}
+.nights i.done{background:var(--ocru);border-color:var(--ocru)}
+.nights i.now{border-color:var(--ocru)}
+.story{font-family:var(--serif);font-size:1.1em;line-height:1.55;min-height:5em}
+.story h3{font-family:var(--serif);margin:0 0 .4em;font-size:1.25em}
+.story p{margin:0 0 .75em}
+.choices{display:grid;gap:12px;margin-top:auto;padding-top:10px}
+.choice{font:inherit;text-align:left;min-height:62px;padding:.6em 1em;border-radius:16px;background:var(--bg);color:var(--var);border:2px solid var(--line);cursor:pointer;display:flex;align-items:center;gap:.8em;opacity:0;transform:translateY(8px);animation:rise2 .4s ease forwards;transition:border-color .2s,background .2s;touch-action:manipulation}
+.choice:nth-child(2){animation-delay:.08s}.choice:nth-child(3){animation-delay:.16s}
+.choice .arr{color:var(--ocru);font-weight:700;flex:none}
+.choice .fx{margin-left:auto;flex:none;display:flex;gap:.45em;font-size:.78em;color:var(--ceata)}
+.choice .fx span{display:inline-flex;gap:.15em;align-items:center}
+.choice .fx .up{color:#3cc4cf}.choice .fx .dn{color:#E7895F}
+@keyframes rise2{to{opacity:1;transform:none}}
+.result{margin-top:auto;padding-top:10px}
+.result .cons{background:var(--bg);border-left:5px solid var(--petrol);border-radius:14px;padding:.8em 1em;margin-bottom:12px;color:var(--var)}
+.result .cons.warn{border-left-color:var(--tigla)}
+.endbadge{display:inline-flex;gap:.5em;align-items:center;background:var(--violet);color:var(--var);font-weight:700;padding:.35em .9em;border-radius:99px;margin-bottom:.6em;font-size:.92em}
+.endbadge.good{background:var(--petrol)}.endbadge.bad{background:var(--tigla)}
+details.truth{background:var(--bg);border-radius:14px;padding:.6em 1em;margin:0 0 1em;border:1px solid var(--line)}
+details.truth summary{cursor:pointer;font-weight:700;color:var(--ocru);min-height:44px;display:flex;align-items:center}
+details.truth ul{margin:.3em 0 .4em;padding-left:1.2em;color:var(--ceata);font-size:.92em}
+details.truth li{margin:.25em 0}
+.log{columns:2;column-gap:1.4em;color:var(--ceata);font-size:.88em;margin:0 0 1em;padding-left:1.3em}
+.log li{break-inside:avoid;margin:.15em 0}
+
+@media (max-width:1000px){
+  #start,#game{flex-direction:column;align-items:stretch}
+  #start .left,#game .left{flex:none}
+  #game .panel{flex:none}
+  .story{min-height:0}
+  .log{columns:1}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr;gap:10px}
+  #restart{justify-self:start;padding:.4em .9em}
+  .bars{gap:8px}.bar{padding:8px 10px}.bar .lbl{font-size:.78em}
+  .choice .fx{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.choice{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I08</span><h1>Apără cetatea</h1></div>
+    <button class="btn ghost" id="restart" type="button">↺ Începe din nou</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="left">
+        <div class="stage" id="startStage"></div>
+      </div>
+      <div class="intro">
+        <p class="kicker">Joc de text · strategie pe ture · 8 nopți</p>
+        <h2>Opt nopți de gardă pe zidurile Sibiului</h2>
+        <p>Anul 1526, scenariu imaginat. Ești Andreas, căpitan al străjilor – personaj fictiv. Zvonuri despre o ceată înarmată pe dealuri țin orașul treaz. Opt nopți la rând iei câte o decizie: cine păzește turnurile breslelor, cum împarți pâinea, ce faci cu praful de pușcă din pulberărie.</p>
+        <p>Fiecare alegere mută trei resurse: <b>moralul</b> oamenilor, <b>proviziile</b> și <b>vigilența</b> de pe ziduri. Dacă una ajunge la zero, noaptea se termină prost. Există trei finaluri.</p>
+        <div class="row"><button class="btn big accent" id="go" type="button">Preia comanda →</button></div>
+        <div class="fict"><b>Ficțiune declarată.</b> Nici asediul, nici personajele nu sunt evenimente istorice. Reale sunt doar decorurile – turnurile breslelor, porțile, pulberăria – luate din fișa de fapte verificate; le găsești enumerate la final.</div>
+      </div>
+    </section>
+
+    <section class="screen" id="game" aria-label="Joc">
+      <div class="left">
+        <div class="stage" id="stage"></div>
+        <div class="bars" aria-label="Resurse">
+          <div class="bar moral"><div class="lbl"><b>Moral</b><span class="d" id="dM"></span></div><div class="trk"><i id="bM"></i></div></div>
+          <div class="bar prov"><div class="lbl"><b>Provizii</b><span class="d" id="dP"></span></div><div class="trk"><i id="bP"></i></div></div>
+          <div class="bar vig"><div class="lbl"><b>Vigilență</b><span class="d" id="dV"></span></div><div class="trk"><i id="bV"></i></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="place"><span id="place">Noaptea 1</span><span class="nights" id="nights" aria-hidden="true"></span></p>
+        <div class="story" id="story" aria-live="polite"></div>
+        <div class="choices" id="choices" role="group" aria-label="Decizii"></div>
+        <div class="result" id="result" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ================= ILUSTRAȚIA ZIDULUI (800×400), dependentă de stare ================= */
+function clamp(v){return Math.max(0,Math.min(100,v));}
+function moon(n){ /* faza lunii se schimbă cu noaptea */
+  var r=26,cx=690,cy=70,off=-r+(n-1)*(2*r/7);
+  return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#F3EFE6" opacity=".95"/><circle cx="'+(cx+off)+'" cy="'+(cy-4)+'" r="'+(r-2)+'" fill="#121D2A"/>';
+}
+function stars(){var s='<g fill="#F3EFE6">',p=[[60,40],[140,90],[230,30],[320,70],[420,26],[520,80],[610,40],[760,30],[90,150],[380,130],[480,150],[560,120],[200,120]];for(var i=0;i<p.length;i++)s+='<circle cx="'+p[i][0]+'" cy="'+p[i][1]+'" r="'+(i%3?1.3:2)+'" opacity="'+(i%2?.55:.85)+'"/>';return s+'</g>';}
+function torch(x,y,lit,alt){
+  var s='<rect x="'+(x-3)+'" y="'+(y-26)+'" width="6" height="28" fill="#4C3A2A"/>';
+  if(lit)s+='<g class="flame'+(alt?' b':'')+'" style="transform-box:fill-box"><path d="M'+x+' '+(y-54)+' c-9 12 -9 20 -6 26 c3 6 9 6 12 0 c3 -6 3 -14 -6 -26z" fill="#E2A62B"/><path d="M'+x+' '+(y-44)+' c-4 6 -4 10 -2 13 c2 3 5 3 6 0 c2 -3 1 -7 -4 -13z" fill="#F3EFE6" opacity=".8"/></g><circle cx="'+x+'" cy="'+(y-36)+'" r="42" fill="#E2A62B" opacity=".10"/>';
+  else s+='<path d="M'+x+' '+(y-34)+' c-3 4 -3 7 0 9 c3 -2 3 -5 0 -9z" fill="#3A4652"/>';
+  return s;
+}
+function guard(x,y){return '<g fill="#0B121A"><circle cx="'+x+'" cy="'+(y-40)+'" r="6"/><path d="M'+(x-8)+' '+y+' L'+(x-6)+' '+(y-30)+' Q'+x+' '+(y-36)+' '+(x+6)+' '+(y-30)+' L'+(x+8)+' '+y+'Z"/><path d="M'+(x+12)+' '+y+' V'+(y-60)+'" stroke="#0B121A" stroke-width="3"/><path d="M'+(x+8)+' '+(y-58)+' l4 -12 l4 12z" fill="#A9B4C0"/></g>';}
+function sack(x,y,k){return '<path d="M'+x+' '+y+' q-4 -40 '+(14*k)+' -52 q'+(16*k)+' -6 '+(32*k)+' 0 q'+(18*k)+' 12 '+(14*k)+' 52z" fill="#C9B48A"/><path d="M'+(x+14*k)+' '+(y-50)+' q'+(16*k)+' -8 '+(32*k)+' 0" stroke="#8F7A50" stroke-width="4" fill="none"/>';}
+function barrel(x,y){return '<rect x="'+x+'" y="'+(y-40)+'" width="34" height="40" rx="8" fill="#6B4A32"/><path d="M'+x+' '+(y-28)+' h34 M'+x+' '+(y-12)+' h34" stroke="#A9B4C0" stroke-width="3"/>';}
+function wallArt(st,night){
+  var m=clamp(st.m),p=clamp(st.p),v=clamp(st.v);
+  var low=Math.min(m,p,v);
+  var s='<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A111B"/><stop offset=".65" stop-color="#121E2C"/><stop offset="1" stop-color="#1B2A3A"/></linearGradient></defs>';
+  s+='<rect width="800" height="400" fill="url(#sky)"/>'+stars()+moon(night);
+  /* dealuri cu focuri îndepărtate (mai multe când vigilența e mică – nu le vede nimeni) */
+  s+='<path d="M0 230 Q140 170 300 215 T620 200 T800 230 V400 H0Z" fill="#0E1A1E"/>';
+  var fires=v<35?3:(v<60?1:0);
+  for(var f=0;f<fires;f++){var fx=120+f*260;s+='<circle cx="'+fx+'" cy="'+(206-f*4)+'" r="3" fill="#E2A62B"/><circle cx="'+fx+'" cy="'+(206-f*4)+'" r="9" fill="#E2A62B" opacity=".25"/>';}
+  /* curtină cu creneluri */
+  s+='<rect x="0" y="236" width="800" height="110" fill="#33414E"/>';
+  for(var x=0;x<800;x+=40)s+='<rect x="'+x+'" y="220" width="24" height="18" fill="#33414E"/>';
+  s+='<path d="M0 236 H800" stroke="#26303A" stroke-width="3"/>';
+  /* turnuri: Archebuzierilor (stânga, pe console), Dulgherilor (centru, rotund→octogon, ascuțit), Olarilor (dreapta, cu retragere) */
+  s+='<rect x="90" y="150" width="60" height="196" fill="#3F4F5E"/><polygon points="90,150 150,150 160,136 80,136" fill="#3F4F5E"/><rect x="80" y="70" width="80" height="66" fill="#3F4F5E"/><polygon points="76,70 164,70 120,36" fill="#B9583A"/><circle cx="120" cy="100" r="3.5" fill="#121D2A"/><rect x="118.5" y="100" width="3" height="11" fill="#121D2A"/>';
+  s+='<path d="M372 346 V130 Q400 124 428 130 V346Z" fill="#45566A"/><path d="M366 126 Q400 118 434 126 V132 Q400 124 366 132Z" fill="#45566A"/><rect x="374" y="92" width="52" height="34" fill="#45566A"/><polygon points="368,92 432,92 400,20" fill="#B9583A"/>';
+  s+='<rect x="650" y="190" width="80" height="156" fill="#3F4F5E"/><rect x="662" y="110" width="56" height="80" fill="#3F4F5E"/><polygon points="656,110 724,110 690,76" fill="#B9583A"/>';
+  /* poartă cu pasaj boltit */
+  s+='<path d="M560 346 V300 a28 28 0 0 1 56 0 V346Z" fill="#0B111A"/><path d="M560 300 a28 28 0 0 1 56 0" fill="none" stroke="#26303A" stroke-width="5"/>';
+  if(v>=50)s+='<g stroke="#26303A" stroke-width="3">'+(function(){var r='';for(var i=0;i<5;i++)r+='<path d="M'+(566+i*11)+' 290 V346"/>';return r;})()+'</g>';
+  /* ferestre luminate în turnuri după vigilență */
+  var win=v>70?'#E2A62B':(v>35?'#9C7420':'#172431');
+  s+='<rect x="114" y="166" width="12" height="18" rx="6" fill="'+win+'"/><rect x="394" y="150" width="12" height="18" rx="6" fill="'+win+'"/><rect x="684" y="130" width="12" height="18" rx="6" fill="'+win+'"/>';
+  /* torțe – numărul lor urmează vigilența */
+  var tx=[200,260,320,470,520,600],lit=Math.round(v/100*tx.length);
+  for(var i=0;i<tx.length;i++)s+=torch(tx[i],222,i<lit,i%2===1);
+  /* străjeri pe zid – după moral */
+  var gx=[230,300,490,560],ng=Math.min(4,Math.floor(m/25));
+  for(var g=0;g<ng;g++)s+=guard(gx[g],222);
+  /* steag pe Turnul Dulgherilor – după moral */
+  if(m>=50)s+='<path d="M400 20 V-2" stroke="#4C3A2A" stroke-width="3"/><g class="wave" style="transform-box:fill-box"><path d="M401 2 h'+(m>=75?44:30)+' l-8 9 l8 9 h-'+(m>=75?44:30)+'z" fill="'+(m>=75?'#E2A62B':'#9C7420')+'"/></g>';
+  else s+='<path d="M400 20 V-2" stroke="#4C3A2A" stroke-width="3"/><path d="M401 2 q12 16 2 30" fill="none" stroke="#5B4A2A" stroke-width="5"/>';
+  /* curtea interioară: saci și butoaie după provizii; fum de la brutărie */
+  s+='<rect x="0" y="346" width="800" height="54" fill="#1A232C"/>';
+  var ns=Math.min(4,Math.round(p/22));
+  var sx=[40,110,180,250];
+  for(var k=0;k<ns;k++)s+=sack(sx[k],396,1);
+  if(p>=40)s+=barrel(300,396);if(p>=70)s+=barrel(340,396);
+  s+='<rect x="700" y="300" width="90" height="100" fill="#2A3540"/><polygon points="694,302 745,268 796,302" fill="#9C4A31"/><rect x="770" y="252" width="12" height="30" fill="#2A3540"/>';
+  if(p>=35)s+='<g class="smoke" style="transform-box:fill-box" fill="#A9B4C0" opacity=".45"><circle cx="776" cy="240" r="7"/><circle cx="782" cy="226" r="9"/><circle cx="772" cy="212" r="10"/></g>';
+  s+='<rect x="712" y="340" width="26" height="44" rx="3" fill="'+(p>=35?'#E2A62B':'#172431')+'" opacity=".9"/>';
+  /* lumina stării */
+  if(low<30)s+='<rect width="800" height="400" fill="#B9583A" opacity="'+(low<15?.22:.12)+'"/>';
+  else if(low>=65&&(m+p+v)/3>=70)s+='<rect width="800" height="400" fill="#0E7C86" opacity=".07"/>';
+  return '<svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Zidul cetății noaptea, cu turnuri, torțe și străjeri">'+s+'</svg>';
+}
+
+/* ================= NOPȚILE (ficțiune; decoruri reale) ================= */
+/* fx = [moral, provizii, vigilență] */
+var NIGHTS=[
+ {t:'Zvonul de la Poarta Cisnădiei',s:['Un negustor intrat pe Poarta Cisnădiei, cu puțin înainte de închidere, jură că a văzut focuri pe dealuri. Oamenii lui tremură, dar poate că au văzut doar ciobani.','E prima ta noapte de comandă. Ce faci?'],
+  c:[{t:'Dublezi străjile la toate cele patru porți',fx:[-5,-5,20],r:'Străjerii mormăie, dar urcă pe ziduri. Noaptea trece liniștită; focurile de pe deal nu se mai văd.'},
+     {t:'Trimiți doi călăreți să cerceteze dealurile',fx:[0,-5,10],r:'Călăreții se întorc înainte de zori: urme de căruțe și cenușă caldă. Cineva a fost acolo.'},
+     {t:'Îi ceri negustorului să tacă, să nu sperie orașul',fx:[5,0,-10],r:'Orașul doarme liniștit. Doar tu stai treaz, cu ochii pe deal.'}]},
+ {t:'Starostii breslelor',s:['Dimineața, starostii vin la tine: pielarii, dulgherii, olarii. Fiecare breaslă are turnul ei de apărat, după rânduială, și vor să știe ce aștepți de la ei.'],
+  c:[{t:'Fiecare breaslă la turnul ei, după rânduială',fx:[10,0,5],r:'Dulgherii urcă în turnul lor, olarii într-al lor. Oamenii își cunosc locul și treaba, iar asta îi liniștește.'},
+     {t:'Pui soldații tăi în locul breslașilor',fx:[-15,0,10],r:'Soldații sunt mai bine pregătiți, dar starostii pleacă jigniți. Zidul e păzit, orașul e supărat.'},
+     {t:'Lași câte o singură strajă în turnurile de pe Strada Cetății',fx:[0,5,-10],r:'Mai puțini oameni pe ziduri înseamnă mai puțină pâine împărțită. Dar între Turnul Archebuzierilor și cel al Dulgherilor noaptea e lungă și pustie.'}]},
+ {t:'Pulberăria',s:['Paznicul pulberăriei vine alergând: într-un butoi, praful de pușcă e umed. Dacă toate sunt așa, archebuzele de pe ziduri nu fac două parale.'],
+  c:[{t:'Verifici toate butoaiele în noaptea asta, la felinar',fx:[-5,-10,15],r:'Până la ziuă ai numărat fiecare butoi. Trei sunt stricate; restul e bun. Oamenii cască, dar știi pe ce te bazezi.'},
+     {t:'Muți pulberea uscată în Turnul Pielarilor',fx:[5,0,10],r:'Turnul Pielarilor e folosit ca depozit de pulbere; acolo e uscat și păzit. Pielarii se simt importanți.'},
+     {t:'Amâni până dimineață – noaptea nu se vede nimic',fx:[5,0,-15],r:'Toată lumea doarme. Dimineața afli că erau trei butoaie stricate, nu unul.'}]},
+ {t:'Pâinea străjerilor',s:['Brutarii bat la ușă: străjerii cer pâine mai multă, iar făina din hambar nu e nesfârșită. Starostele brutarilor așteaptă un răspuns.'],
+  c:[{t:'Deschizi hambarul – pâine caldă pentru toți',fx:[15,-20,0],r:'Mirosul de pâine urcă până în turnuri. Oamenii cântă pe ziduri. Hambarul însă e vizibil mai gol.'},
+     {t:'Rații măsurate, aceleași pentru toți',fx:[-5,-5,0],r:'Nimeni nu e fericit, dar nimeni nu e flămând. Brutarii dau din cap: așa e drept.'},
+     {t:'Trimiți căruțe cu escortă după grâne, pe Poarta Ocnei',fx:[0,15,-10],r:'Căruțele se întorc pline. Dar escorta a lipsit o noapte de pe ziduri, iar la Poarta Ocnei au stat doar doi oameni.'}]},
+ {t:'Ceața',s:['A cincea noapte vine cu o ceață groasă. De pe Turnul Olarilor nu se mai vede Turnul Dulgherilor, deși sunt pe aceeași stradă.'],
+  c:[{t:'Clopotul Turnului Sfatului bate la fiecare ceas; străjerii răspund din turn în turn',fx:[-5,0,15],r:'Toată noaptea, strigătele trec de la un turn la altul prin ceață. Nimeni nu doarme, dar nimeni nu se apropie de zid nevăzut.'},
+     {t:'Aprinzi torțe suplimentare pe metereze',fx:[0,-10,10],r:'Zidul lucește în ceață ca un șir de felinare. Ulei și rășină ai consumat cât pentru trei nopți.'},
+     {t:'Lași oamenii să se odihnească pe rând',fx:[10,0,-10],r:'Străjerii dorm pe schimburi și dimineața sunt odihniți. Dar între două schimburi, o bucată de zid a rămas nepăzită.'}]},
+ {t:'Archebuzierii',s:['Breasla archebuzierilor se plânge că n-a mai tras de mult. Vor să exerseze de la gurile de tragere ale turnului lor, cele „în formă de gaură de cheie”.'],
+  c:[{t:'Exercițiu scurt în zori, cu puțină pulbere',fx:[5,-5,10],r:'Câteva focuri în zori, bine țintite. Archebuzierii zâmbesc, pulberea s-a consumat cu măsură.'},
+     {t:'Fără exerciții – nu risipim pulberea',fx:[-10,5,0],r:'Butoaiele rămân pline. Archebuzierii pleacă bombănind că au mâinile ruginite.'},
+     {t:'Exercițiu mare, din toate turnurile deodată',fx:[10,-20,15],r:'Un tunet lung se rostogolește peste oraș. Toți știu acum că zidurile au dinți – dar praful de pușcă s-a împuținat serios.'}]},
+ {t:'Cearta de la Poarta Turnului',s:['Doi străjeri de la Poarta Turnului se ceartă. Unul vrea să plece o noapte acasă, în Orașul de Jos, la copii. Celălalt îl face laș.'],
+  c:[{t:'Îl lași să meargă acasă o noapte',fx:[10,0,-10],r:'Se întoarce în zori, cu pâine de la nevastă pentru toți. Dar la poartă a stat un singur om.'},
+     {t:'Îl pedepsești, ca să fie exemplu',fx:[-15,0,5],r:'Nimeni nu mai cere învoire. Nimeni nu mai vorbește cu tine nici la masă.'},
+     {t:'Îl muți lângă tine, la Poarta Elisabeta',fx:[5,0,0],r:'Lângă tine, omul se liniștește și veghează bine. Cearta se stinge de la sine.'}]},
+ {t:'Lumina de pe deal',s:['Ultima noapte. Pe deal, o lumină se mișcă încet, se stinge, se aprinde iar. Semnal sau un cioban cu felinarul? Zorii sunt departe.'],
+  c:[{t:'Dai alarma: toți pe ziduri, archebuzele încărcate',fx:[-10,-10,15],r:'Orașul se trezește în zgomot de arme. Lumina dispare. Până la ziuă nu se mai întâmplă nimic – dar nimeni nu a dormit.'},
+     {t:'Trimiți o patrulă mică să vadă ce e',fx:[0,-5,5],r:'Patrula găsește un cioban speriat și un felinar. Zidurile rămân liniștite, dar nu nepăzite.'},
+     {t:'Aștepți zorii fără alarmă',fx:[5,0,-15],r:'Lumina se stinge singură. Poate că n-a fost nimic. Poate că n-ai aflat niciodată.'}]}
+];
+var ENDS={
+ good:{b:'Zorii liniștiți',cls:'good',t:'A opta dimineață vine senină. Oamenii coboară de pe ziduri odihniți, hambarul nu e gol, iar starostii breslelor te salută în Piața Mare. Cine o fi fost pe dealuri – nu vei afla niciodată. În scenariul nostru imaginat, ai ținut cetatea în echilibru: moral, provizii și vigilență, toate deodată.'},
+ mid:{b:'Cetatea rezistă, cu prețul ei',cls:'',t:'Zidurile au ținut, dar opt nopți au lăsat urme: oameni obosiți, un hambar pe jumătate gol sau o breaslă supărată. Cetatea e în picioare, iar tu ai învățat că un căpitan nu poate avea totul deodată. În scenariul nostru imaginat, data viitoare poți echilibra mai bine resursele.'},
+ bad:{b:'Noaptea grea',cls:'bad',t:'O resursă s-a terminat: fără moral, fără pâine sau fără ochi pe ziduri, cetatea nu mai poate fi apărată. În scenariul nostru imaginat, noaptea aceasta se încheie prost – nimeni nu știe exact cum, pentru că povestea e inventată. Reale rămân doar zidurile. Încearcă din nou și ține cele trei bare în echilibru.'}
+};
+var TRUTH=['Turnurile de pe Strada Cetății – Archebuzierilor (1357–1366, 20,75 m), Dulgherilor (1337–1366, 21,65 m) și Olarilor (secolul al XV-lea, 19,60 m) – erau în grija breslelor ale căror nume le poartă.',
+ 'Turnul Archebuzierilor are guri de tragere „în formă de gaură de cheie”; Turnul Pielarilor a fost folosit ca depozit de pulbere, iar Turnul Pulberăriei (începutul secolului al XVI-lea) adăpostea praful de pușcă.',
+ 'Porțile principale ale cetății erau Cisnădiei, Ocnei, Turnului și Elisabeta; au fost demolate între 1830 și începutul secolului XX.',
+ 'Turnul Sfatului a fost folosit ca punct de observație pentru incendii. Fortificațiile aveau în total trei inele de ziduri și 39 de turnuri.',
+ 'Ficțiune: căpitanul Andreas, ceata de pe dealuri, cele opt nopți și toate întâmplările – nu reconstituie un asediu real al Sibiului din 1526.'];
+var SRC='Surse: patrimoniu.sibiu.ro/fortificatii; de.wikipedia.org – Hermannstadt.';
+
+/* ================= STAREA JOCULUI ================= */
+var S={m:60,p:60,v:60},night=0,log=[],busy=false,over=false;
+var LBL=['moral','provizii','vigilență'];
+function render(){
+  $('stage').innerHTML=wallArt(S,Math.max(1,Math.min(8,night+1)));
+  [['M','m'],['P','p'],['V','v']].forEach(function(k){var el=$('b'+k[0]);el.style.width=clamp(S[k[1]])+'%';el.classList.toggle('low',S[k[1]]<30);});
+  var n=$('nights');n.innerHTML='';for(var i=0;i<8;i++){var d=document.createElement('i');if(i<night)d.className='done';else if(i===night)d.className='now';n.appendChild(d);}
+}
+function showDelta(fx){
+  [['M',0],['P',1],['V',2]].forEach(function(k){var el=$('d'+k[0]);var d=fx?fx[k[1]]:0;el.textContent=fx&&d?(d>0?'+':'')+d:'';el.className='d '+(d>0?'up':(d<0?'dn':''));});
+}
+function fxHtml(fx){var s='<span class="fx">';['M','P','V'].forEach(function(l,i){var d=fx[i];if(!d)return;s+='<span class="'+(d>0?'up':'dn')+'" title="'+LBL[i]+'">'+l+(d>0?'▲':'▼')+'</span>';});return s+'</span>';}
+function showNight(){
+  busy=false;showDelta(null);
+  var N=NIGHTS[night];
+  $('place').textContent='Noaptea '+(night+1)+' din 8 · '+N.t;
+  var st=$('story');st.innerHTML='';
+  var h=document.createElement('h3');h.textContent=N.t;st.appendChild(h);
+  N.s.forEach(function(p){var e=document.createElement('p');e.textContent=p;st.appendChild(e);});
+  var ch=$('choices');ch.innerHTML='';ch.hidden=false;$('result').hidden=true;
+  N.c.forEach(function(c,i){
+    var b=document.createElement('button');b.type='button';b.className='choice';
+    b.innerHTML='<span class="arr">→</span><span class="t"></span>'+fxHtml(c.fx);
+    b.querySelector('.t').textContent=c.t;
+    b.addEventListener('click',function(){decide(i);});
+    ch.appendChild(b);
+  });
+  render();
+  var g=$('game');g.style.animation='none';void g.offsetWidth;g.style.animation='';
+}
+function decide(i){
+  if(busy)return;busy=true;
+  var N=NIGHTS[night],c=N.c[i];
+  S.m=clamp(S.m+c.fx[0]);S.p=clamp(S.p+c.fx[1]);S.v=clamp(S.v+c.fx[2]);
+  log.push({n:night+1,t:c.t});
+  showDelta(c.fx);render();
+  var dead=Math.min(S.m,S.p,S.v)<=0;
+  $('choices').hidden=true;
+  var r=$('result');r.hidden=false;
+  r.innerHTML='<div class="cons'+(dead?' warn':'')+'"></div>';
+  var cons=r.querySelector('.cons');
+  cons.textContent=c.r+(dead?' Dar '+LBL[[S.m,S.p,S.v].indexOf(0)]+'… s-a terminat.':'');
+  var b=document.createElement('button');b.type='button';b.className='btn big '+(dead?'':'accent');
+  b.textContent=dead||night>=7?'Vezi deznodământul →':'Noaptea următoare →';
+  b.addEventListener('click',function(){if(dead||night>=7){finish(dead);}else{night++;showNight();}});
+  r.appendChild(b);
+  setTimeout(function(){b.focus({preventScroll:true});if(window.innerWidth<1000)r.scrollIntoView({behavior:'smooth',block:'nearest'});},60);
+}
+function finish(dead){
+  over=true;night=8;render();
+  var avg=(S.m+S.p+S.v)/3,low=Math.min(S.m,S.p,S.v);
+  var E=dead?ENDS.bad:((avg>=62&&low>=42)?ENDS.good:ENDS.mid);
+  $('place').textContent='Deznodământ · scenariu imaginat';
+  var st=$('story');st.innerHTML='<span class="endbadge '+E.cls+'">✦ Final: '+E.b+'</span><p></p>';
+  st.querySelector('p').textContent=E.t;
+  $('choices').hidden=true;
+  var r=$('result');r.hidden=false;r.innerHTML='';
+  var d=document.createElement('details');d.className='truth';
+  d.innerHTML='<summary>Ce e real și ce e inventat în poveste?</summary><ul></ul><p class="src" style="color:var(--ceata);font-size:.88em;margin:0 0 .4em;font-style:italic"></p>';
+  TRUTH.forEach(function(t){var li=document.createElement('li');li.textContent=t;d.querySelector('ul').appendChild(li);});
+  d.querySelector('.src').textContent=SRC;
+  r.appendChild(d);
+  var ol=document.createElement('ol');ol.className='log';
+  log.forEach(function(l){var li=document.createElement('li');li.textContent=l.t;ol.appendChild(li);});
+  var lh=document.createElement('p');lh.style.cssText='margin:0 0 .3em;color:var(--ocru);font-weight:700';lh.textContent='Deciziile tale, noapte de noapte:';
+  r.appendChild(lh);r.appendChild(ol);
+  var b=document.createElement('button');b.type='button';b.className='btn big accent';b.textContent='Joacă din nou';
+  b.addEventListener('click',startGame);r.appendChild(b);
+}
+function startGame(){
+  S={m:60,p:60,v:60};night=0;log=[];over=false;
+  ['start','game'].forEach(function(s){$(s).classList.toggle('on',s==='game');});window.scrollTo(0,0);
+  showNight();
+}
+function restart(){['start','game'].forEach(function(s){$(s).classList.toggle('on',s==='start');});window.scrollTo(0,0);}
+
+$('startStage').innerHTML=wallArt({m:75,p:70,v:80},1);
+$('go').addEventListener('click',startGame);
+$('restart').addEventListener('click',restart);
+document.addEventListener('keydown',function(e){
+  if(!$('game').classList.contains('on'))return;
+  var map={'1':0,'2':1,'3':2};
+  if(!busy&&e.key in map){var b=$('choices').querySelectorAll('.choice')[map[e.key]];if(b){b.click();e.preventDefault();}}
+  else if(busy&&e.key==='Enter'&&document.activeElement.tagName!=='BUTTON'){var nb=$('result').querySelector('.btn');if(nb){nb.click();e.preventDefault();}}
+});
+window.__joc={nights:NIGHTS.length,state:function(){return S;}};
+})();
+</script>
+</body>
+</html>

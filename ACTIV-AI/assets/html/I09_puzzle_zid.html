@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Puzzle zid</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px);position:relative}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.piece:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.25em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn.sel{border-color:var(--ocru);color:var(--ocru);background:transparent}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.btn.sel:hover{background:transparent}}
+
+.screen{flex:1;display:none;min-height:0}
+.screen.on{display:flex;animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(6px,1vw,20px) 0}
+#start .left{flex:1.1;min-width:0}
+#start .intro{flex:1;max-width:760px}
+.ill{border-radius:24px;overflow:hidden;background:#172431;box-shadow:0 18px 44px rgba(0,0,0,.4)}
+.ill svg{display:block;width:100%;height:auto}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.3vw,66px);line-height:1.08;margin:0 0 .4em}
+.intro p{color:var(--ceata);margin:0 0 .9em;max-width:34em}
+.levels{display:flex;gap:12px;flex-wrap:wrap;margin:.6em 0 1.2em}
+.levels .btn{min-width:7em}
+.note{margin-top:1.2em;padding:14px 18px;border-radius:14px;background:var(--surf);border-left:5px solid var(--violet);color:var(--ceata)}
+.note b{color:var(--var)}
+
+/* joc */
+#game{gap:clamp(18px,2.6vw,52px);align-items:stretch;padding-bottom:clamp(6px,.8vw,16px)}
+#game .left{flex:1.25;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px}
+#game .panel{flex:.75;min-width:0;display:flex;flex-direction:column;background:var(--surf);border-radius:24px;padding:clamp(16px,1.8vw,36px);border:1px solid var(--line)}
+.stats{display:flex;gap:12px;flex-wrap:wrap}
+.stat{flex:1;min-width:120px;background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:10px 16px;display:flex;flex-direction:column}
+.stat span{color:var(--ceata);font-size:.82em;letter-spacing:.08em;text-transform:uppercase}
+.stat b{font-family:var(--serif);font-size:1.5em;line-height:1.1;color:var(--ocru)}
+.board{position:relative;width:100%;aspect-ratio:4/3;display:grid;gap:6px;padding:6px;background:#0B121A;border-radius:20px;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 18px 44px rgba(0,0,0,.4);transition:gap .6s,padding .6s}
+.board.solved{gap:0;padding:0;overflow:hidden}
+.cell{position:relative;background:var(--surf);border-radius:8px;min-width:0;min-height:0}
+.board.solved .cell{border-radius:0}
+.piece{position:absolute;inset:0;border-radius:8px;overflow:hidden;cursor:grab;border:2px solid transparent;transition:border-color .2s,box-shadow .2s,border-radius .6s;touch-action:none;background:#172431}
+.piece svg{display:block;width:100%;height:100%;pointer-events:none}
+.piece.sel{border-color:var(--ocru);box-shadow:0 0 0 3px rgba(226,166,43,.35)}
+.piece.drag{z-index:10;cursor:grabbing;box-shadow:0 18px 30px rgba(0,0,0,.6);transition:none;pointer-events:none;border-color:var(--ocru)}
+.piece.ok{border-color:rgba(14,124,134,.0)}
+.board.solved .piece{border-color:transparent;border-radius:0;cursor:default}
+.cell.over .piece{border-color:var(--petrol2)}
+.board.solved::after{content:"";position:absolute;inset:0;border-radius:20px;background:radial-gradient(circle at 50% 40%,rgba(226,166,43,.35),rgba(226,166,43,0) 70%);animation:glow 1.6s ease both;pointer-events:none}
+@keyframes glow{0%{opacity:0}40%{opacity:1}100%{opacity:0}}
+.board.solved .piece svg{animation:pop .7s ease both}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.place{display:flex;align-items:center;gap:.6em;color:var(--ocru);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.88em;margin:0 0 .8em}
+.place::before{content:"";width:.7em;height:.7em;border-radius:50%;background:var(--ocru)}
+.help{color:var(--ceata);margin:0 0 1em}
+.help b{color:var(--var)}
+.mini{width:min(100%,260px);border-radius:14px;overflow:hidden;border:1px solid var(--line);margin-bottom:1em}
+.mini svg{display:block;width:100%;height:auto}
+.panel .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:auto;padding-top:10px}
+.done{display:none;animation:fadeIn .5s ease both}
+.done.on{display:block}
+.endbadge{display:inline-flex;gap:.5em;align-items:center;background:var(--petrol);color:var(--var);font-weight:700;padding:.35em .9em;border-radius:99px;margin-bottom:.6em;font-size:.92em}
+.know{background:var(--bg);border-left:5px solid var(--ocru);border-radius:14px;padding:.8em 1em;margin:0 0 1em}
+.know h3{font-family:var(--serif);margin:0 0 .4em;font-size:1.1em;color:var(--ocru)}
+.know ul{margin:0 0 .4em;padding-left:1.2em;color:var(--var)}
+.know li{margin:.3em 0}
+.know .src{color:var(--ceata);font-style:italic;font-size:.88em;margin:0}
+
+@media (max-width:1000px){
+  #start,#game{flex-direction:column;align-items:stretch}
+  #start .left,#game .left{flex:none}
+  #game .panel{flex:none}
+  .mini{width:min(100%,200px)}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr;gap:10px}
+  #restart{justify-self:start;padding:.4em .9em}
+  .stat{min-width:0;padding:8px 10px}.stat b{font-size:1.2em}.stat span{font-size:.72em}
+  .levels{gap:8px}.levels .btn{min-width:0;flex:1;padding:.5em .3em;font-size:.9em;white-space:nowrap}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="cer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E2C48"/><stop offset=".55" stop-color="#4A4F7A"/><stop offset="1" stop-color="#C9794A"/></linearGradient>
+    <linearGradient id="zid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6F7D8C"/><stop offset="1" stop-color="#4A5868"/></linearGradient>
+    <g id="art"></g>
+  </defs>
+</svg>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I09</span><h1>Puzzle: reconstruiește zidul</h1></div>
+    <button class="btn ghost" id="restart" type="button">↺ Începe din nou</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="left"><div class="ill" id="startArt"></div></div>
+      <div class="intro">
+        <p class="kicker">Puzzle digital · 6, 12 sau 20 de piese</p>
+        <h2>Zidul și Turnul Dulgherilor, din fragmente</h2>
+        <p>Un segment de zid de pe Strada Cetății, cu Turnul Dulgherilor în mijloc, a fost tăiat în piese și amestecat. Trage piesele la locul lor sau atinge două piese ca să le schimbi între ele.</p>
+        <p>Alege nivelul:</p>
+        <div class="levels" role="group" aria-label="Nivel">
+          <button class="btn ghost lvl sel" type="button" data-c="3" data-r="2">6 piese</button>
+          <button class="btn ghost lvl" type="button" data-c="4" data-r="3">12 piese</button>
+          <button class="btn ghost lvl" type="button" data-c="5" data-r="4">20 de piese</button>
+        </div>
+        <button class="btn big accent" id="go" type="button">Începe puzzle-ul →</button>
+        <div class="note"><b>Ilustrație schematică,</b> desenată după descrierea turnului din fișa patrimoniu.sibiu.ro: bază circulară, prismă octogonală deasupra cornișei, acoperiș piramidal ascuțit. Nu e o fotografie.</div>
+      </div>
+    </section>
+
+    <section class="screen" id="game" aria-label="Joc">
+      <div class="left">
+        <div class="board" id="board" aria-label="Tabla de puzzle"></div>
+        <div class="stats">
+          <div class="stat"><span>Timp</span><b id="time">0:00</b></div>
+          <div class="stat"><span>Mutări</span><b id="moves">0</b></div>
+          <div class="stat"><span>La locul lor</span><b id="okc">0 / 12</b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="place" id="place">Nivel · 12 piese</p>
+        <div id="play">
+          <p class="help"><b>Mouse sau deget:</b> trage o piesă peste alta ca să le schimbi. <b>Sau:</b> atinge o piesă, apoi atinge-o pe cea cu care vrei s-o schimbi. Imaginea mică îți arată întregul.</p>
+          <div class="mini" id="mini"></div>
+          <p class="help" id="hint">Cronometrul pornește la prima mutare.</p>
+        </div>
+        <div class="done" id="done">
+          <span class="endbadge">✦ Zidul e întreg!</span>
+          <p id="doneMsg" style="margin:0 0 .8em"></p>
+          <div class="know">
+            <h3>Știai că?</h3>
+            <ul>
+              <li>Turnul Dulgherilor a fost construit între 1337 și 1366 și are 21,65 m – cel mai înalt dintre cele trei turnuri păstrate pe Strada Cetății.</li>
+              <li>Are o bază circulară care trece în prismă octogonală deasupra cornișei, iar acoperișul e piramidal și ascuțit.</li>
+              <li>A fost restaurat în 1967, în 2008 și în 2019–2020, odată cu Turnul Archebuzierilor și Turnul Olarilor, vecinii lui de pe aceeași stradă.</li>
+            </ul>
+            <p class="src">Sursa: fișa turnului, patrimoniu.sibiu.ro/fortificatii</p>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" id="shuffle" type="button">⇄ Amestecă din nou</button>
+          <button class="btn ghost" id="levels2" type="button">Alt nivel</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+var W=800,H=600;
+
+/* ================= ILUSTRAȚIA (800×600): zid cu Turnul Dulgherilor, Strada Cetății ================= */
+function art(){
+  var s='';
+  s+='<rect width="800" height="600" fill="url(#cer)"/>';
+  /* stele și lună */
+  var st=[[40,40],[120,90],[210,30],[300,70],[410,26],[520,60],[640,34],[740,80],[90,160],[690,150],[560,120],[760,190]];
+  s+='<g fill="#F3EFE6">';for(var i=0;i<st.length;i++)s+='<circle cx="'+st[i][0]+'" cy="'+st[i][1]+'" r="'+(i%3?1.6:2.4)+'" opacity="'+(i%2?.6:.9)+'"/>';s+='</g>';
+  s+='<circle cx="640" cy="110" r="38" fill="#F3EFE6" opacity=".95"/><circle cx="656" cy="98" r="34" fill="#4A4F7A"/>';
+  /* nori subțiri */
+  s+='<g fill="#F3EFE6" opacity=".12"><ellipse cx="160" cy="130" rx="90" ry="12"/><ellipse cx="520" cy="200" rx="120" ry="10"/><ellipse cx="300" cy="240" rx="70" ry="8"/></g>';
+  /* dealuri și acoperișuri în spate */
+  s+='<path d="M0 330 Q120 280 260 320 T540 300 T800 320 V420 H0Z" fill="#2B2A4A"/>';
+  s+='<g opacity=".9">';
+  var hx=[0,70,150,230,470,560,650,730];
+  for(var h=0;h<hx.length;h++){var x=hx[h],w=60+(h*17%30),rh=40+(h*13%25);s+='<rect x="'+x+'" y="'+(355-rh*.3)+'" width="'+w+'" height="60" fill="#5A4A5E"/><polygon points="'+(x-4)+','+(355-rh*.3)+' '+(x+w/2)+','+(355-rh)+' '+(x+w+4)+','+(355-rh*.3)+'" fill="'+(h%2?'#B9583A':'#9C4A31')+'"/><path d="M'+(x+w/2-10)+' '+(352-rh*.55)+' q10 -14 20 0z" fill="#1E2C48"/>';}
+  s+='</g>';
+  /* curtina de zid */
+  s+='<rect x="0" y="360" width="800" height="150" fill="url(#zid)"/>';
+  for(var x=0;x<800;x+=50)s+='<rect x="'+x+'" y="340" width="30" height="22" fill="#6F7D8C"/>';
+  s+='<path d="M0 360 H800" stroke="#3B4858" stroke-width="3"/>';
+  /* rosturi de piatră */
+  s+='<g stroke="#3B4858" stroke-width="1.6" opacity=".7">';
+  for(var y=380,r=0;y<510;y+=26,r++){s+='<path d="M0 '+y+' H800"/>';for(var xx=(r%2?30:0);xx<800;xx+=60)s+='<path d="M'+xx+' '+y+' V'+(y+26)+'"/>';}
+  s+='</g>';
+  /* guri de tragere în curtină */
+  for(var g=120;g<800;g+=140)s+='<rect x="'+g+'" y="392" width="8" height="26" fill="#121D2A"/>';
+  /* contraforți */
+  s+='<rect x="520" y="400" width="26" height="110" fill="#5A6878"/><rect x="700" y="400" width="26" height="110" fill="#5A6878"/>';
+  /* Turnul Dulgherilor: bază circulară → octogon deasupra cornișei → acoperiș piramidal ascuțit */
+  s+='<path d="M300 510 V250 Q360 236 420 250 V510Z" fill="#7B8898"/>';
+  s+='<path d="M300 510 V250 Q318 246 336 246 V510Z" fill="#8F9CAB"/><path d="M384 510 V246 Q402 246 420 250 V510Z" fill="#5D6B7B"/>';
+  s+='<g stroke="#3B4858" stroke-width="1.6" opacity=".6">';
+  for(var ty=272;ty<510;ty+=24)s+='<path d="M302 '+ty+' Q360 '+(ty-10)+' 418 '+ty+'"/>';
+  s+='</g>';
+  s+='<path d="M290 240 Q360 226 430 240 V252 Q360 238 290 252Z" fill="#8F9CAB"/>';
+  s+='<rect x="306" y="170" width="108" height="70" fill="#7B8898"/><rect x="306" y="170" width="22" height="70" fill="#8F9CAB"/><rect x="392" y="170" width="22" height="70" fill="#5D6B7B"/>';
+  s+='<path d="M328 170 V240 M392 170 V240" stroke="#3B4858" stroke-width="1.6" opacity=".6"/>';
+  s+='<polygon points="296,170 424,170 360,40" fill="#B9583A"/><polygon points="360,40 424,170 392,170" fill="#9C4A31"/>';
+  s+='<path d="M360 40 V22" stroke="#E2A62B" stroke-width="3"/><path d="M360 22 h14 l-4 5 l4 5 h-14z" fill="#E2A62B"/>';
+  /* ferestre și guri de tragere în turn */
+  s+='<rect x="354" y="192" width="12" height="20" rx="6" fill="#E2A62B"/><rect x="330" y="200" width="6" height="16" fill="#121D2A"/><rect x="384" y="200" width="6" height="16" fill="#121D2A"/>';
+  s+='<rect x="356" y="300" width="8" height="22" fill="#121D2A"/><rect x="356" y="380" width="8" height="22" fill="#121D2A"/>';
+  s+='<path d="M344 510 V470 a16 16 0 0 1 32 0 V510Z" fill="#121D2A"/>';
+  /* Strada Cetății: trotuar, pietre, copaci */
+  s+='<rect x="0" y="510" width="800" height="90" fill="#2E3A46"/><rect x="0" y="510" width="800" height="10" fill="#3B4858"/>';
+  s+='<g fill="#3A4753">';for(var py=532,pr=0;py<600;py+=18,pr++)for(var px=(pr%2?18:0);px<820;px+=36)s+='<ellipse cx="'+px+'" cy="'+py+'" rx="15" ry="6"/>';s+='</g>';
+  function tree(x,y,k,col){return '<rect x="'+(x-5*k)+'" y="'+(y-60*k)+'" width="'+(10*k)+'" height="'+(60*k)+'" fill="#3A2B20"/><circle cx="'+x+'" cy="'+(y-80*k)+'" r="'+(36*k)+'" fill="'+col+'"/><circle cx="'+(x-22*k)+'" cy="'+(y-62*k)+'" r="'+(24*k)+'" fill="'+col+'"/><circle cx="'+(x+24*k)+'" cy="'+(y-66*k)+'" r="'+(26*k)+'" fill="'+col+'"/>';}
+  s+=tree(90,560,1.25,'#2F6B5A')+tree(650,560,1.1,'#E2A62B')+tree(540,575,.8,'#2F6B5A');
+  /* felinar și trecători */
+  s+='<rect x="236" y="470" width="6" height="100" fill="#1A222B"/><rect x="226" y="452" width="26" height="24" rx="3" fill="#E2A62B"/><circle cx="239" cy="464" r="40" fill="#E2A62B" opacity=".12"/>';
+  s+='<g fill="#121A22"><circle cx="440" cy="528" r="8"/><path d="M430 580 L432 538 Q440 532 448 538 L450 580Z"/><circle cx="466" cy="534" r="6"/><path d="M459 580 L460 546 Q466 542 472 546 L473 580Z"/></g>';
+  /* bancă */
+  s+='<rect x="700" y="548" width="70" height="8" fill="#6B4A32"/><rect x="706" y="556" width="6" height="18" fill="#4C3A2A"/><rect x="758" y="556" width="6" height="18" fill="#4C3A2A"/>';
+  return s;
+}
+$('art').innerHTML=art();
+function fullSVG(label){return '<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+label+'"><use href="#art"/></svg>';}
+function pieceSVG(c,r,cols,rows){var pw=W/cols,ph=H/rows;return '<svg viewBox="'+(c*pw)+' '+(r*ph)+' '+pw+' '+ph+'" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#art"/></svg>';}
+
+/* ================= STAREA ================= */
+var cols=4,rows=3,pos=[],moves=0,t0=null,timer=null,solved=false,sel=null;
+var drag=null;
+
+function fmt(ms){var s=Math.floor(ms/1000);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
+function tick(){if(t0!==null)$('time').textContent=fmt(Date.now()-t0);}
+function startTimer(){if(t0===null){t0=Date.now();timer=setInterval(tick,500);}}
+function stopTimer(){clearInterval(timer);timer=null;tick();}
+
+function build(){
+  var n=cols*rows;
+  pos=[];for(var i=0;i<n;i++)pos.push(i);
+  do{for(var k=n-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=pos[k];pos[k]=pos[j];pos[j]=t;}}while(countOk()>Math.max(0,Math.floor(n/4)));
+  moves=0;solved=false;sel=null;t0=null;clearInterval(timer);timer=null;
+  $('time').textContent='0:00';$('moves').textContent='0';
+  $('place').textContent='Nivel · '+n+(n===20?' de':'')+' piese';
+  var b=$('board');b.classList.remove('solved');b.innerHTML='';
+  b.style.gridTemplateColumns='repeat('+cols+',minmax(0,1fr))';b.style.gridTemplateRows='repeat('+rows+',minmax(0,1fr))';
+  for(var c=0;c<n;c++){
+    var cell=document.createElement('div');cell.className='cell';cell.dataset.cell=c;
+    var p=document.createElement('div');p.className='piece';p.tabIndex=0;p.setAttribute('role','button');
+    p.dataset.id=pos[c];p.setAttribute('aria-label','Piesa '+(pos[c]+1));
+    p.innerHTML=pieceSVG(pos[c]%cols,Math.floor(pos[c]/cols),cols,rows);
+    cell.appendChild(p);b.appendChild(cell);
+  }
+  $('done').classList.remove('on');$('play').hidden=false;$('hint').textContent='Cronometrul pornește la prima mutare.';
+  $('mini').innerHTML=fullSVG('Imaginea întreagă, ca model');
+  updateOk();
+}
+function countOk(){var k=0;for(var i=0;i<pos.length;i++)if(pos[i]===i)k++;return k;}
+function updateOk(){
+  var k=countOk();$('okc').textContent=k+' / '+pos.length;
+  var cells=$('board').children;for(var i=0;i<cells.length;i++){cells[i].firstChild.classList.toggle('ok',pos[i]===i);}
+}
+function swap(a,b){
+  if(a===b||solved)return;
+  startTimer();
+  var cells=$('board').children,ca=cells[a],cb=cells[b],pa=ca.firstChild,pb=cb.firstChild;
+  ca.appendChild(pb);cb.appendChild(pa);
+  var t=pos[a];pos[a]=pos[b];pos[b]=t;
+  moves++;$('moves').textContent=moves;
+  updateOk();
+  if(countOk()===pos.length)finish();
+}
+function clearSel(){if(sel!==null){var c=$('board').children[sel];if(c)c.firstChild.classList.remove('sel');sel=null;}}
+function cellAt(x,y){var el=document.elementFromPoint(x,y);while(el&&el!==document.body){if(el.classList&&el.classList.contains('cell'))return +el.dataset.cell;el=el.parentNode;}return null;}
+function finish(){
+  solved=true;stopTimer();clearSel();
+  var b=$('board');b.classList.add('solved');
+  $('play').hidden=true;
+  $('doneMsg').textContent='Ai refăcut zidul din '+pos.length+' piese în '+fmt(Date.now()-t0)+', cu '+moves+' '+(moves===1?'mutare':'mutări')+'.';
+  setTimeout(function(){$('done').classList.add('on');if(window.innerWidth<1000)$('done').scrollIntoView({behavior:'smooth',block:'nearest'});},500);
+}
+
+/* ================= INTERACȚIUNE: pointer (mouse + atingere) și click-click ================= */
+var board=$('board');
+board.addEventListener('pointerdown',function(e){
+  if(solved)return;
+  var p=e.target.closest('.piece');if(!p)return;
+  var from=+p.parentNode.dataset.cell;
+  drag={p:p,from:from,x:e.clientX,y:e.clientY,moved:false,id:e.pointerId};
+  try{p.setPointerCapture(e.pointerId);}catch(err){}
+  e.preventDefault();
+});
+board.addEventListener('pointermove',function(e){
+  if(!drag||e.pointerId!==drag.id)return;
+  var dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)>7){drag.moved=true;drag.p.classList.add('drag');clearSel();}
+  if(drag.moved){
+    drag.p.style.transform='translate('+dx+'px,'+dy+'px)';
+    var over=cellAt(e.clientX,e.clientY);
+    var cells=board.children;for(var i=0;i<cells.length;i++)cells[i].classList.toggle('over',over===i&&over!==drag.from);
+  }
+});
+function endDrag(e){
+  if(!drag||e.pointerId!==drag.id)return;
+  var d=drag;drag=null;
+  var cells=board.children;for(var i=0;i<cells.length;i++)cells[i].classList.remove('over');
+  d.p.style.transform='';d.p.classList.remove('drag');
+  if(d.moved){
+    var to=(e.type==='pointercancel')?null:cellAt(e.clientX,e.clientY);
+    if(to!==null&&to!==d.from)swap(d.from,to);
+  }else{
+    /* click-click */
+    if(sel===null){sel=d.from;d.p.classList.add('sel');$('hint').textContent='Acum atinge piesa cu care vrei s-o schimbi.';}
+    else if(sel===d.from){clearSel();}
+    else{var a=sel;clearSel();swap(a,d.from);$('hint').textContent='';}
+  }
+}
+board.addEventListener('pointerup',endDrag);
+board.addEventListener('pointercancel',endDrag);
+board.addEventListener('keydown',function(e){
+  var p=e.target.closest('.piece');if(!p||solved)return;
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();var c=+p.parentNode.dataset.cell;if(sel===null){sel=c;p.classList.add('sel');}else if(sel===c){clearSel();}else{var a=sel;clearSel();swap(a,c);}}
+});
+
+/* ================= NAVIGARE ================= */
+function show(id){['start','game'].forEach(function(s){$(s).classList.toggle('on',s===id);});window.scrollTo(0,0);}
+var lvls=document.querySelectorAll('.lvl');
+lvls.forEach(function(b){b.addEventListener('click',function(){lvls.forEach(function(x){x.classList.remove('sel');});b.classList.add('sel');cols=+b.dataset.c;rows=+b.dataset.r;});});
+$('go').addEventListener('click',function(){show('game');build();});
+$('shuffle').addEventListener('click',build);
+$('levels2').addEventListener('click',function(){show('start');});
+$('restart').addEventListener('click',function(){clearInterval(timer);timer=null;show('start');});
+$('startArt').innerHTML=fullSVG('Ilustrație: zid de cetate cu Turnul Dulgherilor, seara, pe Strada Cetății');
+window.__puzzle={state:function(){return {pos:pos.slice(),cols:cols,rows:rows,moves:moves,solved:solved};},solveAllButTwo:function(){ /* pentru teste */
+  var n=cols*rows;for(var i=0;i<n;i++)pos[i]=i;var t=pos[0];pos[0]=pos[1];pos[1]=t;
+  var b=$('board');b.innerHTML='';for(var c=0;c<n;c++){var cell=document.createElement('div');cell.className='cell';cell.dataset.cell=c;var p=document.createElement('div');p.className='piece';p.tabIndex=0;p.dataset.id=pos[c];p.innerHTML=pieceSVG(pos[c]%cols,Math.floor(pos[c]/cols),cols,rows);cell.appendChild(p);b.appendChild(cell);}updateOk();}};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz turnuri</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.3em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru)}.btn.accent:hover{background:#efb944}.opt:hover:not(:disabled){border-color:var(--petrol2);background:var(--surf2)}}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.25em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.screen{flex:1;display:none;min-height:0;animation:fadeIn .45s ease both}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.ill{border-radius:24px;overflow:hidden;background:var(--surf);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.ill svg{display:block;width:100%;height:auto}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(8px,1.5vw,30px) 0}
+#start .ill{flex:1.1;max-width:900px}
+#start .intro{flex:1;max-width:760px}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.4vw,68px);line-height:1.08;margin:0 0 .45em}
+.intro p{color:var(--ceata);margin:0 0 1em;max-width:34em}
+.intro .note{font-size:.95em;color:var(--ceata);margin-top:1.2em;display:flex;gap:.6em;align-items:flex-start}
+.intro .note b{color:var(--var)}
+
+/* întrebare */
+#quiz{flex-direction:column;gap:clamp(12px,1.4vw,26px);padding-bottom:clamp(8px,1vw,18px)}
+.progress{display:flex;align-items:center;gap:20px;color:var(--ceata)}
+.progress .bar{flex:1;height:12px;border-radius:99px;background:var(--surf);overflow:hidden}
+.progress .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--petrol),var(--violet));border-radius:99px;transition:width .5s ease}
+.progress .score{color:var(--ocru);font-weight:700;white-space:nowrap}
+.qgrid{flex:1;display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(20px,3vw,60px);align-items:center;min-height:0}
+.qart{display:flex;flex-direction:column;gap:14px;align-items:center}
+.qart .ill{width:100%;max-width:520px}
+.qart .ill svg{animation:reveal .6s ease both}
+@keyframes reveal{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.theme{display:inline-flex;gap:.5em;align-items:center;background:var(--surf);border:1px solid var(--line);color:var(--ceata);padding:.35em .9em;border-radius:99px;font-size:.92em}
+.theme::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--ocru)}
+.qtext{font-family:var(--serif);font-weight:700;font-size:clamp(23px,2vw,42px);line-height:1.22;margin:0 0 clamp(14px,1.4vw,26px)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,.8vw,16px)}
+.opt{font:inherit;text-align:left;min-height:64px;padding:.6em 1em;border-radius:16px;background:var(--surf);color:var(--var);border:2px solid var(--line);display:flex;align-items:center;gap:.9em;cursor:pointer;transition:background .2s,border-color .2s,opacity .3s,transform .15s;touch-action:manipulation}
+.opt:active:not(:disabled){transform:scale(.99)}
+.opt .k{flex:none;width:1.9em;height:1.9em;border-radius:10px;display:grid;place-items:center;background:var(--bg);color:var(--ocru);font-weight:700}
+.opt:disabled{cursor:default}
+.opt.right{background:rgba(14,124,134,.28);border-color:#19a5b0}
+.opt.right .k{background:var(--petrol);color:var(--var)}
+.opt.wrong{background:rgba(185,88,58,.22);border-color:var(--tigla)}
+.opt.wrong .k{background:var(--tigla);color:var(--var)}
+.opt.dim{opacity:.45}
+.card{margin-top:clamp(12px,1.2vw,22px);background:var(--surf);border-left:6px solid var(--petrol);border-radius:14px;padding:clamp(12px,1vw,20px) clamp(14px,1.3vw,24px);display:none;gap:clamp(12px,1.4vw,28px);align-items:center;animation:fadeIn .35s ease both}
+.card.on{display:flex}
+.card.bad{border-left-color:var(--tigla)}
+.card .txt{flex:1;min-width:0}
+.card .verdict{font-weight:700;font-size:1.08em;margin:0 0 .25em}
+.card .verdict.ok{color:#3cc4cf}
+.card .verdict.no{color:#E7895F}
+.card h3{font-family:var(--serif);margin:0 0 .35em;font-size:1.15em}
+.card ul{margin:0 0 .4em;padding:0;list-style:none;display:grid;gap:.25em}
+.card li{display:flex;gap:.6em;align-items:baseline}
+.card li b{color:var(--ocru);font-weight:700;flex:none;min-width:6.2em}
+.card .src{color:var(--ceata);font-style:italic;margin:0;font-size:.92em}
+
+/* rezultat */
+#result{align-items:center;justify-content:center;gap:clamp(24px,5vw,90px);padding:20px 0}
+.ring{width:clamp(220px,22vw,420px);flex:none}
+.ring svg{width:100%;height:auto;display:block}
+.ring circle.val{transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
+.res h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,64px);line-height:1.1;margin:0 0 .4em}
+.res p{color:var(--ceata);max-width:30em;margin:0 0 1.2em}
+.res .row{display:flex;gap:16px;flex-wrap:wrap}
+.lineup{display:flex;gap:6px;align-items:flex-end;justify-content:center;margin:0 0 1em;flex-wrap:wrap}
+.lineup div{width:clamp(66px,5.6vw,104px);text-align:center;color:var(--ceata);font-size:.64em;line-height:1.15;overflow-wrap:anywhere}
+.lineup svg{width:100%;height:auto;display:block}
+
+@media (max-width:700px){.top{display:grid;grid-template-columns:1fr;gap:10px}#restart{justify-self:start;padding:.4em .9em}.opts{grid-template-columns:1fr}}
+@media (max-width:900px){
+  #start{flex-direction:column;align-items:stretch}
+  #start .ill{flex:none}
+  .qgrid{grid-template-columns:1fr;align-items:start;gap:14px}
+  .qart{flex-direction:row;align-items:center;justify-content:space-between}
+  .qart .ill{width:46%;max-width:240px;flex:none}
+  #result{flex-direction:column;text-align:center}
+  .res .row{justify-content:center}
+  .card.on{flex-direction:column;align-items:stretch}
+  .card li b{min-width:5.4em}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I07</span><h1>Quiz: recunoaște turnul după siluetă</h1></div>
+    <button class="btn ghost" id="restart" type="button" aria-label="Începe din nou">↺ Începe din nou</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="ill" id="startArt"></div>
+      <div class="intro">
+        <p class="kicker">10 runde · 6 turnuri · 4 variante</p>
+        <h2>Șase turnuri, o singură siluetă</h2>
+        <p>Turnurile păstrate ale cetății Sibiului se deosebesc prin formă: octogon pe console, dreptunghi cu retragere, bază rotundă care devine octogon, turn scund de pulbere sau poartă masivă cu pasaj boltit.</p>
+        <p>Privește silueta, alege numele. După fiecare răspuns primești o fișă cu anul, înălțimea și breasla turnului.</p>
+        <button class="btn big accent" id="go" type="button">Începe quiz-ul →</button>
+        <p class="note"><span aria-hidden="true">✦</span><span><b>Siluetele sunt desene schematice,</b> făcute după descrierile din fișele patrimoniu.sibiu.ro, nu fotografii. Înălțimile sunt desenate la aceeași scară (omulețul de lângă zid are 1,7 m); pentru Turnul Scărilor fișa nu dă înălțimea, așa că silueta lui e orientativă.</span></p>
+      </div>
+    </section>
+
+    <section class="screen" id="quiz" aria-label="Întrebare">
+      <div class="progress">
+        <span id="qnum">Runda 1 din 10</span>
+        <div class="bar" aria-hidden="true"><i id="qbar"></i></div>
+        <span class="score" id="qscore">Scor: 0</span>
+      </div>
+      <div class="qgrid">
+        <div class="qart">
+          <div class="ill" id="qill"></div>
+          <span class="theme" id="qtheme">Siluetă la scară</span>
+        </div>
+        <div class="qbody">
+          <h2 class="qtext" id="qtext">Ce turn are această siluetă?</h2>
+          <div class="opts" id="opts" role="group" aria-label="Variante de răspuns"></div>
+          <div class="card" id="fb" aria-live="polite">
+            <div class="txt">
+              <p class="verdict" id="fbv"></p>
+              <h3 id="fbn"></h3>
+              <ul id="fbl"></ul>
+              <p class="src" id="fbs"></p>
+            </div>
+            <button class="btn" id="next" type="button">Următoarea rundă →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="result" aria-label="Rezultat">
+      <div class="ring">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="92" fill="none" stroke="#1B2733" stroke-width="18"/>
+          <circle class="val" id="ringVal" cx="110" cy="110" r="92" fill="none" stroke="#E2A62B" stroke-width="18" stroke-linecap="round" transform="rotate(-90 110 110)" stroke-dasharray="578.05" stroke-dashoffset="578.05"/>
+          <text x="110" y="118" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="56" fill="#F3EFE6" id="ringTxt">0</text>
+          <text x="110" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" fill="#A9B4C0">din 10</text>
+        </svg>
+      </div>
+      <div class="res">
+        <p class="kicker">Rezultatul tău</p>
+        <h2 id="resTitle"></h2>
+        <p id="resMsg"></p>
+        <div class="lineup" id="lineup" aria-label="Cele șase turnuri, la scară"></div>
+        <div class="row">
+          <button class="btn big accent" id="again" type="button">Joacă din nou</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ---------- Siluete SVG (viewBox 320×440, sol la y=400, 1 m ≈ 15,7 px) ---------- */
+var FG='#F3EFE6', BG='#1B2733', EDGE='rgba(15,23,32,.28)';
+function ground(){return '<rect x="0" y="400" width="320" height="40" fill="#0E7C86" opacity=".35"/><path d="M0 400 H320" stroke="#0E7C86" stroke-width="3"/>';}
+function person(x){return '<g fill="#A9B4C0" opacity=".9"><circle cx="'+x+'" cy="379" r="4"/><path d="M'+(x-4)+' 400 L'+(x-3)+' 384 Q'+x+' 381 '+(x+3)+' 384 L'+(x+4)+' 400Z"/></g>';}
+function facets(xs,y1,y2){var s='<g stroke="'+EDGE+'" stroke-width="2">';for(var i=0;i<xs.length;i++)s+='<path d="M'+xs[i]+' '+y1+' V'+y2+'"/>';return s+'</g>';}
+function keyhole(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+BG+'"/><rect x="'+(x-2)+'" y="'+y+'" width="4" height="16" fill="'+BG+'"/>';}
+function slit(x,y,h){return '<rect x="'+(x-2.5)+'" y="'+y+'" width="5" height="'+(h||16)+'" fill="'+BG+'"/>';}
+var SIL={
+ /* Turnul Archebuzierilor – prismă octogonală, partea superioară ieșită pe console, guri „gaură de cheie”, 20,75 m */
+ arch:function(){return '<g fill="'+FG+'">'+
+   '<rect x="115" y="232" width="90" height="168"/>'+
+   '<polygon points="115,232 205,232 220,214 100,214"/>'+
+   '<polygon points="118,232 128,246 138,232"/><polygon points="150,232 160,246 170,232"/><polygon points="182,232 192,246 202,232"/>'+
+   '<rect x="100" y="118" width="120" height="96"/>'+
+   '<polygon points="94,118 226,118 160,74"/>'+
+   '</g>'+facets([137,183],232,400)+facets([128,192],118,214)+
+   keyhole(130,160)+keyhole(160,154)+keyhole(190,160)+slit(160,300)+slit(160,350,14)+
+   '<path d="M160 74 V60" stroke="'+FG+'" stroke-width="3"/><path d="M152 64 H168" stroke="'+FG+'" stroke-width="3"/>';},
+ /* Turnul Olarilor – plan dreptunghiular cu retragere la nivelul al doilea, 5 guri de tragere, 19,60 m */
+ olar:function(){return '<g fill="'+FG+'">'+
+   '<rect x="105" y="250" width="110" height="150"/>'+
+   '<rect x="122" y="140" width="76" height="110"/>'+
+   '<polygon points="114,140 206,140 160,92"/>'+
+   '</g>'+'<path d="M105 250 H215" stroke="'+EDGE+'" stroke-width="2"/>'+
+   slit(140,175)+slit(160,168)+slit(180,175)+slit(135,300)+slit(185,300);},
+ /* Turnul Dulgherilor – bază circulară, prismă octogonală deasupra cornișei, acoperiș piramidal ascuțit, 21,65 m */
+ dulg:function(){return '<g fill="'+FG+'">'+
+   '<path d="M112 400 V222 Q160 212 208 222 V400Z"/>'+
+   '<path d="M104 214 Q160 202 216 214 V222 Q160 212 104 222Z"/>'+
+   '<rect x="118" y="150" width="84" height="64"/>'+
+   '<polygon points="110,150 210,150 160,60"/>'+
+   '</g>'+
+   '<path d="M126 400 V230 M194 400 V230" stroke="'+EDGE+'" stroke-width="2" opacity=".7"/>'+facets([146,174],150,214)+
+   '<path d="M160 330 a7 7 0 0 1 7 7 v12 h-14 v-12 a7 7 0 0 1 7 -7z" fill="'+BG+'"/>'+slit(160,176)+slit(136,182,12)+slit(184,182,12);},
+ /* Turnul Pielarilor – plan octogonal, patru niveluri, 18,60 m */
+ piel:function(){return '<g fill="'+FG+'">'+
+   '<rect x="118" y="160" width="84" height="240"/>'+
+   '<polygon points="110,160 210,160 160,108"/>'+
+   '</g>'+facets([146,174],160,400)+
+   '<g stroke="'+EDGE+'" stroke-width="2"><path d="M118 220 H202"/><path d="M118 280 H202"/><path d="M118 340 H202"/></g>'+
+   slit(136,180,14)+slit(184,180,14)+slit(136,240,14)+slit(184,240,14)+slit(136,300,14)+slit(184,300,14)+
+   '<path d="M160 364 a9 9 0 0 1 9 9 v27 h-18 v-27 a9 9 0 0 1 9 -9z" fill="'+BG+'"/>';},
+ /* Turnul Pulberăriei – circular, scund, 14,5 m */
+ pulb:function(){return '<g fill="'+FG+'">'+
+   '<path d="M100 400 V258 Q160 248 220 258 V400Z"/>'+
+   '<path d="M92 258 Q160 246 228 258 Q196 190 160 172 Q124 190 92 258Z"/>'+
+   '</g>'+'<path d="M118 400 V262 M202 400 V262" stroke="'+EDGE+'" stroke-width="2" opacity=".7"/>'+
+   slit(160,290,12)+slit(132,320,10)+slit(188,320,10)+
+   '<path d="M160 370 a8 8 0 0 1 8 8 v22 h-16 v-22 a8 8 0 0 1 8 -8z" fill="'+BG+'"/>';},
+ /* Turnul Scărilor – turn-poartă masiv din cărămidă, un singur etaj, pasaj boltit, acoperiș înalt refăcut */
+ scar:function(){return '<g fill="'+FG+'">'+
+   '<rect x="70" y="262" width="180" height="138"/>'+
+   '<polygon points="60,262 260,262 204,150 116,150"/>'+
+   '</g>'+
+   '<path d="M126 400 V332 A34 34 0 0 1 194 332 V400Z" fill="'+BG+'"/>'+
+   '<path d="M70 262 H250" stroke="'+EDGE+'" stroke-width="2"/>'+
+   '<rect x="94" y="284" width="14" height="20" fill="'+BG+'"/><rect x="153" y="284" width="14" height="20" fill="'+BG+'"/><rect x="212" y="284" width="14" height="20" fill="'+BG+'"/>'+
+   '<path d="M116 150 H204" stroke="'+EDGE+'" stroke-width="2"/>';}
+};
+function sil(key,personX){return '<svg viewBox="0 0 320 440" role="img" aria-label="Silueta unui turn" xmlns="http://www.w3.org/2000/svg">'+'<rect width="320" height="440" fill="'+BG+'"/>'+SIL[key]()+ground()+person(personX||262)+'</svg>';}
+
+/* ---------- Turnurile (fișe patrimoniu.sibiu.ro) ---------- */
+var T=[
+ {k:'arch',n:'Turnul Archebuzierilor',f:[['Construit','1357–1366, odată cu a treia incintă'],['Înălțime','20,75 m'],['Breaslă','archebuzierii; numit ulterior Turnul Pânzarilor, după breasla care îl avea în îngrijire'],['Formă','prismă octogonală; partea de sus iese în afară pe console, cu guri de tragere „în formă de gaură de cheie”']]},
+ {k:'olar',n:'Turnul Olarilor',f:[['Construit','secolul al XV-lea, din piatră; consolidat un secol mai târziu'],['Înălțime','19,60 m'],['Breaslă','olarii'],['Formă','plan dreptunghiular, cu retragere la nivelul al doilea; cinci guri de tragere pentru archebuze']]},
+ {k:'dulg',n:'Turnul Dulgherilor',f:[['Construit','1337–1366'],['Înălțime','21,65 m – cel mai înalt dintre cele trei turnuri de pe Strada Cetății'],['Breaslă','dulgherii'],['Formă','bază circulară care trece în prismă octogonală deasupra cornișei; acoperiș piramidal ascuțit']]},
+ {k:'piel',n:'Turnul Pielarilor',f:[['Construit','mijlocul secolului al XV-lea'],['Înălțime','18,60 m'],['Breaslă','pielarii – prima breaslă menționată la Sibiu, în 1367'],['Formă','plan octogonal, patru niveluri; folosit ca depozit de pulbere']]},
+ {k:'pulb',n:'Turnul Pulberăriei',f:[['Construit','începutul secolului al XVI-lea'],['Înălțime','14,5 m'],['Rol','depozit pentru praful de pușcă; azi în curtea Colegiului Tehnic Independența'],['Formă','turn circular, scund']]},
+ {k:'scar',n:'Turnul Scărilor',f:[['Construit','secolul al XIII-lea; refăcut în 1542'],['Rol','turn-poartă – singura dintre cele trei porți ale primei incinte care s-a păstrat'],['Formă','construcție masivă din cărămidă, cu un singur etaj și pasaj boltit; acoperișul înalt, demolat în secolul al XIX-lea, a fost refăcut în 2007'],['Reper','prin el se ajunge la scările care leagă Orașul de Sus de Orașul de Jos']]}
+];
+var SRC='Sursa: fișele turnurilor, patrimoniu.sibiu.ro/fortificatii';
+var ROUNDS=10, KEYS=['A','B','C','D'];
+var order=[],idx=0,score=0,answered=false,current=null;
+
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function show(id){['start','quiz','result'].forEach(function(s){$(s).classList.toggle('on',s===id);});window.scrollTo(0,0);}
+function pickFacts(t){ /* 3 fapte: an, înălțime/rol, breaslă/formă */
+  var f=t.f.slice(0,3);return f;
+}
+function startQuiz(){
+  var a=shuffle([0,1,2,3,4,5]),b=shuffle([0,1,2,3,4,5]).slice(0,4);
+  if(a[5]===b[0]){var t=b[0];b[0]=b[1];b[1]=t;}
+  order=a.concat(b);idx=0;score=0;show('quiz');renderQ();
+}
+function renderQ(){
+  answered=false;
+  var t=T[order[idx]];
+  var others=shuffle([0,1,2,3,4,5].filter(function(i){return i!==order[idx];})).slice(0,3);
+  var opts=shuffle([{i:order[idx],ok:true}].concat(others.map(function(i){return {i:i,ok:false};})));
+  current={t:t,opts:opts};
+  $('qnum').textContent='Runda '+(idx+1)+' din '+ROUNDS;
+  $('qbar').style.width=(idx/ROUNDS*100)+'%';
+  $('qscore').textContent='Scor: '+score;
+  $('qill').innerHTML=sil(t.k);
+  var box=$('opts');box.innerHTML='';
+  opts.forEach(function(o,i){
+    var b=document.createElement('button');
+    b.type='button';b.className='opt';
+    b.innerHTML='<span class="k">'+KEYS[i]+'</span><span class="t"></span>';
+    b.querySelector('.t').textContent=T[o.i].n;
+    b.addEventListener('click',function(){answer(i);});
+    box.appendChild(b);
+  });
+  $('fb').classList.remove('on','bad');
+  var q=$('quiz');q.style.animation='none';void q.offsetWidth;q.style.animation='';
+}
+function answer(i){
+  if(answered)return;answered=true;
+  var ok=current.opts[i].ok;if(ok)score++;
+  var btns=$('opts').querySelectorAll('.opt');
+  btns.forEach(function(b,j){
+    b.disabled=true;
+    if(current.opts[j].ok)b.classList.add('right');
+    else if(j===i)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  $('qscore').textContent='Scor: '+score;
+  $('qbar').style.width=((idx+1)/ROUNDS*100)+'%';
+  $('fbv').textContent=ok?'Corect!':'Nu chiar – era '+current.t.n+'.';
+  $('fbv').className='verdict '+(ok?'ok':'no');
+  $('fbn').textContent=current.t.n;
+  var ul=$('fbl');ul.innerHTML='';
+  pickFacts(current.t).forEach(function(p){var li=document.createElement('li');var b=document.createElement('b');b.textContent=p[0];var s=document.createElement('span');s.textContent=p[1];li.appendChild(b);li.appendChild(s);ul.appendChild(li);});
+  $('fbs').textContent=SRC;
+  $('next').textContent=idx<ROUNDS-1?'Următoarea rundă →':'Vezi rezultatul →';
+  var fb=$('fb');fb.classList.toggle('bad',!ok);fb.classList.add('on');
+  setTimeout(function(){$('next').focus({preventScroll:true});if(window.innerWidth<900)fb.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
+}
+function next(){
+  if(!answered)return;
+  if(idx<ROUNDS-1){idx++;renderQ();}else showResult();
+}
+function showResult(){
+  show('result');
+  var t,m;
+  if(score>=9){t='Ochi de străjer!';m='Deosebești turnurile cetății dintr-o privire. Data viitoare pe Strada Cetății, caută consolele Turnului Archebuzierilor.';}
+  else if(score>=7){t='Foarte bine!';m='Cunoști bine formele turnurilor. Mai rămâne de prins diferența dintre cele două turnuri octogonale.';}
+  else if(score>=4){t='Un început bun!';m='Fiecare turn are forma lui: rotund, octogonal, dreptunghiular sau poartă cu pasaj boltit. La o plimbare pe Strada Cetății le vei recunoaște.';}
+  else{t='Fiecare siluetă e o poveste.';m='Acum știi mai mult decât la început. Încearcă din nou și urmărește înălțimea și acoperișul fiecărui turn.';}
+  $('resTitle').textContent=t;
+  $('resMsg').textContent='Ai recunoscut corect '+score+' din '+ROUNDS+' siluete. '+m;
+  $('ringTxt').textContent=score;
+  var lu=$('lineup');lu.innerHTML='';
+  T.forEach(function(x){var d=document.createElement('div');d.innerHTML=sil(x.k,300)+'<span></span>';d.querySelector('span').textContent=x.n.replace('Turnul ','');lu.appendChild(d);});
+  var c=$('ringVal'),L=578.05;
+  c.style.transition='none';c.setAttribute('stroke-dashoffset',L);void c.getBoundingClientRect();
+  c.style.transition='';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){c.setAttribute('stroke-dashoffset',L*(1-score/ROUNDS));});});
+}
+function restart(){show('start');}
+
+/* ecran de start: cele șase siluete în linie, la scară */
+(function(){
+  var s='<svg viewBox="0 0 1000 440" role="img" aria-label="Siluetele celor șase turnuri păstrate ale Sibiului, la aceeași scară" xmlns="http://www.w3.org/2000/svg"><rect width="1000" height="440" fill="'+BG+'"/>';
+  s+='<g fill="#F3EFE6" opacity=".55"><circle cx="60" cy="50" r="2"/><circle cx="240" cy="30" r="1.6"/><circle cx="430" cy="60" r="1.8"/><circle cx="700" cy="26" r="1.5"/><circle cx="820" cy="70" r="1.6"/><circle cx="560" cy="110" r="1.3"/></g>';
+  s+='<circle cx="940" cy="66" r="34" fill="#E2A62B" opacity=".9"/><circle cx="956" cy="56" r="30" fill="'+BG+'"/>';
+  var keys=['scar','dulg','arch','olar','piel','pulb'];
+  for(var i=0;i<keys.length;i++){s+='<g transform="translate('+(i*160-60)+' 0)">'+SIL[keys[i]]()+'</g>';}
+  s+='<rect x="0" y="400" width="1000" height="40" fill="#0E7C86" opacity=".35"/><path d="M0 400 H1000" stroke="#0E7C86" stroke-width="3"/>'+person(985);
+  s+='<g font-family="Noto Serif, Georgia, serif" font-weight="700" fill="#E2A62B"><text x="30" y="128" font-size="40" opacity=".9">?</text><text x="490" y="46" font-size="30" opacity=".7">?</text><text x="760" y="150" font-size="28" fill="#D6409F">?</text></g>';
+  $('startArt').innerHTML=s+'</svg>';
+})();
+
+$('go').addEventListener('click',startQuiz);
+$('again').addEventListener('click',startQuiz);
+$('next').addEventListener('click',next);
+$('restart').addEventListener('click',restart);
+document.addEventListener('keydown',function(e){
+  if(!$('quiz').classList.contains('on'))return;
+  var k=e.key.toUpperCase();var map={'1':0,'2':1,'3':2,'4':3,'A':0,'B':1,'C':2,'D':3};
+  if(!answered&&k in map){answer(map[k]);e.preventDefault();}
+  else if(answered&&(e.key==='Enter'||e.key==='ArrowRight')&&document.activeElement!==$('next')){next();e.preventDefault();}
+});
+window.__quiz={rounds:ROUNDS,towers:T.length};
+})();
+</script>
+</body>
+</html>
