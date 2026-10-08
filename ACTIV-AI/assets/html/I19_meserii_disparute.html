@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meserii dispărute</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;--zid:#F5F1EA;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+  --gap:clamp(14px,1.25vw,24px);
+  --ch:clamp(360px,calc((100vh - 290px) / 2),470px);
+  --cw:clamp(300px,calc((100vw - 2 * var(--pad) - 3 * var(--gap)) / 4),520px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var)}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.4;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,1.7vw,32px) 0 clamp(8px,.7vw,14px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.4vw,50px);line-height:1.1;margin:0}
+.tools{display:flex;gap:12px;flex-wrap:wrap}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn svg{width:1.1em;height:1.1em;flex:none}
+@media (hover:hover){.btn:hover:not(:disabled){background:var(--petrol2)}.btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--ocru)}.btn.accent:hover:not(:disabled){background:#efb944}}
+
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px 16px;flex-wrap:wrap;color:var(--ceata);margin-bottom:clamp(8px,.8vw,16px)}
+.bar b{color:var(--var)}
+.disp{display:inline-flex;align-items:center;gap:.5em;border:1px solid rgba(226,166,43,.55);background:rgba(226,166,43,.1);color:var(--var);border-radius:99px;padding:.25em .9em;font-size:.92em}
+.disp svg{width:1.2em;height:1.2em;flex:none;color:var(--ocru)}
+.grid{flex:1;display:grid;grid-template-columns:repeat(4,var(--cw));grid-auto-rows:var(--ch);gap:var(--gap);justify-content:center;align-content:center;padding-bottom:clamp(8px,.7vw,14px);position:relative}
+
+/* carte */
+.card{position:relative;width:100%;height:100%;perspective:1600px;border:0;padding:0;background:transparent;cursor:pointer;font:inherit;color:inherit;text-align:left;touch-action:manipulation;border-radius:22px}
+.card:focus-visible{outline:3px solid var(--ocru);outline-offset:4px}
+.inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.3,.7,.2,1.05)}
+.card.flipped .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 16px 36px rgba(0,0,0,.45)}
+.back{background:#1B2733 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 3 L25 14 L14 25 L3 14Z' fill='none' stroke='%232E4153' stroke-width='1.5'/%3E%3Cpath d='M11 11 H17 L11 17 H17Z' fill='%23B9583A' opacity='.7'/%3E%3C/svg%3E");border:2px solid #2E4153}
+.frame{position:absolute;inset:14px;border:3px solid var(--ocru);border-radius:14px;box-shadow:inset 0 0 0 7px rgba(27,39,51,.85),inset 0 0 0 8px rgba(226,166,43,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4%}
+.ros{height:60%;width:auto;aspect-ratio:1;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.bt{font-family:var(--serif);font-weight:700;font-size:clamp(18px,1.3vw,28px);color:var(--var);background:#1B2733;padding:.1em .7em;border-radius:99px;text-align:center}
+.bn{font-size:clamp(13px,.8vw,17px);font-weight:700;letter-spacing:.14em;color:var(--ocru);background:#1B2733;padding:.1em .6em;border-radius:99px}
+.dm{position:absolute;width:16px;height:16px;background:var(--ocru);transform:rotate(45deg)}
+.d1{top:16px;left:16px}.d2{top:16px;right:16px}.d3{bottom:16px;left:16px}.d4{bottom:16px;right:16px}
+.front{transform:rotateY(180deg);background:var(--zid);color:#0F1720;border:6px solid var(--acc);display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr);grid-template-areas:"art ttl" "what what" "pw pw" "fact fact";column-gap:clamp(10px,.8vw,16px);row-gap:clamp(4px,.4vw,8px);padding:clamp(10px,.75vw,14px)}
+.art{grid-area:art;align-self:start;width:clamp(76px,4.6vw,96px);aspect-ratio:1;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 2px rgba(15,23,32,.08);display:grid;place-items:center}
+.art svg{width:90%;height:90%}
+.ttl{grid-area:ttl;min-width:0;align-self:center}
+.idx{font-weight:700;color:var(--acc);font-size:.74em;letter-spacing:.12em;margin-bottom:.2em}
+.ttl h2{font-family:var(--serif);font-size:clamp(25px,1.65vw,35px);margin:0;line-height:1.05}
+.what{grid-area:what;margin:0;color:#3D4752;font-size:.86em;line-height:1.28}
+.what small{color:#6B7684;font-size:.86em}
+.pw{grid-area:pw;display:flex;flex-direction:column;gap:3px;border-top:1px dashed rgba(15,23,32,.2);padding-top:clamp(4px,.35vw,7px)}
+.lbl{font-size:.74em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4A5562;margin:0}
+.powers{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px}
+.powers li{display:flex;align-items:center;gap:.6em;font-weight:600;font-size:.95em;line-height:1.25}
+.powers li span.v{flex:none;min-width:2.4em;text-align:center;background:var(--acc);color:#fff;border-radius:8px;padding:.03em .35em;font-weight:700}
+.fact{grid-area:fact;align-self:end;background:#FFF8E6;border:2px solid #E9D39B;border-radius:14px;padding:.45em .7em}
+.fact .lbl{color:#9C7420}
+.fact p{margin:.1em 0 0;font-size:.9em;line-height:1.32}
+.fact small{color:#6B7684}
+.nw{white-space:nowrap}
+
+.note{color:var(--ceata);font-size:.88em;text-align:center;margin:0 0 6px}
+.deal{animation:deal .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes deal{from{opacity:0;transform:translateY(40px) rotate(-4deg) scale(.92)}to{opacity:1;transform:none}}
+
+@media (max-width:1299px){
+  :root{--cw:clamp(300px,calc((100vw - 2 * var(--pad) - var(--gap)) / 2),560px);--ch:420px}
+  .grid{grid-template-columns:repeat(2,var(--cw))}
+}
+@media (max-width:820px){
+  :root{--cw:min(440px,calc(100vw - 32px));--ch:370px}
+  .grid{grid-template-columns:var(--cw)}
+  .top{display:grid;grid-template-columns:1fr}
+  .tools .btn{padding:.4em .8em}
+  .bar{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I19</span><h1>Cărți de joc AI: „Meserii dispărute”</h1></div>
+    <div class="tools">
+      <button class="btn accent" id="shuffle" type="button">⤨ Amestecă</button>
+      <button class="btn ghost" id="flipAll" type="button">Întoarce toate</button>
+      <button class="btn ghost" id="restart" type="button">↺ Începe din nou</button>
+    </div>
+  </header>
+  <main>
+    <div class="bar">
+      <span><b>Atinge o carte</b> ca s-o întorci. 8 meserii care nu sunt în setul I04.</span>
+      <span class="disp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12M6 21h12M7 3c0 5 10 6 10 9s-10 4-10 9M17 3c0 5-10 6-10 9s10 4 10 9"/></svg><span>„Dispărute” = nu mai există ca bresle la Sibiu; unele meșteșuguri se mai practică azi.</span></span>
+      <span id="counter">Cărți întoarse: 0 din 8</span>
+    </div>
+    <div class="grid" id="grid" aria-label="Cărțile meseriilor dispărute"></div>
+    <p class="note">Puterile și valorile sunt inventate, doar pentru joc. „Faptul adevărat” vine din fișa de fapte verificate a proiectului; ce făcea fiecare meșter – din dexonline și din studiul ULBS despre breslele de arme.</p>
+  </main>
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+/* ---------- Ilustrații originale (viewBox 120×120) ---------- */
+var ART={
+ sabier:'<g transform="rotate(38 60 60)"><path d="M60 6 L66 18 L66 76 L54 76 L54 18Z" fill="#C6CFD8"/><path d="M60 6 L66 18 L66 76 L60 76Z" fill="#A9B4C0"/><path d="M60 20 V72" stroke="#7C8896" stroke-width="2"/>'+
+  '<rect x="38" y="76" width="44" height="7" rx="3.5" fill="#E2A62B"/><rect x="56" y="83" width="8" height="20" rx="3" fill="#6B4A32"/><g stroke="#4A3220" stroke-width="1.4"><path d="M56 88 H64 M56 93 H64 M56 98 H64"/></g><circle cx="60" cy="107" r="6" fill="#E2A62B"/></g>'+
+  '<g fill="#E2A62B" opacity=".9"><path d="M22 26 l2 -5 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2z"/><path d="M98 98 l1.6 -4 l1.6 4 l4 1.6 l-4 1.6 l-1.6 4 l-1.6 -4 l-4 -1.6z"/></g>',
+ arcas:'<path d="M38 10 Q92 60 38 110" fill="none" stroke="#8F5A2E" stroke-width="8" stroke-linecap="round"/><path d="M38 10 Q92 60 38 110" fill="none" stroke="#C49260" stroke-width="2.4" stroke-linecap="round"/>'+
+  '<rect x="54" y="52" width="10" height="16" rx="3" fill="#4A3220"/><path d="M38 10 L38 110" stroke="#4A5562" stroke-width="1.8"/>'+
+  '<path d="M18 60 H104" stroke="#6B4A32" stroke-width="3.4" stroke-linecap="round"/><path d="M104 60 L94 54 L94 66Z" fill="#7C8896"/><g fill="#B9583A"><path d="M18 60 L10 53 L16 53 L24 60Z"/><path d="M18 60 L10 67 L16 67 L24 60Z"/></g>',
+ arbaletrier:'<path d="M14 40 Q60 22 106 40" fill="none" stroke="#4A5562" stroke-width="7" stroke-linecap="round"/><path d="M14 40 L54 66 M106 40 L66 66" stroke="#A9B4C0" stroke-width="1.8"/>'+
+  '<path d="M54 26 L66 26 L68 106 Q60 112 52 106Z" fill="#B07A45"/><path d="M60 26 L66 26 L68 106 Q64 109 60 110Z" fill="#8F5A2E"/>'+
+  '<rect x="52" y="62" width="16" height="8" rx="3" fill="#2E3A46"/><path d="M60 30 V62" stroke="#6B4A32" stroke-width="3.4"/><path d="M60 22 L56 30 L64 30Z" fill="#7C8896"/>'+
+  '<path d="M68 76 Q84 82 84 98" fill="none" stroke="#2E3A46" stroke-width="4" stroke-linecap="round"/>',
+ pintenar:'<path d="M18 40 Q16 78 46 82 L70 80" fill="none" stroke="#7C8896" stroke-width="10" stroke-linecap="round"/><path d="M18 40 Q16 78 46 82 L70 80" fill="none" stroke="#C6CFD8" stroke-width="3" stroke-linecap="round"/>'+
+  '<path d="M66 80 L88 74" stroke="#7C8896" stroke-width="5" stroke-linecap="round"/>'+
+  '<g transform="translate(96 72)"><g fill="#E2A62B">'+(function(){var s='';for(var i=0;i<8;i++)s+='<path transform="rotate('+(i*45)+')" d="M-2.6 0 L0 -15 L2.6 0Z"/>';return s;})()+'</g><circle r="5" fill="#A87414"/><circle r="2" fill="#F5F1EA"/></g>'+
+  '<rect x="10" y="30" width="16" height="12" rx="3" fill="#6B4A32"/><rect x="14" y="33" width="8" height="6" rx="1.5" fill="none" stroke="#E2A62B" stroke-width="2"/>',
+ scutar:'<path d="M22 16 H98 V56 Q98 92 60 110 Q22 92 22 56 Z" fill="#B9583A"/><path d="M28 22 H92 V56 Q92 87 60 103 Q28 87 28 56 Z" fill="none" stroke="#F5F1EA" stroke-width="2.4"/>'+
+  '<path d="M28 64 L60 40 L92 64 L92 76 L60 52 L28 76Z" fill="#E2A62B"/><circle cx="60" cy="80" r="8" fill="#0E7C86"/>'+
+  '<g fill="#4A5562"><circle cx="30" cy="26" r="2.6"/><circle cx="90" cy="26" r="2.6"/><circle cx="60" cy="100" r="2.6"/></g>',
+ cositorar:'<ellipse cx="44" cy="98" rx="34" ry="8" fill="#A9B4C0"/><ellipse cx="44" cy="96" rx="34" ry="7" fill="#C6CFD8"/><ellipse cx="44" cy="96" rx="22" ry="4" fill="#B5BFC9"/>'+
+  '<g transform="translate(54 14)"><path d="M10 10 L38 10 L38 16 Q50 20 48 36 Q46 48 38 50 L36 64 L46 74 L2 74 L12 64 L10 50 Q2 44 2 30 Q2 18 10 16Z" fill="#C6CFD8"/><path d="M10 10 L38 10 L38 16 Q31 22 31 34 Q31 46 36 50 L36 64 L12 64 L10 50 Q2 44 2 30 Q2 18 10 16Z" fill="#DDE3E8"/>'+
+  '<path d="M8 6 Q24 -4 42 6 L42 10 L6 10Z" fill="#A9B4C0"/><circle cx="24" cy="1" r="3" fill="#A9B4C0"/><path d="M38 20 Q54 22 50 40" stroke="#A9B4C0" stroke-width="4.5" fill="none"/><path d="M14 34 H30 M14 40 H30" stroke="#A9B4C0" stroke-width="1.6"/></g>',
+ chimirar:'<path d="M8 50 Q60 36 112 50 L112 80 Q60 66 8 80 Z" fill="#8F5A2E"/><path d="M8 54 Q60 40 112 54 M8 76 Q60 62 112 76" stroke="#E2A62B" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>'+
+  '<g fill="#6B4A32"><path d="M36 46 Q46 43 56 42 L56 66 Q46 66 36 69Z"/><path d="M66 42 Q76 42 86 45 L86 68 Q76 65 66 65Z"/></g>'+
+  '<g fill="#E2A62B"><circle cx="46" cy="52" r="2.6"/><circle cx="76" cy="52" r="2.6"/><circle cx="24" cy="64" r="2.4"/><circle cx="98" cy="64" r="2.4"/><circle cx="104" cy="60" r="1.6"/><circle cx="18" cy="60" r="1.6"/></g>'+
+  '<rect x="2" y="54" width="16" height="22" rx="3" fill="none" stroke="#C6CFD8" stroke-width="3.4"/><path d="M10 54 V76" stroke="#C6CFD8" stroke-width="2.4"/>',
+ piuar:'<path d="M14 82 H106 L100 108 H20Z" fill="#8F5A2E"/><path d="M14 82 H106 L104 88 H16Z" fill="#6B4A32"/>'+
+  '<path d="M24 82 Q40 70 56 80 Q72 70 88 80 Q98 74 100 82Z" fill="#6E56CF"/><path d="M30 80 Q42 74 54 80 M62 80 Q76 74 88 80" stroke="#8B76E6" stroke-width="2" fill="none"/>'+
+  '<g transform="rotate(-18 40 40)"><rect x="34" y="8" width="8" height="46" rx="3" fill="#B07A45"/><rect x="24" y="50" width="28" height="18" rx="4" fill="#C49260"/></g>'+
+  '<g transform="rotate(14 82 36)"><rect x="78" y="4" width="8" height="46" rx="3" fill="#B07A45"/><rect x="68" y="46" width="28" height="18" rx="4" fill="#C49260"/></g>'+
+  '<g fill="#12A594"><path d="M60 50 q-5 8 0 10 q5 -2 0 -10z"/><path d="M50 34 q-4 6 0 8 q4 -2 0 -8z"/><path d="M70 30 q-4 6 0 8 q4 -2 0 -8z"/></g>'
+};
+function backSVG(i){
+  var s='<div class="frame"><svg class="ros" viewBox="-82 -82 164 164" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle r="80" fill="#0F1720"/><circle r="72" fill="none" stroke="#E2A62B" stroke-width="2"/><circle r="64" fill="none" stroke="#2E4153" stroke-width="1.5" stroke-dasharray="4 5"/>';
+  for(var k=0;k<8;k++){s+='<g transform="rotate('+(k*45+22.5)+')"><path d="M0 -24 L9 -44 L0 -60 L-9 -44Z" fill="'+(k%2?'#6E56CF':'#B9583A')+'"/><circle cx="0" cy="-68" r="3" fill="#E2A62B"/></g>';}
+  s+='<circle r="24" fill="#1B2733" stroke="#E2A62B" stroke-width="2.4"/><path d="M-10 -14 H10 M-10 14 H10" stroke="#F3EFE6" stroke-width="3" stroke-linecap="round"/><path d="M-8 -12 C-8 -3 8 -3 8 0 C8 3 -8 3 -8 12 M8 -12 C8 -3 -8 -3 -8 0 C-8 3 8 3 8 12" fill="none" stroke="#F3EFE6" stroke-width="2.2"/><path d="M-4 -8 H4 L0 -3Z M-5 11 Q0 6 5 11Z" fill="#E2A62B"/></svg>'+
+   '<span class="bt">Meserii dispărute</span><span class="bn">BRESLELE SIBIULUI</span><i class="dm d1"></i><i class="dm d2"></i><i class="dm d3"></i><i class="dm d4"></i></div>';
+  return s;
+}
+/* ---------- Date: puteri inventate; „ce făcea” – dexonline / ULBS; fapte din fișa verificată ---------- */
+var CARDS=[
+ {id:'sabier',name:'Săbierul',acc:'#3E63DD',what:'Făcea și vindea săbii.',ws:'DEX, MDA2',
+  powers:[['Oțel călit','×2'],['Tăiș drept','+3'],['Teacă de piele','+1']],
+  fact:'În documentele latine: „gladiatores”. S-au desprins din breasla fierarilor la sfârșitul secolului al XV-lea.',src:'ULBS'},
+ {id:'arcas',name:'Arcașul',acc:'#8F5A2E',what:'Aici: meșterul care făcea arcuri.',ws:'ULBS',
+  powers:[['Lemn elastic','+2'],['Coardă întinsă','+2'],['Săgeată departe','×2']],
+  fact:'În 1492, arcașii aveau în grijă un turn al cetății Sibiului.',src:'ULBS'},
+ {id:'arbaletrier',name:'Arbaletrierul',acc:'#6E56CF',what:'Aici: meșterul care făcea arbalete.',ws:'ULBS',
+  powers:[['Trăgaci sigur','+2'],['Pat de lemn','+1'],['Reîncărcare lentă','−1']],
+  fact:'Muzeul de Istorie din Sibiu păstrează 25 de arbalete din secolul al XV-lea, considerate lucrări locale.',src:'ULBS'},
+ {id:'pintenar',name:'Pintenarul',acc:'#4A5562',what:'Făcea și vindea pinteni pentru călăreți.',ws:'MDA2, DAR',
+  powers:[['Rotiță zimțată','+2'],['Pas de galop','×2'],['Clinchet de metal','+1']],
+  fact:'Ca și săbierii, pintenarii s-au desprins din breasla fierarilor la sfârșitul secolului al XV-lea.',src:'ULBS'},
+ {id:'scutar',name:'Scutarul',acc:'#B9583A',what:'Aici: meșterul care făcea scuturi.',ws:'ULBS',
+  powers:[['Zid de lemn','+3'],['Piele întinsă','+1'],['Blazon pictat','+1']],
+  fact:'În a doua jumătate a secolului al XVI-lea, scutarii au primit în grijă un turn al cetății.',src:'ULBS'},
+ {id:'cositorar',name:'Cositorarul',acc:'#0E7C86',what:'Făcea vase și căni din cositor.',ws:'MDA2',
+  powers:[['Topire ușoară','+2'],['Tipar sigur','×2'],['Cană cu picior','+1']],
+  fact:'Una dintre cele mai mari bresle din Transilvania (secolul al XVI-lea). În 1568: 10 la 1 cositor–plumb.',src:'limbaromana.org'},
+ {id:'chimirar',name:'Chimirarul',acc:'#A87414',what:'Făcea chimire – brâie late de piele.',ws:'DEX: chimir',
+  powers:[['Buzunar ascuns','+2'],['Cataramă','+1'],['Brâu de sărbătoare','×2']],
+  fact:'Chimirarii apar printre meseriile vechi ale Sibiului, alături de căciulari, mantelari și trăistari.',src:'limbaromana.org; ULBS'},
+ {id:'piuar',name:'Piuarul',acc:'#C2357F',what:'Lucra la piua care împâslește postavul.',ws:'DEX',
+  powers:[['Ciocane de lemn','+2'],['Apă caldă','+1'],['Postav des','×2']],
+  fact:'În 1577, postăvarii au cumpărat cu 100 de florini piua de lângă Poarta Turnului.',src:'limbaromana.org'}
+];
+var ROMAN=['I','II','III','IV','V','VI','VII','VIII'],NC=CARDS.length;
+var grid=$('grid'),els=[],busy=false,reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+/* cuvintele cu cratimă (s-au, XV-lea) nu se despart la capăt de rând */
+function nw(s){return esc(s).replace(/(\S+-\S+)/g,'<span class="nw">$1</span>');}
+function cardEl(c,i){
+  var b=document.createElement('button');b.type='button';b.className='card';b.dataset.id=c.id;
+  b.style.setProperty('--acc',c.acc);
+  b.setAttribute('aria-pressed','false');b.setAttribute('aria-label','Carte: '+c.name+'. Atinge pentru a întoarce.');
+  var front='<div class="face front"><div class="art"><svg viewBox="0 0 120 120" aria-hidden="true">'+ART[c.id]+'</svg></div>'+
+   '<div class="ttl"><div class="idx">'+ROMAN[i]+' · MESERIE DISPĂRUTĂ</div><h2>'+esc(c.name)+'</h2></div>'+
+   '<p class="what">'+nw(c.what)+'</p>'+
+   '<div class="pw"><p class="lbl">Puteri de joc · inventate</p><ul class="powers">'+c.powers.map(function(p){return '<li><span class="v">'+p[1]+'</span><span>'+esc(p[0])+'</span></li>';}).join('')+'</ul></div>'+
+   '<div class="fact"><p class="lbl">★ Fapt adevărat</p><p>'+nw(c.fact)+' <small>('+esc(c.src)+')</small></p></div></div>';
+  b.innerHTML='<div class="inner"><div class="face back">'+backSVG(i)+'</div>'+front+'</div>';
+  b.addEventListener('click',function(){if(busy)return;setFlip(b,!b.classList.contains('flipped'));});
+  return b;
+}
+function setFlip(b,on){b.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on?'true':'false');count();}
+function count(){var n=grid.querySelectorAll('.card.flipped').length;$('counter').textContent='Cărți întoarse: '+n+' din '+NC;$('flipAll').textContent=n===NC?'Ascunde toate':'Întoarce toate';}
+function build(order){
+  grid.innerHTML='';els=[];
+  order.forEach(function(ci,k){var e=cardEl(CARDS[ci],ci);e.classList.add('deal');e.style.animationDelay=(k*70)+'ms';grid.appendChild(e);els.push(e);});
+  setTimeout(function(){els.forEach(function(e){e.classList.remove('deal');e.style.animationDelay='';});},1400);
+  count();
+}
+function shuffleArr(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function shuffle(){
+  if(busy)return;busy=true;$('shuffle').disabled=true;
+  var cards=[].slice.call(grid.children),anyUp=cards.some(function(c){return c.classList.contains('flipped');});
+  cards.forEach(function(c){setFlip(c,false);});
+  setTimeout(function(){
+    var g=grid.getBoundingClientRect(),cx=g.left+g.width/2,cy=Math.min(g.top+g.height/2,window.innerHeight/2);
+    var first=cards.map(function(c){return c.getBoundingClientRect();});
+    var gather=cards.map(function(c,i){var r=first[i];return c.animate([{transform:'none'},{transform:'translate('+(cx-r.left-r.width/2)+'px,'+(cy-r.top-r.height/2)+'px) rotate('+((i%3)-1)*5+'deg)'}],{duration:reduced?1:380,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'});});
+    gather[gather.length-1].onfinish=function(){
+      var order;do{order=shuffleArr(cards);}while(order.every(function(c,i){return c===cards[i];}));
+      order.forEach(function(c){grid.appendChild(c);});
+      gather.forEach(function(a){a.cancel();});
+      order.forEach(function(c,k){var r=c.getBoundingClientRect();
+        c.animate([{transform:'translate('+(cx-r.left-r.width/2)+'px,'+(cy-r.top-r.height/2)+'px) rotate('+((k%3)-1)*5+'deg)'},{transform:'none'}],{duration:reduced?1:620,delay:reduced?0:k*60,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'});});
+      setTimeout(function(){busy=false;$('shuffle').disabled=false;},reduced?20:620+NC*60);
+    };
+  },anyUp&&!reduced?650:0);
+}
+$('shuffle').addEventListener('click',shuffle);
+$('flipAll').addEventListener('click',function(){if(busy)return;var cards=[].slice.call(grid.children),allUp=cards.every(function(c){return c.classList.contains('flipped');});cards.forEach(function(c,i){setTimeout(function(){setFlip(c,!allUp);},reduced?0:i*90);});});
+$('restart').addEventListener('click',function(){if(busy)return;build([0,1,2,3,4,5,6,7]);});
+build([0,1,2,3,4,5,6,7]);
+window.__cards={order:function(){return [].map.call(grid.children,function(c){return c.dataset.id;});},busy:function(){return busy;}};
+})();
+</script>
+</body>
+</html>

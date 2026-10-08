@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unealta și meseria</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--zid:#F5F1EA;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.notice{display:flex;align-items:center;gap:.7em;margin:clamp(8px,.8vw,16px) 0 0;padding:.5em 1em;border-radius:14px;background:rgba(14,124,134,.14);border:1px solid rgba(18,149,159,.45);color:var(--var);font-size:clamp(14px,1.02vw,21px);line-height:1.35}
+.notice svg{width:1.7em;height:1.7em;flex:none;color:#7FD6C9}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);margin-top:clamp(8px,.8vw,16px);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.15vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.3em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s;touch-action:manipulation;text-align:center;line-height:1.2}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.tool:focus-visible,.prof:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.15em;min-height:72px;padding:.5em 1.5em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn[aria-pressed="true"]{border-color:var(--ocru);color:var(--ocru)}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}
+  .tool:not(.done):hover{border-color:var(--ocru)}.prof:not(.done):hover{border-color:var(--ocru);background:var(--surf2)}}
+.screen{flex:1;display:none;min-height:0;animation:fadeIn .45s ease both}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.88em;margin:0 0 .6em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+
+/* copertă */
+#cover{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(6px,1vw,20px) 0}
+#cover .art{flex:1.1;max-width:900px;border-radius:24px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+#cover .art>svg{display:block;width:100%;height:auto}
+#cover .intro{flex:1;max-width:780px}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,64px);line-height:1.08;margin:0 0 .45em}
+.intro p{color:var(--ceata);margin:0 0 1em;max-width:34em}
+.intro p b{color:var(--var)}
+.steps{margin:0 0 1.3em;padding:0;list-style:none;display:grid;gap:.45em;counter-reset:s}
+.steps li{display:flex;gap:.75em;align-items:flex-start;counter-increment:s;line-height:1.4}
+.steps li::before{content:counter(s);flex:none;width:1.75em;height:1.75em;border-radius:50%;background:var(--petrol);color:var(--var);display:grid;place-items:center;font-weight:700;font-size:.9em;margin-top:.05em}
+.how{font-size:.9em;color:var(--ceata);margin:1.3em 0 0;display:flex;gap:.6em;align-items:flex-start;max-width:36em}
+.how b{color:var(--var)}
+
+/* joc */
+#game{flex-direction:column;gap:clamp(10px,1vw,18px)}
+.hud{display:flex;align-items:center;gap:clamp(10px,1.4vw,28px);flex-wrap:wrap;color:var(--ceata)}
+.hud .stat{display:inline-flex;align-items:baseline;gap:.45em;white-space:nowrap}
+.hud .stat b{font-family:var(--serif);color:var(--var);font-size:1.35em;font-variant-numeric:tabular-nums}
+.dots{flex:1;display:flex;gap:6px;min-width:150px;max-width:420px}
+.dots i{flex:1;height:12px;border-radius:99px;background:var(--surf);transition:background .3s}
+.dots i.ok{background:var(--petrol2)}
+.dots i.re{background:var(--ocru)}
+.hud .sp{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+#timer{font-variant-numeric:tabular-nums;min-width:8.6em}
+.board{flex:1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(16px,2vw,40px);min-height:0}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(10px,1vw,20px);min-height:0}
+.tool{font:inherit;color:inherit;position:relative;background:var(--surf);border:3px solid var(--line);border-radius:20px;padding:clamp(8px,.7vw,14px);cursor:grab;display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.5vw,10px);min-height:0;min-width:0;touch-action:none;user-select:none;-webkit-user-select:none;transition:border-color .2s,background .2s,transform .15s,opacity .3s}
+.tool.enter{animation:fadeIn .4s ease both}
+.tool .art{flex:1;min-height:0;width:100%;display:grid;place-items:center;background:var(--zid);border-radius:14px;box-shadow:inset 0 0 0 2px rgba(15,23,32,.08)}
+.tool .art svg{height:92%;width:auto;max-width:92%;aspect-ratio:1;display:block;pointer-events:none}
+.tool .tn{font-weight:700;font-size:1em;line-height:1.15;text-align:center}
+.tool .tm{position:absolute;top:clamp(12px,1vw,20px);right:clamp(12px,1vw,20px);background:var(--petrol);color:var(--var);font-weight:700;font-size:.82em;border-radius:99px;padding:.2em .7em;display:none;align-items:center;gap:.3em}
+.tool .tm svg{width:1.1em;height:1.1em}
+.tool.sel{border-color:var(--ocru);background:#2A3644;transform:translateY(-3px);box-shadow:0 0 0 4px rgba(226,166,43,.25)}
+.tool.done{cursor:default;border-color:var(--petrol2);background:#17303A}
+.tool.done .art{opacity:.8}
+.tool.done .tm{display:inline-flex}
+.tool.bad,.prof.bad{animation:shake .45s ease;border-color:var(--tigla)!important}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.tool.flash{animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
+.side{display:flex;flex-direction:column;gap:clamp(10px,1vw,18px);min-height:0;min-width:0}
+.side h2{font-family:var(--serif);font-size:1.25em;margin:0}
+.side h2 small{font-family:var(--sans);font-weight:500;color:var(--ceata);font-size:.72em;margin-left:.4em}
+.profs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(8px,.8vw,14px)}
+.prof{font:inherit;font-weight:700;font-size:clamp(19px,1.3vw,28px);min-height:clamp(56px,4.4vw,84px);border-radius:16px;border:3px solid var(--line);background:var(--surf);color:var(--var);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5em;padding:.3em .8em;text-align:center;line-height:1.15;touch-action:manipulation;transition:border-color .2s,background .2s,opacity .3s}
+.prof.sel{border-color:var(--ocru);background:#2A3644}
+.prof.hot{border-color:var(--ocru);background:rgba(226,166,43,.18)}
+.prof.done{opacity:.38;cursor:default;text-decoration:line-through;text-decoration-thickness:2px}
+.prof.wait{border-style:dashed}
+.rdone{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:rgba(14,124,134,.2);border:2px solid var(--petrol2);border-radius:18px;padding:clamp(12px,1vw,20px) clamp(14px,1.3vw,26px)}
+.rdone p{margin:0;display:flex;flex-direction:column;gap:.15em}
+.rdone b{font-family:var(--serif);font-size:1.3em}
+.rdone span{color:var(--ceata)}
+.fb{flex:1;min-height:0;overflow:auto;background:var(--surf);border-radius:20px;padding:clamp(14px,1.3vw,26px);display:flex;flex-direction:column;gap:.55em;border-left:8px solid var(--chip)}
+.fb.ok{border-left-color:var(--petrol2)}
+.fb.no{border-left-color:var(--tigla)}
+.fb p{margin:0}
+.verdict{display:flex;align-items:center;gap:.5em;font-family:var(--serif);font-weight:700;font-size:1.45em;line-height:1.15}
+.verdict svg{width:1.25em;height:1.25em;flex:none}
+.verdict.ok{color:#5FD0D8}.verdict.no{color:#F08A6A}
+.fb .lab{font-size:.78em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ceata);margin-bottom:.1em}
+.fb .what{line-height:1.42}
+.fb .sib{background:rgba(226,166,43,.12);border:1px solid rgba(226,166,43,.45);border-radius:14px;padding:.55em .8em;line-height:1.42}
+.fb .sib .lab{color:var(--ocru)}
+.fb small{color:var(--ceata);font-size:.82em}
+.fb .btn{align-self:flex-start;margin-top:.2em}
+.fb ol{margin:.2em 0 0;padding-left:1.3em;color:var(--ceata);display:grid;gap:.3em}
+.fb ol b{color:var(--var)}
+.ghost-drag{position:fixed;left:0;top:0;width:120px;height:120px;border-radius:18px;background:var(--zid);box-shadow:0 18px 36px rgba(0,0,0,.5),0 0 0 4px var(--ocru);pointer-events:none;z-index:50;display:grid;place-items:center;opacity:.95}
+.ghost-drag svg{width:90%;height:90%}
+
+/* rezultat */
+#result{align-items:center;justify-content:center;gap:clamp(24px,5vw,90px);padding:10px 0}
+.ring{width:clamp(220px,19vw,360px);flex:none}
+.ring svg{width:100%;height:auto;display:block}
+.res{max-width:980px}
+.res h2{font-family:var(--serif);font-size:clamp(30px,3.1vw,62px);line-height:1.1;margin:0 0 .4em}
+.res p{color:var(--ceata);max-width:36em;margin:0 0 1em}
+.res p b{color:var(--var)}
+.rev{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px;margin:0 0 1.3em;padding:0;list-style:none}
+.rev li{display:flex;align-items:center;gap:.45em;background:var(--surf);border:2px solid var(--line);border-radius:12px;padding:.3em .7em;font-size:.88em;font-weight:600;line-height:1.2}
+.rev li svg{width:1.15em;height:1.15em;flex:none}
+.rev li.ok{border-color:var(--petrol2)}.rev li.ok svg{color:#5FD0D8}
+.rev li.re{border-color:#9C7420}.rev li.re svg{color:var(--ocru)}
+.rev li span i{font-style:normal;color:var(--ceata);font-weight:500}
+
+@media (min-width:1001px) and (min-height:860px){.app{height:100vh;height:100dvh}}
+@media (min-width:1001px) and (max-height:859px){.tools{grid-template-rows:none;align-content:start}.tool .art{flex:none;aspect-ratio:1}.fb{overflow:visible;flex:none}}
+@media (max-width:1000px){
+  #cover{flex-direction:column;align-items:stretch}
+  #cover .art{flex:none}
+  .board{grid-template-columns:1fr}
+  .tools{grid-template-rows:none}
+  .tool .art{flex:none;aspect-ratio:1}
+  .tool .art svg{height:88%}
+  .fb{overflow:visible;flex:none}
+  #result{flex-direction:column;text-align:center}
+  .res .row{justify-content:center}
+  .rev{grid-template-columns:repeat(2,minmax(0,1fr));text-align:left}
+  .hud .sp{margin-left:0}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr;gap:10px}
+  #home{justify-self:start;padding:.4em .9em}
+  .hud{gap:6px 14px}
+  .dots{flex:1 1 100%;order:3;max-width:none}
+  .hud .sp{order:4;width:100%}
+  .hud .sp .btn{flex:1;padding:.4em .6em}
+  .tools{gap:8px}
+  .tool{border-radius:16px;padding:6px}
+  .tool .art{border-radius:10px}
+  .tool .tn{font-size:.8em}
+  .tool .tm{top:8px;right:8px;font-size:.66em;padding:.15em .5em}
+  .prof{font-size:18px}
+  .rev{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I17</span><h1>Joc AI: potrivește unealta cu meseria</h1></div>
+    <button class="btn ghost" id="home" type="button">↺ Coperta</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="cover" aria-label="Începutul jocului">
+      <div class="art" id="coverArt"></div>
+      <div class="intro">
+        <p class="kicker">12 unelte · 12 meserii · 2 runde</p>
+        <h2>Ce unealtă folosea fiecare meșter?</h2>
+        <p>În atelierele breslelor, fiecare meșter își avea uneltele lui. Potrivește <b>12 unelte</b> cu meseriile lor – toate meserii atestate la Sibiu – și, după fiecare pereche găsită, află un <b>fapt adevărat</b> despre breasla din Sibiu.</p>
+        <ol class="steps">
+          <li><span><b>Atinge o unealtă</b>, apoi meseria potrivită – sau <b>trage unealta</b> peste meserie.</span></li>
+          <li><span>Dacă nu se potrivesc, primești un indiciu despre unealtă.</span></li>
+          <li><span>Scorul numără perechile găsite <b>din prima</b>. Cronometrul e opțional.</span></li>
+        </ol>
+        <div class="row">
+          <button class="btn big accent" id="start" type="button">Începe jocul →</button>
+          <button class="btn ghost tmr" id="tmrCover" type="button" aria-pressed="false">⏱ Cronometru: oprit</button>
+        </div>
+        <p class="how"><span aria-hidden="true">✦</span><span><b>Cum e făcut:</b> jocul a fost scris cu AI (Claude, Anthropic). Ce face fiecare unealtă – informație generală, verificată în dexonline și pe en.wikipedia; faptele despre bresle vin din fișa de fapte verificate a proiectului, cu sursa la fiecare.</span></p>
+      </div>
+    </section>
+
+    <section class="screen" id="game" aria-label="Jocul: potrivește unealta cu meseria">
+      <div class="hud">
+        <span class="stat">Runda <b id="rn">1</b> din 2</span>
+        <span class="stat">Perechi <b id="pn">0</b> din 12</span>
+        <span class="stat">Din prima <b id="fp">0</b></span>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <div class="sp">
+          <button class="btn ghost tmr" id="timer" type="button" aria-pressed="false">⏱ Cronometru: oprit</button>
+          <button class="btn ghost" id="restart" type="button">↻ De la capăt</button>
+        </div>
+      </div>
+      <div class="board">
+        <div class="tools" id="tools" role="group" aria-label="Uneltele rundei"></div>
+        <div class="side">
+          <h2>Meseriile <small id="selInfo">Alege o unealtă</small></h2>
+          <div class="profs" id="profs" role="group" aria-label="Meseriile rundei"></div>
+          <div class="rdone" id="rdone" hidden><p><b id="rdTitle"></b><span id="rdMsg"></span></p><button class="btn big accent" id="goNext" type="button"></button></div>
+          <div class="fb" id="fb" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="result" aria-label="Rezultatul jocului">
+      <div class="ring">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="92" fill="none" stroke="#1B2733" stroke-width="18"/>
+          <circle id="ringVal" cx="110" cy="110" r="92" fill="none" stroke="#E2A62B" stroke-width="18" stroke-linecap="round" transform="rotate(-90 110 110)" stroke-dasharray="578.05" stroke-dashoffset="578.05" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)"/>
+          <text x="110" y="118" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="58" fill="#F3EFE6" id="ringTxt">0</text>
+          <text x="110" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" fill="#A9B4C0">din 12, din prima</text>
+        </svg>
+      </div>
+      <div class="res">
+        <p class="kicker">Scorul tău</p>
+        <h2 id="resTitle"></h2>
+        <p id="resMsg"></p>
+        <ul class="rev" id="rev" aria-label="Perechile din joc"></ul>
+        <div class="row">
+          <button class="btn big accent" id="again" type="button">Joacă din nou</button>
+          <button class="btn ghost" id="toCover" type="button">Înapoi la copertă</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="notice"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 40 26 22"/><path d="M24 12l12 12-6 6-12-12z"/><path d="M30 8l10 10"/></svg><span>Unelte desenate schematic cu AI, nu după obiecte din muzee. Meseriile din joc sunt doar cele atestate la Sibiu în sursele proiectului; fiecare fapt are sursa lui.</span></p>
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* =====================================================================
+   ILUSTRAȚII – unelte desenate schematic în SVG (viewBox 0 0 120 120)
+   ===================================================================== */
+var ART={
+ calapod:'<ellipse cx="62" cy="96" rx="48" ry="6" fill="#0F1720" opacity=".12"/>'+
+  '<path d="M20 50 Q20 34 34 33 L56 33 Q66 33 72 42 Q80 56 96 63 Q108 68 106 80 Q104 90 92 90 L30 90 Q18 90 18 78 Z" fill="#B07A45"/>'+
+  '<path d="M18 78 Q18 90 30 90 L92 90 Q104 90 106 80 Q100 84 90 84 L30 84 Q22 84 18 78Z" fill="#7A4E2A"/>'+
+  '<path d="M28 58 Q52 52 72 60 Q86 66 98 72" stroke="#8F5A2E" stroke-width="2" fill="none" opacity=".55"/><path d="M26 70 Q50 66 70 72 Q84 76 100 78" stroke="#8F5A2E" stroke-width="2" fill="none" opacity=".4"/>'+
+  '<rect x="34" y="28" width="22" height="7" rx="2.5" fill="#7C8896"/><circle cx="45" cy="45" r="4" fill="#5A3A20"/>'+
+  '<path d="M84 18 L100 34" stroke="#6B4A32" stroke-width="5" stroke-linecap="round"/><rect x="74" y="10" width="18" height="10" rx="2" transform="rotate(45 83 15)" fill="#4A5562"/>',
+ ac:'<path d="M14 106 L92 22" stroke="#4A5562" stroke-width="4" stroke-linecap="round"/><path d="M14 106 L20 99" stroke="#A9B4C0" stroke-width="2"/>'+
+  '<ellipse cx="87" cy="27.5" rx="2.2" ry="5" transform="rotate(42 87 27.5)" fill="#F5F1EA"/>'+
+  '<path d="M88 26 C104 18 110 40 96 50 C84 58 96 74 108 70" stroke="#B9583A" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+
+  '<path d="M52 98 L52 66 Q52 46 70 46 Q88 46 88 66 L88 98 Z" fill="#A9B4C0"/><path d="M52 98 L52 66 Q52 46 70 46 Q62 52 62 66 L62 98Z" fill="#C6CFD8"/>'+
+  '<g fill="#7C8896">'+(function(){var s='';for(var r=0;r<4;r++)for(var c=0;c<4;c++){var x=58+c*8+(r%2?4:0),y=58+r*8;if(x<86)s+='<circle cx="'+x+'" cy="'+y+'" r="2"/>';}return s;})()+'</g>'+
+  '<rect x="49" y="94" width="42" height="9" rx="3" fill="#7C8896"/>',
+ nicovala:'<ellipse cx="60" cy="102" rx="46" ry="5" fill="#0F1720" opacity=".14"/>'+
+  '<path d="M10 54 Q28 54 40 50 L104 50 L104 64 L88 64 Q78 66 76 74 L76 84 L90 84 L94 98 L36 98 L40 84 L56 84 L56 74 Q54 66 44 64 L28 62 Q14 60 10 54 Z" fill="#4A5562"/>'+
+  '<path d="M10 54 Q28 54 40 50 L104 50 L104 55 L40 55 Q28 58 10 54Z" fill="#7C8896"/><rect x="86" y="51" width="6" height="4" fill="#2E3A46"/>'+
+  '<g transform="rotate(-38 70 28)"><rect x="66" y="20" width="44" height="7" rx="3.5" fill="#8F5A2E"/><rect x="54" y="12" width="16" height="23" rx="3" fill="#2E3A46"/></g>'+
+  '<g fill="#E2A62B"><circle cx="34" cy="40" r="2.4"/><circle cx="26" cy="32" r="1.8"/><circle cx="40" cy="30" r="1.6"/><circle cx="20" cy="42" r="1.4"/></g>',
+ roata:'<path d="M48 46 Q42 34 50 26 L50 20 L70 20 L70 26 Q78 34 72 46 Z" fill="#B9583A"/><path d="M50 20 L70 20 L70 23 L50 23Z" fill="#8F3E26"/><path d="M54 30 Q60 33 66 30" stroke="#8F3E26" stroke-width="1.6" fill="none"/>'+
+  '<ellipse cx="60" cy="48" rx="34" ry="7" fill="#8F5A2E"/><ellipse cx="60" cy="46.5" rx="34" ry="6" fill="#A8743F"/>'+
+  '<rect x="57" y="52" width="6" height="40" fill="#4A5562"/>'+
+  '<ellipse cx="60" cy="98" rx="46" ry="11" fill="#7A4E2A"/><ellipse cx="60" cy="95" rx="46" ry="10" fill="#B07A45"/><ellipse cx="60" cy="95" rx="10" ry="2.4" fill="#4A5562"/>'+
+  '<g stroke="#E2A62B" stroke-width="3" fill="none" stroke-linecap="round"><path d="M18 40 Q14 48 20 54"/><path d="M102 40 Q106 48 100 54"/></g>'+
+  '<path d="M96 84 Q104 76 112 80" stroke="#6E56CF" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M108 74 L113 80 L106 83" stroke="#6E56CF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+ barda:'<rect x="8" y="88" width="104" height="16" rx="6" fill="#B07A45"/><path d="M14 94 H106" stroke="#8F5A2E" stroke-width="1.6" opacity=".6"/><g fill="#C98A4B"><path d="M30 84 l6 -5 l3 4z"/><path d="M90 82 l7 -3 l1 5z"/></g>'+
+  '<path d="M26 92 L66 36" stroke="#8F5A2E" stroke-width="8" stroke-linecap="round"/>'+
+  '<path d="M58 26 L74 24 L76 36 Q92 32 102 18 Q114 46 98 74 Q90 58 74 52 L72 60 L58 58 Z" fill="#A9B4C0"/>'+
+  '<path d="M102 18 Q114 46 98 74" stroke="#F5F1EA" stroke-width="2.6" fill="none"/><path d="M58 26 L74 24 L72 60 L58 58Z" fill="#7C8896"/>',
+ razuit:'<path d="M18 74 C26 62 46 66 60 62 C76 58 92 64 104 74 C110 82 104 100 90 104 C70 110 46 110 28 104 C14 98 12 84 18 74Z" fill="#C98A4B"/>'+
+  '<path d="M24 78 C34 70 50 72 62 68 C76 66 90 70 98 78 C102 86 96 98 86 100 C68 104 48 104 32 100 C22 96 20 86 24 78Z" fill="none" stroke="#F5F1EA" stroke-width="2" stroke-dasharray="4 4"/>'+
+  '<path d="M26 40 Q60 56 94 40 L94 48 Q60 66 26 48 Z" fill="#A9B4C0"/><path d="M26 48 Q60 66 94 48" stroke="#F5F1EA" stroke-width="2.2" fill="none"/>'+
+  '<rect x="10" y="22" width="12" height="34" rx="6" transform="rotate(-24 16 39)" fill="#6B4A32"/><rect x="98" y="22" width="12" height="34" rx="6" transform="rotate(24 104 39)" fill="#6B4A32"/>',
+ creuzet:'<path d="M20 98 Q30 84 34 92 Q40 80 46 92 Q52 84 58 98Z" fill="#E2A62B" opacity=".85"/><path d="M28 98 Q34 90 38 96 Q42 88 48 98Z" fill="#B9583A"/>'+
+  '<path d="M18 46 L60 46 L52 86 Q39 92 26 86 Z" fill="#E9E4DA" stroke="#7C8896" stroke-width="2.4" stroke-linejoin="round"/>'+
+  '<ellipse cx="39" cy="46" rx="21" ry="5" fill="#E2A62B"/><ellipse cx="37" cy="45" rx="10" ry="2" fill="#FFE29A"/>'+
+  '<path d="M52 66 H80" stroke="#E2A62B" stroke-width="5" stroke-linecap="round"/><path d="M92 66 Q104 66 112 76" stroke="#E2A62B" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+  '<rect x="78" y="16" width="16" height="92" rx="3" fill="#4A5562"/>'+
+  '<g fill="#F5F1EA"><circle cx="86" cy="26" r="4.6"/><circle cx="86" cy="40" r="3.8"/><circle cx="86" cy="53" r="3.2"/><circle cx="86" cy="66" r="2.4"/><circle cx="86" cy="78" r="1.9"/><circle cx="86" cy="89" r="1.5"/><circle cx="86" cy="99" r="1.2"/></g>',
+ brici:'<path d="M14 98 L104 74" stroke="#8F5A2E" stroke-width="12" stroke-linecap="round"/><path d="M16 96 L102 73" stroke="#B07A45" stroke-width="4" stroke-linecap="round" opacity=".6"/>'+
+  '<path d="M44 34 L102 26 Q108 26 108 32 L108 40 Q78 50 46 48 Z" fill="#A9B4C0"/><path d="M46 48 Q78 50 108 40" stroke="#F5F1EA" stroke-width="2.4" fill="none"/><path d="M44 34 L102 26" stroke="#7C8896" stroke-width="2"/>'+
+  '<g transform="rotate(52 46 40)"><rect x="40" y="35" width="56" height="11" rx="5.5" fill="#2E3A46"/><rect x="44" y="38" width="48" height="5" rx="2.5" fill="#4A5562"/></g><circle cx="46" cy="40" r="3.4" fill="#E2A62B"/>',
+ lopata:'<path d="M60 16 Q48 22 50 46 L52 98" stroke="none" fill="none"/>'+
+  '<rect x="54" y="52" width="9" height="64" rx="4.5" fill="#8F5A2E"/>'+
+  '<path d="M30 10 L88 10 Q94 10 94 16 L92 50 Q90 58 82 58 L36 58 Q28 58 26 50 L24 16 Q24 10 30 10Z" fill="#C49260"/><path d="M50 58 L68 58 L64 66 L54 66Z" fill="#B07A45"/>'+
+  '<path d="M30 16 L88 16" stroke="#A8743F" stroke-width="1.6" opacity=".6"/>'+
+  '<ellipse cx="59" cy="36" rx="25" ry="15" fill="#A0602C"/><ellipse cx="59" cy="33" rx="23" ry="12" fill="#C98A4B"/>'+
+  '<path d="M44 30 l8 8 M56 26 l8 9 M68 27 l6 7" stroke="#8F5A2E" stroke-width="3" stroke-linecap="round"/>',
+ tipar:'<rect x="10" y="22" width="44" height="80" rx="6" fill="#7C8896"/><rect x="10" y="22" width="44" height="80" rx="6" fill="none" stroke="#4A5562" stroke-width="2.4"/>'+
+  '<path d="M24 36 L40 36 L40 42 Q48 46 46 58 Q44 66 40 66 L38 78 L44 86 L20 86 L26 78 L24 66 Q18 60 18 50 Q18 42 24 42Z" fill="#3B4652"/>'+
+  '<circle cx="15" cy="30" r="2.2" fill="#4A5562"/><circle cx="15" cy="94" r="2.2" fill="#4A5562"/>'+
+  '<path d="M54 30 Q60 26 66 30" stroke="#4A5562" stroke-width="3" fill="none"/>'+
+  '<g transform="translate(62 30)"><path d="M10 8 L36 8 L36 14 Q46 18 44 32 Q42 42 36 44 L34 58 L42 66 L4 66 L12 58 L10 44 Q2 38 2 26 Q2 16 10 14Z" fill="#C6CFD8"/><path d="M10 8 L36 8 L36 14 Q30 20 30 32 Q30 42 34 46 L34 58 L12 58 L10 44 Q2 38 2 26 Q2 16 10 14Z" fill="#DDE3E8"/>'+
+  '<path d="M8 4 Q24 -4 40 4 L40 8 L6 8Z" fill="#A9B4C0"/><path d="M36 20 Q50 22 46 36" stroke="#A9B4C0" stroke-width="4" fill="none"/><path d="M14 30 H32" stroke="#A9B4C0" stroke-width="1.6"/></g>',
+ suveica:'<g stroke="#D7CDBB" stroke-width="2.2"><path d="M20 10 V110"/><path d="M34 10 V110"/><path d="M48 10 V110"/><path d="M62 10 V110"/><path d="M76 10 V110"/><path d="M90 10 V110"/><path d="M104 10 V110"/></g>'+
+  '<path d="M8 62 Q28 46 60 46 Q92 46 112 62 Q92 78 60 78 Q28 78 8 62 Z" fill="#B07A45"/><path d="M8 62 Q28 70 60 70 Q92 70 112 62 Q92 78 60 78 Q28 78 8 62Z" fill="#8F5A2E"/>'+
+  '<path d="M8 62 L18 57 L18 67Z" fill="#7C8896"/><path d="M112 62 L102 57 L102 67Z" fill="#7C8896"/>'+
+  '<rect x="38" y="55" width="44" height="14" rx="7" fill="#5A3A20"/><rect x="44" y="57" width="32" height="10" rx="5" fill="#6E56CF"/><g stroke="#8B76E6" stroke-width="1.4"><path d="M50 57 V67 M56 57 V67 M62 57 V67 M68 57 V67"/></g>'+
+  '<path d="M82 62 C92 50 98 34 112 30" stroke="#6E56CF" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+ satar:'<rect x="6" y="94" width="108" height="16" rx="5" fill="#B07A45"/><path d="M12 100 H108" stroke="#8F5A2E" stroke-width="1.6" opacity=".6"/>'+
+  '<path d="M44 22 L100 22 Q106 22 106 28 L106 72 Q76 80 44 74 Z" fill="#A9B4C0"/><path d="M44 74 Q76 80 106 72" stroke="#F5F1EA" stroke-width="2.6" fill="none"/><path d="M44 22 L106 22 L106 28 L44 28Z" fill="#7C8896"/>'+
+  '<circle cx="94" cy="38" r="5" fill="#F5F1EA"/>'+
+  '<rect x="8" y="34" width="40" height="14" rx="6" fill="#6B4A32"/><g fill="#E2A62B"><circle cx="20" cy="41" r="2"/><circle cx="34" cy="41" r="2"/></g>'
+};
+
+/* =====================================================================
+   DATE – 12 perechi. Meseriile sunt doar cele atestate la Sibiu în fișa de fapte.
+   „Ce face”: dexonline + en.wikipedia (detalii în _fapte_noi_I17_I19.md).
+   „La Sibiu”: fișa de fapte verificate (sursa la fiecare).
+   ===================================================================== */
+var T=[
+ {id:'calapod',tool:'Calapod',job:'cizmar',ok:'Calapodul este unealta cizmarului.',
+  hint:'Calapodul e o piesă de lemn în forma labei piciorului.',
+  what:'Calapodul este o piesă de lemn în forma labei piciorului. Cizmarul întinde pielea pe el ca să dea formă încălțămintei.',
+  whatSrc:'DEX – calapod; en.wikipedia – Shoemaking',
+  fact:'1455: cizmarii din Sibiu primesc un statut propriu, întărit în 1491. Tot ei apărau Poarta Ocnei.',factSrc:'limbaromana.org'},
+ {id:'ac',tool:'Ac și degetar',job:'croitor',ok:'Acul și degetarul sunt uneltele croitorului.',
+  hint:'Degetarul e un căpăcel de metal care apără degetul de înțepături.',
+  what:'Degetarul se poartă pe degetul cu care se împinge acul și îl apără de înțepături. Acul trage ața prin stofă.',
+  whatSrc:'DEX – degetar; en.wikipedia – Thimble',
+  fact:'1695: din acest an se păstrează un însemn al breslei croitorilor din Sibiu. Croitorii apărau Poarta Turnului.',factSrc:'mnir.ro; limbaromana.org'},
+ {id:'nicovala',tool:'Nicovală și ciocan',job:'fierar',ok:'Nicovala și ciocanul sunt uneltele fierarului.',
+  hint:'Nicovala e un bloc greu de oțel, cu un „corn” la un capăt.',
+  what:'Nicovala este un bloc greu de oțel pe care fierarul sprijină metalul și îl bate cu ciocanul, ca să-i dea formă. „Cornul” ei ajută la formele rotunde.',
+  whatSrc:'DEX – nicovală; en.wikipedia – Anvil',
+  fact:'1376: fierarii apar în documente cu numele latin „Fabrorum fraternitatis”. Mai târziu au avut în grijă Turnul Fierarilor (1575).',factSrc:'ULBS; limbaromana.org'},
+ {id:'roata',tool:'Roată de modelat',job:'olar',ok:'Roata de modelat este roata olarului.',
+  hint:'Discul de sus se învârte, iar roata mare de jos se împinge cu piciorul.',
+  what:'Pe discul care se rotește, olarul modelează cu mâinile vase rotunde din lut. La roata cu volant, roata mare de jos se împinge cu piciorul, așa că mâinile rămân libere.',
+  whatSrc:'en.wikipedia – Potter’s wheel; DEX – olar',
+  fact:'1556: olarii și cositorarii aveau în grijă bastionul Haller. Pe Strada Cetății se păstrează Turnul Olarilor.',factSrc:'limbaromana.org; patrimoniu.sibiu.ro'},
+ {id:'barda',tool:'Bardă',job:'dulgher',ok:'Barda este unealta dulgherului.',
+  hint:'Barda e o secure cu tăișul lat și coada scurtă, pentru cioplit lemnul.',
+  what:'Barda este o secure cu tăișul lat și coada scurtă, folosită la cioplitul lemnului. Cu ea, dulgherul face din bușteni grinzi pentru case și acoperișuri.',
+  whatSrc:'DEX – bardă, dulgher; en.wikipedia – Broadaxe',
+  fact:'1450: din acest an se păstrează un însemn al breslei dulgherilor din Sibiu. Pe Strada Cetății se află Turnul Dulgherilor.',factSrc:'mnir.ro; patrimoniu.sibiu.ro'},
+ {id:'razuit',tool:'Cuțit de răzuit',job:'tăbăcar',ok:'Cuțitul de răzuit este unealta tăbăcarului.',
+  hint:'Cu el se curățau de păr pieile crude ale animalelor.',
+  what:'Cu cuțitul, tăbăcarul răzuia pieile crude de păr și de resturi. Apoi le tăbăcea – le transforma în piele trainică, de exemplu cu tanin din scoarță de copac.',
+  whatSrc:'DEX – tăbăcar; en.wikipedia – Tanning (leather)',
+  fact:'1367: tăbăcarii din Sibiu cumpără o moară de tăbăcit cu 85 de florini. Altă sursă numește 1367 anul primei mențiuni a breslei pielarilor.',factSrc:'limbaromana.org; capitalcultural.ro'},
+ {id:'creuzet',tool:'Creuzet și filieră',job:'aurar',ok:'Creuzetul și filiera sunt uneltele aurarului.',
+  hint:'În creuzet se topește metalul, iar prin filieră se trage sârma subțire.',
+  what:'În creuzet, un vas care rezistă la temperaturi foarte mari, se topește metalul. Prin găurile filierei, o placă de oțel, se trage sârma, ca să devină mai subțire.',
+  whatSrc:'DEX – creuzet, filieră; en.wikipedia – Crucible, Draw plate, Goldsmith',
+  fact:'1346: aurarului Kunz din Sibiu i se comandă o monstranță. Statutul aurarilor datează din 1494.',factSrc:'limbaromana.org'},
+ {id:'brici',tool:'Brici',job:'bărbier',ok:'Briciul este unealta bărbierului.',
+  hint:'Briciul are o lamă de oțel care se pliază în mâner.',
+  what:'Briciul are o lamă de oțel care se pliază în mâner. Ca să rămână tăios, se trage din când în când pe o curea de piele.',
+  whatSrc:'DEX – brici; en.wikipedia – Straight razor',
+  fact:'Strada Bărbierilor păstrează și azi numele meseriei. Breslele Sibiului au fost desființate prin decretul din 1872 sau la 18 aprilie 1875 – sursele diferă.',factSrc:'limbaromana.org; fișa de fapte ACTIV AI'},
+ {id:'lopata',tool:'Lopată de cuptor',job:'brutar',ok:'Lopata de cuptor este unealta brutarului.',
+  hint:'E o lopată de lemn, plată, cu coadă lungă, folosită la cuptor.',
+  what:'Lopata de cuptor e o unealtă de lemn, cu coadă lungă: brutarul bagă cu ea pâinea în cuptor și o scoate.',
+  whatSrc:'DEX – lopată; en.wikipedia – Peel (tool)',
+  fact:'1376: statutul comun al breslelor îi numește anume pe brutari, alături de pielari și cuțitari. Taxa de intrare în breasla brutarilor: 6 florini.',factSrc:'mnir.ro; limbaromana.org'},
+ {id:'tipar',tool:'Tipar de turnat',job:'cositorar',ok:'Tiparul de turnat este unealta cositorarului.',
+  hint:'În tipar se toarnă metal topit, care ia forma lui.',
+  what:'În tipar se toarnă metalul topit; după răcire, obiectul păstrează forma tiparului. Aliajele de cositor se topesc ușor, la circa 170–230 °C.',
+  whatSrc:'MDA2 – tipar; en.wikipedia – Casting (metalworking), Pewter',
+  fact:'Proba de meșter a cositorarilor: în două săptămâni, un castron, o cană cu picior, o ploscă și un vas de spălat. Statutul din 1568 cerea 10 funți de cositor la 1 funt de plumb.',factSrc:'limbaromana.org'},
+ {id:'suveica',tool:'Suveică',job:'țesător',ok:'Suveica este unealta țesătorului.',
+  hint:'Suveica duce firul printre firele urzelii.',
+  what:'Suveica e o piesă de lemn lunguiață care duce firul de bătătură printre firele urzelii, dintr-o parte în alta a războiului de țesut.',
+  whatSrc:'DEX – suveică; en.wikipedia – Shuttle (weaving)',
+  fact:'1493: țesătorii de lână aveau în grijă un turn al cetății. Taxa de intrare în breasla țesătorilor: 2 florini.',factSrc:'limbaromana.org'},
+ {id:'satar',tool:'Satâr',job:'măcelar',ok:'Satârul este unealta măcelarului.',
+  hint:'Satârul e un cuțit mare, lat și greu, care despică oasele.',
+  what:'Satârul este un cuțit mare, lat și greu, cu care se despică oasele și se taie bucățile mari de carne.',
+  whatSrc:'DEX – satâr; en.wikipedia – Cleaver',
+  fact:'1570: breasla măcelarilor primește un statut în 13 puncte. Măcelarii apărau Poarta Cisnădiei.',factSrc:'turnulsfatului.ro; limbaromana.org'}
+];
+var N=T.length,PER=6;
+
+function svgOf(id){return '<svg viewBox="0 0 120 120" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+ART[id]+'</svg>';}
+var S='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',E='</svg>';
+var ICON={
+ bifa:S+'<circle cx="24" cy="24" r="19"/><path d="M15 25l6 6 12-13"/>'+E,
+ x:S+'<circle cx="24" cy="24" r="19"/><path d="M17 17l14 14M31 17 17 31"/>'+E,
+ re:S+'<path d="M38 22a14 14 0 1 1-5-10"/><path d="M34 6v8h-8"/>'+E,
+ info:S+'<circle cx="24" cy="24" r="19"/><path d="M24 22v11M24 15v1"/>'+E
+};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ---------- coperta: panoul cu unelte și meserii ---------- */
+function coverSVG(){
+  var W=900,H=560,s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Unelte și meserii legate prin fire"><rect width="'+W+'" height="'+H+'" fill="#1B2733"/>';
+  for(var y=30;y<H;y+=36)for(var x=30;x<W;x+=36)s+='<circle cx="'+x+'" cy="'+y+'" r="2.2" fill="#2E4153"/>';
+  var tools=[['calapod',150,105],['nicovala',150,280],['suveica',150,455]];
+  var jobs=[['țesător',690,120],['cizmar',690,280],['fierar',690,440]];
+  var link=[[0,1,true],[1,2,false],[2,0,false]];
+  var qs=[];
+  function bz(p0,p1,p2,p3,t){var u=1-t;return u*u*u*p0+3*u*u*t*p1+3*u*t*t*p2+t*t*t*p3;}
+  link.forEach(function(l){var a=tools[l[0]],b=jobs[l[1]];
+    if(!l[2])qs.push([bz(a[1]+92,a[1]+260,b[1]-230,b[1]-90,.3),bz(a[2],a[2],b[2],b[2],.3)]);
+    s+='<path d="M'+(a[1]+92)+' '+a[2]+' C'+(a[1]+260)+' '+a[2]+' '+(b[1]-230)+' '+b[2]+' '+(b[1]-90)+' '+b[2]+'" fill="none" stroke="'+(l[2]?'#12959F':'#E2A62B')+'" stroke-width="'+(l[2]?6:4)+'" '+(l[2]?'':'stroke-dasharray="10 10"')+' stroke-linecap="round"/>';});
+  tools.forEach(function(t){s+='<circle cx="'+t[1]+'" cy="'+t[2]+'" r="86" fill="#0F1720" opacity=".35"/><circle cx="'+t[1]+'" cy="'+t[2]+'" r="80" fill="#F5F1EA"/><svg x="'+(t[1]-62)+'" y="'+(t[2]-62)+'" width="124" height="124" viewBox="0 0 120 120">'+ART[t[0]]+'</svg>';});
+  jobs.forEach(function(j,k){var w=180;s+='<rect x="'+(j[1]-90)+'" y="'+(j[2]-34)+'" width="'+w+'" height="68" rx="34" fill="'+(k===1?'#0E7C86':'#223241')+'" stroke="'+(k===1?'#12959F':'#E2A62B')+'" stroke-width="3"/><text x="'+j[1]+'" y="'+(j[2]+10)+'" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" fill="#F3EFE6">'+j[0]+'</text>';});
+  s+='<g transform="translate(790 248)"><circle r="20" fill="#12959F"/><path d="M-9 1 l6 6 l12 -13" stroke="#F3EFE6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>';
+  qs.forEach(function(q){s+='<g transform="translate('+q[0]+' '+q[1]+')"><circle r="24" fill="#0F1720" stroke="#E2A62B" stroke-width="3"/><text y="11" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="32" fill="#E2A62B">?</text></g>';});
+  return s+'</svg>';
+}
+
+/* =====================================================================
+   JOCUL
+   ===================================================================== */
+var G={order:[],round:0,matched:{},first:{},tries:0,miss:{},sel:null,selProf:null,log:[],t0:0,t1:0,timerOn:false,busy:false,profOrder:[]};
+var view='cover',tick=null;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function show(id){['cover','game','result'].forEach(function(s){$(s).classList.toggle('on',s===id);});view=id;window.scrollTo(0,0);}
+function roundItems(){return G.order.slice(G.round*PER,G.round*PER+PER);}
+function matchedCount(){return Object.keys(G.matched).length;}
+
+function startGame(){
+  G.order=shuffle(T.map(function(t,i){return i;}));G.round=0;G.matched={};G.first={};G.miss={};G.tries=0;G.log=[];G.sel=null;G.selProf=null;G.busy=false;
+  G.t0=Date.now();G.t1=0;
+  var d=$('dots');d.innerHTML='';for(var i=0;i<N;i++)d.appendChild(document.createElement('i'));
+  show('game');renderRound();fbIntro();updHud();startTick();
+}
+function renderRound(){
+  var items=roundItems(),tb=$('tools'),pb=$('profs');
+  tb.innerHTML='';pb.innerHTML='';G.sel=null;G.selProf=null;
+  items.forEach(function(ti,k){
+    var t=T[ti],b=document.createElement('button');b.type='button';b.className='tool enter';b.dataset.i=ti;b.style.animationDelay=(k*60)+'ms';
+    b.addEventListener('animationend',function(ev){if(ev.animationName==='fadeIn'){b.classList.remove('enter');b.style.animationDelay='';}});
+    b.innerHTML='<span class="art">'+svgOf(t.id)+'</span><span class="tn"></span><span class="tm">'+ICON.bifa+'<span></span></span>';
+    b.querySelector('.tn').textContent=t.tool;b.setAttribute('aria-label','Unealta: '+t.tool);
+    bindTool(b);tb.appendChild(b);
+  });
+  G.profOrder=shuffle(items);
+  G.profOrder.forEach(function(ti){
+    var t=T[ti],b=document.createElement('button');b.type='button';b.className='prof';b.dataset.job=t.job;b.dataset.i=ti;
+    b.textContent=t.job;b.setAttribute('aria-label','Meseria: '+t.job);
+    b.addEventListener('click',function(){onProf(b);});pb.appendChild(b);
+  });
+  $('rn').textContent=G.round+1;$('profs').hidden=false;$('rdone').hidden=true;selInfo();
+}
+function selInfo(){
+  var el=$('selInfo');
+  if(G.sel!=null)el.textContent='pentru: '+T[G.sel].tool;
+  else if(G.selProf!=null)el.textContent='Alege unealta pentru: '+T[G.selProf].job;
+  else el.textContent='Alege o unealtă';
+  Array.prototype.forEach.call($('profs').children,function(p){p.classList.toggle('wait',G.sel!=null&&!p.classList.contains('done'));});
+}
+function toolEl(i){return $('tools').querySelector('.tool[data-i="'+i+'"]');}
+function profEl(i){return $('profs').querySelector('.prof[data-i="'+i+'"]');}
+function clearSel(){G.sel=null;G.selProf=null;Array.prototype.forEach.call(document.querySelectorAll('.tool.sel,.prof.sel'),function(e){e.classList.remove('sel');});selInfo();}
+function onTool(b){
+  if(G.busy)return;var i=+b.dataset.i;if(G.matched[i]!=null)return;
+  if(G.selProf!=null){attempt(i,G.selProf);return;}
+  if(G.sel===i){clearSel();return;}
+  clearSel();G.sel=i;b.classList.add('sel');selInfo();
+}
+function onProf(b){
+  if(G.busy||b.classList.contains('done'))return;var pi=+b.dataset.i;
+  if(G.sel!=null){attempt(G.sel,pi);return;}
+  if(G.selProf===pi){clearSel();return;}
+  clearSel();G.selProf=pi;b.classList.add('sel');selInfo();
+}
+/* tragere cu degetul / mouse-ul */
+var drag=null,suppress=false;
+function bindTool(b){
+  b.addEventListener('click',function(e){if(suppress){e.preventDefault();return;}onTool(b);});
+  b.addEventListener('pointerdown',function(e){
+    if(G.busy||b.classList.contains('done')||(e.pointerType==='mouse'&&e.button!==0))return;
+    drag={b:b,id:e.pointerId,x:e.clientX,y:e.clientY,on:false,ghost:null,hot:null};
+    try{b.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  b.addEventListener('pointermove',function(e){
+    if(!drag||drag.b!==b||drag.id!==e.pointerId)return;
+    var dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(!drag.on&&dx*dx+dy*dy>100){
+      drag.on=true;clearSel();G.sel=+b.dataset.i;b.classList.add('sel');selInfo();
+      var g=document.createElement('div');g.className='ghost-drag';g.innerHTML=svgOf(T[G.sel].id);document.body.appendChild(g);drag.ghost=g;
+    }
+    if(drag.on){
+      drag.ghost.style.transform='translate('+(e.clientX-60)+'px,'+(e.clientY-60)+'px) rotate(-6deg)';
+      var el=document.elementFromPoint(e.clientX,e.clientY),p=el&&el.closest?el.closest('.prof:not(.done)'):null;
+      if(drag.hot&&drag.hot!==p)drag.hot.classList.remove('hot');
+      if(p)p.classList.add('hot');drag.hot=p;
+    }
+  });
+  function end(e,cancel){
+    if(!drag||drag.b!==b||drag.id!==e.pointerId)return;
+    var d=drag;drag=null;
+    try{b.releasePointerCapture(e.pointerId);}catch(_){}
+    if(!d.on)return;
+    if(d.ghost)d.ghost.remove();if(d.hot)d.hot.classList.remove('hot');
+    suppress=true;setTimeout(function(){suppress=false;},60);
+    var el=cancel?null:document.elementFromPoint(e.clientX,e.clientY),p=el&&el.closest?el.closest('.prof:not(.done)'):null;
+    if(p)attempt(+b.dataset.i,+p.dataset.i);else clearSel();
+  }
+  b.addEventListener('pointerup',function(e){end(e,false);});
+  b.addEventListener('pointercancel',function(e){end(e,true);});
+}
+function attempt(ti,pi){
+  if(G.busy||G.matched[ti]!=null)return;
+  var tEl=toolEl(ti),pEl=profEl(pi);clearSel();G.tries++;
+  if(ti===pi){
+    G.matched[ti]=true;if(G.first[ti]==null)G.first[ti]=true;
+    G.log.push(ti);
+    tEl.classList.add('done','flash');tEl.querySelector('.tm span').textContent=T[ti].job;tEl.setAttribute('aria-label','Unealta: '+T[ti].tool+' – potrivită cu meseria '+T[ti].job);
+    pEl.classList.add('done');pEl.disabled=true;
+    setTimeout(function(){tEl.classList.remove('flash');},600);
+    var dots=$('dots').children,k=matchedCount()-1;dots[k].className=G.first[ti]?'ok':'re';
+    var roundDone=roundItems().every(function(i){return G.matched[i];});
+    if(roundDone&&G.round===1){G.t1=Date.now();stopTick();}
+    fbMatch(ti,roundDone);
+  }else{
+    G.first[ti]=false;G.miss[ti]=(G.miss[ti]||0)+1;
+    [tEl,pEl].forEach(function(e){e.classList.remove('bad');void e.offsetWidth;e.classList.add('bad');});
+    setTimeout(function(){tEl.classList.remove('bad');pEl.classList.remove('bad');},500);
+    fbMiss(ti,pi);
+  }
+  updHud();
+}
+function updHud(){
+  $('pn').textContent=matchedCount();
+  $('fp').textContent=Object.keys(G.first).filter(function(k){return G.first[k]&&G.matched[k];}).length;
+  updTimer();
+}
+function fbIntro(){
+  var fb=$('fb');fb.className='fb';
+  fb.innerHTML='<p class="verdict" style="color:var(--var)">'+ICON.info+'<span>Runda '+(G.round+1)+': șase unelte, șase meserii</span></p>'+
+   '<ol><li><b>Atinge o unealtă</b> din stânga, apoi meseria ei.</li><li>Sau <b>trage unealta</b> peste meserie.</li><li>După fiecare pereche găsită, aici apare un fapt adevărat despre breasla din Sibiu.</li></ol>';
+}
+function fbMatch(ti,roundDone){
+  var t=T[ti],fb=$('fb'),last=roundDone&&G.round===1;
+  fb.className='fb ok';
+  fb.innerHTML='<p class="verdict ok">'+ICON.bifa+'<span></span></p>'+
+   '<div><p class="lab">Ce face unealta</p><p class="what"><span class="w"></span> <small class="ws"></small></p></div>'+
+   '<div class="sib"><p class="lab">★ La Sibiu</p><p><span class="f"></span> <small class="fs"></small></p></div>';
+  fb.querySelector('.verdict span').textContent=(G.first[ti]?'Corect, din prima! ':'Corect! ')+t.ok;
+  fb.querySelector('.w').textContent=t.what;fb.querySelector('.ws').textContent='('+t.whatSrc+')';
+  fb.querySelector('.f').textContent=t.fact;fb.querySelector('.fs').textContent='('+t.factSrc+')';
+  if(roundDone){
+    $('profs').hidden=true;$('rdone').hidden=false;
+    var fpR=roundItems().filter(function(i){return G.first[i];}).length;
+    $('rdTitle').textContent=last?'Ai potrivit toate cele 12 unelte!':'Runda 1, gata!';
+    $('rdMsg').textContent='În această rundă: '+fpR+' din 6 din prima.';
+    $('goNext').textContent=last?'Vezi scorul →':'Runda 2 →';
+    $('selInfo').textContent=last?'toate potrivite':'runda 1 încheiată';
+  }
+  if(window.innerWidth<=1000)setTimeout(function(){fb.scrollIntoView({behavior:'smooth',block:'nearest'});},60);
+}
+function fbMiss(ti,pi){
+  var fb=$('fb');fb.className='fb no';
+  fb.innerHTML='<p class="verdict no">'+ICON.x+'<span></span></p><p class="what"><b>Indiciu:</b> <span class="h"></span></p><p><small>Alege din nou unealta sau meseria.</small></p>';
+  fb.querySelector('.verdict span').textContent='Nu încă! '+T[ti].tool+' + '+T[pi].job+' nu fac pereche.';
+  fb.querySelector('.h').textContent=T[ti].hint;
+}
+/* cronometru opțional */
+function fmt(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60);s%=60;return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;}
+function elapsed(){return (G.t1||Date.now())-G.t0;}
+function updTimer(){
+  var on=G.timerOn,txt=on?(view==='game'?'⏱ '+fmt(elapsed()):'⏱ Cronometru: pornit'):'⏱ Cronometru: oprit';
+  [$('timer'),$('tmrCover')].forEach(function(b){b.setAttribute('aria-pressed',on?'true':'false');});
+  $('timer').textContent=on?'⏱ '+fmt(G.t0?elapsed():0):'⏱ Cronometru: oprit';
+  $('timer').setAttribute('aria-label',on?'Cronometru pornit: '+fmt(G.t0?elapsed():0)+'. Atinge pentru a-l opri.':'Cronometru oprit. Atinge pentru a-l porni.');
+  $('tmrCover').textContent=on?'⏱ Cronometru: pornit':'⏱ Cronometru: oprit';
+}
+function startTick(){stopTick();tick=setInterval(updTimer,500);}
+function stopTick(){if(tick){clearInterval(tick);tick=null;}updTimer();}
+function toggleTimer(){G.timerOn=!G.timerOn;updTimer();}
+$('timer').addEventListener('click',toggleTimer);
+$('tmrCover').addEventListener('click',toggleTimer);
+
+function finish(){
+  if(!G.t1)G.t1=Date.now();stopTick();show('result');
+  var fp=T.filter(function(t,i){return G.first[i];}).length,miss=G.tries-N,t,m;
+  if(fp===N){t='Meșter cu diplomă!';m='Toate cele 12 unelte, potrivite din prima. Breasla te primește cu masă festivă.';}
+  else if(fp>=9){t='Calfă pricepută!';m='Încă puțin și ești meșter. Uită-te la perechile marcate cu săgeata circulară: acolo ai avut nevoie de a doua încercare.';}
+  else if(fp>=5){t='Ucenic harnic!';m='Ai trecut de jumătate. Joacă din nou: uneltele vin în altă ordine, iar indiciile se rețin repede.';}
+  else{t='Abia ai intrat în atelier';m='Fiecare greșeală ți-a adus un indiciu. Joacă din nou și vezi câte unelte recunoști acum.';}
+  $('resTitle').textContent=t;
+  var msg='Ai potrivit din prima <b>'+fp+' din 12</b> unelte'+(miss>0?' (încercări greșite: '+miss+')':', fără nicio greșeală')+'.';
+  if(G.timerOn)msg+=' Timp: <b>'+fmt(G.t1-G.t0)+'</b>.';
+  $('resMsg').innerHTML=msg+' '+esc(m);
+  $('ringTxt').textContent=fp;
+  var ul=$('rev');ul.innerHTML='';
+  G.order.forEach(function(i){var r=T[i],li=document.createElement('li');li.className=G.first[i]?'ok':'re';
+    li.innerHTML=(G.first[i]?ICON.bifa:ICON.re)+'<span>'+esc(r.tool)+' <i>→</i> '+esc(r.job)+'</span>';
+    li.title=G.first[i]?'Din prima':'Încercări greșite: '+(G.miss[i]||0);ul.appendChild(li);});
+  var c=$('ringVal'),L=578.05;c.style.transition='none';c.setAttribute('stroke-dashoffset',L);void c.getBoundingClientRect();c.style.transition='';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){c.setAttribute('stroke-dashoffset',L*(1-fp/N));});});
+}
+
+$('goNext').addEventListener('click',function(){
+  if(!roundItems().every(function(i){return G.matched[i];}))return;
+  if(G.round===1){finish();return;}
+  G.round=1;renderRound();fbIntro();if(window.innerWidth<=1000)window.scrollTo({top:0,behavior:'smooth'});
+});
+$('coverArt').innerHTML=coverSVG();
+$('start').addEventListener('click',startGame);
+$('restart').addEventListener('click',startGame);
+$('again').addEventListener('click',startGame);
+$('toCover').addEventListener('click',function(){show('cover');updTimer();});
+$('home').addEventListener('click',function(){stopTick();show('cover');updTimer();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&view==='game')clearSel();});
+updTimer();
+
+/* acces pentru testare automată */
+window.__game={T:T,G:G,round:roundItems,attempt:attempt,start:startGame,finish:finish,
+  next:function(){var b=$('goNext');if(b)b.click();},view:function(){return view;}};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rătăcit la Păltiniș</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--violet2:#8B76E6;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;--rosu:#E5484D;--albastru:#3E63DD;--albastru2:#6F8BF0;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px 32px;flex-wrap:wrap;padding:clamp(14px,1.5vw,30px) 0 clamp(10px,1vw,20px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(23px,2.05vw,42px);line-height:1.12;margin:0}
+h1 .sub{display:block;font-size:.68em;color:var(--ceata);margin-top:.12em}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.warn{display:flex;align-items:center;gap:.7em;margin:0;padding:10px 0;border-top:2px solid var(--surf);color:var(--var);font-size:clamp(14px,1vw,21px)}
+.warn svg{width:1.5em;height:1.5em;flex:none;color:var(--ocru)}
+.warn b{color:var(--ocru)}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:10px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;min-width:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s;touch-action:manipulation;user-select:none}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.ch:hover{border-color:var(--ocru);background:var(--surf2)}}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.ch:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.15em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.screen{flex:1;display:none;min-height:0;animation:fadeIn .45s ease both}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.85em;margin:0 0 .6em}
+
+/* ---------- start ---------- */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(8px,1.2vw,24px) 0}
+#start .ill{flex:1.15;max-width:920px;border-radius:24px;overflow:hidden;background:var(--surf);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+#start .ill svg{display:block;width:100%;height:auto}
+#start .intro{flex:1;max-width:780px}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.3vw,66px);line-height:1.08;margin:0 0 .45em;text-wrap:balance}
+.intro p{color:var(--ceata);margin:0 0 1em;max-width:34em}
+.intro p b{color:var(--var)}
+.types{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 1.3em;padding:0;list-style:none}
+.types li{display:inline-flex;align-items:center;gap:.45em;background:var(--surf);border:1px solid var(--line);border-radius:99px;padding:.3em .9em .3em .6em;color:var(--var);font-size:.9em}
+.types li svg{width:1.5em;height:1.5em;color:var(--ocru);flex:none}
+.note{font-size:.9em;color:var(--ceata);margin-top:1.2em;display:flex;gap:.6em;align-items:flex-start}
+.note b{color:var(--var)}
+
+/* ---------- joc ---------- */
+#game{display:none;grid-template-columns:minmax(0,1fr) clamp(400px,29vw,560px);grid-template-rows:auto 1fr;grid-template-areas:"story hud" "story map";gap:clamp(14px,1.4vw,28px) clamp(16px,2vw,40px);padding-bottom:clamp(10px,1vw,20px)}
+#game.on{display:grid}
+.story{grid-area:story;display:flex;flex-direction:column;gap:clamp(12px,1.1vw,20px);min-width:0}
+.hud{grid-area:hud}
+.mapcard{grid-area:map}
+.card{background:var(--surf);border-radius:24px;padding:clamp(14px,1.3vw,28px) clamp(18px,1.8vw,36px)}
+.scard{border-left:8px solid var(--chip);display:flex;flex-direction:column;gap:clamp(8px,.8vw,14px);animation:fadeIn .4s ease both}
+.scard.imag{border-left-color:var(--ceata);background:linear-gradient(180deg,#1B2733,#1a2430)}
+.place{display:flex;align-items:center;gap:.7em;flex-wrap:wrap;margin:0;color:var(--ocru);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.8em}
+.badge{display:inline-flex;align-items:center;gap:.4em;border:2px dashed var(--ceata);color:var(--ceata);border-radius:99px;padding:.1em .7em;letter-spacing:.1em;font-size:.92em}
+.step{margin-left:auto;color:var(--ceata);letter-spacing:.08em}
+.scard h2{font-family:var(--serif);font-size:clamp(26px,2vw,40px);line-height:1.1;margin:0;display:flex;align-items:center;gap:.45em}
+.scard h2 .ic{width:1.25em;height:1.25em;flex:none;color:var(--ocru)}
+.scard h2 .ic svg{width:100%;height:100%;display:block}
+.react{background:rgba(110,86,207,.16);border-left:6px solid var(--violet2);border-radius:12px;padding:.65em 1em;display:flex;flex-direction:column;gap:.45em;margin:0}
+.react p{margin:0;font-style:italic;color:var(--var)}
+.costs{display:flex;flex-wrap:wrap;gap:8px}
+.costs span{display:inline-flex;align-items:center;gap:.35em;font-size:.8em;font-weight:600;color:var(--ceata);background:var(--bg);border-radius:99px;padding:.15em .75em}
+.costs span.plus{color:#5FD0D8}
+.txt p{font-family:var(--serif);font-size:clamp(18px,1.15vw,24px);line-height:1.5;margin:0 0 .5em;text-wrap:pretty}
+.txt p:last-child{margin-bottom:0}
+.ask{margin:.2em 0 0;color:var(--ocru);font-weight:700;font-size:1.05em}
+.choices{display:grid;gap:clamp(10px,.9vw,16px)}
+.ch{font:inherit;font-weight:600;font-size:clamp(18px,1.1vw,24px);min-height:clamp(60px,3.9vw,76px);border-radius:18px;border:3px solid var(--line);background:var(--surf);color:var(--var);cursor:pointer;display:flex;align-items:center;gap:.8em;padding:.45em 1em;text-align:left;line-height:1.25;transition:border-color .2s,background .2s,transform .15s;touch-action:manipulation;animation:fadeIn .45s ease both}
+.ch:active{transform:scale(.985)}
+.ch .k{flex:none;width:1.9em;height:1.9em;border-radius:50%;background:var(--bg);color:var(--ocru);display:grid;place-items:center;font-size:.8em;font-weight:700}
+.ch .ar{margin-left:auto;flex:none;color:var(--ceata)}
+
+/* hud */
+.hud{display:flex;flex-direction:column;gap:clamp(8px,.6vw,12px);padding:clamp(12px,1vw,20px) clamp(16px,1.3vw,26px)}
+.hrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hlab{color:var(--ceata);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.hval{margin-left:auto;font-family:var(--serif);font-weight:700;font-size:1.15em;font-variant-numeric:tabular-nums}
+.lbar{height:14px;border-radius:99px;background:var(--bg);overflow:hidden;flex-basis:100%}
+.lbar i{display:block;height:100%;width:100%;border-radius:99px;background:linear-gradient(90deg,var(--tigla),var(--ocru) 45%,#F3D27A);transition:width .7s ease}
+.lbar.low i{background:var(--tigla)}
+.lsub{font-size:.75em;color:var(--ceata);font-weight:500;letter-spacing:0;text-transform:none}
+.bat{display:inline-flex;align-items:center;gap:.5em}
+.bat svg{width:2.1em;height:1.1em}
+.inv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:1;min-width:0}
+.hrow2{display:flex;gap:14px;align-items:stretch}
+.phone{display:flex;flex-direction:column;justify-content:center;gap:6px;flex:none;padding-right:14px;border-right:2px solid var(--line)}
+.phone .hval{margin-left:0}
+.slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:6px 3px 5px;font-size:.68em;font-weight:600;text-align:center;line-height:1.15;color:var(--var)}
+.slot svg{width:2em;height:2em;color:var(--ocru)}
+.slot.no{border-style:dashed;opacity:.55;color:var(--ceata)}
+.slot.no svg{color:var(--ceata)}
+.slot small{font-weight:500;color:var(--ceata);font-size:.9em}
+
+/* hartă */
+.mapcard{display:flex;flex-direction:column;gap:8px;padding:clamp(12px,1vw,20px);min-height:0}
+.mapcard h3{margin:0 4px;font-size:.8em;letter-spacing:.1em;text-transform:uppercase;color:var(--ceata)}
+.mapbox{background:#15202B;border-radius:16px;overflow:hidden}
+.mapbox svg{display:block;width:100%;height:auto}
+.legend{display:grid;gap:4px;margin:0;padding:2px 4px 0;list-style:none;color:var(--ceata);font-size:.72em;line-height:1.3}
+.legend li{display:flex;align-items:center;gap:.6em}
+.legend svg{width:2.6em;height:1em;flex:none}
+.legend b{color:var(--var);font-weight:600}
+.mnote{margin:2px 4px 0;font-size:.7em;color:var(--ceata);font-style:italic}
+
+/* final */
+.endgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(12px,1.1vw,20px);align-items:start}
+.ecard{border-left:8px solid var(--petrol2);display:flex;flex-direction:column;gap:clamp(8px,.7vw,12px);animation:fadeIn .4s ease both}
+.ecard.learn{border-left-color:var(--ocru)}
+.ekind{display:inline-flex;align-items:center;gap:.5em;align-self:flex-start;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.78em;border-radius:99px;padding:.3em .9em;background:rgba(14,124,134,.3);color:#7FDDE3}
+.ecard.learn .ekind{background:rgba(226,166,43,.18);color:var(--ocru)}
+.ekind svg{width:1.3em;height:1.3em}
+.ecard h2{font-family:var(--serif);font-size:clamp(26px,1.9vw,38px);line-height:1.1;margin:0}
+.ecard .react p{font-size:.9em}
+.ecard .txt p{font-size:clamp(17px,1.02vw,21px)}
+.path{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none;font-size:.72em}
+.path li{background:var(--bg);border-radius:8px;padding:.15em .6em;color:var(--ceata)}
+.path li.im{border:1px dashed var(--ceata)}
+.ptitle{margin:.2em 0 0;font-size:.75em;letter-spacing:.1em;text-transform:uppercase;color:var(--ceata);font-weight:700}
+.lessons{display:flex;flex-direction:column;gap:clamp(8px,.6vw,12px);border:2px solid var(--line);animation:fadeIn .5s ease both}
+.lessons h3{font-family:var(--serif);font-size:1.3em;margin:0}
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:clamp(8px,.6vw,12px);counter-reset:r}
+.rules li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 10px;align-items:start}
+.rules li p{grid-column:2/4}
+.rules .n{grid-row:1/3;width:1.8em;height:1.8em;border-radius:50%;background:var(--petrol);display:grid;place-items:center;font-weight:700;font-size:.9em;margin-top:.1em}
+.rules b{font-size:.92em}
+.rules li.fix .n{background:var(--violet)}
+.rules li.miss .n{background:var(--tigla)}
+.rules li.none .n{background:var(--line)}
+.rules p{margin:0;color:var(--ceata);font-size:.8em;line-height:1.35}
+.rules .st{display:inline-block;justify-self:end;margin-top:.2em;font-size:.7em;font-weight:700;border-radius:99px;padding:.05em .6em;vertical-align:.12em;white-space:nowrap}
+.st.ok{background:rgba(14,124,134,.35);color:#7FDDE3}
+.st.fix{background:rgba(110,86,207,.3);color:#C3B6FF}
+.st.miss{background:rgba(185,88,58,.3);color:#F4A88C}
+.st.none{background:var(--bg);color:var(--ceata)}
+.real{margin:.2em 0 0;font-size:.76em;color:var(--var);background:var(--bg);border-radius:12px;padding:.5em .8em}
+.erow{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.erow .btn.big{min-height:64px}
+.found{display:flex;align-items:center;gap:10px;color:var(--ceata);font-size:.85em;margin-left:auto}
+.found i{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);display:inline-block}
+.found i.g{background:var(--petrol2);border-color:var(--petrol2)}
+.found i.l{background:var(--ocru);border-color:var(--ocru)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@keyframes pulse{0%{r:9;opacity:.8}100%{r:24;opacity:0}}
+.pulse{animation:pulse 1.6s ease-out infinite}
+
+@media (max-width:1100px){
+  .endgrid{grid-template-columns:1fr}
+}
+@media (max-width:1000px){
+  #start{flex-direction:column;align-items:stretch}
+  #start .ill{flex:none}
+  #game{grid-template-columns:1fr;grid-template-rows:auto;grid-template-areas:"hud" "story" "map"}
+  .found{margin-left:0}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr;gap:10px}
+  #home{justify-self:start;padding:.4em .9em}
+  .hud{gap:8px}
+  .slot{font-size:.68em}
+  .step{margin-left:0}
+  .scard{border-left-width:6px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I16</span><h1>Aventură de text AI: rătăcit la Păltiniș <span class="sub">— alege drumul spre casă</span></h1></div>
+    <button class="btn ghost" id="home" type="button" aria-label="Înapoi la început">↺ Înapoi la început</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="ill" id="startArt"></div>
+      <div class="intro">
+        <p class="kicker">12 momente de decizie · 5 finaluri</p>
+        <h2>Ceața urcă din vale. Pe unde o iei?</h2>
+        <p>Joci rolul lui <b>Matei, 15 ani – personaj fictiv</b>. Pleacă de la stația de telescaun din Păltiniș, pe traseul marcat cu cruce roșie, și la un moment dat nu mai vede marcajul. Tu alegi ce face. Fiecare alegere consumă din lumina zilei și din bateria telefonului.</p>
+        <ul class="types" id="types" aria-label="Ce găsești în joc"></ul>
+        <button class="btn big accent" id="go" type="button">Începe aventura →</button>
+        <p class="note"><span aria-hidden="true">✦</span><span><b>Aventură AI:</b> povestea a fost scrisă cu AI (Claude, Anthropic). Traseele, marcajele și reperele – izvorul Dorul Clujului, Poiana Găujoara, stâna, Șaua Bătrâna, Vf. Oncești, Poiana Lupilor, Șanta – vin din fișele muntii-nostri.ro; potecile pe care se rătăcește Matei sunt imaginate.</span></p>
+      </div>
+    </section>
+
+    <section class="screen" id="game" aria-label="Aventura">
+      <div class="story" id="story" aria-live="polite"></div>
+
+      <aside class="hud card" id="hud" aria-label="Lumină, telefon și inventar">
+        <div class="hrow">
+          <span class="hlab">Lumină rămasă <span class="lsub">(în poveste)</span></span>
+          <span class="hval" id="lightTxt">≈ 3 h 30 min</span>
+          <span class="lbar" id="lbar" aria-hidden="true"><i id="lfill"></i></span>
+        </div>
+        <div class="hrow2">
+          <div class="phone"><span class="hlab">Telefon</span>
+          <span class="hval bat" id="batBox"><svg viewBox="0 0 42 22" aria-hidden="true"><rect x="1.5" y="1.5" width="35" height="19" rx="4" fill="none" stroke="#A9B4C0" stroke-width="2.5"/><rect x="38" y="7" width="3" height="8" rx="1.2" fill="#A9B4C0"/><rect id="batFill" x="4.5" y="4.5" width="29" height="13" rx="2" fill="#5FD0D8"/></svg><span id="batTxt">40 %</span></span></div>
+          <div class="inv" id="inv" role="list" aria-label="Inventar"></div>
+        </div>
+      </aside>
+
+      <section class="mapcard card" aria-label="Harta schematică a traseelor">
+        <h3>Harta traseelor din jurul Păltinișului</h3>
+        <div class="mapbox" id="mapbox"></div>
+        <ul class="legend">
+          <li><svg viewBox="0 0 52 20" aria-hidden="true"><path d="M2 10h48" stroke="#E5484D" stroke-width="4"/><rect x="18" y="2" width="16" height="16" rx="2" fill="#F3EFE6"/><path d="M26 5v10M21 10h10" stroke="#E5484D" stroke-width="3"/></svg><span><b>Cruce roșie</b>: spre Șaua Bătrâna · 5,8 km · 2 h – 2 h 30 min</span></li>
+          <li><svg viewBox="0 0 52 20" aria-hidden="true"><path d="M2 10h48" stroke="#3E63DD" stroke-width="4"/><rect x="18" y="2" width="16" height="16" rx="2" fill="#F3EFE6"/><path d="M26 5l6 10H20z" fill="#3E63DD"/></svg><span><b>Triunghi albastru</b>: circuit · 8,6 km · 3 h 15 min – 3 h 45 min</span></li>
+          <li><svg viewBox="0 0 52 20" aria-hidden="true"><path d="M2 10h20" stroke="#E2A62B" stroke-width="4" stroke-linecap="round"/><path d="M30 10h20" stroke="#E2A62B" stroke-width="4" stroke-dasharray="4 5" stroke-linecap="round"/></svg><span><b>Drumul lui Matei</b>: plin pe marcaj, punctat în afara lui</span></li>
+        </ul>
+        <p class="mnote">Hartă schematică, poziții aproximative – nu la scară.</p>
+      </section>
+    </section>
+  </main>
+
+  <p class="warn"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 5 44 41H4z"/><path d="M24 19v10M24 35v.5"/></svg><span>Poveste imaginată; traseele și marcajele după muntii-nostri.ro. În realitate: verificați vremea, mergeți însoțiți, urgențe – <b>112</b>.</span></p>
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ---------- Pictograme (stroke currentColor, viewBox 48×48) ---------- */
+var S='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',E='</svg>';
+var ICON={
+ telescaun:S+'<path d="M3 9l42 10"/><path d="M24 14v12"/><path d="M15 26h18v6a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3z"/><path d="M15 31h18M18 35v6M30 35v6"/>'+E,
+ izvor:S+'<path d="M24 6c6 9 10 14 10 20a10 10 0 0 1-20 0c0-6 4-11 10-20z"/><path d="M5 42h38M10 37h6M32 37h6"/>'+E,
+ serp:S+'<path d="M12 42h18c6 0 6-8 0-8H18c-6 0-6-8 0-8h12c6 0 6-8 0-8H20c-5 0-5-8 0-8h8"/><circle cx="31" cy="10" r="1.5" fill="currentColor"/>'+E,
+ poiana:S+'<path d="M3 38c8-5 14-5 21-2s13 3 21-2"/><path d="M6 30h14M26 24h16M10 22h10"/><path d="M8 44h32"/>'+E,
+ stana:S+'<path d="M6 40h36M10 40V23l14-11 14 11v17"/><path d="M20 40v-9h8v9"/><path d="M38 31c2 0 4 2 4 4"/><path d="M42 38c-1-2 1-3 1-5" />'+E,
+ ceata:S+'<path d="M5 14h24M12 22h30M5 30h26M14 38h28"/>'+E,
+ scurt:S+'<path d="M10 44c0-10 4-16 12-22"/><path d="M22 22c4-3 6-7 6-12" stroke-dasharray="3 5"/><path d="M33 9c0-3 3-5 5-5s5 2 5 5c0 4-5 4-5 8M38 22v.5"/>'+E,
+ oprire:S+'<circle cx="24" cy="24" r="18"/><path d="M24 10l5 14-5 14-5-14z"/><path d="M24 6v3M24 39v3M6 24h3M39 24h3"/>'+E,
+ vale:S+'<path d="M3 10l14 26h14L45 10"/><path d="M19 32c2 2 4 2 5 0s3-2 5 0"/><path d="M8 14l3-4 3 4M34 14l3-4 3 4"/>'+E,
+ apel:S+'<rect x="14" y="5" width="20" height="38" rx="4"/><path d="M21 37h6"/><path d="M19 15v10M23 15v10M27 15h4v5h-4v5h4"/>'+E,
+ asteptare:S+'<circle cx="18" cy="13" r="5"/><path d="M10 42V28a8 8 0 0 1 16 0v14"/><path d="M23 13h3"/><path d="M30 9l13-5M30 13h14M30 17l13 5"/>'+E,
+ marcaj:S+'<rect x="9" y="9" width="30" height="30" rx="3"/><path d="M24 15v18M15 24h18" stroke-width="4" stroke="#E5484D"/>'+E,
+ bun:S+'<path d="M10 44V6"/><path d="M10 8h26l-6 8 6 8H10"/>'+E,
+ invat:S+'<path d="M12 5h24M12 43h24M15 5c0 10 9 13 9 19s-9 9-9 19M33 5c0 10-9 13-9 19s9 9 9 19"/><path d="M20 39h8"/>'+E,
+ harta:S+'<path d="M5 11l12-5 14 5 12-5v31l-12 5-14-5-12 5z"/><path d="M17 6v31M31 11v31"/>'+E,
+ frontala:S+'<path d="M6 27c0-9 8-15 18-15s18 6 18 15"/><rect x="17" y="21" width="14" height="11" rx="3"/><path d="M24 36v6M14 38l-3 4M34 38l3 4"/>'+E,
+ apa:S+'<path d="M19 4h10v6l4 5v26a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3V15l4-5z"/><path d="M15 23h18M15 33h18"/>'+E,
+ baterie:S+'<rect x="9" y="7" width="30" height="36" rx="5"/><path d="M26 15l-6 11h8l-6 11"/><path d="M20 4h8"/>'+E,
+ harta2:S+'<path d="M24 43s-13-12-13-22a13 13 0 0 1 26 0c0 10-13 22-13 22z"/><circle cx="24" cy="21" r="4.5"/>'+E,
+ lumina:S+'<circle cx="24" cy="24" r="8"/><path d="M24 5v5M24 38v5M5 24h5M38 24h5M11 11l3.5 3.5M33.5 33.5 37 37M11 37l3.5-3.5M33.5 14.5 37 11"/>'+E,
+ reguli:S+'<path d="M24 5l16 6v12c0 10-7 17-16 20-9-3-16-10-16-20V11z"/><path d="M17 24l5 5 9-10"/>'+E
+};
+var ITEMS=[['harta','hartă'],['frontala','frontală'],['apa','apă'],['baterie','baterie externă']];
+
+/* ---------- Cele 5 reguli („Ce am învățat”) ---------- */
+var RULES=[
+ {t:'Pregătește-te și ține cont de vreme',d:'Verifică vremea înainte de plecare și ia hartă, frontală, apă și baterie externă. Ține telefonul încărcat.'},
+ {t:'Nu pleca singur și anunță pe cineva',d:'Mergi însoțit și spune cuiva traseul și ora de întoarcere. Dacă ai promis că aștepți undeva, aștepți acolo.'},
+ {t:'Rămâi pe traseul marcat',d:'Nu tăia pe scurtătură și nu coborî pe o vale necunoscută, oricât de aproape ar părea drumul.'},
+ {t:'Rătăcit? Oprește-te și orientează-te',d:'Stai, respiră, gândește-te pe unde ai venit și întoarce-te la ultimul marcaj cunoscut.'},
+ {t:'Sună la 112 și rămâi la vedere',d:'Spune de unde ai plecat și ce marcaj ai văzut ultima dată, apoi rămâi pe loc, într-un loc deschis, și economisește bateria.'}
+];
+
+/* ---------- Poziții pe harta schematică (viewBox 440×330; aproximative) ---------- */
+var POS={
+ P:[372,78],I:[318,100],Sp:[276,111],G:[226,117],T:[172,131],M2:[128,149],B:[76,170],
+ C:[138,180],Sc:[288,166],V1:[150,214],V1u:[164,204],V2:[104,236],V2u:[112,222]
+};
+var OFF={C:1,Sc:1,V1:1,V1u:1,V2:1,V2u:1},RING={C:1,Sc:1,V1:1,V2:1};
+
+function fmtL(m){if(m<=0)return 's-a întunecat';var h=Math.floor(m/60),mm=m%60;return '≈ '+(h?h+' h':'')+(h&&mm?' ':'')+(mm?mm+' min':'');}
+var L0=210,P0=40;
+
+/* ---------- Povestea: 12 momente + 5 finaluri ----------
+   c: alegeri {l: text, to: nod, L: minute de lumină, P: % baterie, tag: {regulă: +1/-1}, r: urmarea}
+   Decorurile reale vin din fișa de fapte și din fișele muntii-nostri.ro; locurile marcate „imag” sunt imaginate. */
+var N={
+ telescaun:{pos:'P',place:'Păltiniș · stația de telescaun',title:'Stația de telescaun',ic:'telescaun',
+  t:function(){return[
+   'Ești Matei, ai 15 ani (personaj fictiv) și ai venit cu părinții și cu sora ta mai mică la Păltiniș – stațiunea fondată în 1894 de SKV (Societatea Carpatină Ardeleană a Turiștilor), la 1.440 sau 1.442 m altitudine, după sursă. Peste câteva săptămâni aici va fi zăpadă – cam 120 de zile pe an –, dar azi e o după-amiază de octombrie și miroase a pădure de conifere.',
+   'Porniți pe traseul cu cruce roșie, care urcă până în Șaua Bătrâna (1.863 m): 5,8 km, 2 h – 2 h 30 min, „ușor”, după muntii-nostri.ro. Tata hotărăște: „Mergem până în Poiana Găujoara și ne întoarcem cu lumină.” Telefonul tău are doar 40 %, iar rucsacul pregătit de mama e greu.'];},
+  q:'Ce iei cu tine?',
+  c:[{l:'Iei rucsacul cu tot: hartă, frontală, apă și baterie externă',to:'izvor',L:20,P:2,inv:['harta','frontala','apa','baterie'],tag:{0:1},r:'Rucsacul e greu, dar tot ce e în el poate conta mai târziu.'},
+     {l:'Iei doar telefonul – rucsacul rămâne în mașină',to:'izvor',L:20,P:2,inv:[],tag:{0:-1},r:'Mergi ușor. Harta, frontala, apa și bateria externă au rămas în portbagaj.'}]},
+
+ izvor:{pos:'I',place:'Cruce roșie · izvorul Dorul Clujului',title:'La izvorul Dorul Clujului',ic:'izvor',
+  t:function(){return[
+   'Poteca merge puțin pe lângă șosea, apoi coboară prin pădurea de molid până la izvorul Dorul Clujului, unde sunt câteva bănci. Sora ta e obosită și vrea pauză.',
+   'Ție îți vine greu să stai pe loc: ai vrea să prinzi priveliștea din Poiana Găujoara înainte să urce ceața din vale.'];},
+  q:'Ce faci?',
+  c:[{l:'Rămâi cu familia: mergeți împreună, în ritmul surorii tale',to:'E1',L:0,P:0,tag:{1:1},r:'Aștepți. După zece minute de pauză, porniți toți patru.'},
+     {l:'Îi spui mamei: „Vă aștept în Poiana Găujoara și nu merg mai departe”',to:'serp',L:15,P:2,told:true,tag:{1:-1},r:'Mama ezită, apoi încuviințează: „Pe cruce roșie și ne aștepți acolo!” E bine că ai spus unde mergi. Dar de acum ești singur pe potecă.'},
+     {l:'Pleci în grabă: „Ne vedem sus!”',to:'serp',L:15,P:2,told:false,tag:{1:-1},r:'Pleci înainte să apuce cineva să te întrebe unde anume e „sus”. Nimeni nu știe exact unde te vei opri.'}]},
+
+ serp:{pos:'Sp',place:'Cruce roșie · serpentinele',title:'Serpentinele prin pădure',ic:'serp',
+  t:function(){return[
+   'După izvor, poteca urcă prin pădure în serpentine largi. La fiecare cotitură, pe câte un trunchi, apare marcajul: o cruce roșie. Din vale urcă ceața, iar molizii din jur devin cenușii.',
+   'La o cotitură vezi o potecă îngustă care o ia drept în sus, pe unde serpentinele fac un ocol mare. Nu are niciun marcaj – e o potecă imaginată în poveste.'];},
+  q:'Pe unde o iei?',
+  c:[{l:'Rămâi pe poteca marcată cu cruce roșie, chiar dacă ocolește',to:'gauj',L:30,P:3,tag:{2:1},r:'Serpentinele par lungi, dar crucea roșie apare, cuminte, la fiecare cotitură.'},
+     {l:'Tai pe poteca nemarcată – pare mult mai scurtă',to:'scurt',L:25,P:3,tag:{2:-1},r:'Primele minute merg bine. Apoi poteca se îngustează și se pierde printre rădăcini și pietre.'}]},
+
+ gauj:{pos:'G',place:'Cruce roșie · Poiana Găujoara',title:'Poiana Găujoara, în ceață',ic:'poiana',
+  t:function(s){return[
+   'Ai ajuns în Poiana Găujoara. În zilele senine, de aici se văd Munții Făgărașului și Sibiul, scrie fișa traseului. Azi vezi doar alb: ceața a acoperit tot.',
+   (s.told?'Familia ta n-a ajuns încă. I-ai promis mamei că o aștepți aici.':'Familia ta n-a ajuns încă și nimeni nu știe că te-ai oprit aici.')+' Crucea roșie merge mai departe, spre stână și spre Șaua Bătrâna. „Doar până la stână și înapoi”, îți spui.'];},
+  q:'Ce faci?',
+  c:[{l:'Rămâi în poiană și îi scrii mamei unde ești',to:'E2',L:0,P:2,tag:{1:1},r:'„Am ajuns în Poiana Găujoara, vă aștept aici.” Mesajul pleacă. Te așezi la marginea poienii, unde te vede oricine iese din pădure.'},
+     {l:'Mai urci puțin, pe cruce roșie, până la stână',to:'stana',L:25,P:3,tag:{1:-1},r:'Pleci. După câțiva pași, poiana dispare în ceață, în spatele tău.'}]},
+
+ stana:{pos:'T',place:'Cruce roșie · stâna cu izvor',title:'La stână',ic:'stana',
+  t:function(){return[
+   'Poteca urcă mai abrupt și trece prin fața unei stâne, cu un izvor în apropiere. Stâna pare goală: în calendarul păstoresc al Mărginimii Sibiului, septembrie e luna în care oile coboară în sate.',
+   'Ceața e acum atât de deasă încât nu mai vezi următorul marcaj. Până în Șaua Bătrâna mai e de urcat, iar lumina zilei scade.'];},
+  q:'Ce faci?',
+  c:[{l:'Te întorci pe cruce roșie, pe unde ai venit, spre Poiana Găujoara',to:'E2',L:35,P:2,tag:{3:1},r:'Cobori încet, din marcaj în marcaj. Fiecare cruce roșie îți spune că ești pe drumul bun.'},
+     {l:'Mergi mai departe prin ceață, spre Șaua Bătrâna',to:'ceata',L:30,P:4,tag:{0:-1},r:'Urci. Ceața se îndesește și fiecare pas seamănă cu cel dinainte.'}]},
+
+ ceata:{pos:'C',place:'Sub Șaua Bătrâna · în ceață',title:'Niciun marcaj în jur',ic:'ceata',
+  t:function(){return[
+   'Pădurea se rărește și începe pajiștea. Poteca se desface în mai multe urme subțiri. Te uiți în jur: niciun marcaj.',
+   'Ultima cruce roșie ai văzut-o acum câteva minute, pe un molid de la marginea pădurii. Inima îți bate tare.'];},
+  q:'Ce faci?',
+  c:[{l:'Te întorci la molidul cu ultimul marcaj și suni la 112',to:'apel',pos:'M2',L:10,P:2,tag:{3:1,4:1},r:'Faci înapoi cei câțiva pași până la molidul cu cruce roșie. De aici nu mai pleci.'},
+     {l:'Mergi după instinct: „Șaua trebuie să fie cam pe acolo”',to:'vale',L:30,P:4,tag:{3:-1},r:'Mergi. Pajiștea începe să coboare, apoi coboară tot mai tare. Nu mai știi încotro e șaua.'}]},
+
+ scurt:{pos:'Sc',imag:true,place:'În afara marcajului · potecă nemarcată',title:'Unde s-a dus poteca?',ic:'scurt',
+  t:function(){return[
+   'Poteca s-a pierdut printre rădăcini și pietre. În jur sunt numai trunchiuri, toate la fel, și ceață între ele. Nu mai știi sigur pe unde ai venit.',
+   'Ți-ar veni să alergi, oriunde, numai să ieși de aici.'];},
+  q:'Ce faci?',
+  c:[{l:'Te oprești, respiri adânc și te gândești pe unde ai venit',to:'oprire',L:10,P:2,tag:{3:1},r:function(s){return s.inv.apa?'Te oprești. Bei câteva guri de apă și respiri rar, până se liniștește inima.':'Te oprești și respiri rar, până se liniștește inima. Ți-e sete – apa a rămas în mașină.';}},
+     {l:'Mergi mai repede înainte – sigur iese undeva',to:'vale',L:40,P:4,tag:{3:-1},r:'Grăbești pasul. Poteca devine o pantă, apoi o vale care coboară.'}]},
+
+ oprire:{pos:'Sc',imag:true,place:'În afara marcajului · te orientezi',title:'Stai, respiră, gândește-te',ic:'oprire',
+  t:function(s){return s.inv.harta?[
+   'Desfaci harta. Găsești Păltinișul, izvorul Dorul Clujului și serpentinele crucii roșii. Ai urcat drept în sus din serpentine, așa că poteca marcată e sub tine, pe unde ai venit.',
+   'Pe hartă vezi și circuitul cu triunghi albastru – Vf. Oncești, Poiana Lupilor, Șanta. Pare aproape, dacă tai prin pădure. De undeva de jos se aude un pârâu.']:[
+   'Harta a rămas în mașină. Îți amintești doar atât: ai urcat drept în sus din serpentine, iar ultima cruce roșie era la cotitura de unde ai plecat.',
+   'De undeva de jos se aude un pârâu.'];},
+  q:'Ce faci?',
+  c:[{l:'Te întorci încet, exact pe unde ai venit, până la ultima cruce roșie',to:'marcaj',L:25,P:2,tag:{3:1},r:'Mergi încet și te uiți după urmele tale: o creangă ruptă, o piatră pe care ai călcat.'},
+     {l:'Cobori pe vale, spre zgomotul pârâului – pare drumul cel mai scurt',to:'vale',L:30,P:4,tag:{2:-1},r:'Cobori. Zgomotul pârâului se aude tot mai aproape, dar pârâul nu se vede.'},
+     {need:'harta',l:'Tai prin pădure, drept spre circuitul cu triunghi albastru',to:'E4',L:0,P:0,tag:{2:-1},r:'Pe hartă părea aproape. Prin pădure, fără potecă, fiecare sută de metri durează cât un kilometru.'}]},
+
+ vale:{pos:function(s){return s.cur==='C'?'V2':'V1';},imag:true,place:'În afara marcajului · vale necunoscută',title:'Valea care tot coboară',ic:'vale',
+  t:function(s){return[
+   'Panta coboară tot mai repede. Auzi pârâul, dar nu-l vezi. Frunzele ude și pietrele alunecă sub tălpi, așa că te ții de crengi. Între versanți se întunecă mai repede decât sus.',
+   'Telefonul arată '+s.phone+' %. Fiecare pas în jos e un pas pe care va trebui să-l urci înapoi.'];},
+  q:'Ce faci?',
+  c:[{l:'Te oprești, urci înapoi până într-un loc deschis și suni la 112',to:'apel',pos:function(s){return s.cur==='V2'?'V2u':'V1u';},L:20,P:3,tag:{2:1,4:1},r:'Urci înapoi, gâfâind, până într-un luminiș. Aici telefonul are semnal.'},
+     {l:'Cobori mai departe – poate pârâul duce la un drum',to:'E5',L:0,P:0,tag:{2:-1},r:'Cobori tot mai departe, cu speranța că dai de un drum.'}]},
+
+ apel:{pos:null,place:'Apel de urgență · 112',title:'Suni la 112',ic:'apel',
+  enter:function(s){s.phone=Math.max(3,s.phone-5);},
+  t:function(s){var unde=s.hist.some(function(h){return h.n==='ceata';})?'ultima cruce roșie, după stână, sub Șaua Bătrâna':'ultima cruce roșie, în serpentinele de după izvorul Dorul Clujului';
+   return[
+   'Formezi 112. Îți răspunde o voce calmă (personaj imaginat), care te întreabă pe rând: cum te numești, de unde ai plecat, pe ce traseu, ce marcaj ai văzut ultima dată, ce vezi în jur. Răspunzi: Păltiniș, telescaunul, '+unde+'.',
+   s.told?'Când te întreabă dacă știe cineva unde ești, poți spune da: mama știe că ai pornit spre Poiana Găujoara.':'Când te întreabă dacă știe cineva unde ești, eziți: ai plecat strigând doar „Ne vedem sus!”.',
+   'Ți se spune că vin salvamontiștii și că trebuie să rămâi pe loc, cu telefonul pornit. '+(s.inv.baterie?'Conectezi bateria externă: telefonul se încarcă de la '+s.phone+' %.':'Telefonul are '+s.phone+' % și n-ai baterie externă, așa că vorbești scurt.')];},
+  q:'Ce faci acum?',
+  c:[{l:'Rămâi pe loc, într-un loc deschis, și economisești bateria',to:'asteptare',L:20,P:0,charge:true,tag:{4:1},r:function(s){return s.inv.baterie?'Lași telefonul la încărcat în buzunarul gecii și închizi aplicațiile care nu-ți trebuie.':'Închizi aplicațiile care nu-ți trebuie și pui telefonul pe economie de energie.';}},
+     {l:'Pornești totuși singur, ca să ieși mai repede',to:'E5',L:0,P:0,tag:{4:-1},r:'Nu vrei să-i „deranjezi” pe salvamontiști, așa că pleci. După câteva minute, locul de unde ai sunat a rămas în urmă, în ceață.'}]},
+
+ asteptare:{pos:null,place:'Așteptare · la vedere',title:'Aștepți salvamontiștii',ic:'asteptare',
+  t:function(){return[
+   'Lumina scade și începe să bată vântul. Îți tragi gluga pe cap și îi scrii mamei, scurt: „Am sunat la 112, sunt bine, aștept salvamontiștii.”',
+   'La câțiva pași sunt niște molizi deși. Acolo ar fi mai cald, dar de acolo nu te-ar vedea nimeni.'];},
+  q:'Unde aștepți?',
+  c:[{l:function(s){return 'Rămâi în locul deschis, cu '+(s.inv.frontala?'frontala':'lanterna telefonului')+' pregătită';},to:'E3',L:20,P:3,tag:{4:1},r:'Rămâi unde ești. Te miști pe loc, ca să nu-ți fie frig, și asculți.'},
+     {l:'Te ascunzi de vânt sub molizii deși',to:'E5',L:0,P:0,tag:{4:-1},r:'Sub molizi e mai cald, dar e beznă. Auzi voci departe, apoi tot mai departe.'}]},
+
+ marcaj:{pos:'Sp',place:'Cruce roșie · înapoi pe traseu',title:'Din nou la cruce roșie',ic:'marcaj',
+  t:function(s){return[
+   'După câteva minute lungi o vezi: crucea roșie, pe un trunchi, la cotitura serpentinei. Ești din nou pe traseul marcat.',
+   'Lumina mai ține '+fmtL(s.light).replace('≈ ','cam ')+'. Telefonul are '+s.phone+' % și are semnal.'];},
+  q:'Ce faci?',
+  c:[{l:'O suni pe mama, îi spui unde ești și stabiliți unde vă întâlniți',to:'E2',L:20,P:3,tag:{1:1},r:'Mama răspunde din prima: „Stai acolo, pe marcaj. Venim noi spre tine.”'},
+     {l:'Nu suni, ca să nu se sperie, și cauți altă scurtătură spre poiană',to:'E4',L:0,P:0,tag:{2:-1},r:'Pornești iar printre copaci, de data asta „mai atent”. După zece minute nu mai vezi nici crucea roșie.'}]},
+
+ /* ---------- finaluri ---------- */
+ E1:{end:'good',pos:'G',ic:'bun',title:'Cea mai sigură aventură',
+  t:function(){return[
+   'Ați urcat împreună, fără grabă, până în Poiana Găujoara. Ceața a acoperit priveliștea, așa că v-ați întors pe același marcaj, cu lumină destulă. La întoarcere, mama a trecut pe la schit, biserica de lemn din anii 1930.',
+   'N-a fost nicio aventură – și asta e vestea bună: un grup care rămâne împreună, pe traseul marcat, nu are pe cine să caute. Joacă din nou ca să vezi ce s-ar fi întâmplat dacă plecai singur înainte.'];}},
+ E2:{end:'good',pos:null,ic:'bun',title:'Înapoi pe cruce roșie',
+  t:function(s){var first;
+   if(s.via==='marcaj')first='Familia te găsește pe marcaj, la cotitura serpentinei. Mama te strânge în brațe, apoi îți spune, pe drept, că data viitoare mergeți împreună. Ai greșit o dată, dar ai corectat la timp: te-ai întors la ultimul marcaj cunoscut.';
+   else if(s.via==='stana')first='Ajungi în Poiana Găujoara chiar când iese și familia din pădure. Ai urcat mai departe decât trebuia, dar te-ai întors la timp, din marcaj în marcaj. Mama îți spune, pe drept, că data viitoare mergeți împreună.';
+   else first='Familia ajunge în poiană după un sfert de oră. Mama te strânge în brațe, apoi îți spune, pe drept, că data viitoare mergeți împreună. Măcar ai rămas exact unde ai spus că aștepți.';
+   return[first,'Coborâți toți pe cruce roșie, pe lângă izvorul Dorul Clujului, și ajungeți la telescaun înainte de întuneric.'];}},
+ E3:{end:'good',pos:null,ic:'bun',title:'Găsit la timp',
+  t:function(s){return[
+   'Pe înserat auzi voci care te strigă pe nume. '+(s.inv.frontala?'Aprinzi frontala':'Aprinzi lanterna telefonului')+', o miști spre ele și strigi: „Aici!” Doi salvamontiști (personaje imaginate) ies din ceață, te întreabă dacă ești bine și îți dau o geacă groasă.',
+   'Coborâți împreună până la Păltiniș, unde te așteaptă părinții. Te-ai rătăcit, dar apoi ai făcut exact ce trebuia: te-ai oprit, ai sunat la 112 și ai rămas pe loc, la vedere.'];}},
+ E4:{end:'learn',pos:'P',road:true,ic:'invat',title:'Ai pierdut timp',
+  enter:function(s){s.light=0;if(!s.inv.baterie)s.phone=0;},
+  t:function(s){return[
+   'Pădurea pare fără sfârșit. Mult mai târziu, pe întuneric, dai de un drum forestier (imaginat în poveste) și îl urmezi până vezi luminile stațiunii. '+(s.inv.frontala?'Frontala te-a ajutat să vezi pe unde calci.':'Mergi la lumina telefonului, până când bateria se termină.'),
+   'Părinții, speriați, sunaseră deja la 112'+(s.told?' și le spuseseră salvamontiștilor că ai pornit spre Poiana Găujoara.':', dar nu știau să spună încotro ai pornit.')+' Nu ți s-a întâmplat nimic rău – doar că o scurtătură te-a costat câteva ore și o seară întreagă de griji pentru toți.'];}},
+ E5:{end:'learn',pos:null,ic:'invat',title:'Găsit de salvamontiști, dar…',
+  enter:function(s){s.light=0;if(!s.inv.baterie)s.phone=0;},
+  t:function(s){var first;
+   if(s.via==='apel')first='Când salvamontiștii au ajuns la locul de unde ai sunat, nu te-au mai găsit acolo și au luat căutarea de la capăt, pe întuneric.';
+   else if(s.via==='asteptare')first='Salvamontiștii au trecut pe aproape și te-au strigat, dar sub molizii deși nu ți-au văzut lumina și nu ți-au auzit glasul prin vânt.';
+   else first='Valea s-a îngustat, iar pârâul ți-a tăiat drumul. Te-ai oprit, în sfârșit, lângă un bolovan mare, cu pantofii uzi și cu frig.';
+   return[first,
+   'Te-au găsit abia târziu în noapte'+(s.inv.baterie?'':', când telefonul tău se descărcase deja')+'. '+(s.told?'Pentru că mama știa pe ce traseu ai pornit, au știut măcar de unde să înceapă.':'Pentru că nimeni nu știa exact încotro ai pornit, căutarea a durat și mai mult.'),
+   'Ești teafăr, dar o echipă întreagă a umblat ore în șir prin pădure, noaptea, ca să te găsească. Fiecare pas făcut departe de locul cunoscut le-a îngreunat munca.'];}}
+};
+var ENDS=['E1','E2','E3','E4','E5'];
+
+/* ---------- Stare ---------- */
+var s,found={};
+function fresh(){return{node:'telescaun',light:L0,phone:P0,inv:{harta:true,frontala:true,apa:true,baterie:true},told:null,hist:[],trail:[],tags:[[],[],[],[],[]],via:null,react:null,cost:null,cur:'P',step:0};}
+function val(x){return typeof x==='function'?x(s):x;}
+function choicesOf(n){return (n.c||[]).filter(function(c){return !c.need||s.inv[c.need];});}
+
+function show(id){['start','game'].forEach(function(k){$(k).classList.toggle('on',k===id);});window.scrollTo(0,0);}
+function startGame(){s=fresh();s.trail=[{p:'P',off:false}];show('game');goTo('telescaun',true);}
+
+function choose(i){
+  var n=N[s.node],list=choicesOf(n),c=list[i];if(!c)return;
+  var react=val(c.r),dL=c.L||0,dP=c.P||0;
+  s.light=Math.max(0,s.light-dL);s.phone=Math.max(0,s.phone-dP);
+  if(c.inv){ITEMS.forEach(function(it){s.inv[it[0]]=c.inv.indexOf(it[0])>=0;});}
+  if(c.told!==undefined)s.told=c.told;
+  var plus=0;
+  if(c.charge&&s.inv.baterie){var before=s.phone;s.phone=Math.min(100,s.phone+45);plus=s.phone-before;}
+  if(c.tag)Object.keys(c.tag).forEach(function(k){s.tags[+k].push(c.tag[k]);});
+  s.hist.push({n:s.node,l:val(c.l)});
+  s.via=s.node;
+  s.react=react;s.cost={L:dL,P:dP,plus:plus};
+  goTo(c.to,false,c.pos);
+}
+
+function goTo(id,first,cpos){
+  var n=N[id];if(!n){console.error('Nod lipsă: '+id);return;}
+  s.node=id;s.step++;
+  var p=val(cpos)||val(n.pos)||s.cur;
+  if(n.road)s.trail.push({p:p,off:true});
+  else if(p!==s.cur)s.trail.push({p:p,off:!!OFF[p]});
+  s.cur=p;
+  if(n.enter)n.enter(s);
+  if(n.end){found[id]=true;renderEnd(n);}else renderNode(n,first);
+  renderHud();renderMap();
+  window.scrollTo({top:0,behavior:first?'auto':'smooth'});
+}
+
+function reactHtml(){
+  if(!s.react)return '';
+  var c=s.cost,ch='';
+  if(c&&c.L)ch+='<span>'+ICON.lumina.replace('<svg','<svg width="18" height="18"')+'−'+c.L+' min de lumină</span>';
+  if(c&&c.P)ch+='<span>−'+c.P+' % baterie</span>';
+  if(c&&c.plus)ch+='<span class="plus">+'+c.plus+' % din bateria externă</span>';
+  return '<div class="react"><p>'+esc(s.react)+'</p>'+(ch?'<div class="costs">'+ch+'</div>':'')+'</div>';
+}
+
+function renderNode(n,first){
+  var st=$('story'),list=choicesOf(n);
+  var h='<article class="card scard'+(n.imag?' imag':'')+'">';
+  h+='<p class="place"><span>'+esc(n.place)+'</span>'+(n.imag?'<span class="badge">loc imaginat</span>':'')+'<span class="step">Momentul '+s.step+'</span></p>';
+  h+='<h2><span class="ic">'+ICON[n.ic]+'</span><span>'+esc(n.title)+'</span></h2>';
+  h+=reactHtml();
+  h+='<div class="txt">'+val(n.t).map(function(p){return '<p>'+esc(p)+'</p>';}).join('')+'</div>';
+  h+='<p class="ask">'+esc(n.q)+'</p></article>';
+  h+='<div class="choices" role="group" aria-label="Alegeri">';
+  list.forEach(function(c,i){h+='<button class="ch" type="button" data-i="'+i+'" style="animation-delay:'+(0.08*i+0.1)+'s"><span class="k">'+'ABC'[i]+'</span><span class="lb">'+esc(val(c.l))+'</span><span class="ar" aria-hidden="true">→</span></button>';});
+  h+='</div>';
+  st.innerHTML=h;
+  Array.prototype.forEach.call(st.querySelectorAll('.ch'),function(b){b.addEventListener('click',function(){choose(+b.dataset.i);});});
+  if(!first){var b0=st.querySelector('.ch');if(b0&&window.innerWidth>1000)b0.focus({preventScroll:true});}
+}
+
+function ruleStatus(arr){
+  if(!arr.length)return['none','– n-a fost cazul'];
+  var hasBad=arr.indexOf(-1)>=0,last=arr[arr.length-1];
+  if(!hasBad)return['ok','✓ aplicată'];
+  if(last===1)return['fix','↺ corectată'];
+  return['miss','! de exersat'];
+}
+
+function renderEnd(n){
+  var good=n.end==='good',st=$('story');
+  var h='<div class="endgrid">';
+  h+='<article class="card ecard'+(good?'':' learn')+'">';
+  h+='<span class="ekind">'+ICON[n.ic]+(good?'Final bun':'Final de învățat')+'</span>';
+  h+='<h2>'+esc(n.title)+'</h2>';
+  h+=reactHtml();
+  h+='<div class="txt">'+val(n.t).map(function(p){return '<p>'+esc(p)+'</p>';}).join('')+'</div>';
+  h+='<p class="ptitle">Drumul tău</p><ul class="path">';
+  s.hist.forEach(function(x){var m=N[x.n];h+='<li'+(m.imag?' class="im"':'')+'>'+esc(m.title)+'</li>';});
+  h+='<li>'+esc(n.title)+'</li></ul>';
+  h+='</article>';
+  h+='<aside class="card lessons" aria-label="Ce am învățat"><h3>Ce am învățat</h3><ol class="rules">';
+  RULES.forEach(function(r,i){var rs=ruleStatus(s.tags[i]);h+='<li class="'+rs[0]+'"><span class="n">'+(i+1)+'</span><b>'+esc(r.t)+'</b><span class="st '+rs[0]+'">'+rs[1]+'</span><p>'+esc(r.d)+'</p></li>';});
+  h+='</ol><p class="real">În realitate: verificați traseul și vremea înainte de plecare; mergeți însoțiți. Urgențe – 112.</p></aside>';
+  h+='</div>';
+  var nf=ENDS.filter(function(e){return found[e];}).length;
+  h+='<div class="erow"><button class="btn big accent" id="again" type="button">↻ Joacă din nou</button><button class="btn ghost" id="toStart" type="button">Înapoi la început</button>';
+  h+='<span class="found" aria-label="Finaluri descoperite: '+nf+' din 5">Finaluri descoperite: <b>'+nf+' din 5</b>'+ENDS.map(function(e){return '<i class="'+(found[e]?(N[e].end==='good'?'g':'l'):'')+'" title="'+(found[e]?esc(N[e].title):'nedescoperit')+'"></i>';}).join('')+'</span></div>';
+  st.innerHTML=h;
+  $('again').addEventListener('click',startGame);
+  $('toStart').addEventListener('click',function(){show('start');});
+  if(window.innerWidth>1000)$('again').focus({preventScroll:true});
+}
+
+function renderHud(){
+  $('lightTxt').textContent=fmtL(s.light);
+  var f=Math.max(0,Math.min(1,s.light/L0));
+  $('lfill').style.width=(f*100)+'%';
+  $('lbar').classList.toggle('low',s.light<=40);
+  $('batTxt').textContent=s.phone+' %';
+  var bf=$('batFill');bf.setAttribute('width',Math.max(0,29*s.phone/100).toFixed(1));bf.setAttribute('fill',s.phone<=15?'#E5484D':(s.phone<=30?'#E2A62B':'#5FD0D8'));
+  var inv=$('inv');inv.innerHTML='';
+  ITEMS.forEach(function(it){var has=s.inv[it[0]];var d=document.createElement('div');d.className='slot'+(has?'':' no');d.innerHTML=ICON[it[0]]+'<span></span>'+(has?'':'<small>în mașină</small>');d.querySelector('span').textContent=it[1];d.title=has?it[1]+' – în rucsac':it[1]+' – a rămas în mașină';inv.appendChild(d);});
+}
+
+/* ---------- Harta schematică ---------- */
+function cross(x,y){return '<g transform="translate('+x+' '+y+')"><rect x="-7" y="-7" width="14" height="14" rx="2" fill="#F3EFE6"/><path d="M0 -4.5V4.5M-4.5 0H4.5" stroke="#E5484D" stroke-width="2.6"/></g>';}
+function tri(x,y){return '<g transform="translate('+x+' '+y+')"><rect x="-7" y="-7" width="14" height="14" rx="2" fill="#F3EFE6"/><path d="M0 -4.5 4.6 4H-4.6z" fill="#3E63DD"/></g>';}
+function pt(k){return POS[k];}
+function baseMap(){
+  var V='#F3EFE6',CE='#A9B4C0';
+  var m='<svg id="map" viewBox="0 0 440 330" role="img" aria-label="Hartă schematică: traseul cu cruce roșie de la Păltiniș spre Șaua Bătrâna și circuitul cu triunghi albastru prin Vf. Oncești, Poiana Lupilor și Șanta; poziții aproximative" xmlns="http://www.w3.org/2000/svg">';
+  m+='<rect width="440" height="330" fill="#15202B"/>';
+  /* pădure de conifere – pete schematice */
+  var tr='';[[300,30],[330,140],[250,150],[190,90],[120,100],[60,120],[200,190],[150,200],[360,250],[260,300],[60,290],[400,290],[40,60],[110,300]].forEach(function(q,i){var x=q[0],y=q[1];for(var j=0;j<3;j++){var dx=(j-1)*11+(i%2)*3,dy=(j%2)*7;tr+='<path d="M'+(x+dx)+' '+(y+dy-11)+'l7 14h-14z"/>';}});
+  m+='<g fill="#1E3A33" opacity=".85">'+tr+'</g>';
+  /* circuitul cu triunghi albastru */
+  var blue=[pt('P'),[352,150],[266,206],[208,246],[304,284],[392,236],[408,140],pt('P')];
+  m+='<polyline points="'+blue.map(function(q){return q.join(',');}).join(' ')+'" fill="none" stroke="#3E63DD" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  /* traseul cu cruce roșie */
+  var red=['P','I','Sp','G','T','M2','B'].map(pt);
+  m+='<polyline points="'+red.map(function(q){return q.join(',');}).join(' ')+'" fill="none" stroke="#E5484D" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  m+=cross(296,106)+cross(198,124)+cross(102,160);
+  m+=tri(326,167)+tri(266,269)+tri(400,188);
+  /* repere */
+  var dot=function(q,r,f){return '<circle cx="'+q[0]+'" cy="'+q[1]+'" r="'+(r||5)+'" fill="'+(f||V)+'" stroke="#15202B" stroke-width="2"/>';};
+  m+=dot(pt('I'))+dot(pt('G'))+dot(pt('T'))+dot(pt('B'),6)+dot([266,206])+dot([208,246])+dot([304,284]);
+  /* stâna – căsuță */
+  m+='<path d="M163 128h18M166 128v-8l6-5 6 5v8" fill="none" stroke="'+V+'" stroke-width="2"/>';
+  /* schitul – bisericuță */
+  m+='<g transform="translate(414 74)" fill="none" stroke="'+V+'" stroke-width="2"><path d="M-8 8V-1l8-6 8 6v9z"/><path d="M0 -7v-7M-3 -11h6"/></g>';
+  /* Păltiniș */
+  m+='<circle cx="372" cy="78" r="9" fill="#E2A62B" stroke="#15202B" stroke-width="2.5"/><path d="M366 78h12M372 72v12" stroke="#15202B" stroke-width="0"/>';
+  m+='<g font-family="Inter, system-ui, sans-serif" fill="'+V+'" font-size="15" font-weight="600">';
+  m+='<text x="372" y="58" text-anchor="middle">Păltiniș</text>';
+  m+='<text x="312" y="88" text-anchor="end">izvorul Dorul Clujului</text>';
+  m+='<text x="228" y="143" text-anchor="middle">Poiana</text><text x="228" y="160" text-anchor="middle">Găujoara</text>';
+  m+='<text x="160" y="116" text-anchor="end">stâna</text>';
+  m+='<text x="70" y="196" text-anchor="middle">Șaua Bătrâna</text>';
+  m+='<text x="278" y="211" text-anchor="start" fill="#AFC0FA">Vf. Oncești</text>';
+  m+='<text x="200" y="270" text-anchor="end" fill="#AFC0FA">Poiana Lupilor</text>';
+  m+='<text x="316" y="302" text-anchor="start" fill="#AFC0FA">Șanta</text>';
+  m+='</g><g font-family="Inter, system-ui, sans-serif" fill="'+CE+'" font-size="13">';
+  m+='<text x="372" y="42" text-anchor="middle">telescaun</text>';
+  m+='<text x="70" y="211" text-anchor="middle">1.863 m</text>';
+  m+='<text x="414" y="96" text-anchor="middle">schit</text>';
+  m+='</g>';
+  /* nord */
+  m+='<g transform="translate(26 34)"><path d="M0 -16 7 6 0 1-7 6z" fill="'+CE+'"/><text x="0" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="'+CE+'">N</text></g>';
+  m+='<g id="dyn"></g></svg>';
+  $('mapbox').innerHTML=m;
+}
+function renderMap(){
+  var g=document.getElementById('dyn');if(!g)return;
+  var h='',tr=s.trail,seen={};
+  tr.forEach(function(e){seen[e.p]=true;});
+  /* locurile imaginate prin care a trecut Matei: cerc punctat */
+  Object.keys(seen).forEach(function(k){if(RING[k]){var q=pt(k);h+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="12" fill="#15202B" fill-opacity=".6" stroke="#D7DEE6" stroke-width="2" stroke-dasharray="3 4"/>';}});
+  for(var i=1;i<tr.length;i++){
+    var a=pt(tr[i-1].p),b=pt(tr[i].p),off=tr[i-1].off||tr[i].off;
+    h+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="#E2A62B" stroke-width="5" stroke-linecap="round"'+(off?' stroke-dasharray="2 9"':'')+' opacity=".95"/>';
+  }
+  tr.forEach(function(e,i){if(i>0&&i<tr.length-1){var q=pt(e.p);h+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="4" fill="#E2A62B"/>';}});
+  var c=pt(s.cur);
+  h+='<circle class="pulse" cx="'+c[0]+'" cy="'+c[1]+'" r="9" fill="none" stroke="#E2A62B" stroke-width="3"/>';
+  h+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="8" fill="#E2A62B" stroke="#F3EFE6" stroke-width="3"/>';
+  h+='<text x="'+(c[0])+'" y="'+(c[1]+4.5)+'" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#0F1720">M</text>';
+  g.innerHTML=h;
+}
+
+/* ---------- Ilustrația de start ---------- */
+(function(){
+  var V='#F3EFE6',CE='#A9B4C0',OC='#E2A62B';
+  var s2='<svg viewBox="0 0 1000 620" role="img" aria-label="Ilustrație schematică: munți în ceață, pădure de conifere, telescaunul de la Păltiniș, un marcaj cu cruce roșie pe un trunchi și un adolescent cu frontală pe potecă" xmlns="http://www.w3.org/2000/svg">';
+  s2+='<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26384A"/><stop offset=".6" stop-color="#1B2733"/><stop offset="1" stop-color="#16212C"/></linearGradient>';
+  s2+='<radialGradient id="beam" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(612 444) rotate(-14) scale(260 70)"><stop offset="0" stop-color="#F3D27A" stop-opacity=".55"/><stop offset="1" stop-color="#F3D27A" stop-opacity="0"/></radialGradient></defs>';
+  s2+='<rect width="1000" height="620" fill="url(#sky)"/>';
+  s2+='<circle cx="790" cy="120" r="46" fill="#F3EFE6" opacity=".12"/>';
+  s2+='<path d="M0 300 L120 190 L210 250 L330 140 L450 240 L560 170 L700 260 L820 180 L1000 280 V620 H0Z" fill="#2B3B4B"/>';
+  s2+='<path d="M0 330 L150 250 L280 310 L420 230 L560 300 L690 240 L860 320 L1000 270 V620 H0Z" fill="#223241"/>';
+  s2+='<g fill="'+V+'" opacity=".13"><ellipse cx="260" cy="300" rx="320" ry="26"/><ellipse cx="760" cy="320" rx="300" ry="22"/></g>';
+  /* conifere */
+  var t='';function fir(x,y,h,c){var w=h*.36;return '<path d="M'+x+' '+(y-h)+' L'+(x+w)+' '+(y-h*.35)+' L'+(x+w*.55)+' '+(y-h*.35)+' L'+(x+w*1.1)+' '+y+' L'+(x-w*1.1)+' '+y+' L'+(x-w*.55)+' '+(y-h*.35)+' L'+(x-w)+' '+(y-h*.35)+'Z" fill="'+c+'"/><rect x="'+(x-3)+'" y="'+y+'" width="6" height="'+(h*.12)+'" fill="#2A2018"/>';}
+  for(var i=0;i<26;i++){var x=i*40+10,y=380+((i*37)%30);t+=fir(x,y,70+((i*13)%30),'#1F4235');}
+  for(i=0;i<16;i++){x=i*66+30;y=470+((i*29)%26);t+=fir(x,y,110+((i*17)%40),'#1A3A2E');}
+  s2+=t;
+  s2+='<g fill="'+V+'" opacity=".16"><ellipse cx="420" cy="420" rx="420" ry="30"/><ellipse cx="880" cy="440" rx="240" ry="24"/></g>';
+  /* telescaun */
+  s2+='<path d="M560 40 L1000 170" stroke="'+CE+'" stroke-width="3"/><path d="M560 52 L1000 182" stroke="'+CE+'" stroke-width="2" opacity=".6"/>';
+  s2+='<g fill="none" stroke="'+CE+'" stroke-width="7"><path d="M860 136 V420"/><path d="M836 136 h48"/></g>';
+  [[650,67],[760,99],[930,150]].forEach(function(c){s2+='<g stroke="'+V+'" stroke-width="3" fill="none"><path d="M'+c[0]+' '+c[1]+' v34"/><path d="M'+(c[0]-16)+' '+(c[1]+34)+' h32 v14 h-32z" fill="'+V+'" fill-opacity=".85"/></g>';});
+  /* potecă */
+  s2+='<path d="M380 620 C430 560 520 540 560 500 S640 440 700 430" stroke="#C9B48A" stroke-width="22" fill="none" opacity=".45" stroke-linecap="round"/>';
+  /* lumina frontalei */
+  s2+='<ellipse cx="740" cy="410" rx="170" ry="48" fill="url(#beam)" transform="rotate(-14 612 444)"/>';
+  /* adolescent cu rucsac și frontală */
+  s2+='<g transform="translate(600 452)"><path d="M-6 0 l-6 54 M6 0 l8 54" stroke="#2B3B4B" stroke-width="10" stroke-linecap="round"/><rect x="-14" y="-52" width="28" height="56" rx="10" fill="#0E7C86"/><rect x="-30" y="-48" width="18" height="40" rx="6" fill="#B9583A"/><circle cx="0" cy="-66" r="13" fill="#E8C9A6"/><path d="M-13 -70 a13 13 0 0 1 26 0" fill="#2A2018"/><rect x="5" y="-74" width="9" height="7" rx="2" fill="'+OC+'"/><path d="M12 -36 l18 18" stroke="#0E7C86" stroke-width="9" stroke-linecap="round"/></g>';
+  /* trunchi cu marcaj cruce roșie (prim-plan) */
+  s2+='<rect x="120" y="250" width="56" height="370" fill="#3A2D22"/><path d="M128 270v330M150 260v350M166 280v320" stroke="#2A2018" stroke-width="3"/>';
+  s2+='<rect x="124" y="330" width="48" height="48" rx="4" fill="'+V+'"/><path d="M148 338v32M132 354h32" stroke="#E5484D" stroke-width="9"/>';
+  /* stâlp cu triunghi albastru (fundal) */
+  s2+='<rect x="292" y="410" width="12" height="70" fill="#3A2D22"/><rect x="282" y="392" width="32" height="30" rx="3" fill="'+V+'" opacity=".85"/><path d="M298 398 l10 18 h-20z" fill="#3E63DD"/>';
+  /* ceață în prim-plan */
+  s2+='<g fill="'+V+'" opacity=".1"><ellipse cx="300" cy="560" rx="380" ry="40"/><ellipse cx="860" cy="590" rx="300" ry="34"/></g>';
+  $('startArt').innerHTML=s2+'</svg>';
+  var ul=$('types');
+  [['baterie','Inventar: hartă, frontală, apă, baterie externă'],['lumina','Lumina rămasă'],['harta2','Harta traseelor'],['reguli','Ce am învățat: 5 reguli']].forEach(function(k){var li=document.createElement('li');li.innerHTML=ICON[k[0]]+'<span></span>';li.querySelector('span').textContent=k[1];ul.appendChild(li);});
+})();
+
+baseMap();
+$('go').addEventListener('click',startGame);
+$('home').addEventListener('click',function(){show('start');});
+document.addEventListener('keydown',function(e){
+  if(!$('game').classList.contains('on')||!s)return;
+  var n=N[s.node];if(n.end)return;
+  var m={'1':0,'2':1,'3':2,'a':0,'b':1,'c':2};
+  var k=m[(e.key||'').toLowerCase()];
+  if(k!==undefined&&k<choicesOf(n).length&&!(e.target&&e.target.tagName==='INPUT')){e.preventDefault();choose(k);}
+});
+
+/* interfață pentru testare automată */
+window.__game={N:N,ENDS:ENDS,state:function(){return JSON.parse(JSON.stringify(s));},choices:function(){return s?choicesOf(N[s.node]).length:0;},start:startGame,choose:choose,found:function(){return Object.keys(found);}};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ierbar digital: Dumbrava</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--violet2:#8B76E6;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--zid:#F5F1EA;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(22px,2.1vw,42px);line-height:1.12;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.notice{display:flex;align-items:center;gap:.7em;margin:clamp(8px,.8vw,16px) 0 0;padding:.55em 1em;border-radius:14px;background:rgba(14,124,134,.14);border:1px solid rgba(18,149,159,.45);color:var(--var);font-size:clamp(14px,1.05vw,21px);line-height:1.35}
+.notice svg{width:1.8em;height:1.8em;flex:none;color:#7FD6C9}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);margin-top:clamp(8px,.8vw,16px);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.15vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.3em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s;touch-action:manipulation;text-align:center;line-height:1.2}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.opt:not([disabled]):hover{border-color:var(--ocru);background:var(--surf2)}.card:hover{transform:translateY(-4px);border-color:var(--ocru)}.filt:hover{border-color:var(--ocru)}}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.opt:focus-visible,.card:focus-visible,.filt:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.15em;min-height:72px;padding:.5em 1.5em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.screen{flex:1;display:none;min-height:0;animation:fadeIn .45s ease both}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.88em;margin:0 0 .6em}
+.paper{background:linear-gradient(160deg,#F8F4EE 0%,#F5F1EA 55%,#EEE7DA 100%);border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.38),inset 0 0 0 1px rgba(120,100,70,.18)}
+.paper>svg{display:block;width:100%;height:auto}
+
+/* copertă */
+#cover{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(6px,1vw,20px) 0}
+#cover .art{flex:1.15;max-width:960px;border-radius:24px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+#cover .art svg{display:block;width:100%;height:auto}
+#cover .intro{flex:1;max-width:760px}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.3vw,66px);line-height:1.08;margin:0 0 .45em}
+.intro p{color:var(--ceata);margin:0 0 1em;max-width:34em}
+.intro p b{color:var(--var)}
+.groups{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 1.3em;padding:0;list-style:none}
+.groups li{display:inline-flex;align-items:center;gap:.5em;background:var(--surf);border:1px solid var(--line);border-radius:99px;padding:.3em 1em .3em .5em;font-size:.92em}
+.groups li i{width:.95em;height:.95em;border-radius:50%;display:inline-block;flex:none}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.how{font-size:.9em;color:var(--ceata);margin:1.3em 0 0;display:flex;gap:.6em;align-items:flex-start;max-width:36em}
+.how b{color:var(--var)}
+
+/* grila */
+#grid{flex-direction:column;gap:clamp(12px,1.2vw,22px)}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.filt{font:inherit;font-weight:600;min-height:56px;padding:.4em 1.15em;border-radius:99px;border:2px solid var(--line);background:var(--surf);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;gap:.5em;touch-action:manipulation;transition:border-color .2s,background .2s}
+.filt i{width:.85em;height:.85em;border-radius:50%;flex:none}
+.filt small{color:var(--ceata);font-weight:600;font-size:.85em}
+.filt[aria-pressed="true"]{background:var(--var);color:var(--bg);border-color:var(--var)}
+.filt[aria-pressed="true"] small{color:#4A5560}
+.bar .btn{margin-left:auto}
+.cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1vw,20px);width:100%;max-width:1600px;margin:0 auto;align-content:start}
+.card{font:inherit;color:inherit;text-align:left;background:var(--surf);border:2px solid var(--line);border-radius:18px;padding:10px 10px 14px;cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:transform .2s,border-color .2s;touch-action:manipulation;animation:fadeIn .4s ease both;position:relative;min-width:0}
+.card .paper{border-radius:10px;box-shadow:none}
+.card .nm{font-family:var(--serif);font-weight:700;font-size:1.1em;line-height:1.15;padding:0 4px}
+.card .lt{font-family:var(--serif);font-style:italic;color:var(--ceata);font-size:.86em;line-height:1.2;padding:0 4px;margin-top:-4px}
+.card .no{position:absolute;top:18px;left:18px;font-weight:700;font-size:.72em;letter-spacing:.08em;color:#5C5446;background:rgba(251,248,241,.9);border-radius:6px;padding:.15em .5em}
+.card .gt{position:absolute;top:18px;right:18px;font-weight:700;font-size:.68em;letter-spacing:.06em;text-transform:uppercase;color:#fff;border-radius:99px;padding:.25em .7em}
+.g-arbore{background:var(--petrol)}.g-arbust{background:#B07D12}.g-ierboasa{background:var(--violet)}
+.dot-arbore{background:#12959F}.dot-arbust{background:var(--ocru)}.dot-ierboasa{background:var(--violet2)}
+
+/* fișa */
+#detail{gap:clamp(16px,2.2vw,44px);align-items:stretch}
+#detail .plate{flex:none;height:100%;aspect-ratio:600/760;max-width:46%}
+#detail .plate svg{width:100%;height:100%}
+.info{flex:1;min-width:0;background:var(--surf);border-radius:24px;padding:clamp(18px,1.6vw,32px) clamp(18px,2.2vw,44px);display:flex;flex-direction:column;gap:clamp(10px,.8vw,16px);overflow:hidden;border-left:8px solid var(--chip)}
+.ibody{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:clamp(9px,.75vw,15px);padding-right:6px}
+.info h2{font-family:var(--serif);font-size:clamp(32px,2.7vw,54px);line-height:1.05;margin:0}
+.ttl{display:flex;align-items:baseline;gap:.2em .8em;flex-wrap:wrap;margin-top:-.2em}
+.info .lat{font-family:var(--serif);font-style:italic;font-size:1.35em;line-height:1.25;color:#E9D9B8;margin:0}
+.info .lat span{font-style:normal;font-family:var(--sans);font-size:.7em;color:var(--ceata);margin-left:.4em}
+.nota{margin:0;color:var(--ceata);font-size:.92em;border-left:4px solid var(--ocru);padding:.1em 0 .1em .8em}
+.info h3{font-family:var(--serif);font-size:1.12em;margin:0;color:var(--var)}
+.clues{list-style:none;margin:0;padding:0;display:grid;gap:.45em;counter-reset:c}
+.clues li{display:flex;gap:.75em;align-items:flex-start;counter-increment:c;line-height:1.4}
+.clues li::before{content:counter(c);flex:none;width:1.75em;height:1.75em;border-radius:50%;background:var(--petrol);color:var(--var);display:grid;place-items:center;font-weight:700;font-size:.9em;margin-top:.05em}
+.per{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.per div{background:var(--bg);border-radius:14px;padding:.6em .9em;display:flex;gap:.7em;align-items:flex-start}
+.per svg{width:1.9em;height:1.9em;flex:none;color:var(--ocru)}
+.per small{display:block;color:var(--ceata);font-size:.78em;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.per span{display:block;line-height:1.3}
+.cur{background:rgba(110,86,207,.18);border:1px solid rgba(139,118,230,.5);border-radius:16px;padding:.7em 1em;margin:0;line-height:1.45}
+.cur b{color:#C9BCFF;font-family:var(--serif)}
+.src{margin:0;color:var(--ceata);font-style:italic;font-size:.85em}
+.nav{display:flex;gap:12px;flex-wrap:wrap;padding-top:.6em;border-top:1px solid var(--line)}
+.nav .btn.accent{margin-left:auto}
+
+/* joc */
+#game{flex-direction:column;gap:clamp(10px,1.1vw,20px)}
+.hud{display:flex;align-items:center;gap:clamp(12px,1.6vw,32px);flex-wrap:wrap;color:var(--ceata)}
+.hud .stat{display:inline-flex;align-items:baseline;gap:.45em;white-space:nowrap}
+.hud .stat b{font-family:var(--serif);color:var(--var);font-size:1.35em;font-variant-numeric:tabular-nums}
+.dots{flex:1;display:flex;gap:8px;min-width:160px;max-width:520px}
+.dots i{flex:1;height:12px;border-radius:99px;background:var(--surf);transition:background .3s}
+.dots i.cur{background:var(--line);box-shadow:inset 0 0 0 2px var(--ocru)}
+.dots i.ok{background:var(--petrol2)}
+.dots i.no{background:var(--tigla)}
+.hud .btn{margin-left:auto}
+.qarea{flex:1;display:flex;gap:clamp(16px,2.2vw,44px);min-height:0}
+.qleaf{flex:none;height:100%;aspect-ratio:1/1;max-width:50%;position:relative}
+.qleaf svg{width:100%;height:100%}
+.qleaf .cap{position:absolute;left:12px;bottom:12px;font-size:.72em;color:#6C6352;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:rgba(248,244,238,.88);border-radius:6px;padding:.2em .5em}
+.qright{flex:1;min-width:0;display:flex;flex-direction:column;gap:clamp(10px,1vw,18px)}
+.ask{font-family:var(--serif);font-size:clamp(26px,2.4vw,48px);line-height:1.15;margin:0}
+.opts{display:grid;gap:clamp(10px,1vw,16px)}
+.opt{font:inherit;font-weight:700;font-size:clamp(20px,1.4vw,30px);min-height:clamp(64px,5.2vw,100px);border-radius:18px;border:3px solid var(--line);background:var(--surf);color:var(--var);cursor:pointer;display:flex;align-items:center;gap:.7em;padding:.35em 1em;text-align:left;line-height:1.15;transition:border-color .2s,background .2s,opacity .3s,transform .15s;touch-action:manipulation}
+.opt:active{transform:scale(.98)}
+.opt .k{flex:none;width:1.7em;height:1.7em;border-radius:50%;background:var(--bg);color:var(--ceata);display:grid;place-items:center;font-size:.7em}
+.opt .mk{margin-left:auto;flex:none;width:1.3em;height:1.3em}
+.opt .mk svg{width:100%;height:100%;display:block}
+.opt[disabled]{cursor:default}
+.opt.right{border-color:var(--petrol2);background:rgba(14,124,134,.28)}
+.opt.right .k{background:var(--petrol);color:var(--var)}
+.opt.wrong{border-color:var(--tigla);background:rgba(185,88,58,.24)}
+.opt.wrong .k{background:var(--tigla);color:var(--var)}
+.opt.dim{opacity:.45}
+.fb{background:var(--surf);border-radius:20px;padding:clamp(14px,1.4vw,28px);display:flex;flex-direction:column;gap:.6em;animation:fadeIn .35s ease both}
+.verdict{display:flex;align-items:center;gap:.5em;font-family:var(--serif);font-weight:700;font-size:1.6em;line-height:1.1;margin:0}
+.verdict svg{width:1.3em;height:1.3em;flex:none}
+.verdict.ok{color:#5FD0D8}.verdict.no{color:#F08A6A}
+.fb p{margin:0}
+.fb .ans b{font-family:var(--serif);font-size:1.15em}
+.fb .ans i{font-family:var(--serif);color:#E9D9B8}
+.fb .key{color:var(--ceata)}
+.fb .key b{color:var(--var)}
+.fb .btn{align-self:flex-start;margin-top:.3em}
+.qhelp{color:var(--ceata);margin:0;font-size:.92em}
+
+/* rezultat */
+#result{align-items:center;justify-content:center;gap:clamp(24px,5vw,90px);padding:20px 0}
+.ring{width:clamp(220px,20vw,380px);flex:none}
+.ring svg{width:100%;height:auto;display:block}
+.res{max-width:900px}
+.res h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,64px);line-height:1.1;margin:0 0 .4em}
+.res p{color:var(--ceata);max-width:34em;margin:0 0 1em}
+.rev{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 1.3em;padding:0;list-style:none}
+.rev li{display:inline-flex;align-items:center;gap:.45em;background:var(--surf);border:2px solid var(--line);border-radius:12px;padding:.35em .8em;font-size:.92em;font-weight:600}
+.rev li svg{width:1.1em;height:1.1em;flex:none}
+.rev li.ok{border-color:var(--petrol2)}.rev li.ok svg{color:#5FD0D8}
+.rev li.no{border-color:var(--tigla)}.rev li.no svg{color:#F08A6A}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ecrane mari: totul încape pe ecran */
+@media (min-width:1001px) and (min-height:700px){
+  .app{height:100vh;height:100dvh}
+  #grid .cards{overflow:auto;padding:4px;max-width:min(1600px,calc((50vh - 310px) * 5.11 + 224px))}
+}
+@media (min-width:1401px){.cards{gap:20px;grid-template-columns:repeat(var(--n,6),calc((100% - 100px) / 6));justify-content:center}}
+@media (max-width:1400px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:1000px){
+  #cover{flex-direction:column;align-items:stretch}
+  #cover .art{flex:none}
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #detail{flex-direction:column}
+  #detail .plate{height:auto;width:100%;max-width:560px;margin:0 auto}
+  #detail .plate svg{height:auto}
+  .info,.ibody{overflow:visible}
+  .qarea{flex-direction:column}
+  .qleaf{height:auto;width:100%;max-width:440px;margin:0 auto}
+  .qleaf svg{height:auto}
+  .hud .btn{margin-left:0}
+  .dots{flex:1 1 100%;order:3;max-width:none}
+  #result{flex-direction:column;text-align:center}
+  .res .row,.rev{justify-content:center}
+  .bar .btn{margin-left:0}
+}
+@media (max-width:700px){
+  .top{display:grid;grid-template-columns:1fr;gap:10px}
+  #home{justify-self:start;padding:.4em .9em}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card .nm{font-size:1em}
+  .nav .btn{flex:1 1 40%;padding:.5em .7em;white-space:nowrap}
+  .nav .btn.accent{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I15</span><h1>Ierbar digital AI: 12 plante din Dumbrava, cu fișe ilustrate</h1></div>
+    <button class="btn ghost" id="home" type="button">↺ Coperta</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="cover" aria-label="Coperta ierbarului">
+      <div class="art" id="coverArt"></div>
+      <div class="intro">
+        <p class="kicker">12 fișe ilustrate · 3 grupe · un mini-joc</p>
+        <h2>Deschide ierbarul Pădurii Dumbrava</h2>
+        <p>Un ierbar este o colecție de plante presate, fiecare pe foaia ei, cu o etichetă. Acesta e <b>digital</b>: 12 plante din listele de arbori, arbuști și plante ierboase ale Pădurii Dumbrava, desenate schematic, cu indicii de recunoaștere, perioade orientative și câte o curiozitate.</p>
+        <ul class="groups" id="groups" aria-label="Grupele de plante"></ul>
+        <div class="row">
+          <button class="btn big accent" id="open" type="button">Deschide ierbarul →</button>
+          <button class="btn big" id="play" type="button">Joacă: Recunoaște frunza</button>
+        </div>
+        <p class="how"><span aria-hidden="true">✦</span><span><b>Cum e făcut:</b> fișele au fost scrise cu AI (Claude, Anthropic). Informațiile botanice sunt verificate pe Wikipedia, iar denumirile, în dicționarele de pe dexonline; sursa apare pe fiecare fișă. Unde un nume popular acoperă mai multe specii, fișa spune asta.</span></p>
+      </div>
+    </section>
+
+    <section class="screen" id="grid" aria-label="Ierbarul – toate fișele">
+      <div class="bar">
+        <div class="filters" id="filters" role="group" aria-label="Filtrează plantele"></div>
+        <button class="btn" id="play2" type="button">Joacă: Recunoaște frunza →</button>
+      </div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section class="screen" id="detail" aria-label="Fișa plantei">
+      <div class="plate paper" id="dPlate"></div>
+      <article class="info">
+       <div class="ibody" id="dInfo" aria-live="polite">
+        <p class="kicker" id="dKick"></p>
+        <div class="ttl"><h2 id="dName"></h2><p class="lat" id="dLat"></p></div>
+        <p class="nota" id="dNota"></p>
+        <h3>Cum o recunoști</h3>
+        <ol class="clues" id="dClues"></ol>
+        <div class="per" id="dPer"></div>
+        <p class="cur" id="dCur"></p>
+        <p class="src" id="dSrc"></p>
+       </div>
+        <div class="nav">
+          <button class="btn ghost" id="back" type="button">← Înapoi</button>
+          <button class="btn ghost" id="prev" type="button">‹ Precedenta</button>
+          <button class="btn accent" id="next" type="button">Următoarea →</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="screen" id="game" aria-label="Mini-joc: recunoaște frunza">
+      <div class="hud">
+        <span class="stat">Frunza <b id="qn">1</b> din 5</span>
+        <span class="stat">Scor <b id="sc">0</b></span>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <button class="btn ghost" id="restart" type="button">↻ De la capăt</button>
+      </div>
+      <div class="qarea">
+        <div class="qleaf paper" id="qLeaf"></div>
+        <div class="qright">
+          <h2 class="ask">Al cui este această frunză?</h2>
+          <p class="qhelp" id="qHelp">Alege una dintre cele trei variante (pe tastatură: 1–3).</p>
+          <div class="opts" id="opts" role="group" aria-label="Variante de răspuns"></div>
+          <div class="fb" id="fb" hidden aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="result" aria-label="Rezultatul jocului">
+      <div class="ring">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="92" fill="none" stroke="#1B2733" stroke-width="18"/>
+          <circle id="ringVal" cx="110" cy="110" r="92" fill="none" stroke="#E2A62B" stroke-width="18" stroke-linecap="round" transform="rotate(-90 110 110)" stroke-dasharray="578.05" stroke-dashoffset="578.05" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)"/>
+          <text x="110" y="118" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="58" fill="#F3EFE6" id="ringTxt">0</text>
+          <text x="110" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" fill="#A9B4C0">din 5</text>
+        </svg>
+      </div>
+      <div class="res">
+        <p class="kicker">Scorul tău</p>
+        <h2 id="resTitle"></h2>
+        <p id="resMsg"></p>
+        <ul class="rev" id="rev" aria-label="Frunzele din joc și răspunsurile tale"></ul>
+        <div class="row">
+          <button class="btn big accent" id="again" type="button">Joacă din nou</button>
+          <button class="btn ghost" id="toGrid" type="button">Înapoi la ierbar</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="notice"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 38C8 22 18 10 40 8c1 20-10 31-26 30"/><path d="M10 38c6-9 13-15 22-20"/></svg><span>Plante din listele Direcției Silvice / sibiul.ro pentru Pădurea Dumbrava; desene schematice generate cu AI – pentru identificare sigură folosiți un atlas botanic; nu culegeți plante din rezervație.</span></p>
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* =====================================================================
+   DATE – 12 plante din listele fișei de fapte (Pădurea Dumbrava).
+   Botanica: en.wikipedia (pagina speciei; de.wikipedia pentru salata iepurelui);
+   denumiri: dexonline (DEX, DLRLC, DFL). Detalii în _fapte_noi_I15.md.
+   ===================================================================== */
+var GRP={arbore:'Arbore',arbust:'Arbust',ierboasa:'Plantă ierboasă'};
+var GRPS={arbore:'Arbori',arbust:'Arbuști',ierboasa:'Plante ierboase'};
+var P=[
+ {id:'stejar',ro:'Stejar',lat:'Quercus robur',grp:'arbore',
+  nota:'Sursele despre Dumbrava vorbesc de un „stejăret de terasă”. Dicționarul dendrofloricol (DFL) dă pentru „stejar” specia Quercus robur, numită și stejar pedunculat.',
+  frunza:'3–6 lobi rotunjiți, două „urechiușe” la bază și o codiță foarte scurtă.',
+  ind:['Frunza are 3–6 lobi rotunjiți, adânciți cel mult până la jumătatea distanței spre nervura din mijloc.',
+       'La baza frunzei se văd două „urechiușe”, iar codița (pețiolul) e foarte scurtă, de regulă 2–3 mm.',
+       'Ghindele stau câte 2–3 pe o codiță lungă de 4–8 cm – de aici numele de „stejar pedunculat”.'],
+  flori:'primăvara (în nordul Europei, la începutul lui mai)',fructe:'ghindele – toamna',
+  cur:'În Dumbrava a trăit „Stejarul împăratului”, cu o circumferință de 10,3 m. Avea circa 700 de ani când a fost tăiat, după ce s-a uscat.',
+  src:'en.wikipedia – Quercus robur, Acorn; dssibiu.ro și sibiul.ro (Stejarul împăratului); dexonline (DFL) pentru nume.'},
+ {id:'gorun',ro:'Gorun',lat:'Quercus petraea',grp:'arbore',
+  nota:'DEX: gorun = Quercus petraea. Numele latinesc „petraea” înseamnă „a locurilor stâncoase”.',
+  frunza:'lobi mici și regulați (5–6 pe fiecare parte), fără „urechiușe”, cu o codiță de circa 1 cm.',
+  ind:['Frunza are lobi mici și regulați, câte 5–6 pe fiecare parte, fără „urechiușe” la bază.',
+       'Codița frunzei e lungă, de circa 1 cm.',
+       'Ghindele (2–3 cm) stau direct pe ramură, fără codiță. Truc: la stejar e invers – frunza aproape fără codiță, ghinda cu codiță lungă.'],
+  flori:'primăvara (amenți)',fructe:'ghinda se coace în circa șase luni, spre toamnă',
+  cur:'Gaițele – păsări din lista faunei Dumbravei – ascund ghinde în multe locuri. Unele rămân uitate și încolțesc: așa „plantează” păsările stejari și goruni noi.',
+  src:'en.wikipedia – Quercus petraea, Acorn; dexonline (DEX) pentru nume.'},
+ {id:'carpen',ro:'Carpen',lat:'Carpinus betulus',grp:'arbore',
+  nota:'DEX: carpen = Carpinus betulus.',
+  frunza:'frunză ovală, dințată, cu nervuri paralele, reliefate, care o fac să pară „încrețită”.',
+  ind:['Frunza e ovală, cu marginea dințată și cu nervuri paralele, bine reliefate, care o fac să pară „încrețită”.',
+       'Scoarța e netedă și cenușiu-verzuie, chiar și la arborii bătrâni.',
+       'Fructul e o nucușoară prinsă de o bractee – o frunzuliță verde cu trei vârfuri, lungă de 3–4 cm.'],
+  flori:'amenții apar după frunze, la începutul verii (după en.wikipedia)',fructe:'toamna',
+  cur:'Lemnul de carpen e greu și tare, bun pentru unelte. În grădini, carpenul e folosit mult pentru garduri vii înalte și pentru tufe tunse în forme.',
+  src:'en.wikipedia – Carpinus betulus; dexonline (DEX) pentru nume.'},
+ {id:'tei',ro:'Tei',lat:'Tilia',gen:true,labLat:'Tilia sp.',grp:'arbore',
+  nota:'Sursele despre Dumbrava scriu doar „tei”, fără specie. Dicționarul dendrofloricol (DFL) numește trei specii: teiul pucios (Tilia cordata), teiul cu frunză mare (T. platyphyllos) și teiul argintiu (T. tomentosa). De aceea fișa descrie genul.',
+  frunza:'frunză în formă de inimă, de obicei asimetrică la bază, cu marginea dințată.',
+  ind:['Frunza are formă de inimă, de cele mai multe ori asimetrică la bază, cu marginea dințată.',
+       'Florile mici, galben-verzui și foarte parfumate atârnă în buchete, sub o bractee lungă, ca o panglică.',
+       'Fructele mici și tari, ca niște nuci în miniatură, rămân prinse de aceeași bractee.'],
+  flori:'începutul verii (după fișa teiului pucios)',fructe:'',
+  cur:'Florile de tei se folosesc pentru ceai, iar albinele fac din ele o miere apreciată. Lemnul, moale și ușor de lucrat, e preferat pentru sculptură.',
+  src:'en.wikipedia – Tilia, Tilia cordata; dexonline (DEX, DFL) pentru nume.'},
+ {id:'jugastru',ro:'Jugastru',lat:'Acer campestre',grp:'arbore',
+  nota:'DEX: jugastru = Acer campestre, un arțar.',
+  frunza:'frunze opuse, mici, cu cinci lobi rotunjiți și marginea netedă.',
+  ind:['Frunzele stau față în față, câte două (opuse), și au cinci lobi rotunjiți, cu marginea netedă.',
+       'Frunza e mică pentru un arțar: 5–16 cm, cu tot cu codiță.',
+       'Fructele sunt samare duble, cu aripile întinse în linie dreaptă (la 180°).'],
+  flori:'primăvara, odată cu frunzele',fructe:'vara – toamna',
+  cur:'Samarele arțarilor se rotesc când cad, ca niște „elicoptere”, și duc semințele departe, purtate de vânt. Lemnul jugastrului, alb și tare, e folosit și la instrumente muzicale.',
+  src:'en.wikipedia – Acer campestre, Maple; dexonline (DEX) pentru nume.'},
+ {id:'cires',ro:'Cireș pădureț',lat:'Prunus avium',grp:'arbore',
+  nota:'Dicționarul dendrofloricol (DFL): cireș pădureț = Prunus avium – aceeași specie căreia en.wikipedia îi spune și „sweet cherry”, cireș dulce.',
+  frunza:'frunză ovală, ascuțită, dințată, cu 2–5 glande mici, roșii, pe codiță.',
+  ind:['Frunza e ovală, ascuțită la vârf, cu marginea dințată; pe codiță are 2–5 glande mici, roșii.',
+       'Florile albe, cu cinci petale, apar primăvara devreme, odată cu frunzele.',
+       'La arborii tineri, scoarța netedă, brun-roșcată, are dungi orizontale (lenticele).'],
+  flori:'primăvara devreme',fructe:'la mijlocul verii',
+  cur:'Cireșele sălbatice, roșii până la purpuriu închis, pot fi dulci sau amărui. Păsările și mamiferele le mănâncă și le răspândesc semințele. Atenție: în afară de fructul copt, toate părțile plantei sunt ușor toxice.',
+  src:'en.wikipedia – Prunus avium; dexonline (DFL) pentru nume.'},
+ {id:'paducel',ro:'Păducel',lat:'Crataegus monogyna',grp:'arbust',
+  nota:'Sursele despre Dumbrava scriu „păducel”; DEX îl leagă de Crataegus monogyna. Genul Crataegus are circa 200 de specii, așa că identificarea exactă cere un atlas.',
+  frunza:'frunză mică (2–4 cm), adânc crestată în lobi depărtați.',
+  ind:['Frunzele sunt mici (2–4 cm), adânc crestate în lobi depărtați.',
+       'Ramurile tinere au spini ascuțiți, de peste 1 cm.',
+       'Fructele sunt mici (circa 1 cm), ovale, roșu închis, cu o singură sămânță.'],
+  flori:'mai – începutul lui iunie (în arealul de origine)',fructe:'rămân pe ramuri și iarna',
+  cur:'Fructele rămase iarna sunt o hrană importantă pentru sturzi – familie din care face parte și mierla, pasăre din lista faunei Dumbravei. Păsările răspândesc apoi semințele.',
+  src:'en.wikipedia – Crataegus monogyna, Crataegus, Common blackbird; dexonline (DEX) pentru nume.'},
+ {id:'porumbar',ro:'Porumbar',lat:'Prunus spinosa',grp:'arbust',
+  nota:'DEX: porumbar = Prunus spinosa.',
+  frunza:'frunze mici (2–4,5 cm), ovale, cu marginea dințată.',
+  ind:['Arbust des, cu ramuri rigide, terminate în spini lungi și ascuțiți.',
+       'Florile albe-crem, cu cinci petale, apar primăvara devreme, puțin înaintea frunzelor.',
+       'Fructele (porumbele) sunt negre, acoperite cu o brumă albăstruie, și au 10–12 mm.'],
+  flori:'primăvara devreme, înaintea frunzelor',fructe:'toamna târziu; culese tradițional după primele înghețuri',
+  cur:'În engleză, un val de frig venit când porumbarul e în floare se numește „blackthorn winter” – „iarna porumbarului”. Porumbele sunt foarte astringente; după îngheț, coaja lor se înmoaie.',
+  src:'en.wikipedia – Prunus spinosa; dexonline (DEX) pentru nume.'},
+ {id:'maces',ro:'Măceș',lat:'Rosa canina',grp:'arbust',
+  nota:'„Măceș” e un nume dat mai multor trandafiri sălbatici (DEX: genul Rosa); alte dicționare (DLRLC, DFL) îl leagă de Rosa canina. Sursele despre Dumbrava nu precizează specia.',
+  frunza:'frunză compusă din 5–7 frunzulițe dințate.',
+  ind:['Frunza e compusă din 5–7 frunzulițe (foliole).',
+       'Tulpinile au ghimpi mici, ascuțiți, încovoiați ca niște cârlige, cu care planta se agață.',
+       'Florile, de 4–6 cm, au cinci petale, de regulă roz-pal, uneori albe.'],
+  flori:'iunie – iulie',fructe:'măceșele – septembrie – octombrie',
+  cur:'Numele englezesc „dog rose” („trandafirul câinelui”) ar veni, după Pliniu, dintr-o credință veche: că rădăcina vindecă mușcătura câinilor turbați – o legendă, nu un tratament. Măceșele, bogate în vitamina C, se folosesc pentru ceai, sirop și gem.',
+  src:'en.wikipedia – Rosa canina; dexonline (DEX, DLRLC, DFL) pentru nume.'},
+ {id:'lemn',ro:'Lemnul câinelui',lat:'Ligustrum vulgare',grp:'arbust',
+  nota:'DEX și DLRLC: lemn-câinesc (lemnul-câinelui) = Ligustrum vulgare.',
+  frunza:'frunze înguste (2–6 cm), în perechi opuse, fiecare pereche în cruce cu următoarea.',
+  ind:['Frunzele, înguste (2–6 cm), stau în perechi opuse, fiecare pereche în cruce cu cea de dedesubt.',
+       'Florile albe-crem, adunate în ciorchini (panicule) de 3–6 cm, au un miros puternic.',
+       'Fructele sunt bace mici, negre și lucioase – otrăvitoare pentru oameni.'],
+  flori:'mijlocul verii',fructe:'bace negre, după înflorire',
+  cur:'Sturzii mănâncă bacele și le împrăștie semințele. Arbustul se folosește de mult pentru garduri vii – chiar așa îl descriu și dicționarele românești.',
+  src:'en.wikipedia – Ligustrum vulgare, Ligustrum; dexonline (DEX, DLRLC) pentru nume.'},
+ {id:'brandusa',ro:'Brândușă',lat:'Crocus',gen:true,labLat:'Crocus sp.',grp:'ierboasa',
+  nota:'Sursele despre Dumbrava scriu doar „brândușe”. Numele acoperă mai multe plante: brândușa de primăvară (genul Crocus, de exemplu Crocus heuffelianus – DEX) și brândușa de toamnă (Colchicum autumnale), foarte toxică. Fișa desenează o brândușă de primăvară.',
+  frunza:'frunze înguste, ca de iarbă, cu o dungă deschisă la mijloc.',
+  ind:['Frunzele sunt înguste, ca de iarbă, cu o dungă deschisă la culoare pe mijloc.',
+       'Floarea are formă de cupă sau de pâlnie, cu 6 tepale (petale) și 3 stamine.',
+       'Planta crește dintr-un bulb mic și rotund, îngropat în pământ.'],
+  flori:'speciile de primăvară: de la mijlocul iernii până primăvara; brândușa de toamnă: toamna',fructe:'',
+  cur:'Atenție la asemănări: brândușa de toamnă (Colchicum autumnale) are 6 stamine, nu 3, și e mortal de toxică – frunzele ei au fost confundate chiar cu leurda. Șofranul, în schimb, vine din stigmatele uscate ale unei brândușe adevărate, Crocus sativus.',
+  src:'en.wikipedia – Crocus, Colchicum autumnale; dexonline (DEX) pentru nume.'},
+ {id:'salata',ro:'Salata iepurelui',lat:'Prenanthes purpurea',grp:'ierboasa',
+  nota:'Sursele despre Dumbrava dau doar numele popular; DEX și DLRLC îl leagă de Prenanthes purpurea, din familia Asteraceae.',
+  frunza:'frunzele de sus, fără codiță, au baza în formă de inimă, care cuprinde tulpina.',
+  ind:['Tulpina e subțire, înaltă de 30–150 cm.',
+       'Frunzele de sus nu au codiță: baza lor, în formă de inimă, cuprinde tulpina.',
+       'Florile, roșiatice până la violet, stau câte 2–5 într-un capitul mic și seamănă cu niște stele.'],
+  flori:'iulie – august',fructe:'',
+  cur:'Și în germană planta se numește tot „salata iepurelui”: Hasenlattich. Specia a fost descrisă științific de Carl Linné, în 1753, și crește mai ales în păduri amestecate de munte.',
+  src:'de.wikipedia – Purpur-Hasenlattich; en.wikipedia – Prenanthes purpurea; dexonline (DEX, DLRLC) pentru nume.'}
+];
+P.forEach(function(p,i){p.nr=i+1;});
+
+/* =====================================================================
+   DESEN – planșe de ierbar în SVG (generate în cod, schematic)
+   ===================================================================== */
+var K={leaf:'#6E8C4B',leafL:'#A4BE80',vein:'#40592D',edge:'#3A522C',twig:'#6E5440',twigD:'#3F322A',ink:'#2E2A22'};
+function n(v){return Math.round(v*10)/10;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function sstep(a,b,x){var t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);}
+function env(t,a,b){if(t<=0||t>=1)return 0;var ts=a/(a+b),m=Math.pow(ts,a)*Math.pow(1-ts,b);return Math.pow(t,a)*Math.pow(1-t,b)/m;}
+function pth(pts,close){var s='M'+n(pts[0][0])+' '+n(pts[0][1]);for(var i=1;i<pts.length;i++)s+='L'+n(pts[i][0])+' '+n(pts[i][1]);return s+(close?'Z':'');}
+function angDiff(a,b){var d=a-b;while(d>180)d-=360;while(d<-180)d+=360;return d;}
+function rng(seed){var s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+
+/* frunză simplă, generată de-a lungul nervurii: baza în (0,0), vârful spre y negativ */
+function leafShape(sp){
+  var N=sp.N||200,L=sp.L,W=sp.W,S={},PR={};
+  [1,-1].forEach(function(s){
+    var pts=[],pr=[];
+    for(var i=0;i<=N;i++){
+      var t=i/N,h=W*env(t,sp.a,sp.b);
+      if(sp.aur&&t<.16){var q=Math.sin(Math.PI*t/.16);h+=sp.aur*W*q*q;}
+      if(sp.lobes){
+        var ph=s>0?(sp.ph||0):(sp.ph2!=null?sp.ph2:(sp.ph||0)+.2);
+        var u=((sp.lobes*t+ph)%1+1)%1,r=Math.sqrt(Math.max(0,1-Math.pow(2*u-1,2)));
+        var l0=sp.l0||.08,fd=sstep(l0,l0+.1,t)*(1-sstep(sp.l1||.84,.97,t));
+        h*=1-sp.ld*fd*(1-r);
+      }
+      if(sp.teeth){var u2=(sp.teeth*t)%1;h+=sp.ta*W*Math.pow(u2,sp.tp||1.6)*sstep(.03,.15,t)*(1-sstep(.88,1,t));}
+      var hp=h;
+      if(sp.teeth2){var u3=(sp.teeth2*t)%1;h+=sp.ta2*W*Math.pow(u3,1.4)*sstep(.03,.15,t)*(1-sstep(.88,1,t));}
+      var as=1+(sp.asym||0)*s*(1-sstep(.25,.7,t));
+      h*=as;hp*=as;
+      var y=-L*t;
+      if(sp.cord&&t<sp.tc){var uu=t/sp.tc;y+=sp.cord*L*Math.sin(Math.PI*uu)*(1-uu)/.58*(1+(sp.asym||0)*2.5*s);}
+      pts.push([s*h,y]);pr.push(hp);
+    }
+    S[s]=pts;PR[s]=pr;
+  });
+  var R=S[1],Lf=S[-1].slice().reverse();
+  var d=pth(R.concat(Lf.slice(1)),true);
+  var half='M0 0'+pth(R,false).replace(/^M/,'L')+'L0 '+n(-L)+'Z';
+  var mid='M0 0L0 '+n(-L*(sp.mtip||.96));
+  var veins=[];
+  [1,-1].forEach(function(s){
+    var pts=S[s],pr=PR[s],idx=[],i;
+    if(sp.veins==='max'){
+      for(i=2;i<N-1;i++){var tt=i/N;if(tt<.07||tt>.93)continue;if(pr[i]>pr[i-1]&&pr[i]>=pr[i+1])idx.push(i);}
+    }else{
+      var nv=sp.veins||5,v0=sp.v0||.12,v1=sp.v1||.8;
+      for(var k=0;k<nv;k++)idx.push(Math.round((v0+k*(v1-v0)/Math.max(1,nv-1))*N));
+    }
+    idx.forEach(function(i){
+      var p=pts[i],t=i/N,ts=Math.max(0,t-(sp.vang||.1)),ys=-L*ts,ex=p[0]*.9,ey=p[1];
+      var cx=sp.vstraight?ex*.5:ex*.42,cy=sp.vstraight?(ys+ey)/2:ys+(ey-ys)*.8;
+      veins.push('M0 '+n(ys)+'Q'+n(cx)+' '+n(cy)+' '+n(ex)+' '+n(ey));
+    });
+    if(sp.palm){[.06,.14].forEach(function(t){var i=Math.round(t*N),p=pts[i];veins.push('M0 0Q'+n(p[0]*.5)+' '+n(p[1]*.3)+' '+n(p[0]*.88)+' '+n(p[1]));});}
+  });
+  return {d:d,half:half,mid:mid,veins:veins.join('')};
+}
+/* frunză palmată / lobată, în coordonate polare (centrul = locul codiței) */
+function polarShape(sp){
+  var pts=[],R=sp.R,tips=[];
+  for(var dg=-180;dg<180;dg+=1){
+    var r=sp.r0||.2,acc=sp.soft?Math.pow(r,sp.soft):0;
+    if(sp.wedge){var dd=Math.abs(angDiff(dg,-90));r*=1-sstep(sp.wedge[0],sp.wedge[1],dd);}
+    sp.lobes.forEach(function(lb){
+      var dd=angDiff(dg,lb.a);
+      if(Math.abs(dd)<lb.w){var v=lb.l*Math.pow(Math.cos(Math.PI/2*dd/lb.w),lb.p||sp.p||.6);
+        if(sp.tooth)v*=1+sp.tooth*Math.pow(Math.abs(Math.sin(Math.PI*(sp.tn||2.5)*dd/lb.w)),2)*(Math.abs(dd)<lb.w*.8?1:0);
+        if(sp.soft)acc+=Math.pow(v,sp.soft);else r=Math.max(r,v);}
+    });
+    if(sp.soft)r=Math.pow(acc,1/sp.soft);
+    if(sp.saw){var uu=(((dg+180)/360*sp.saw)%1);r*=1+sp.sa*Math.pow(uu,1.6)*sstep(10,40,Math.abs(angDiff(dg,90)));}
+    var rad=dg*Math.PI/180;pts.push([R*r*Math.cos(rad),R*r*Math.sin(rad)]);
+  }
+  var veins='';
+  sp.lobes.forEach(function(lb){var rad=lb.a*Math.PI/180,ex=R*lb.l*.9*Math.cos(rad),ey=R*lb.l*.9*Math.sin(rad);
+    veins+='M0 0Q'+n(ex*.5+ey*.05)+' '+n(ey*.5-ex*.05)+' '+n(ex)+' '+n(ey);
+    if(lb.l>.7){[-.5,.5].forEach(function(o){var a2=(lb.a+o*lb.w*.9)*Math.PI/180,rr=R*lb.l*.55;var sx=R*lb.l*.38*Math.cos(rad),sy=R*lb.l*.38*Math.sin(rad);veins+='M'+n(sx)+' '+n(sy)+'L'+n(rr*Math.cos(a2))+' '+n(rr*Math.sin(a2));});}
+  });
+  var half='M0 0';
+  pts.forEach(function(p){if(p[0]>=0)half+='L'+n(p[0])+' '+n(p[1]);});
+  return {d:pth(pts,true),half:half+'Z',mid:'',veins:veins};
+}
+/* frunză desenată din puncte de control (jumătatea dreaptă), cu dinți pe margine */
+function catmull(pts,seg){
+  var out=[];
+  for(var i=0;i<pts.length-1;i++){
+    var p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||pts[i+1];
+    for(var j=0;j<seg;j++){var t=j/seg,t2=t*t,t3=t2*t;
+      out.push([.5*(2*p1[0]+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3),
+                .5*(2*p1[1]+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)]);}
+  }
+  out.push(pts[pts.length-1]);return out;
+}
+function splineShape(sp){
+  var k=sp.k||1,S={},AC={};
+  [1,-1].forEach(function(s){
+    var cp=sp.pts.map(function(p){var x=p[0],y=p[1];if(s<0){x*=sp.lx||1;if(y>0)y*=sp.ly||1;}return [s*x*k,y*k];});
+    var d=catmull(cp,40),acc=[0],i;
+    for(i=1;i<d.length;i++)acc.push(acc[i-1]+Math.hypot(d[i][0]-d[i-1][0],d[i][1]-d[i-1][1]));
+    var tot=acc[acc.length-1],res=[];
+    for(i=0;i<d.length;i++){
+      var p=d[i];
+      if(sp.tp){var a=acc[i],fade=sstep(sp.t0*k,(sp.t0+12)*k,a)*(1-sstep(tot-(sp.t1+10)*k,tot-sp.t1*k,a)),u=(a/(sp.tp*k))%1,amp=sp.ta*k*Math.pow(u,1.6)*fade;
+        var pa=d[Math.max(0,i-1)],pb=d[Math.min(d.length-1,i+1)],tx=pb[0]-pa[0],ty=pb[1]-pa[1],l=Math.hypot(tx,ty)||1;
+        var nx=s>0?-ty/l:ty/l,ny=s>0?tx/l:-tx/l;p=[p[0]+nx*amp,p[1]+ny*amp];}
+      res.push(p);
+    }
+    S[s]=res;AC[s]=acc.map(function(v){return v/tot;});
+  });
+  var R=S[1],Lf=S[-1].slice().reverse(),top=R[R.length-1];
+  var d=pth(R.concat(Lf.slice(1)),true),half=pth(R,false)+'L0 '+n(top[1])+'Z';
+  var at=function(s,fr){var ac=AC[s];for(var i=0;i<ac.length;i++)if(ac[i]>=fr)return S[s][i];return S[s][ac.length-1];};
+  var veins='M0 0L0 '+n(top[1]*.97);
+  (sp.vs||[]).forEach(function(v){[1,-1].forEach(function(s){var p=at(s,v[1]),ys=top[1]*v[0];veins+='M0 '+n(ys)+'Q'+n(p[0]*.45)+' '+n(ys+(p[1]-ys)*.7)+' '+n(p[0]*.92)+' '+n(p[1]*.94);});});
+  return {d:d,half:half,mid:'',veins:veins};
+}
+function scaleSpec(sp,k){var o={};for(var key in sp)o[key]=sp[key];if(sp.L)o.L=sp.L*k;if(sp.W)o.W=sp.W*k;if(sp.R)o.R=sp.R*k;if(sp.pet)o.pet=sp.pet*k;o.k=k;return o;}
+function leafSVG(sp,col){
+  var c=col||{},sh=sp.type==='polar'?polarShape(sp):sp.type==='spline'?splineShape(sp):leafShape(sp),k=sp.k||1;
+  var f=c.f||K.leaf,fl=c.fl||K.leafL,v=c.v||K.vein,e=c.e||K.edge,s='';
+  if(sp.pet)s+='<path d="M0 0L0 '+n(sp.pet)+'" stroke="'+(c.p||v)+'" stroke-width="'+n((sp.pw||2.4)*Math.sqrt(k))+'" stroke-linecap="round"/>';
+  if(sp.glands)s+='<circle cx="-3.2" cy="'+n(sp.pet*.22)+'" r="2.8" fill="#B23A2E"/><circle cx="3.2" cy="'+n(sp.pet*.3)+'" r="2.8" fill="#B23A2E"/>';
+  s+='<path d="'+sh.d+'" fill="'+f+'" stroke="'+e+'" stroke-width="'+n(1.3*Math.sqrt(k))+'" stroke-linejoin="round"/>';
+  s+='<path d="'+sh.half+'" fill="'+fl+'" opacity=".42"/>';
+  if(sh.mid)s+='<path d="'+sh.mid+'" stroke="'+v+'" stroke-width="'+n((sp.mw||2)*Math.sqrt(k))+'" fill="none" stroke-linecap="round"/>';
+  s+='<path d="'+sh.veins+'" stroke="'+v+'" stroke-width="'+n((sp.vw||1.1)*Math.sqrt(k))+'" fill="none" opacity=".8" stroke-linecap="round"/>';
+  return s;
+}
+/* (x,y) = capătul codiței; rot în grade (0 = frunza în sus) */
+function leafAt(sp,x,y,rot,k,col){
+  var s2=scaleSpec(sp,k||1);
+  return '<g transform="translate('+n(x)+' '+n(y)+') rotate('+n(rot)+') translate(0 '+n(-(s2.pet||0))+')">'+leafSVG(s2,col)+'</g>';
+}
+function g(x,y,r,k,inner){return '<g transform="translate('+n(x)+' '+n(y)+') rotate('+n(r||0)+') scale('+(k||1)+')">'+inner+'</g>';}
+function tape(x,y,w,h,r){return g(x,y,r,1,'<rect x="'+(-w/2)+'" y="'+(-h/2)+'" width="'+w+'" height="'+h+'" fill="#E2D3A8" opacity=".85"/><path d="M'+(-w/2)+' '+(-h/2)+'h'+w+'M'+(-w/2)+' '+(h/2)+'h'+w+'" stroke="#C9B98E" stroke-width="1"/>');}
+function twig(d,w,c){return '<path d="'+d+'" fill="none" stroke="'+(c||K.twig)+'" stroke-width="'+(w||6)+'" stroke-linecap="round" stroke-linejoin="round"/>';}
+function stalk(d,w,c){return '<path d="'+d+'" fill="none" stroke="'+(c||'#6B6A3A')+'" stroke-width="'+(w||2)+'" stroke-linecap="round"/>';}
+function cub(p0,p1,p2,p3,t){var u=1-t;return [u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]];}
+function cubT(p0,p1,p2,p3,t){var u=1-t;var x=3*u*u*(p1[0]-p0[0])+6*u*t*(p2[0]-p1[0])+3*t*t*(p3[0]-p2[0]),y=3*u*u*(p1[1]-p0[1])+6*u*t*(p2[1]-p1[1])+3*t*t*(p3[1]-p2[1]);return Math.atan2(y,x)*180/Math.PI;}
+function acorn(x,y,r,k){
+  var s='<path d="M-12 12C-14 28-8 42 0 48C8 42 14 28 12 12Z" fill="#A9773F" stroke="#6E4B26" stroke-width="1.4"/>'+
+  '<path d="M-6 17C-7 28-4 37 0 43" stroke="#CFA36A" stroke-width="3" fill="none" opacity=".7" stroke-linecap="round"/>'+
+  '<path d="M0 48L0 52" stroke="#6E4B26" stroke-width="2" stroke-linecap="round"/>'+
+  '<path d="M-15 14C-16 4-9-1 0-1C9-1 16 4 15 14C8 17-8 17-15 14Z" fill="#8A6A45" stroke="#5E4529" stroke-width="1.4"/>'+
+  '<path d="M-11 5h22M-14 10h28" stroke="#5E4529" stroke-width="1.2" stroke-dasharray="2 3"/>';
+  return g(x,y,r,k||1,s);
+}
+function samaras(x,y,r,k){
+  function wing(s){return '<path d="M'+6*s+' -3C'+20*s+' -13 '+44*s+' -15 '+54*s+' -7C'+58*s+' 1 '+46*s+' 8 '+9*s+' 6Z" fill="#C9BA7E" stroke="#7D7044" stroke-width="1.2"/><path d="M'+10*s+' 1C'+24*s+' -4 '+38*s+' -7 '+51*s+' -6M'+14*s+' 3C'+28*s+' 0 '+40*s+' -1 '+50*s+' 0" stroke="#9A8A55" stroke-width="1" fill="none"/>';}
+  return g(x,y,r,k||1,wing(1)+wing(-1)+'<ellipse cx="-7" cy="1" rx="8" ry="6.5" fill="#A8955A" stroke="#6E6038" stroke-width="1.2"/><ellipse cx="7" cy="1" rx="8" ry="6.5" fill="#A8955A" stroke="#6E6038" stroke-width="1.2"/>');
+}
+function bract3(x,y,r,k){
+  var s='<path d="M0 0C-5 5-15 8-21 20C-13 18-9 20-7 25C-9 39-6 53 0 64C6 53 9 39 7 25C9 20 13 18 21 20C15 8 5 5 0 0Z" fill="#A9BC7A" stroke="#5F7342" stroke-width="1.2"/>'+
+  '<path d="M0 6L0 60M0 9L-15 19M0 9L15 19M0 22l-4 6M0 30l4 6M0 38l-4 6" stroke="#5F7342" stroke-width="1" fill="none"/>'+
+  '<ellipse cx="0" cy="6" rx="5" ry="6.5" fill="#8C7A4A" stroke="#5E5030"/>';
+  return g(x,y,r,k||1,s);
+}
+function flower5(x,y,r,o){
+  var s='',i;
+  for(i=0;i<5;i++)s+='<ellipse cx="0" cy="'+n(-r*.52)+'" rx="'+n(r*.42)+'" ry="'+n(r*.54)+'" transform="rotate('+(i*72)+')" fill="'+o.f+'" stroke="'+o.e+'" stroke-width="1"/>';
+  if(o.vein)for(i=0;i<5;i++)s+='<path d="M0 '+n(-r*.25)+'L0 '+n(-r*.85)+'" transform="rotate('+(i*72)+')" stroke="'+o.vein+'" stroke-width=".9"/>';
+  if(o.an){for(i=0;i<14;i++){var a=i*360/14*Math.PI/180,rr=r*(i%2?.3:.36);s+='<path d="M0 0L'+n(rr*Math.cos(a))+' '+n(rr*Math.sin(a))+'" stroke="'+o.an+'" stroke-width=".9"/><circle cx="'+n(rr*Math.cos(a))+'" cy="'+n(rr*Math.sin(a))+'" r="'+n(Math.max(1.2,r*.055))+'" fill="'+o.an+'"/>';}}
+  s+='<circle r="'+n(r*.15)+'" fill="'+o.c+'"/>';
+  return g(x,y,o.r||0,1,s);
+}
+function berry(x,y,rx,ry,f,e,hi,r){return g(x,y,r||0,1,'<ellipse rx="'+rx+'" ry="'+ry+'" fill="'+f+'" stroke="'+e+'" stroke-width="1.2"/><ellipse cx="'+n(-rx*.35)+'" cy="'+n(-ry*.38)+'" rx="'+n(rx*.28)+'" ry="'+n(ry*.2)+'" fill="'+hi+'" opacity=".75" transform="rotate(-30 '+n(-rx*.35)+' '+n(-ry*.38)+')"/>');}
+function thorn(x,y,r,len,w,c){return g(x,y,r,1,'<path d="M'+(-w/2)+' 1L0 '+(-len)+'L'+(w/2)+' 1Z" fill="'+(c||K.twigD)+'"/>');}
+function prickle(x,y,r,k){return g(x,y,r,k||1,'<path d="M-6 1C-4-5 1-10 8-12C3-7 2-3 5 1Z" fill="#8E4A3A"/>');}
+function strap(p0,p1,p2,w,f,e,st){
+  var A=[],B=[],C=[],N=50;
+  for(var i=0;i<=N;i++){var t=i/N,u=1-t;
+    var x=u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0],y=u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1];
+    var tx=2*u*(p1[0]-p0[0])+2*t*(p2[0]-p1[0]),ty=2*u*(p1[1]-p0[1])+2*t*(p2[1]-p1[1]),l=Math.hypot(tx,ty)||1;
+    var nx=-ty/l,ny=tx/l,ww=w*(1-Math.pow(t,5))*(.75+.25*sstep(0,.1,t))/2;
+    A.push([x+nx*ww,y+ny*ww]);B.push([x-nx*ww,y-ny*ww]);if(t<.93)C.push([x,y]);}
+  return '<path d="'+pth(A.concat(B.reverse()),true)+'" fill="'+f+'" stroke="'+e+'" stroke-width="1.1"/><path d="'+pth(C,false)+'" stroke="'+st+'" stroke-width="'+n(w*.26)+'" fill="none" stroke-linecap="round"/>';
+}
+function label(p){
+  var s='<g transform="translate(296 652)"><rect width="284" height="94" rx="2" fill="#FCF9F3" stroke="#B9AE98" stroke-width="1.5"/><rect x="6" y="6" width="272" height="82" fill="none" stroke="#DCD3C2"/>';
+  s+='<text x="16" y="27" font-family="Inter, sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.6" fill="#7A6F5C">IERBAR AI · NR. '+(p.nr<10?'0':'')+p.nr+'</text>';
+  s+='<text x="16" y="55" font-family="Noto Serif, Georgia, serif" font-style="italic" font-size="22" fill="#2E2A22">'+esc(p.labLat||p.lat)+'</text>';
+  s+='<text x="16" y="79" font-family="Inter, sans-serif" font-size="15.5" fill="#4B4538">'+esc(p.ro+' · '+(p.grp==='ierboasa'?'ierboasă':GRP[p.grp].toLowerCase()))+'</text></g>';
+  s+='<text x="26" y="738" font-family="Inter, sans-serif" font-size="14" font-style="italic" fill="#8C8270">desen schematic generat cu AI</text>';
+  return s;
+}
+
+/* ---------- specificațiile frunzelor ---------- */
+var LF={
+ stejar:{L:190,W:58,a:1.2,b:.6,lobes:5,ph:.12,ph2:.38,ld:.5,l0:.1,aur:.3,cord:.1,tc:.17,pet:4,veins:'max',vang:.12},
+ gorun:{L:168,W:47,a:.8,b:.75,lobes:6.6,ph:.08,ph2:.32,ld:.3,l0:.07,pet:24,veins:'max',vang:.1},
+ carpen:{L:150,W:40,a:.6,b:1.15,teeth:13,ta:.1,tp:2.2,teeth2:39,ta2:.035,pet:12,veins:'max',vang:.06,vstraight:true},
+ tei:{type:'spline',pts:[[0,0],[10,12],[32,18],[55,9],[71,-14],[77,-40],[73,-70],[61,-98],[42,-121],[22,-137],[8,-147],[0,-157]],lx:.9,ly:.6,tp:8.5,ta:3.4,t0:10,t1:9,vs:[[0,.06],[0,.16],[.24,.33],[.44,.5],[.64,.66],[.82,.8]],pet:38},
+ jug:{type:'polar',R:76,r0:.16,p:.55,lobes:[{a:-90,l:1,w:30},{a:-141,l:.84,w:26},{a:-39,l:.84,w:26},{a:170,l:.5,w:22},{a:10,l:.5,w:22}],pet:58},
+ cires:{L:165,W:46,a:1.15,b:1.3,teeth:30,ta:.06,tp:1.5,pet:34,veins:7,v0:.12,v1:.82,vang:.1,glands:true},
+ padu:{type:'polar',R:64,r0:.3,p:.6,wedge:[68,98],lobes:[{a:-90,l:1,w:22},{a:-123,l:.92,w:18},{a:-57,l:.92,w:18},{a:-150,l:.66,w:16},{a:-30,l:.66,w:16}],tooth:.07,tn:2.5,pet:20},
+ porum:{L:62,W:19,a:.95,b:.95,teeth:11,ta:.09,pet:7,veins:4,v0:.15,v1:.75,vw:.9,mw:1.4},
+ foliola:{L:40,W:15,a:.9,b:.95,teeth:9,ta:.13,tp:1.8,pet:3,veins:3,v0:.2,v1:.7,vang:.1,mw:1.2,vw:.8},
+ lemn:{L:100,W:18,a:.85,b:1,pet:7,veins:5,v0:.15,v1:.75,vang:.12,vw:.8},
+ salata:{L:130,W:30,a:.28,b:1.1,cord:.16,tc:.3,teeth:7,ta:.05,pet:0,veins:5,v0:.15,v1:.7,vang:.1},
+ tepal:{L:95,W:21,a:.75,b:.8,veins:3,v0:.2,v1:.6,vang:.15,vw:.8,mw:1},
+ tbract:{L:118,W:14,a:.5,b:.6,veins:4,v0:.2,v1:.8,vw:.7,mw:1.2}
+};
+var COL={
+ stejar:{f:'#6E8C4B'},gorun:{f:'#5F7F42',fl:'#93AE70'},carpen:{f:'#759A4F',fl:'#B0CB86'},
+ tei:{f:'#7FA055',fl:'#B9D18E'},jug:{f:'#6F9150'},jugG:{f:'#C2A43C',fl:'#E6CC6A',v:'#7A6420',e:'#7A6420'},
+ cires:{f:'#6A8B49'},padu:{f:'#5F8344'},porum:{f:'#5D7D43'},
+ rosa:{f:'#6B8A4A'},lemn:{f:'#52733E',fl:'#8DAA6E'},salata:{f:'#7A9672',fl:'#B3C7A8',v:'#4D6648',e:'#4D6648'},
+ tep1:{f:'#7C5CB8',fl:'#A58AD6',v:'#4E3484',e:'#4E3484'},tep2:{f:'#9C7CD6',fl:'#C2ACEB',v:'#5A3E93',e:'#5A3E93'},
+ tbr:{f:'#D3CE8C',fl:'#EEEBBE',v:'#9C9550',e:'#9C9550'}
+};
+
+function pinnate(x,y,r,k,nl){
+  var pairs=(nl-1)/2,Lr=118*k,s='<path d="M0 6L0 '+n(-Lr)+'" stroke="'+K.vein+'" stroke-width="'+n(2.2*Math.sqrt(k))+'" stroke-linecap="round"/>';
+  s+='<path d="M0 6C-6 0-9-8-7-16M0 6C6 0 9-8 7-16" stroke="#5D7A40" stroke-width="'+n(2*k)+'" fill="none"/>';
+  for(var i=0;i<pairs;i++){var yy=-Lr*(.28+(pairs>1?i*(.54/(pairs-1)):0)),kk=k*(.86+.12*i/Math.max(1,pairs-1));
+    s+=leafAt(LF.foliola,0,yy,-60,kk,COL.rosa)+leafAt(LF.foliola,0,yy,60,kk,COL.rosa);}
+  s+=leafAt(LF.foliola,0,-Lr,0,k*1.05,COL.rosa);
+  return g(x,y,r,1,s);
+}
+function crocusCup(x,y,r,k){
+  var s=leafAt(LF.tepal,0,0,-15,.95,COL.tep1)+leafAt(LF.tepal,0,0,15,.95,COL.tep1)+
+    '<path d="M-2-60L-1-96M2-60L3-94" stroke="#E07A2E" stroke-width="2.4" stroke-linecap="round"/>'+
+    leafAt(LF.tepal,0,0,-5,1.04,COL.tep2)+leafAt(LF.tepal,0,0,6,1,COL.tep2);
+  return g(x,y,r,k,s);
+}
+function crocusOpen(x,y,r,k){
+  var s='',i;
+  for(i=0;i<3;i++)s+=leafAt(LF.tepal,0,0,i*120,.5,COL.tep1);
+  for(i=0;i<3;i++)s+=leafAt(LF.tepal,0,0,60+i*120,.46,COL.tep2);
+  s+='<circle r="9" fill="#F3E7B8"/>';
+  for(i=0;i<3;i++){var a=(30+i*120)*Math.PI/180;s+='<path d="M0 0L'+n(20*Math.cos(a))+' '+n(20*Math.sin(a))+'" stroke="#E9B83A" stroke-width="2"/><ellipse cx="'+n(22*Math.cos(a))+'" cy="'+n(22*Math.sin(a))+'" rx="3.6" ry="7" transform="rotate('+(120+i*120)+' '+n(22*Math.cos(a))+' '+n(22*Math.sin(a))+')" fill="#E9A92A" stroke="#B57B12"/>';}
+  for(i=0;i<3;i++){var b=(90+i*120)*Math.PI/180;s+='<path d="M0 0L'+n(15*Math.cos(b))+' '+n(15*Math.sin(b))+'" stroke="#D9542B" stroke-width="2.6" stroke-linecap="round"/>';}
+  return g(x,y,r,k,s);
+}
+function headPP(x,y,r,k){
+  var s='<path d="M-4 0L-4-15Q0-18 4-15L4 0Z" fill="#7C8C5A" stroke="#55623C" stroke-width="1"/>';
+  [-64,-32,0,32,64].forEach(function(a){s+='<ellipse cx="0" cy="-27" rx="3.6" ry="12" transform="rotate('+a+' 0 -15)" fill="#9A55B5" stroke="#6A2F82" stroke-width="1"/>';});
+  s+='<circle cx="0" cy="-15" r="2.6" fill="#6A2F82"/>';
+  return g(x,y,r,k||1,s);
+}
+function budPP(x,y,r,k){return g(x,y,r,k||1,'<path d="M-3.5 0L-3.5-13Q0-16 3.5-13L3.5 0Z" fill="#7C8C5A" stroke="#55623C" stroke-width="1"/><path d="M-2.5-13Q0-21 2.5-13Z" fill="#9A55B5"/>');}
+
+/* ---------- planșele (viewBox 0 0 600 760; eticheta jos, în dreapta) ---------- */
+var PLATE={
+ stejar:function(){
+  var s=twig('M175 612C205 520 250 420 330 252',7);
+  s+=stalk('M236 452C282 470 330 498 350 548',2.6,'#7A6342')+stalk('M330 512L318 545',2.2,'#7A6342');
+  s+=leafAt(LF.stejar,255,412,-76,.9)+leafAt(LF.stejar,300,322,80,.84)+leafAt(LF.stejar,330,254,-36,.94)+leafAt(LF.stejar,330,254,46,.9)+leafAt(LF.stejar,330,254,4,1.03);
+  s+=acorn(350,548,-18,1)+acorn(318,545,14,.92);
+  s+=tape(214,520,74,22,22);
+  return s;},
+ gorun:function(){
+  var s=twig('M190 614C222 520 266 420 316 270',7);
+  s+=leafAt(LF.gorun,242,452,-82,.92)+leafAt(LF.gorun,288,356,84,.9)+leafAt(LF.gorun,316,272,-42,1)+leafAt(LF.gorun,316,272,42,.95)+leafAt(LF.gorun,316,272,0,1.06);
+  s+=acorn(274,414,214,.95)+acorn(268,430,250,.92)+acorn(258,424,168,.9);
+  s+=tape(222,528,74,22,22);
+  return s;},
+ carpen:function(){
+  var s=twig('M160 615Q200 540 205 480Q210 420 190 375Q172 330 235 282Q272 240 255 165',5.5);
+  s+=stalk('M240 292C320 300 372 360 382 430L386 600',2.2,'#6F7A45');
+  var pos=[[380,420,-35],[384,456,32],[385,492,-30],[386,528,30],[386,562,-26],[386,596,24]];
+  pos.forEach(function(q){s+=bract3(q[0],q[1],q[2],.92);});
+  s+=leafAt(LF.carpen,205,482,62,1)+leafAt(LF.carpen,190,377,-64,1)+leafAt(LF.carpen,235,284,52,.95)+leafAt(LF.carpen,255,168,-10,.82);
+  s+=tape(178,568,70,22,28);
+  return s;},
+ tei:function(){
+  var s=twig('M128 602C210 520 320 430 452 318',6.5);
+  /* inflorescență: bractee + flori */
+  s+=leafAt(LF.tbract,262,486,192,1,COL.tbr);
+  s+=stalk('M262 486L251 546Q256 574 268 590',2.2,'#8F8A4C');
+  [[-26,6],[0,0],[24,8],[-14,26],[14,30],[0,46]].forEach(function(o){s+=stalk('M268 590L'+(268+o[0])+' '+(600+o[1]),1.4,'#8F8A4C')+flower5(268+o[0],600+o[1],11.5,{f:'#EADF96',e:'#B8A94E',c:'#C9A93A',an:'#C9A93A'});});
+  /* bractee cu fructe */
+  s+=leafAt(LF.tbract,392,370,160,.86,COL.tbr);
+  s+=stalk('M392 370L410 420Q422 446 428 462',2,'#8F8A4C');
+  [[-14,8],[8,4],[-4,24],[16,24]].forEach(function(o){s+=stalk('M428 462L'+(428+o[0])+' '+(470+o[1]),1.3,'#8F8A4C')+berry(428+o[0],470+o[1],7,7,'#A3A274','#6F6E44','#E3E2C0');});
+  s+=leafAt(LF.tei,192,538,-36,1.05,COL.tei)+leafAt(LF.tei,320,438,4,1.05,COL.tei)+leafAt(LF.tei,452,320,30,.84,COL.tei);
+  s+=tape(170,572,72,22,44);
+  return s;},
+ jugastru:function(){
+  var s=twig('M300 628C297 520 304 400 300 196',6.5);
+  s+=stalk('M300 338C270 360 236 392 218 422',2,'#7D7044')+stalk('M300 338C330 360 364 392 382 422',2,'#7D7044');
+  s+=samaras(216,432,-6,1)+samaras(384,432,6,1);
+  s+=leafAt(LF.jug,300,566,-80,1,COL.jug)+leafAt(LF.jug,300,566,80,1,COL.jugG)+leafAt(LF.jug,300,330,-58,.95,COL.jug)+leafAt(LF.jug,300,330,58,.95,COL.jug)+leafAt(LF.jug,300,204,0,.72,COL.jug);
+  s+=tape(300,614,22,36,0);
+  return s;},
+ cires:function(){
+  var s=twig('M165 615C215 510 270 380 335 228',6.5,'#7A4B3A');
+  for(var i=0;i<6;i++){var p=cub([165,615],[215,510],[270,380],[335,228],.08+i*.13);s+='<path d="M'+n(p[0]-4)+' '+n(p[1])+'h8" stroke="#C9A58C" stroke-width="1.6" stroke-linecap="round"/>';}
+  s+=stalk('M318 282Q290 262 252 252',1.6,'#6B7A40')+stalk('M318 282Q280 240 232 218',1.6,'#6B7A40')+stalk('M318 282Q300 230 272 200',1.6,'#6B7A40');
+  s+=stalk('M276 392Q330 410 356 478',1.8,'#6B7A40')+stalk('M276 392Q318 430 320 500',1.8,'#6B7A40')+stalk('M276 392Q350 400 392 454',1.8,'#6B7A40');
+  s+=leafAt(LF.cires,232,466,-60,1,COL.cires)+leafAt(LF.cires,290,342,56,1,COL.cires)+leafAt(LF.cires,335,232,-8,.88,COL.cires);
+  s+=flower5(252,252,22,{f:'#FFFDF7',e:'#BDB6A6',c:'#D9C66A',an:'#C9A93A',r:10})+flower5(232,218,21,{f:'#FFFDF7',e:'#BDB6A6',c:'#D9C66A',an:'#C9A93A',r:-14})+flower5(272,198,19,{f:'#FFFDF7',e:'#BDB6A6',c:'#D9C66A',an:'#C9A93A',r:30});
+  s+=berry(356,494,17,16,'#A3222B','#6E1219','#F2A0A6')+berry(320,516,17,16,'#8E1B25','#5E0E16','#E89098')+berry(392,470,16,15,'#B12C32','#6E1219','#F2A0A6');
+  s+=tape(196,548,72,22,26);
+  return s;},
+ paducel:function(){
+  var s=twig('M160 615C210 510 255 390 300 238',5.5);
+  s+=thorn(203,518,-72,24,6)+thorn(256,392,64,22,6)+thorn(282,300,-58,20,5)+thorn(230,452,70,18,5);
+  s+=stalk('M262 404Q300 430 330 466',1.6,'#6E5440')+stalk('M262 404Q320 440 352 474',1.6,'#6E5440')+stalk('M262 404Q296 448 322 488',1.6,'#6E5440')+stalk('M262 404Q330 448 356 494',1.6,'#6E5440');
+  [[330,474],[352,482],[322,496],[356,502],[340,492]].forEach(function(q){s+=berry(q[0],q[1]+6,8,10,'#9E2B25','#5E1612','#E7948A');s+='<path d="M'+(q[0]-2)+' '+(q[1]+16)+'l2 3 2-3" stroke="#3A1A12" stroke-width="1.3" fill="none"/>';});
+  s+=leafAt(LF.padu,214,496,-56,1,COL.padu)+leafAt(LF.padu,256,394,58,1,COL.padu)+leafAt(LF.padu,300,242,-4,.92,COL.padu)+leafAt(LF.padu,236,446,-112,.82,COL.padu);
+  var fl=[[372,186],[402,170],[432,190],[388,220],[418,226],[448,220],[410,256]];
+  fl.forEach(function(q){s+=stalk('M304 246Q'+n((304+q[0])/2)+' '+n(q[1]+30)+' '+q[0]+' '+q[1],1.3,'#6B7A40');});
+  fl.forEach(function(q,i){s+=flower5(q[0],q[1],14,{f:'#FFFCF6',e:'#BDB6A6',c:'#C9C08A',an:'#9C3F5E',r:i*17});});
+  s+=tape(186,566,70,22,24);
+  return s;},
+ porumbar:function(){
+  var s=twig('M165 615C215 520 245 410 330 215',6,K.twigD)+twig('M222 488L150 420',4,K.twigD)+twig('M262 392L348 345',4,K.twigD)+twig('M300 290L248 242',3.5,K.twigD);
+  s+=thorn(150,420,-47,18,5)+thorn(348,345,61,16,5)+thorn(248,242,-47,16,4.5)+thorn(330,215,24,16,5)+thorn(196,540,-80,16,5)+thorn(240,446,72,14,4.5);
+  s+=leafAt(LF.porum,196,556,-52,1,COL.porum)+leafAt(LF.porum,200,552,40,1,COL.porum)+leafAt(LF.porum,230,470,62,1,COL.porum)+leafAt(LF.porum,226,476,-26,.95,COL.porum)+leafAt(LF.porum,184,452,-72,.9,COL.porum)+leafAt(LF.porum,252,410,-40,.9,COL.porum);
+  var fo={f:'#FFFCF4',e:'#BDB6A6',c:'#D7C77A',an:'#C2A13A'};
+  [[292,296,14],[306,262,15],[318,236,13],[278,330,14],[262,256,13],[328,350,13],[338,214,12]].forEach(function(q,i){fo.r=i*23;s+=flower5(q[0],q[1],q[2],fo);});
+  s+=stalk('M246 432Q300 440 340 462',1.6,K.twigD)+stalk('M246 432Q320 430 368 446',1.6,K.twigD)+stalk('M246 432Q310 460 352 490',1.6,K.twigD);
+  [[346,476],[374,458],[358,504]].forEach(function(q){s+=berry(q[0],q[1],15,15,'#2C3050','#191B30','#9AA4C8');s+='<ellipse cx="'+(q[0]-3)+'" cy="'+(q[1]-4)+'" rx="11" ry="9" fill="#8E98BC" opacity=".35"/>';});
+  s+=tape(186,580,70,22,28);
+  return s;},
+ maces:function(){
+  var s=twig('M120 615C170 450 300 300 470 252',6,'#6C6A3F');
+  for(var i=0;i<9;i++){var t=.06+i*.105,p=cub([120,615],[170,450],[300,300],[470,252],t),a=cubT([120,615],[170,450],[300,300],[470,252],t);s+=prickle(p[0],p[1],a+(i%2?0:180),1.1);}
+  s+=stalk('M268 380Q290 420 300 462',2,'#6C6A3F')+stalk('M268 380Q318 404 334 448',2,'#6C6A3F');
+  s+=g(300,476,-8,1,'<ellipse rx="13" ry="19" fill="#D2552B" stroke="#8A2E14" stroke-width="1.3"/><ellipse cx="-4" cy="-7" rx="3.5" ry="6" fill="#F6B08E" opacity=".75"/><path d="M0 18l-7 9M0 18l0 11M0 18l7 9" stroke="#4E5A2E" stroke-width="1.6" stroke-linecap="round"/>');
+  s+=g(336,462,-24,1,'<ellipse rx="12" ry="18" fill="#C9481F" stroke="#8A2E14" stroke-width="1.3"/><ellipse cx="-4" cy="-6" rx="3.2" ry="5.5" fill="#F6B08E" opacity=".75"/><path d="M0 17l-7 9M0 17l0 11M0 17l7 9" stroke="#4E5A2E" stroke-width="1.6" stroke-linecap="round"/>');
+  s+=pinnate(214,448,-38,1,7)+pinnate(346,318,32,.95,7)+pinnate(430,262,-28,.7,5);
+  s+=flower5(484,214,52,{f:'#F3C4CB',e:'#C98A95',c:'#E3B23C',an:'#C9962A',vein:'#E3A2AD',r:8});
+  s+=tape(150,548,72,22,72);
+  return s;},
+ lemn:function(){
+  var s=twig('M300 625C296 520 304 380 300 250',5,'#6E6048');
+  /* paniculă */
+  s+=stalk('M300 252L300 74',2,'#7A7550');
+  var r=rng(7),fl='';
+  for(var i=0;i<9;i++){var y=240-i*19,w=86*(1-i/10);
+    [1,-1].forEach(function(sd){var ex=300+sd*w,ey=y-14;s+=stalk('M300 '+y+'Q'+n(300+sd*w*.5)+' '+(y-2)+' '+n(ex)+' '+n(ey),1.3,'#7A7550');
+      for(var j=0;j<3;j++){var fx=300+sd*w*(.45+j*.27)+ (r()-.5)*8,fy=y-6-j*5+(r()-.5)*10;fl+=flower4(fx,fy,6.2,r()*90);} });}
+  for(i=0;i<4;i++)fl+=flower4(300+(r()-.5)*12,78+i*8,6,r()*90);
+  s+=fl;
+  s+=leafAt(LF.lemn,300,578,-74,1.05,COL.lemn)+leafAt(LF.lemn,300,578,74,1.05,COL.lemn)+leafAt(LF.lemn,300,494,-30,.8,COL.lemn)+leafAt(LF.lemn,300,494,30,.8,COL.lemn)+leafAt(LF.lemn,300,410,-70,1,COL.lemn)+leafAt(LF.lemn,300,410,70,1,COL.lemn)+leafAt(LF.lemn,300,326,-28,.74,COL.lemn)+leafAt(LF.lemn,300,326,28,.74,COL.lemn);
+  /* ramură cu bace */
+  s+=twig('M478 600L462 470',3,'#6E6048')+stalk('M466 500L440 486M466 500L492 482M464 482L452 458M464 482L482 456',1.4,'#6E6048');
+  [[440,488],[452,458],[492,482],[482,456],[466,468],[470,444],[448,472],[488,500]].forEach(function(q){s+=berry(q[0],q[1],8,8,'#1F1F26','#0B0B10','#9AA0B4');});
+  s+=tape(300,600,24,64,0)+tape(470,570,56,18,-8);
+  return s;},
+ brandusa:function(){
+  var s='<path d="M300 598C292 612 280 620 270 628M300 598C300 614 302 622 300 630M300 598C310 612 322 620 334 626M296 600C286 606 274 610 262 612" stroke="#9B8A6E" stroke-width="1.4" fill="none"/>';
+  s+='<ellipse cx="300" cy="576" rx="32" ry="25" fill="#8A6A4A" stroke="#5C432B" stroke-width="1.5"/><path d="M276 566C286 560 296 572 306 562S322 566 326 574M278 584C290 578 300 590 312 582S324 586 328 588M286 556C292 552 300 560 306 552" stroke="#C2A27A" stroke-width="1.2" fill="none"/>';
+  s+=strap([296,556],[248,360],[208,168],10,'#5E8445','#3F5A2E','#D6E3C4')+strap([302,556],[290,340],[252,138],10,'#5E8445','#3F5A2E','#D6E3C4')+strap([304,556],[318,330],[352,150],10,'#5E8445','#3F5A2E','#D6E3C4')+strap([306,556],[348,360],[404,196],10,'#5E8445','#3F5A2E','#D6E3C4');
+  s+='<path d="M298 552Q286 430 272 334" stroke="#EFE8F3" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M298 552Q286 430 272 334" stroke="#CFC4D9" stroke-width="1" fill="none"/>';
+  s+='<path d="M304 552Q336 430 364 342" stroke="#EFE8F3" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M304 552Q336 430 364 342" stroke="#CFC4D9" stroke-width="1" fill="none"/>';
+  s+=crocusCup(272,336,-6,1)+crocusOpen(370,300,0,1.1);
+  s+=tape(300,520,80,22,-4);
+  return s;},
+ salata:function(){
+  var s=twig('M300 625C302 500 292 360 298 150',4,'#6E6A48');
+  s+=stalk('M298 214Q252 182 216 128',2,'#6E6A48')+stalk('M298 196Q346 160 390 116',2,'#6E6A48')+stalk('M298 150L300 82',2,'#6E6A48')+stalk('M297 238Q358 222 410 196',2,'#6E6A48')+stalk('M297 248Q240 236 196 214',2,'#6E6A48');
+  s+=stalk('M246 166Q240 150 248 140',1.4,'#6E6A48')+stalk('M350 152Q350 138 342 128',1.4,'#6E6A48')+stalk('M366 228Q370 212 362 202',1.4,'#6E6A48')+stalk('M232 230Q232 214 240 206',1.4,'#6E6A48');
+  s+=headPP(216,128,-35,1.05)+headPP(390,116,40,1.05)+headPP(300,82,0,1.05)+headPP(410,196,70,1)+headPP(196,214,-70,1);
+  s+=budPP(248,140,10)+budPP(342,128,-20)+budPP(362,202,-15)+budPP(240,206,15);
+  s+=leafAt(LF.salata,300,522,-62,1.12,COL.salata)+leafAt(LF.salata,297,420,58,1,COL.salata)+leafAt(LF.salata,295,330,-52,.8,COL.salata)+leafAt(LF.salata,297,262,50,.58,COL.salata);
+  s+=twig('M300 625C302 500 292 360 298 150',3,'#7A6A58');
+  s+=tape(300,590,70,20,-4);
+  return s;}
+};
+function flower4(x,y,r,rot){var s='';for(var i=0;i<4;i++)s+='<ellipse cx="0" cy="'+n(-r*.55)+'" rx="'+n(r*.38)+'" ry="'+n(r*.55)+'" transform="rotate('+(i*90)+')" fill="#FBF5DF" stroke="#BFB48E" stroke-width=".8"/>';return g(x,y,rot,1,s+'<circle r="'+n(r*.18)+'" fill="#D8C46A"/>');}
+
+/* ---------- doar frunza (pentru mini-joc; viewBox 0 0 400 400) ---------- */
+var LEAFONLY={
+ stejar:function(){return leafAt(LF.stejar,200,372,-8,1.62);},
+ gorun:function(){return leafAt(LF.gorun,196,380,8,1.6,COL.gorun);},
+ carpen:function(){return leafAt(LF.carpen,200,382,-6,1.86,COL.carpen);},
+ tei:function(){return leafAt(LF.tei,212,388,-8,1.5,COL.tei);},
+ jugastru:function(){return leafAt(LF.jug,200,390,0,1.85,COL.jug);},
+ cires:function(){return leafAt(LF.cires,196,386,6,1.74,COL.cires);},
+ paducel:function(){return leafAt(LF.padu,200,384,0,2.4,COL.padu);},
+ porumbar:function(){return leafAt(LF.porum,200,384,-6,4.1,COL.porum);},
+ maces:function(){return pinnate(200,384,0,1.85,7);},
+ lemn:function(){return twig('M200 396L200 70',4,'#6E6048')+leafAt(LF.lemn,200,330,-64,1.85,COL.lemn)+leafAt(LF.lemn,200,330,64,1.85,COL.lemn)+leafAt(LF.lemn,200,180,-24,1.15,COL.lemn)+leafAt(LF.lemn,200,180,24,1.15,COL.lemn);},
+ brandusa:function(){return strap([196,396],[150,240],[110,40],15,'#5E8445','#3F5A2E','#D6E3C4')+strap([200,396],[196,220],[214,24],15,'#5E8445','#3F5A2E','#D6E3C4')+strap([204,396],[250,240],[300,60],15,'#5E8445','#3F5A2E','#D6E3C4');},
+ salata:function(){return twig('M196 398C198 300 192 160 196 20',4.5,'#7A6A58')+leafAt(LF.salata,196,340,-50,1.45,COL.salata)+leafAt(LF.salata,195,190,48,1.15,COL.salata);}
+};
+
+/* ---------- planșa completă și varianta pentru grilă ---------- */
+var CACHE={};
+var PID={stejar:'stejar',gorun:'gorun',carpen:'carpen',tei:'tei',jugastru:'jugastru',cires:'cires',paducel:'paducel',porumbar:'porumbar',maces:'maces',lemn:'lemn',brandusa:'brandusa',salata:'salata'};
+function plateInner(p){if(!CACHE[p.id])CACHE[p.id]=PLATE[PID[p.id]]();return CACHE[p.id];}
+function plateSVG(p){return '<svg viewBox="0 0 600 760" role="img" aria-label="'+esc('Planșă de ierbar desenată schematic: '+p.ro+' ('+(p.labLat||p.lat)+')')+'" xmlns="http://www.w3.org/2000/svg">'+plateInner(p)+label(p)+'</svg>';}
+function cardSVG(p){return '<svg viewBox="40 18 520 610" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+plateInner(p)+'</svg>';}
+function leafSVGonly(p){return '<svg viewBox="0 0 400 400" role="img" aria-label="Frunză desenată schematic – ghicește planta" xmlns="http://www.w3.org/2000/svg">'+LEAFONLY[PID[p.id]]()+'</svg>';}
+
+/* ---------- copertă ---------- */
+function coverSVG(){
+  var s='<svg viewBox="0 0 1000 760" role="img" aria-label="Coperta unui ierbar: două foi cu plante presate – o ramură de stejar cu ghinde și o ramură de jugastru – și o etichetă" xmlns="http://www.w3.org/2000/svg">';
+  s+='<rect width="1000" height="760" fill="#163A3C"/>';
+  for(var i=0;i<52;i++)s+='<path d="M0 '+(i*15+4)+'H1000" stroke="#1C4648" stroke-width="1.2"/>';
+  s+='<rect width="74" height="760" fill="#0F2C2E"/><path d="M74 0V760" stroke="#2A5A5C" stroke-width="2"/>';
+  s+='<g transform="translate(470 54) rotate(6) scale(.82)"><rect width="600" height="760" fill="#EEE7DA"/>'+plateInner(P[4])+'</g>';
+  s+='<g transform="translate(372 44) rotate(-3.5) scale(.86)"><rect x="6" y="10" width="600" height="760" fill="rgba(0,0,0,.25)"/><rect width="600" height="760" fill="#F6F2EB"/>'+plateInner(P[0])+label(P[0])+'</g>';
+  s+='<g transform="translate(112 96) rotate(-2)"><rect width="250" height="190" rx="6" fill="#F6F1E4" stroke="#C9B98E" stroke-width="2"/><rect x="10" y="10" width="230" height="170" rx="3" fill="none" stroke="#C9B98E"/>';
+  s+='<text x="125" y="72" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="44" fill="#2E3A2A">Ierbar</text>';
+  s+='<text x="125" y="108" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-style="italic" font-size="21" fill="#4B4538">Pădurea Dumbrava</text>';
+  s+='<path d="M60 126H190" stroke="#C9B98E" stroke-width="1.5"/>';
+  s+='<text x="125" y="156" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#6B624F">12 plante · desene AI</text></g>';
+  s+='<g transform="translate(130 450)" fill="none" stroke="#2F6466" stroke-width="2.5" stroke-linecap="round" opacity=".9">'+
+     '<path d="M0 160C10 100 40 50 110 20"/><path d="M30 105c-20-8-30-24-28-44 20 4 30 20 28 44Z"/><path d="M52 72c-4-20 4-38 22-46 6 20-2 36-22 46Z"/><path d="M74 48c10-16 30-22 48-14-10 18-28 22-48 14Z"/></g>';
+  s+='<text x="112" y="690" font-family="Inter, sans-serif" font-size="18" fill="#7FB2AF" font-style="italic">desene schematice</text><text x="112" y="714" font-family="Inter, sans-serif" font-size="18" fill="#7FB2AF" font-style="italic">generate cu AI</text>';
+  return s+'</svg>';
+}
+
+/* =====================================================================
+   INTERFAȚĂ
+   ===================================================================== */
+var S='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',E='</svg>';
+var ICON={
+ bifa:S+'<circle cx="24" cy="24" r="19"/><path d="M15 25l6 6 12-13"/>'+E,
+ x:S+'<circle cx="24" cy="24" r="19"/><path d="M17 17l14 14M31 17 17 31"/>'+E,
+ floare:S+'<circle cx="24" cy="20" r="4"/><path d="M24 16c-2-6 2-9 0-11M24 16c3-5 8-5 9-3-1 4-5 6-9 7M24 24c4 2 7 6 5 9-4 0-6-4-5-9M24 24c-4 2-7 6-5 9 4 0 6-4 5-9M20 20c-6-1-8-6-6-8 4 0 6 4 6 8M24 26v17M24 36c4-4 9-4 11-2-3 4-7 4-11 2"/>'+E,
+ fruct:S+'<circle cx="17" cy="32" r="8"/><circle cx="32" cy="34" r="7"/><path d="M17 24c2-8 6-13 12-16M32 27c-1-8-1-14-3-19M29 8c5-2 9 0 11 3-4 2-8 1-11-3"/>'+E
+};
+var view={screen:'cover',filter:'all',list:P.slice(),idx:0};
+function show(id){['cover','grid','detail','game','result'].forEach(function(s){$(s).classList.toggle('on',s===id);});view.screen=id;window.scrollTo(0,0);}
+
+/* copertă */
+$('coverArt').innerHTML=coverSVG();
+(function(){var ul=$('groups');[['arbore',6,'6 arbori'],['arbust',4,'4 arbuști'],['ierboasa',2,'2 plante ierboase']].forEach(function(q){var li=document.createElement('li');li.innerHTML='<i class="dot-'+q[0]+'"></i><span></span>';li.querySelector('span').textContent=q[2];ul.appendChild(li);});})();
+
+/* filtre + grilă */
+var FILT=[['all','Toate',12],['arbore','Arbori',6],['arbust','Arbuști',4],['ierboasa','Plante ierboase',2]];
+(function(){var box=$('filters');FILT.forEach(function(f){var b=document.createElement('button');b.type='button';b.className='filt';b.dataset.f=f[0];b.setAttribute('aria-pressed',f[0]==='all'?'true':'false');
+  b.innerHTML=(f[0]==='all'?'':'<i class="dot-'+f[0]+'"></i>')+'<span></span><small>'+f[2]+'</small>';b.querySelector('span').textContent=f[1];
+  b.addEventListener('click',function(){setFilter(f[0]);});box.appendChild(b);});})();
+function setFilter(f){
+  view.filter=f;view.list=P.filter(function(p){return f==='all'||p.grp===f;});
+  Array.prototype.forEach.call($('filters').children,function(b){b.setAttribute('aria-pressed',b.dataset.f===f?'true':'false');});
+  renderCards();
+}
+function renderCards(){
+  var box=$('cards');box.innerHTML='';box.style.setProperty('--n',Math.min(6,view.list.length));
+  view.list.forEach(function(p,i){
+    var b=document.createElement('button');b.type='button';b.className='card';b.style.animationDelay=(i*35)+'ms';
+    b.setAttribute('aria-label','Deschide fișa: '+p.ro+', '+(p.gen?'genul ':'')+p.lat);
+    b.innerHTML='<div class="paper">'+cardSVG(p)+'</div><span class="no">'+(p.nr<10?'0':'')+p.nr+'</span><span class="gt g-'+p.grp+'">'+(p.grp==='ierboasa'?'Ierboasă':GRP[p.grp])+'</span><span class="nm"></span><span class="lt"></span>';
+    b.querySelector('.nm').textContent=p.ro;b.querySelector('.lt').textContent=(p.gen?'genul ':'')+p.lat;
+    b.addEventListener('click',function(){openDetail(i);});
+    box.appendChild(b);
+  });
+}
+
+/* fișa */
+function openDetail(i){
+  var L=view.list;view.idx=(i+L.length)%L.length;var p=L[view.idx];
+  $('dPlate').innerHTML=plateSVG(p);
+  $('dKick').textContent='Fișa '+(p.nr<10?'0':'')+p.nr+' din 12 · '+GRP[p.grp]+(view.filter!=='all'?' · filtru: '+GRPS[view.filter].toLowerCase():'');
+  $('dName').textContent=p.ro;
+  $('dLat').innerHTML='';
+  if(p.gen){$('dLat').appendChild(document.createTextNode(p.labLat));var sp=document.createElement('span');sp.textContent='(genul '+p.lat+', mai multe specii)';$('dLat').appendChild(sp);}
+  else $('dLat').textContent=p.lat;
+  $('dNota').textContent=p.nota;
+  var ol=$('dClues');ol.innerHTML='';p.ind.forEach(function(t){var li=document.createElement('li');li.textContent=t;ol.appendChild(li);});
+  var per=$('dPer');per.innerHTML='';
+  [['floare','Înflorire (orientativ)',p.flori],['fruct','Fructe (orientativ)',p.fructe]].forEach(function(q){if(!q[2])return;var d=document.createElement('div');d.innerHTML=ICON[q[0]]+'<p style="margin:0"><small></small><span></span></p>';d.querySelector('small').textContent=q[1];d.querySelector('span').textContent=q[2];per.appendChild(d);});
+  $('dCur').innerHTML='<b>Curiozitate. </b><span></span>';$('dCur').querySelector('span').textContent=p.cur;
+  $('dSrc').textContent='Sursa: '+p.src;
+  $('next').textContent=L.length>1?'Următoarea →':'Înapoi la ierbar →';
+  $('prev').hidden=L.length<2;
+  show('detail');$('dInfo').scrollTop=0;
+}
+$('back').addEventListener('click',function(){show('grid');});
+$('next').addEventListener('click',function(){if(view.list.length>1)openDetail(view.idx+1);else show('grid');});
+$('prev').addEventListener('click',function(){openDetail(view.idx-1);});
+
+/* mini-jocul „Recunoaște frunza” */
+var G={order:[],qi:0,score:0,answered:false,opts:[],log:[]},NQ=5;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function startGame(){
+  G.order=shuffle(P).slice(0,NQ);G.qi=0;G.score=0;G.log=[];
+  var d=$('dots');d.innerHTML='';for(var i=0;i<NQ;i++)d.appendChild(document.createElement('i'));
+  show('game');renderQ();
+}
+function renderQ(){
+  var p=G.order[G.qi];G.answered=false;
+  $('qn').textContent=G.qi+1;$('sc').textContent=G.score;
+  Array.prototype.forEach.call($('dots').children,function(el,k){if(k===G.qi)el.className='cur';else if(k>G.qi)el.className='';});
+  $('qLeaf').innerHTML=leafSVGonly(p)+'<span class="cap">Frunză desenată schematic</span>';
+  G.opts=shuffle([p].concat(shuffle(P.filter(function(o){return o.id!==p.id;})).slice(0,2)));
+  var box=$('opts');box.innerHTML='';
+  G.opts.forEach(function(o,k){
+    var b=document.createElement('button');b.type='button';b.className='opt';
+    b.innerHTML='<span class="k">'+(k+1)+'</span><span class="lb"></span><span class="mk"></span>';
+    b.querySelector('.lb').textContent=o.ro;b.setAttribute('aria-label','Varianta '+(k+1)+': '+o.ro);
+    b.addEventListener('click',function(){answer(k);});box.appendChild(b);
+  });
+  $('fb').hidden=true;$('fb').innerHTML='';$('qHelp').hidden=false;
+}
+function answer(k){
+  if(G.answered)return;G.answered=true;
+  var p=G.order[G.qi],ok=G.opts[k].id===p.id;
+  if(ok)G.score++;
+  G.log.push({p:p,ok:ok,ch:G.opts[k]});
+  $('sc').textContent=G.score;$('dots').children[G.qi].className=ok?'ok':'no';
+  Array.prototype.forEach.call($('opts').children,function(b,j){b.disabled=true;
+    if(G.opts[j].id===p.id){b.classList.add('right');b.querySelector('.mk').innerHTML=ICON.bifa;}
+    else if(j===k){b.classList.add('wrong');b.querySelector('.mk').innerHTML=ICON.x;}
+    else b.classList.add('dim');});
+  var last=G.qi===NQ-1,fb=$('fb');
+  fb.innerHTML='<p class="verdict '+(ok?'ok':'no')+'">'+(ok?ICON.bifa:ICON.x)+'<span class="vt"></span></p><p class="ans">Răspunsul corect: <b class="an"></b> <i class="al"></i></p><p class="key"><b>Cum o recunoști:</b> <span class="kt"></span></p><button class="btn big accent" id="qNext" type="button">'+(last?'Vezi scorul →':'Următoarea frunză →')+'</button>';
+  fb.querySelector('.vt').textContent=ok?['Corect!','Exact!','Bravo!'][Math.floor(Math.random()*3)]:'Nu de data asta.';
+  fb.querySelector('.an').textContent=p.ro;fb.querySelector('.al').textContent='('+(p.gen?'genul ':'')+p.lat+')';
+  fb.querySelector('.kt').textContent=p.frunza;
+  fb.hidden=false;$('qHelp').hidden=true;
+  $('qNext').addEventListener('click',nextQ);
+  if(window.innerWidth<=1000)setTimeout(function(){fb.scrollIntoView({behavior:'smooth',block:'center'});},60);
+  else setTimeout(function(){var nb=$('qNext');if(nb)nb.focus({preventScroll:true});},50);
+}
+function nextQ(){if(!G.answered)return;G.qi++;if(G.qi>=NQ){finish();return;}renderQ();window.scrollTo({top:0,behavior:'smooth'});}
+function finish(){
+  show('result');var sc=G.score,t,m;
+  if(sc===NQ){t='Ochi de botanist!';m='Ai recunoscut toate frunzele. Încearcă și în parc – cu un atlas botanic alături.';}
+  else if(sc>=3){t='Foarte bine!';m='Mai privește fișele frunzelor ratate: indiciile de recunoaștere te ajută data viitoare.';}
+  else if(sc>=1){t='Bun început!';m='Multe frunze seamănă între ele. Deschide ierbarul, citește indiciile și joacă din nou.';}
+  else{t='Fiecare frunză e o lecție';m='Deschide ierbarul și privește desenele: fiecare fișă are trei indicii de recunoaștere.';}
+  $('resTitle').textContent=t;$('resMsg').textContent='Ai recunoscut '+sc+' din '+NQ+' frunze. '+m;
+  $('ringTxt').textContent=sc;
+  var ul=$('rev');ul.innerHTML='';
+  G.log.forEach(function(r){var li=document.createElement('li');li.className=r.ok?'ok':'no';li.innerHTML=(r.ok?ICON.bifa:ICON.x)+'<span></span>';li.querySelector('span').textContent=r.p.ro;li.title=r.ok?'Corect':'Ai ales: '+r.ch.ro;ul.appendChild(li);});
+  var c=$('ringVal'),Lr=578.05;c.style.transition='none';c.setAttribute('stroke-dashoffset',Lr);void c.getBoundingClientRect();c.style.transition='';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){c.setAttribute('stroke-dashoffset',Lr*(1-sc/NQ));});});
+}
+
+/* butoane și tastatură */
+$('open').addEventListener('click',function(){setFilter(view.filter);show('grid');});
+$('play').addEventListener('click',startGame);
+$('play2').addEventListener('click',startGame);
+$('restart').addEventListener('click',startGame);
+$('again').addEventListener('click',startGame);
+$('toGrid').addEventListener('click',function(){setFilter(view.filter);show('grid');});
+$('home').addEventListener('click',function(){show('cover');});
+document.addEventListener('keydown',function(e){
+  var k=(e.key||'');
+  if(view.screen==='game'){var m={'1':0,'2':1,'3':2};if(m[k]!==undefined&&!G.answered){e.preventDefault();answer(m[k]);}
+    else if(k==='Enter'&&G.answered&&document.activeElement&&document.activeElement.id!=='qNext'&&document.activeElement.id!=='restart'){e.preventDefault();nextQ();}}
+  else if(view.screen==='detail'){if(k==='ArrowRight'){openDetail(view.idx+1);}else if(k==='ArrowLeft'){openDetail(view.idx-1);}else if(k==='Escape'){show('grid');}}
+});
+setFilter('all');
+window.__ierbar={P:P,G:G,view:view,svg:{plate:plateSVG,leaf:leafSVGonly},answer:function(k){answer(k);},next:nextQ,start:startGame,openDetail:openDetail,setFilter:setFilter,
+  correctIndex:function(){var p=G.order[G.qi];for(var i=0;i<G.opts.length;i++)if(G.opts[i].id===p.id)return i;return -1;}};
+})();
+</script>
+</body>
+</html>

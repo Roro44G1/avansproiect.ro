@@ -1,0 +1,1421 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rețete reinventate</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--zid:#F5F1EA;--chip:#D6409F;--ink:#1B2733;--ink2:#4A5866;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+@supports (overflow:clip){html,body{overflow-x:clip}}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:clamp(14px,1.7vw,32px) 0 clamp(10px,1vw,20px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(22px,1.9vw,38px);line-height:1.12;margin:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.15vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.5em 1em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.45em;transition:transform .15s,background .2s,border-color .2s,opacity .2s;touch-action:manipulation;user-select:none;text-align:center;line-height:1.15}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.pick:hover{border-color:var(--petrol2);background:var(--surf2)}}
+.btn:active,.pick:active{transform:scale(.97)}
+.btn:focus-visible,.pick:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.pulse{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(226,166,43,.55)}50%{box-shadow:0 0 0 8px rgba(226,166,43,0)}}
+
+main{flex:1;display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);column-gap:clamp(16px,2vw,40px);row-gap:16px;min-height:0;padding-bottom:clamp(8px,.8vw,16px);align-items:start}
+.ctl{background:var(--surf);border-radius:22px;padding:clamp(14px,1.05vw,20px) clamp(14px,1.25vw,24px);display:flex;flex-direction:column;gap:clamp(8px,.62vw,12px);min-width:0}
+.gh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 .35em}
+.grp h2{font-family:var(--serif);font-size:1em;margin:0 0 .35em;display:flex;align-items:center;gap:.5em;flex-wrap:wrap;line-height:1.2}
+.gh h2{margin:0}
+.grp h2 small{font-family:var(--sans);font-weight:500;color:var(--ceata);font-size:.8em}
+.grp h2 .n{font-family:var(--sans);font-size:.78em;background:var(--petrol);color:var(--var);border-radius:99px;width:1.7em;height:1.7em;display:inline-grid;place-items:center;font-weight:700;flex:none}
+.cnt b{color:var(--ocru)}
+.opts{display:grid;gap:8px}
+.opts.ing{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opts.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pick{font:inherit;font-weight:600;font-size:1em;min-height:56px;padding:.15em .45em;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--var);cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.12;gap:.4em;transition:border-color .2s,background .2s,transform .15s,opacity .2s;touch-action:manipulation;min-width:0}
+.pick.ig{justify-content:flex-start;text-align:left;padding:.15em .4em .15em .3em}
+.pick canvas{width:36px;height:36px;flex:none;display:block}
+.pick span{min-width:0;overflow-wrap:break-word}
+.pick[aria-pressed="true"]{border-color:var(--ocru);background:rgba(226,166,43,.17)}
+.pick.full{opacity:.4}
+.btn.sm{min-height:56px;padding:.3em .9em;font-size:.9em}
+.acts{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:10px}
+.acts .btn{padding:.45em .5em;white-space:nowrap}
+.hint{min-height:1.35em;margin:-2px 0 0;color:var(--ocru);font-size:.85em;line-height:1.35}
+.note{margin:0;color:var(--ceata);font-size:.82em;line-height:1.4;display:flex;gap:.6em;align-items:flex-start}
+.note b{color:var(--var)}
+
+/* fișa */
+.fisa{position:relative;background:linear-gradient(160deg,#F9F6F0 0%,#F5F1EA 55%,#EEE7DA 100%);color:var(--ink);border-radius:22px;padding:clamp(14px,1.15vw,22px) clamp(16px,1.5vw,30px);display:flex;flex-direction:column;gap:clamp(7px,.5vw,10px);min-width:0;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.fh{display:grid;grid-template-columns:minmax(0,clamp(220px,19.5vw,380px)) minmax(0,1fr);gap:clamp(14px,1.3vw,26px);align-items:start}
+.plate canvas{display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 8px 20px rgba(60,40,20,.25)}
+.meta{min-width:0;display:flex;flex-direction:column;gap:.25em}
+.meta .k{margin:0;color:var(--tigla);font-weight:700;letter-spacing:.11em;text-transform:uppercase;font-size:.7em}
+.meta h2{font-family:var(--serif);font-weight:700;font-size:clamp(25px,1.85vw,38px);line-height:1.1;margin:0}
+.meta .sub{margin:0;font-family:var(--serif);font-style:italic;color:var(--ink2);font-size:.95em;line-height:1.3}
+.tags{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:.2em 0 .1em;padding:0}
+.tags li{background:#E7DECE;border-radius:99px;padding:.12em .7em;font-size:.78em;font-weight:600;color:#36424E;white-space:nowrap}
+.fisa h3{font-family:var(--serif);font-size:1em;margin:.15em 0 0;color:var(--petrol)}
+.ing{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.05em 1.1em}
+.ing li{line-height:1.3;padding:.1em 0;border-bottom:1px dashed #D8CDB9}
+.ing b{color:var(--tigla);font-weight:700}
+.stap{margin:.15em 0 0;color:var(--ink2);font-size:.82em}
+.al{margin:.1em 0 0;font-size:.82em;color:#36424E;line-height:1.5}
+.al .p{display:inline-block;background:var(--tigla);color:#fff;border-radius:6px;padding:0 .45em;font-weight:700;margin-right:.25em}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:.2em}
+.steps li{display:flex;gap:.6em;line-height:1.33;counter-increment:s}
+.steps li::before{content:counter(s);flex:none;width:1.55em;height:1.55em;border-radius:50%;background:var(--petrol);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.85em;margin-top:.08em}
+.story{background:var(--surf);color:var(--var);border-radius:14px;padding:.55em 1em;border-left:6px solid var(--ocru);margin:0;line-height:1.4}
+.story b{color:var(--ocru);font-family:var(--serif)}
+.story small{color:var(--ceata);font-size:.8em}
+.safe{margin:0;font-size:.78em;color:var(--ink2);line-height:1.4}
+.safe b{color:var(--ink)}
+.stmsg{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:var(--bg);color:var(--var);border:2px solid var(--ocru);border-radius:14px;padding:.5em 1em;font-weight:600;font-size:.9em;z-index:3;box-shadow:0 8px 24px rgba(0,0,0,.35);width:max-content;max-width:90%;text-align:center}
+.fisa.stale>*:not(.stmsg){opacity:.42;filter:saturate(.6)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (min-width:1101px) and (min-height:760px){
+  .app{height:100vh;height:100dvh}
+  main{align-items:stretch}
+  .fisa{overflow:auto}
+}
+@media (max-width:1100px){
+  main{grid-template-columns:1fr}
+  .fh{grid-template-columns:1fr}
+  .plate{max-width:440px;width:100%;margin:0 auto}
+}
+@media (max-width:700px){
+  .opts.ing{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .opts.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .acts{grid-template-columns:1fr}
+  .ing{grid-template-columns:1fr}
+  .gh{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I18</span><h1>Generator AI de rețete transilvănene „reinventate” — combină ingrediente locale</h1></div>
+  </header>
+
+  <main>
+    <section class="ctl" aria-label="Alege ingredientele, stilul și momentul">
+      <div class="grp">
+        <div class="gh"><h2><span class="n">1</span>Cămara <small class="cnt" id="cnt"></small></h2><button class="btn ghost sm" id="rand" type="button">✦ La întâmplare</button></div>
+        <div class="opts ing" id="gIng" role="group" aria-label="Ingrediente locale (alege între 2 și 4)"></div>
+      </div>
+      <div class="grp"><h2><span class="n">2</span>Stilul</h2><div class="opts four" id="gSt" role="group" aria-label="Stilul"></div></div>
+      <div class="grp"><h2><span class="n">3</span>Momentul</h2><div class="opts three" id="gMo" role="group" aria-label="Momentul zilei"></div></div>
+      <div class="acts">
+        <button class="btn accent" id="gen" type="button">✦ Generează</button>
+        <button class="btn" id="variant" type="button">↻ Altă variantă</button>
+        <button class="btn ghost" id="dl" type="button">⤓ Descarcă fișa</button>
+      </div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+      <p class="note"><span aria-hidden="true">✦</span><span><b>Cum e făcută:</b> rețetele sunt compuse din șabloane scrise cu AI (Claude, Anthropic); combinațiile sunt imaginate, nu rețete tradiționale testate. Faptul din „Legătura cu Sibiul” vine din fișa de fapte verificate a proiectului, cu sursa lui.</span></p>
+    </section>
+
+    <section class="fisa" id="fisa" aria-label="Fișa rețetei generate">
+      <div class="stmsg" id="stmsg" hidden>Ai schimbat alegerea – apasă „Generează” pentru o rețetă nouă.</div>
+      <div class="fh">
+        <div class="plate"><canvas id="cv" width="800" height="800" role="img" aria-label="Farfuria rețetei, văzută de sus"></canvas></div>
+        <div class="meta" aria-live="polite">
+          <p class="k" id="rKick"></p>
+          <h2 id="rName"></h2>
+          <p class="sub" id="rSub"></p>
+          <ul class="tags" id="rTags"></ul>
+          <h3>Ingrediente</h3>
+          <ul class="ing" id="rIng"></ul>
+          <p class="stap" id="rStap"></p>
+          <p class="al" id="rAl"></p>
+        </div>
+      </div>
+      <h3>Pași</h3>
+      <ol class="steps" id="rSteps"></ol>
+      <p class="story" id="rStory"></p>
+      <p class="safe" id="rSafe"></p>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* =====================================================================
+   1. CĂMARA – ingrediente locale (din fișa de fapte: Mărginime, „Drumul brânzei”, gastronomie)
+   ===================================================================== */
+var ORDER=['telemea','urda','burduf','framantata','salam','varza','malai','smantana','oua','lapte','ceapa','mere','prune','nuci','marar','paine','cartofi','ciuperci'];
+var ING={
+ telemea:{n:'Telemea de Sibiu',art:'telemeaua',cu:'telemea',al:['lapte'],q:[150,'g'],ln:'telemea de Sibiu'},
+ urda:{n:'Urdă',art:'urda',cu:'urdă',al:['lapte'],q:[200,'g'],ln:'urdă'},
+ burduf:{n:'Brânză de burduf',art:'brânza de burduf',cu:'brânză de burduf',al:['lapte'],q:[100,'g'],ln:'brânză de burduf'},
+ framantata:{n:'Brânză frământată',art:'brânza frământată',cu:'brânză frământată',al:['lapte'],q:[100,'g'],ln:'brânză frământată'},
+ salam:{n:'Salam de Sibiu',art:'salamul',cu:'salam de Sibiu',al:[],q:[80,'g'],ln:'salam de Sibiu'},
+ varza:{n:'Varză',art:'varza',cu:'varză',al:[],q:[300,'g'],ln:'varză'},
+ malai:{n:'Mălai',art:'mălaiul',cu:'mălai',al:[],q:[150,'g'],ln:'mălai'},
+ smantana:{n:'Smântână',art:'smântâna',cu:'smântână',al:['lapte'],q:[150,'g'],ln:'smântână'},
+ oua:{n:'Ouă',art:'ouăle',cu:'ouă',al:['ou'],q:[3,'buc'],sg:'ou',pl:'ouă'},
+ lapte:{n:'Lapte',art:'laptele',cu:'lapte',al:['lapte'],q:[300,'ml'],ln:'lapte pasteurizat (din comerț)'},
+ ceapa:{n:'Ceapă',art:'ceapa',cu:'ceapă',al:[],q:[1,'buc'],sg:'ceapă',pl:'cepe'},
+ mere:{n:'Mere',art:'merele',cu:'mere',al:[],q:[2,'buc'],sg:'măr',pl:'mere'},
+ prune:{n:'Prune',art:'prunele',cu:'prune',al:[],q:[8,'buc'],sg:'prună fără sâmbure',pl:'prune fără sâmburi'},
+ nuci:{n:'Nuci',art:'nucile',cu:'nuci',al:['nuci'],q:[40,'g'],ln:'miez de nucă'},
+ marar:{n:'Mărar',art:'mărarul',cu:'mărar',al:[],q:[.5,'leg'],ln:'mărar'},
+ paine:{n:'Pâine de casă',art:'pâinea',cu:'pâine de casă',al:['gluten'],q:[4,'fel'],ln:'pâine de casă'},
+ cartofi:{n:'Cartofi',art:'cartofii',cu:'cartofi',al:[],q:[4,'buc'],sg:'cartof mediu',pl:'cartofi medii'},
+ ciuperci:{n:'Ciuperci',art:'ciupercile',cu:'ciuperci',al:[],q:[250,'g'],ln:'ciuperci cumpărate (de cultură)'}
+};
+var CH=['telemea','urda','burduf','framantata'];
+var SAV=['telemea','burduf','framantata','salam','varza','ceapa','marar','cartofi','ciuperci'];
+var PRI=['telemea','salam','burduf','urda','framantata','ciuperci','mere','prune','nuci','varza','oua','cartofi','smantana','ceapa','marar','paine','malai','lapte'];
+var STY=[['stana','Ca la stână'],['sarb','De sărbătoare'],['modern','Modern'],['picnic','Pentru picnic']];
+var MOM=[['dim','Mic dejun'],['pranz','Prânz'],['gust','Gustare']];
+var STI={stana:0,sarb:1,modern:2,picnic:3},MOI={dim:0,pranz:1,gust:2};
+var STN={},MON={};STY.forEach(function(s){STN[s[0]]=s[1];});MOM.forEach(function(s){MON[s[0]]=s[1];});
+
+/* =====================================================================
+   2. FAPTE VERIFICATE (din _brief/fapte_verificate.md) – pentru „Legătura cu Sibiul”
+   ===================================================================== */
+var FX={
+ tel1:['Din 16 octombrie 2019, Telemeaua de Sibiu este produs cu indicație geografică protejată (IGP) în UE – al șaptelea produs românesc înregistrat.','economica.net, 2019'],
+ tel2:['Telemeaua de Sibiu e o brânză semitare din lapte de oaie, coagulată cu cheag; se vinde proaspătă sau maturată (cel puțin 21 de zile).','economica.net, 2019'],
+ sal1:['Salamul de Sibiu are IGP din februarie 2016 – al doilea produs românesc recunoscut în UE, după Magiunul de Topoloveni.','euronews.ro; turnulsfatului.ro, 2016'],
+ sal2:['Salamul de Sibiu se afumă cu lemn de esență tare și se maturează cel puțin 60 de zile, cu mucegaiul nobil Penicillium nalgiovense.','mediafax.ro, 2016'],
+ sal3:['Prima fabrică de salam din Sibiu a fost deschisă în 1845, de Michael Fonn; numele „salam de Sibiu” apare în 1863, la București.','patrimoniu.sibiu.ro'],
+ branz:['Pe „Drumul brânzei” din Mărginimea Sibiului se găsesc telemea, brânză de burduf, brânză frământată și urdă.','sibiu-turism.ro'],
+ past:['În Mărginimea Sibiului, păstoritul a fost ocupația principală: vara oile urcau la munte, iar iarna coborau în sat.','sibiu-turism.ro'],
+ jina:['Jina, la 900 m, este cel mai înalt sat din Mărginimea Sibiului.','sibiu-turism.ro; en.wikipedia'],
+ oieri:['În calendarul păstoresc al Mărginimii, pe 15 august este Sărbătoarea oierilor de la Tilișca.','sibiu-turism.ro'],
+ balmos:['Balmoșul ciobănesc, preparat legat de viața de la stână, se face din lapte, mălai, smântână, unt, ouă și brânză, fierte încet.','evz.ro'],
+ mama:['Mămăliga se face din făină de porumb (mălai) fiartă în apă cu sare și se servește adesea cu brânză și smântână.','en.wikipedia'],
+ bulz:['Bulzul – mămăligă cu brânză și unt, rumenită la cuptor – e una dintre rețetele cu mămăligă; aici îl „reinventăm” în bulgărași.','en.wikipedia'],
+ sarm:['În Transilvania, printre sarmalele din oală se pun picioare de porc afumate sau șorici.','en.wikipedia'],
+ rge:['În 2019, Sibiul a fost Regiune Gastronomică Europeană.','fișa de fapte ACTIV AI'],
+ brut:['Statutul comun al breslelor din 1376 numește, printre meserii, „brutarii, pielarii și cuțitarii”.','mnir.ro'],
+ brut2:['Ca să intre în breaslă, un brutar plătea o taxă de 6 florini, iar un măcelar – 10 florini.','limbaromana.org'],
+ bresle:['La 9 noiembrie 1376, statutul comun al breslelor din Sibiu, Sebeș, Sighișoara și Orăștie număra 19 bresle și 25 de meserii.','limbaromana.org; mnir.ro'],
+ macel:['Strada Măcelarilor e singura stradă cu nume de breaslă din Orașul de Sus; măcelarii apărau Poarta Cisnădiei.','fișa de fapte; limbaromana.org'],
+ turn:['Turnul Sfatului, dintre Piața Mare și Piața Mică, a fost folosit și ca depozit de grâne.','fișa de fapte ACTIV AI'],
+ zid:['Sibiul medieval avea trei inele de ziduri, 39 de turnuri și mai multe porți mari.','de.wikipedia'],
+ ochi:['„Ochii Sibiului” sunt lucarne în formă de pleoapă; rolul lor real e aerisirea podurilor caselor.','fișa de fapte ACTIV AI'],
+ pod:['Podul Minciunilor, terminat în 1859, a fost primul pod din fontă din România; legenda spune că se prăbușește dacă cineva minte pe el.','fișa de fapte ACTIV AI'],
+ aur:['Pasajul Aurarilor coboară în trepte din Piața Mică în Piața Aurarilor, numită după meseria aurarilor.','inyourpocket.com'],
+ tigl:['Cartierul Țiglari își trage numele de la fabrica de țiglă a lui Gustav Binder, din secolul al XIX-lea.','turnulsfatului.ro, 2014'],
+ cibin:['Cibinul izvorăște din Munții Cindrel și are 82 de km până se varsă în Olt, lângă Tălmaciu.','en.wikipedia'],
+ paltinis:['Păltinișul, fondat în 1894, este socotit cea mai veche stațiune montană din România.','turistintransilvania.com; patrimoniu.sibiu.ro'],
+ dumb:['Pădurea Dumbrava e loc de promenadă al sibienilor încă din secolul al XVII-lea.','sibiul.ro; dssibiu.ro'],
+ terezian:['Parcul Terezian a fost odinioară Târgul Vitelor.','en.wikipedia'],
+ stejari:['Cartierul Trei Stejari își trage numele de la niște stejari bătrâni de la o răscruce.','turnulsfatului.ro, 2014'],
+ turnisor:['Numele cartierului Turnișor înseamnă „turn mic”; în germană i se spune Neppendorf.','en.wikipedia'],
+ palarie:['În Mărginimea Sibiului, portul popular e alb-negru, iar bărbații poartă la sărbători pălărie rotundă, fără boruri.','en.wikipedia'],
+ fier:['Din breasla fierarilor s-au desprins, de la sfârșitul secolului al XV-lea, săbierii, scutarii, arcașii și armurierii.','limbaromana.org; ULBS'],
+ cindrel:['Vârful Cindrel, cel mai înalt din munții cu același nume, are 2.244 m.','en.wikipedia']
+};
+
+/* =====================================================================
+   3. UTILITARE DE TEXT
+   ===================================================================== */
+function L(a){a=a.filter(Boolean);if(!a.length)return '';if(a.length===1)return a[0];return a.slice(0,-1).join(', ')+' și '+a[a.length-1];}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function A(k){return ING[k].art;}
+function CU(k){return ING[k].cu;}
+function arts(a){return a.map(A);}
+function cuStr(keys){return keys.length?'cu '+L(keys.map(CU)):'';}
+function W(ml,c){var v=ml*c.m;return (v>=1000?String(v/1000).replace('.',',')+' l':v+' ml')+' de apă';}
+function tStr(m){if(m>=60){var r=m-60;return 'circa o oră'+(r?' și '+r+(r<20?' minute':' de minute'):'');}return 'circa '+m+(m<20?' minute':' de minute');}
+function AR(c,s){if(!c._ar){c._ar=1;return 'Cere ajutorul unui adult la aragaz: '+s;}return cap(s);}
+function OV(c,s){if(!c._ov){c._ov=1;return 'Cere ajutorul unui adult la cuptor: '+s;}return cap(s);}
+function isSweet(c){return c.any(['mere','prune','nuci'])&&!c.any(SAV);}
+
+var PR={
+ telemea:{cub:'taie telemeaua cuburi mici',cubm:'taie telemeaua cuburi mari',sf:'sfărâmă telemeaua cu furculița',fel:'taie telemeaua felii subțiri'},
+ urda:{sf:'amestecă urda cu furculița, să fie cremoasă'},
+ burduf:{sf:'sfărâmă brânza de burduf cu furculița'},
+ framantata:{sf:'sfărâmă brânza frământată cu furculița'},
+ salam:{fel:'taie salamul felii subțiri',cub:'taie salamul cubulețe',cubf:'taie salamul cubulețe foarte mici',frg:'taie salamul felii groase, apoi în sferturi'},
+ varza:{fid:'taie varza în fâșii foarte subțiri',fas:'taie varza în fâșii late'},
+ ceapa:{toc:'toacă ceapa mărunt',tocf:'toacă ceapa foarte mărunt',ron:'taie ceapa rondele subțiri',fel:'taie ceapa felii'},
+ mere:{fel:'taie merele felii subțiri, fără cotor',cub:'taie merele cubulețe, fără cotor',cubm:'taie merele cuburi mari, fără cotor',sf:'taie merele în sferturi, fără cotor'},
+ prune:{buc:'taie prunele în bucăți',jum:'taie prunele în jumătăți'},
+ nuci:{buc:'rupe miezul de nucă în bucăți mici'},
+ marar:{toc:'toacă mărarul fin'},
+ paine:{fel:'taie pâinea felii',cub:'taie pâinea cuburi'},
+ cartofi:{cub:'curăță cartofii și taie-i cuburi',fel:'taie cartofii, bine spălați, în felii groase, cu tot cu coajă'},
+ ciuperci:{fel:'curăță ciupercile cu un șervețel umed și taie-le felii',toc:'curăță ciupercile cu un șervețel umed și toacă-le mărunt'}
+};
+function preps(c,list){return list.filter(function(p){return c.has(p[0]);}).map(function(p){return PR[p[0]][p[1]];});}
+function prep(c,list){
+  var ps=preps(c,list),H=['Spală-te pe mâini','Spală-te bine pe mâini','Mai întâi, spală-te pe mâini'][c.v%3];
+  if(!ps.length)return H+' și pune la îndemână toate ingredientele și ustensilele.';
+  return H+'. Pe tocător, cu grijă: '+L(ps)+'.';
+}
+function panStep(c,keys,o){
+  o=o||{};
+  var v=keys.filter(function(k){return k!=='salam';}),sal=keys.indexOf('salam')>=0;
+  if(!v.length&&!sal)return null;
+  if(!v.length)return AR(c,(o.pre||'')+'într-o tigaie fără ulei, rumenește salamul circa 2 minute.');
+  var lab=v.map(function(k){return (o.lab&&o.lab[k])||A(k);});
+  var mins=o.min||(v.indexOf('varza')>=0?'12':'7');
+  return AR(c,(o.pre||'')+'într-o tigaie cu o lingură de ulei, călește '+L(lab)+' circa '+mins+' minute, amestecând des'+(sal?'; în ultimul minut adaugă și salamul':'')+'.');
+}
+function serve(c,hot,pre,ov){
+  ov=ov||{};
+  var st=c.st,mar=c.has('marar'),s;
+  if(ov[st])s=ov[st];
+  else if(st==='stana')s=hot?'Servește cât e cald, pe un fund de lemn, ca la stână.':'Așază totul pe un fund de lemn și servește, ca la stână.';
+  else if(st==='sarb')s='Așază frumos pe un platou de sărbătoare'+(mar?', decorează cu fire de mărar':'')+' și servește'+(hot?' cât e cald':'')+'.';
+  else if(st==='modern')s='Așază porția în mijlocul farfuriei, cu marginea curată, și servește'+(hot?' imediat':'')+' – simplu și modern.';
+  else s=hot?'Pentru picnic: lasă totul să se răcească, pune în cutii cu capac și ține la rece, în geanta frigorifică, până la masă.':'Pentru picnic: pune totul în cutii cu capac și ține la rece, în geanta frigorifică, până la masă.';
+  var m=ov.nomo?'':(c.mo==='dim'?' La micul dejun, pune alături o cană de ceai.':c.mo==='gust'?' Fă porții mici, de gustare.':'');
+  return (pre?pre+' ':'')+s+m;
+}
+var FILL=['Gustă și, dacă e nevoie, potrivește gustul.','Strânge ustensilele și șterge masa – un bucătar bun lucrează curat.'];
+function cookSteps(c,ck,s){ck.forEach(function(x,i){s.push(i?cap(x)+'.':AR(c,x+'.'));});}
+function fit6(a){
+  a=a.filter(Boolean);
+  while(a.length>6){var bi=0,bl=1e9;for(var i=0;i<a.length-2;i++){var l=a[i].length+a[i+1].length;if(l<bl){bl=l;bi=i;}}a.splice(bi,2,a[bi]+' '+a[bi+1]);}
+  var f=0;while(a.length<4){a.splice(a.length-1,0,FILL[f++%FILL.length]);}
+  return a;
+}
+
+/* =====================================================================
+   4. TEHNICI – șabloane scrise cu AI (combinații imaginate, nu rețete testate)
+   ===================================================================== */
+var SKW=['telemea','salam','mere','prune','paine','cartofi'],DIPK=['smantana','urda','framantata','burduf','marar','nuci'];
+var TECH=[
+{id:'mamaliga',base:['malai'],noun:function(){return 'mămăliguță';},
+ req:function(c){return c.has('malai');},
+ acc:['malai','telemea','urda','burduf','framantata','salam','varza','smantana','oua','lapte','ceapa','marar','ciuperci'],
+ b:6,st:[4,1,0,-2],mo:[1,3,0],time:30,lvl:'ușor',plate:'mound',
+ qty:{malai:[150,'g'],lapte:[200,'ml'],oua:[2,'buc'],varza:[200,'g']},
+ names:[{t:'Mămăliguța de pe Drumul brânzei {cu2}',f:'branz',lead:'Pe drumul brânzei: ',iff:function(c){return c.ch.length>0;}},{t:'Mămăliguța de pe Cibin {cu2}',f:'cibin'},{t:'Mămăliguța ciobanului grăbit {cu2}',f:'mama',lead:'Despre mămăligă: '}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['telemea','sf'],['urda','sf'],['burduf','sf'],['framantata','sf'],['salam','cub'],['varza','fid'],['ceapa','toc'],['ciuperci','fel'],['marar','toc']]));
+  s.push(AR(c,'pune la fiert '+(c.has('lapte')?W(400,c)+' amestecată cu laptele':W(600,c))+', cu un vârf de sare.'));
+  s.push('Când clocotește, toarnă mălaiul în ploaie, amestecând mereu cu un tel, apoi lasă mămăliga la foc mic circa 15 minute, până se îngroașă.');
+  s.push(panStep(c,c.f(['varza','ceapa','salam','ciuperci'])));
+  if(c.has('oua'))s.push('Prăjește ouăle ochiuri în puțin ulei, până se încheagă complet albușul și gălbenușul.');
+  var top=arts(c.ch);
+  if(c.any(['varza','ceapa','ciuperci']))top.push('legumele călite');
+  if(c.has('salam'))top.push('salamul');
+  if(c.has('oua'))top.push('ouăle');
+  if(c.has('smantana'))top.push('câte o lingură de smântână');
+  if(c.has('marar'))top.push('mărarul');
+  s.push(top.length?'Pune mămăliga în farfurii adânci și așază deasupra '+L(top)+'.':'Pune mămăliga în farfurii adânci, cât e caldă.');
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'turn',base:['malai'],noun:function(){return 'turnulețe de mămăligă în straturi';},
+ req:function(c){return c.has('malai')&&(c.ch.length>0||c.has('smantana'));},
+ acc:['malai','telemea','urda','burduf','framantata','salam','smantana','marar','ciuperci','ceapa','lapte','varza'],
+ b:6,st:[1,4,2,-1],mo:[-1,3,1],time:55,lvl:'mediu',plate:'stack',
+ qty:{malai:[200,'g'],lapte:[200,'ml'],varza:[200,'g']},
+ names:[{t:'Turnul Sfatului de mămăligă {cu1}',f:'turn'},{t:'Bastionul de mămăligă {cu2}',f:'zid'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['telemea','sf'],['urda','sf'],['burduf','sf'],['framantata','sf'],['salam','fel'],['varza','fid'],['ceapa','toc'],['ciuperci','fel'],['marar','toc']]));
+  s.push(AR(c,'fierbe mămăliga – '+(c.has('lapte')?W(500,c)+' cu laptele':W(700,c))+' și un vârf de sare, apoi mălaiul turnat în ploaie, amestecând mereu – circa 15 minute, până se îngroașă bine.'));
+  s.push('Întinde mămăliga caldă pe o tavă, cu o lingură udă, într-un strat gros cât un deget, și lasă mămăliga să se răcească 20 de minute.');
+  s.push(panStep(c,c.f(['varza','ceapa','ciuperci']),{pre:'între timp, '}));
+  var fl=c.ch.map(CU);if(c.has('salam'))fl.push('felii de salam');if(c.any(['varza','ceapa','ciuperci']))fl.push('legume călite');if(c.has('smantana'))fl.push('smântână');
+  s.push('Decupează cercuri de mămăligă cu marginea unui pahar și clădește turnulețe: un cerc de mămăligă, un strat de '+L(fl)+', apoi încă un cerc'+(c.has('marar')?', presărat cu mărar':'')+'.');
+  s.push(OV(c,'încălzește turnulețele 10 minute la 180 °C, apoi scoate tava cu mănuși de bucătărie.'));
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'bulz',base:['malai'],noun:function(){return 'bulgărași de mămăligă la cuptor';},
+ req:function(c){return c.has('malai')&&c.ch.length>0;},
+ acc:['malai','telemea','urda','burduf','framantata','salam','smantana','marar','ciuperci','ceapa','lapte','oua'],
+ b:6,st:[3,2,1,1],mo:[-1,3,1],time:50,lvl:'mediu',plate:'balls',
+ qty:{malai:[200,'g'],lapte:[200,'ml'],oua:[2,'buc']},
+ names:[{t:'Bulgărașii de pe Cibin cu inimă de {ch1}',f:'bulz',lead:'Rudă cu rețeta ta: '},{t:'Bulzișorii din Mărginime {cu2}',f:'bulz',lead:'Rudă cu rețeta ta: '}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['telemea','sf'],['urda','sf'],['burduf','sf'],['framantata','sf'],['salam','cub'],['ceapa','toc'],['ciuperci','toc'],['marar','toc']]));
+  if(c.has('oua'))s.push(AR(c,'fierbe ouăle tari, 10 minute, răcește-le în apă rece, apoi curăță-le și toacă-le.'));
+  s.push(AR(c,'fierbe o mămăligă mai groasă – '+(c.has('lapte')?W(400,c)+' cu laptele':W(600,c))+' și un vârf de sare, apoi mălaiul turnat în ploaie – circa 15 minute, amestecând mereu.'));
+  s.push(panStep(c,c.f(['ceapa','ciuperci'])));
+  var fl=arts(c.ch);if(c.has('salam'))fl.push('salamul');if(c.has('oua'))fl.push('ouăle tocate');if(c.any(['ceapa','ciuperci']))fl.push('legumele călite');if(c.has('marar'))fl.push('mărarul');
+  if(fl.length>1)s.push('Amestecă într-un bol umplutura: '+L(fl)+'.');
+  s.push('Când mămăliga s-a răcit cât s-o poți atinge fără să te frigi, udă-ți palmele, ia câte o lingură mare, turtește-o, pune la mijloc puțină umplutură și închide-o ca pe un bulgăre.');
+  s.push(OV(c,'coace bulgărașii pe hârtie de copt circa 15 minute la 200 °C, până se rumenesc; scoate tava cu mănuși de bucătărie.'));
+  s.push(serve(c,true,c.has('smantana')?'Pune smântâna într-un bol mic, alături.':''));
+  return s;}},
+
+{id:'terci',base:['malai'],noun:function(){return 'terci dulce de mălai';},
+ req:function(c){return c.has('malai')&&c.any(['lapte','mere','prune','nuci'])&&c.only(['malai','lapte','mere','prune','nuci','urda','smantana']);},
+ acc:['malai','lapte','mere','prune','nuci','urda','smantana'],
+ b:7,st:[2,0,2,-1],mo:[4,-2,1],time:20,lvl:'ușor',plate:'mound',
+ qty:{malai:[80,'g'],lapte:[400,'ml'],urda:[100,'g'],smantana:[100,'g'],prune:[6,'buc']},
+ names:[{t:'Terciul auriu din Orașul de Jos {cu2}',f:null},{t:'Terciul de dimineață de pe Valea Cibinului {cu2}',f:'cibin'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['mere','cub'],['prune','buc'],['nuci','buc']]));
+  s.push(AR(c,c.has('lapte')?'încălzește laptele cu un vârf de sare, până aproape să fiarbă – nu-l lăsa să dea în foc.':'pune la fiert '+W(400,c)+' cu un vârf de sare.'));
+  s.push('Toarnă mălaiul în ploaie, amestecând mereu, și fierbe la foc mic circa 10 minute'+(c.has('mere')?'; în ultimele 3 minute adaugă merele, ca să se înmoaie':'')+'. Dacă se îngroașă prea tare, adaugă puțină apă.');
+  s.push('Oprește focul, îndulcește cu o linguriță de miere sau zahăr și adaugă un vârf de scorțișoară.');
+  var top=[];if(c.has('prune'))top.push('prunele');if(c.has('nuci'))top.push('nucile');if(c.has('urda'))top.push('câte o lingură de urdă');if(c.has('smantana'))top.push('câte o lingură de smântână');
+  s.push(top.length?'Pune terciul în boluri și adaugă deasupra '+L(top)+'.':'Pune terciul în boluri, cât e cald.');
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'tartine',base:['paine'],noun:function(){return 'tartine de pâine de casă';},
+ req:function(c){return c.has('paine');},
+ acc:['paine','telemea','urda','burduf','framantata','salam','varza','smantana','oua','ceapa','mere','prune','nuci','marar','ciuperci'],
+ b:5,st:[0,1,3,3],mo:[3,0,3],time:15,lvl:'ușor',plate:'slices',
+ qty:{oua:[2,'buc'],varza:[150,'g'],urda:[150,'g'],smantana:[100,'g'],ciuperci:[200,'g'],prune:[6,'buc']},
+ names:[{t:'Tartinele Podului Minciunilor {cu2}',f:'pod'},{t:'Feliile breslei brutarilor {cu2}',f:'brut',lead:'Pâinea și breslele: '}],
+ steps:function(c){
+  var s=[],sp=c.f(['urda','burduf','framantata','smantana']),mc=c.has('ciuperci');
+  s.push(prep(c,[['telemea','fel'],['salam','fel'],['varza','fid'],['ceapa',mc?'toc':'ron'],['mere','fel'],['prune','buc'],['nuci','buc'],['marar','toc'],['ciuperci','fel']]));
+  if(c.has('oua'))s.push(AR(c,'fierbe ouăle tari, 10 minute, răcește-le în apă rece, apoi curăță-le și taie-le felii.'));
+  if(mc)s.push(panStep(c,c.f(['ceapa','ciuperci'])));
+  if(c.has('varza'))s.push('Amestecă varza cu un vârf de sare și o lingură de ulei.');
+  if(sp.length)s.push('Într-un bol, amestecă '+L(arts(sp))+(c.has('marar')?' cu jumătate din mărar':'')+' și un vârf de sare, până obții o cremă.');
+  s.push(c._ar?'Rumenește ușor feliile de pâine în prăjitor sau în tigaie.':'Cere ajutorul unui adult la prăjitor (sau la tigaie) și rumenește ușor feliile de pâine.');
+  var top=[];
+  if(c.has('telemea'))top.push('feliile de telemea');if(c.has('salam'))top.push('salamul');if(c.has('varza'))top.push('varza');if(c.has('oua'))top.push('ouăle');
+  if(mc)top.push(c.has('ceapa')?'ciupercile cu ceapă':'ciupercile');else if(c.has('ceapa'))top.push('rondelele de ceapă');
+  if(c.has('mere'))top.push('merele');if(c.has('prune'))top.push('prunele');if(c.has('nuci'))top.push('nucile');if(c.has('marar'))top.push(sp.length?'restul de mărar':'mărarul');
+  s.push(sp.length?(top.length?'Întinde crema pe felii și așază deasupra '+L(top)+'.':'Întinde crema din belșug pe felii.'):'Așază pe felii '+L(top)+'.');
+  s.push(serve(c,false));
+  return s;}},
+
+{id:'friganele',base:['paine','oua'],noun:function(c){return isSweet(c)?'frigănele dulci':'frigănele';},
+ req:function(c){return c.has('paine')&&c.has('oua')&&(isSweet(c)||!c.any(['mere','prune','nuci']));},
+ acc:['paine','oua','lapte','smantana','urda','telemea','burduf','framantata','salam','marar','ciuperci','ceapa','mere','prune','nuci'],
+ b:7,st:[1,1,2,0],mo:[4,0,1],time:20,lvl:'ușor',plate:'slices',
+ qty:{lapte:[100,'ml'],urda:[100,'g'],smantana:[100,'g'],ciuperci:[200,'g'],prune:[6,'buc']},
+ names:[{t:'Frigănelele aurii din Pasajul Aurarilor {cu2}',f:'aur'},{t:'Frigănelele din Piața Mare {cu2}',f:'rge',lead:'Gastronomie: '}],
+ steps:function(c){
+  var s=[],sw=isSweet(c);
+  s.push(prep(c,[['telemea','sf'],['burduf','sf'],['framantata','sf'],['salam','fel'],['ceapa','toc'],['ciuperci','fel'],['mere','fel'],['prune','buc'],['nuci','buc'],['marar','toc']]));
+  s.push(panStep(c,c.f(['ceapa','ciuperci'])));
+  s.push('Bate ouăle într-o farfurie adâncă cu '+(c.has('lapte')?'laptele':'două linguri de apă')+(sw?' și o linguriță de zahăr':' și un vârf de sare')+(c.has('marar')?', apoi adaugă mărarul':'')+'.');
+  s.push('Înmoaie feliile de pâine pe ambele părți în compoziție.');
+  s.push(AR(c,'prăjește feliile în puțin ulei, la foc mediu, câte 2–3 minute pe fiecare parte, până se rumenesc și oul se încheagă complet.'));
+  var top=arts(c.f(['telemea','burduf','framantata']));
+  if(c.has('urda'))top.push('câte o lingură de urdă');if(c.has('salam'))top.push('salamul');if(c.any(['ceapa','ciuperci']))top.push('legumele călite');
+  if(c.has('mere'))top.push('merele');if(c.has('prune'))top.push('prunele');if(c.has('nuci'))top.push('nucile');if(c.has('smantana'))top.push('câte o lingură de smântână');
+  if(top.length)s.push('Pune frigănelele în farfurii și, cât sunt calde, adaugă deasupra '+L(top)+'.');
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'cartofiCuptor',base:['cartofi'],noun:function(){return 'cartofi la cuptor';},
+ req:function(c){return c.has('cartofi');},
+ acc:['cartofi','telemea','urda','burduf','framantata','salam','smantana','ceapa','ciuperci','marar','oua','varza','malai','mere','prune'],
+ b:6,st:[1,2,2,1],mo:[-2,3,1],time:50,lvl:'ușor',plate:'wedges',
+ qty:{cartofi:[5,'buc'],malai:[3,'lg'],oua:[2,'buc'],varza:[200,'g'],urda:[100,'g'],smantana:[150,'g'],prune:[6,'buc']},
+ names:[{t:'Țiglele de cartofi din Țiglari {cu2}',f:'tigl'},{t:'Cartofii aurii din Piața Aurarilor {cu2}',f:'aur'}],
+ steps:function(c){
+  var s=[],tray=c.f(['varza','ceapa','mere','prune','ciuperci']);
+  s.push(prep(c,[['cartofi','fel'],['varza','fas'],['ceapa','fel'],['mere','sf'],['prune','jum'],['ciuperci','fel'],['salam','cub'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['marar','toc']]));
+  if(c.has('malai'))s.push('Pune cartofii într-un bol cu 2 linguri de ulei și un vârf de sare, apoi tăvălește-i prin mălai, ca să prindă crustă. Așază-i într-o tavă cu hârtie de copt'+(tray.length?', alături de '+L(arts(tray)):'')+'.');
+  else s.push('Așază cartofii'+(tray.length?' și '+L(arts(tray)):'')+' într-o tavă cu hârtie de copt, stropește cu 2 linguri de ulei, presară sare și amestecă.');
+  s.push(OV(c,'coace tava circa 35 de minute la 200 °C, până se rumenesc cartofii.'));
+  var ch=arts(c.f(['telemea','burduf','framantata']));if(c.has('salam'))ch.push('salamul');
+  if(ch.length)s.push('Cu ajutorul adultului, scoate tava cu mănuși de bucătărie, presară '+L(ch)+' și mai coace 5 minute.');
+  if(c.has('oua'))s.push('În ultimele 10 minute, fă printre cartofi câte un „cuib” pentru fiecare ou, sparge ouăle în ele și coace până se încheagă complet albușul și gălbenușul.');
+  var dp=c.f(['urda','smantana']);
+  if(dp.length)s.push('Pentru sos, amestecă '+L(arts(dp))+(c.has('marar')?' cu mărarul':'')+' și un vârf de sare.');
+  s.push(serve(c,true,(!dp.length&&c.has('marar'))?'Presară mărarul deasupra.':''));
+  return s;}},
+
+{id:'piure',base:['cartofi'],noun:function(){return 'piure de cartofi';},
+ req:function(c){return c.has('cartofi')&&c.any(['lapte','smantana']);},
+ acc:['cartofi','lapte','smantana','telemea','urda','burduf','framantata','marar','ceapa','ciuperci','salam','oua','varza','paine'],
+ b:6,st:[0,2,1,-2],mo:[-2,3,-1],time:35,lvl:'ușor',plate:'mound',
+ qty:{lapte:[150,'ml'],smantana:[100,'g'],oua:[2,'buc'],paine:[2,'fel'],varza:[200,'g'],urda:[100,'g'],ciuperci:[200,'g']},
+ names:[{t:'Piureul „Ceața de pe Cibin” {cu2}',f:'cibin'},{t:'Norii de piure de la Păltiniș {cu2}',f:'paltinis'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['cartofi','cub'],['varza','fid'],['ceapa','toc'],['ciuperci','fel'],['salam','cub'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['marar','toc'],['paine','cub']]));
+  s.push(AR(c,'fierbe cartofii în apă cu sare circa 20 de minute, până se înmoaie; adultul scurge apa fierbinte.'));
+  s.push(panStep(c,c.f(['varza','ceapa','salam','ciuperci'])));
+  if(c.has('paine'))s.push('Rumenește cuburile de pâine într-o tigaie fără ulei, 3–4 minute – vor fi crutoane.');
+  if(c.has('oua'))s.push('Prăjește ouăle ochiuri în puțin ulei, până se încheagă complet.');
+  var lq=c.f(['smantana','lapte']).map(function(k){return k==='lapte'?'laptele încălzit':'smântâna';});
+  var mix=arts(c.f(['telemea','urda','burduf','framantata']));
+  s.push('Pisează cartofii cu '+L(lq)+' și un vârf de sare, până obții un piure fin'+(mix.length?'; amestecă în el '+L(mix):'')+'.');
+  var top=[];if(c.any(['varza','ceapa','ciuperci']))top.push('legumele călite');if(c.has('salam'))top.push('salamul');if(c.has('oua'))top.push('ouăle');if(c.has('paine'))top.push('crutoanele');if(c.has('marar'))top.push('mărarul');
+  if(top.length)s.push('Pune piureul în farfurii și adaugă deasupra '+L(top)+'.');
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'salataCartofi',base:['cartofi'],noun:function(){return 'salată de cartofi';},
+ req:function(c){return c.has('cartofi');},
+ acc:['cartofi','ceapa','marar','smantana','oua','telemea','burduf','framantata','urda','salam','varza','mere','nuci','ciuperci'],
+ b:5,st:[0,1,1,4],mo:[-1,2,2],time:45,lvl:'ușor',plate:'bowl',
+ qty:{oua:[2,'buc'],varza:[150,'g'],smantana:[100,'g'],urda:[100,'g'],ciuperci:[200,'g']},
+ names:[{t:'Salata de picnic din Dumbrava {cu2}',f:'dumb'},{t:'Salata de cartofi din Parcul Terezian {cu2}',f:'terezian'}],
+ steps:function(c){
+  var s=[];
+  s.push('Spală-te pe mâini și spală bine cartofii.');
+  s.push(AR(c,'fierbe cartofii întregi, în coajă, circa 25 de minute'+(c.has('oua')?'; în altă oală, fierbe ouăle tari, 10 minute':'')+'. Lasă totul să se răcească.'));
+  if(c.has('ciuperci'))s.push(panStep(c,['ciuperci'])+' Lasă-le să se răcească.');
+  var pp=preps(c,[['ceapa','toc'],['marar','toc'],['salam','cub'],['telemea','cub'],['burduf','sf'],['framantata','sf'],['mere','cub'],['varza','fid'],['nuci','buc']]);
+  s.push('Curăță cartofii'+(c.has('oua')?' și ouăle':'')+' și taie-i cuburi'+(pp.length?'; pe tocător, cu grijă, '+L(pp):'')+'.');
+  var d=c.f(['urda','smantana']);
+  s.push('Pentru sos, amestecă '+(d.length?L(arts(d)):'2 linguri de ulei')+' cu un vârf de sare și unul de piper.');
+  s.push('Pune totul într-un bol mare, toarnă sosul și amestecă ușor, ca să nu se sfărâme cartofii.');
+  s.push(serve(c,false));
+  return s;}},
+
+{id:'omleta',base:['oua'],noun:function(c){return isSweet(c)?'omletă dulce':'omletă';},
+ req:function(c){return c.has('oua')&&(isSweet(c)||!c.any(['mere','prune','nuci']));},
+ acc:['oua','telemea','urda','burduf','framantata','salam','ceapa','ciuperci','marar','lapte','smantana','cartofi','varza','paine','mere','prune','nuci'],
+ b:6,st:[1,0,2,0],mo:[4,1,0],time:20,lvl:'ușor',plate:'omelette',
+ qty:{oua:[4,'buc'],lapte:[50,'ml'],cartofi:[2,'buc'],urda:[100,'g'],smantana:[100,'g'],varza:[150,'g'],paine:[2,'fel'],ciuperci:[150,'g'],prune:[6,'buc']},
+ names:[{t:'Omleta din Turnișor {cu2}',f:'turnisor'},{t:'Omleta de duminică {cu2}',f:null}],
+ steps:function(c){
+  var s=[],sw=isSweet(c);
+  s.push(prep(c,[['telemea','sf'],['burduf','sf'],['framantata','sf'],['salam','cub'],['varza','fid'],['ceapa','toc'],['ciuperci','fel'],['cartofi','cub'],['mere','fel'],['prune','buc'],['nuci','buc'],['marar','toc'],['paine','fel']]));
+  if(c.has('cartofi'))s.push(AR(c,'fierbe cubulețele de cartof 10 minute în apă cu sare; adultul scurge apa.'));
+  var pv=c.f(['varza','ceapa','ciuperci','cartofi','salam']),veg=c.f(['varza','ceapa','ciuperci','cartofi']);
+  if(pv.length)s.push(panStep(c,pv,{lab:{cartofi:'cartofii fierți'},min:'5'}));
+  if(sw&&c.any(['mere','prune']))s.push(AR(c,'într-o tigaie cu puțin ulei, încălzește '+L(arts(c.f(['mere','prune'])))+' 3 minute, ca să se înmoaie, apoi pune-le deoparte.'));
+  var ie=sw?[]:arts(c.f(['telemea','urda','burduf','framantata']));
+  var add=ie.slice();if(c.has('marar'))add.push('mărarul');
+  s.push('Bate ouăle într-un bol cu '+(c.has('lapte')?'laptele':'o lingură de apă')+(sw?', o linguriță de zahăr și un vârf de scorțișoară':' și un vârf de sare')+(add.length?', apoi adaugă '+L(add):'')+'.');
+  s.push(AR(c,'toarnă ouăle în tigaie'+(veg.length?', peste legume':c.has('salam')?', peste salam':'')+', la foc mic, și gătește 4–5 minute, până omleta se încheagă complet; îndoaie-o în două cu o paletă.'));
+  var top=[];if(sw&&c.any(['mere','prune']))top.push('fructele');if(sw&&c.has('urda'))top.push('câte o lingură de urdă');if(c.has('nuci'))top.push('nucile');if(c.has('smantana'))top.push('câte o lingură de smântână');
+  var pre=top.length?'Adaugă deasupra '+L(top)+'.':'';
+  if(c.has('paine'))pre+=(pre?' ':'')+'Rumenește feliile de pâine și pune-le alături.';
+  s.push(serve(c,true,pre));
+  return s;}},
+
+{id:'briose',base:['oua'],noun:function(){return 'brioșe de omletă la cuptor';},
+ req:function(c){return c.has('oua')&&c.any(['telemea','urda','burduf','framantata','salam','ceapa','ciuperci','marar','varza']);},
+ acc:['oua','telemea','urda','burduf','framantata','salam','ceapa','ciuperci','marar','lapte','smantana','varza','malai'],
+ b:5,st:[-1,1,3,4],mo:[2,0,3],time:35,lvl:'ușor',plate:'muffins',
+ qty:{oua:[5,'buc'],lapte:[50,'ml'],smantana:[100,'g'],urda:[100,'g'],varza:[100,'g'],malai:[2,'lg'],ciuperci:[150,'g']},
+ names:[{t:'Brioșele celor 19 bresle {cu2}',f:'bresle'},{t:'Turnulețele de omletă din Turnișor {cu2}',f:'turnisor'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['telemea','cub'],['burduf','sf'],['framantata','sf'],['salam','cub'],['varza','fid'],['ceapa','toc'],['ciuperci','toc'],['marar','toc']]));
+  s.push('Unge cu ulei o tavă de brioșe sau pune în ea forme de hârtie.');
+  var lq=arts(c.f(['urda','smantana','lapte']));if(c.has('malai'))lq.push('două linguri de mălai');
+  s.push('Bate ouăle într-un bol'+(lq.length?' cu '+L(lq)+',':'')+' cu un vârf de sare și unul de piper.');
+  var fl=arts(c.f(['telemea','burduf','framantata','salam','varza','ceapa','ciuperci','marar']));
+  s.push(fl.length?'Împarte în forme '+L(fl)+', apoi toarnă ouăle bătute până la două treimi din fiecare formă.':'Toarnă ouăle bătute în forme, până la două treimi din fiecare.');
+  s.push(OV(c,'coace circa 20 de minute la 180 °C, până brioșele cresc și se încheagă complet; scoate tava cu mănuși de bucătărie.'));
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'oualeUmplute',base:['oua'],noun:function(){return 'ouă umplute';},
+ req:function(c){return c.has('oua')&&c.any(['urda','framantata','telemea','burduf','smantana']);},
+ acc:['oua','urda','framantata','telemea','burduf','smantana','marar','salam','ceapa','paine'],
+ b:6,st:[-1,4,1,3],mo:[1,0,3],time:25,lvl:'ușor',plate:'eggs',
+ qty:{oua:[4,'buc'],urda:[80,'g'],framantata:[60,'g'],telemea:[60,'g'],burduf:[60,'g'],smantana:[3,'lg'],salam:[40,'g'],ceapa:[1,'buc','ceapă mică','cepe mici'],paine:[2,'fel']},
+ names:[{t:'Ochii Sibiului din ouă umplute {cu2}',f:'ochi'},{t:'Ouăle umplute din Piața Mică {cu2}',f:null}],
+ steps:function(c){
+  var s=[];
+  s.push('Spală-te pe mâini. '+AR(c,'fierbe ouăle tari, 10 minute, apoi pune-le în apă rece să se răcească.'));
+  s.push('Curăță ouăle, taie-le în jumătăți pe lungime și scoate gălbenușurile într-un bol.');
+  var pp=preps(c,[['ceapa','tocf'],['marar','toc'],['salam','cubf'],['telemea','sf'],['burduf','sf'],['framantata','sf']]);
+  if(pp.length)s.push('Pe tocător, cu grijă: '+L(pp)+'.');
+  var fl=arts(c.f(['urda','framantata','telemea','burduf','smantana','salam','ceapa','marar']));
+  s.push('Pisează gălbenușurile cu '+L(fl)+' și un vârf de sare, până obții o cremă.');
+  s.push('Umple albușurile cu crema, folosind o linguriță'+(c.has('paine')?', apoi așază-le pe felii de pâine':'')+'.');
+  s.push(serve(c,false));
+  return s;}},
+
+{id:'salataVarza',base:['varza'],noun:function(){return 'salată crocantă de varză';},
+ req:function(c){return c.has('varza');},
+ acc:['varza','mere','prune','nuci','marar','ceapa','smantana','telemea','burduf','framantata','urda','salam','oua','paine'],
+ b:6,st:[0,1,3,2],mo:[-2,2,2],time:20,lvl:'ușor',plate:'bowl',
+ qty:{oua:[2,'buc'],paine:[2,'fel'],smantana:[100,'g'],urda:[100,'g'],prune:[6,'buc']},
+ names:[{t:'Salata crocantă din Dumbrava {cu2}',f:'dumb'},{t:'Salata „Trei Stejari” {cu2}',f:'stejari'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['varza','fid'],['ceapa','ron'],['mere','cub'],['prune','buc'],['nuci','buc'],['marar','toc'],['salam','cub'],['telemea','cub'],['burduf','sf'],['framantata','sf'],['paine','cub']]));
+  s.push('Pune varza într-un bol mare, presară un vârf de sare și strânge-o ușor în pumni, cu mâinile curate, 1–2 minute, ca să se înmoaie.');
+  if(c.has('oua'))s.push(AR(c,'fierbe ouăle tari, 10 minute; răcește-le, curăță-le și taie-le în sferturi.'));
+  if(c.has('paine'))s.push(AR(c,'rumenește cuburile de pâine într-o tigaie fără ulei, 3–4 minute – vor fi crutoane.'));
+  var ad=arts(c.f(['ceapa','mere','prune','salam','telemea','burduf','framantata','marar']));
+  var d=c.f(['urda','smantana']),dr=d.length?L(arts(d)):'2 linguri de ulei';
+  s.push(ad.length?'Adaugă '+L(ad)+', apoi amestecă totul cu '+dr+'.':'Amestecă varza cu '+dr+'.');
+  var top=[];if(c.has('oua'))top.push('ouăle');if(c.has('nuci'))top.push('nucile');if(c.has('paine'))top.push('crutoanele');
+  if(top.length)s.push('Așază deasupra '+L(top)+'.');
+  s.push(serve(c,false));
+  return s;}},
+
+{id:'rulouri',base:['varza'],noun:function(){return 'rulouri de varză la cuptor';},
+ req:function(c){
+  if(!c.has('varza'))return false;
+  if(c.has('lapte')&&!c.any(['malai','cartofi']))return false;
+  var n=(c.has('malai')?1:0)+(c.has('cartofi')?1:0)+(c.any(['ceapa','ciuperci'])?1:0)+c.ch.length+(c.has('salam')?1:0)+(c.has('nuci')?1:0);
+  return c.any(['malai','cartofi','ciuperci'])||n>=2;},
+ acc:['varza','malai','cartofi','ciuperci','ceapa','telemea','urda','burduf','framantata','salam','marar','smantana','oua','lapte','nuci'],
+ b:7,st:[1,4,1,-1],mo:[-3,4,-1],time:70,lvl:'mediu',plate:'rolls',
+ qty:{varza:[8,'buc','frunză mare de varză','frunze mari de varză'],malai:[100,'g'],cartofi:[3,'buc'],lapte:[100,'ml'],oua:[1,'buc'],smantana:[150,'g'],ciuperci:[200,'g']},
+ names:[{t:'Sarmalele reinventate din Piața Mică {cu2}',f:'sarm',lead:'Rudă cu sarmalele: '},{t:'Rulourile breslei imaginare a bucătarilor {cu2}',f:'sarm',lead:'Rudă cu sarmalele: '}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['cartofi','cub'],['ceapa','toc'],['ciuperci','toc'],['salam','cub'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['nuci','buc'],['marar','toc']]));
+  s.push(AR(c,'desprinde frunzele de varză și opărește-le 3 minute în apă clocotită, ca să se înmoaie; adultul le scoate cu o spumieră.'));
+  if(c.has('malai'))s.push('Fierbe o mămăligă groasă din mălai și '+(c.has('lapte')&&!c.has('cartofi')?W(300,c)+' cu laptele':W(400,c))+', cu un vârf de sare, circa 15 minute, amestecând.');
+  if(c.has('cartofi'))s.push('Fierbe cuburile de cartof circa 20 de minute în apă cu sare, scurge-le și pisează-le'+(c.has('lapte')?' cu laptele':'')+'.');
+  s.push(panStep(c,c.f(['ceapa','ciuperci'])));
+  var fl=[];if(c.has('malai'))fl.push('mămăliga');if(c.has('cartofi'))fl.push('piureul');if(c.any(['ceapa','ciuperci']))fl.push('legumele călite');
+  fl=fl.concat(arts(c.ch));if(c.has('salam'))fl.push('salamul');if(c.has('nuci'))fl.push('nucile');if(c.has('marar'))fl.push('mărarul');
+  if(fl.length>1||c.has('oua'))s.push('Amestecă umplutura: '+L(fl)+(c.has('oua')?(c.m>1?', plus ouăle bătute':', plus oul bătut')+', ca să se lege':'')+'.');
+  s.push('Pune câte o lingură de umplutură pe fiecare frunză, strânge marginile spre interior și rulează strâns.');
+  s.push(OV(c,'așază rulourile într-o tavă, adaugă un pahar de apă, acoperă cu folie de aluminiu și coace circa 30 de minute la 180 °C; scoate tava cu mănuși de bucătărie.'));
+  s.push(serve(c,true,c.has('smantana')?'Servește rulourile cu smântână.':''));
+  return s;}},
+
+{id:'varzaCalita',base:['varza'],noun:function(){return 'varză călită';},
+ req:function(c){return c.has('varza');},
+ acc:['varza','ceapa','salam','marar','ciuperci','smantana','mere','cartofi','oua','telemea','burduf','framantata','urda','malai','paine'],
+ b:5,st:[2,1,0,-2],mo:[-2,3,-1],time:35,lvl:'ușor',plate:'mound',
+ qty:{varza:[500,'g'],oua:[2,'buc'],cartofi:[3,'buc'],malai:[120,'g'],paine:[2,'fel'],ciuperci:[200,'g']},
+ names:[{t:'Varza călită de pe Strada Măcelarilor {cu2}',f:'macel',iff:function(c){return c.has('salam');}},{t:'Varza călită de duminică {cu2}',f:null}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['varza','fid'],['ceapa','toc'],['ciuperci','fel'],['mere','cub'],['cartofi','cub'],['salam','cub'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['marar','toc']]));
+  if(c.has('malai'))s.push(AR(c,'fierbe o mămăligă moale – '+W(600,c)+' cu un vârf de sare și mălaiul turnat în ploaie – circa 15 minute, amestecând.'));
+  if(c.has('cartofi'))s.push(AR(c,'fierbe cuburile de cartof circa 15 minute în apă cu sare și scurge-le.'));
+  var ex=arts(c.f(['ciuperci','mere']));
+  s.push(AR(c,'într-o tigaie largă, cu 2 linguri de ulei, '+(c.has('ceapa')?'călește ceapa 3 minute, apoi adaugă varza':'pune varza')+(ex.length?' și '+L(ex):'')+'; gătește circa 15 minute la foc mic, amestecând, și adaugă puțină apă dacă se prinde.'));
+  var fin=[];if(c.has('salam'))fin.push('salamul');if(c.has('cartofi'))fin.push('cartofii fierți');
+  s.push((fin.length?'În ultimele 3 minute adaugă '+L(fin)+'. ':'')+'Potrivește de sare și piper'+(c.has('marar')?' și presară mărarul':'')+'.');
+  if(c.has('oua'))s.push('Fă în varză câte un „cuib” pentru fiecare ou, sparge ouăle și acoperă tigaia cu un capac, până se încheagă complet albușul și gălbenușul.');
+  var side=arts(c.f(['telemea','urda','burduf','framantata']));if(c.has('smantana'))side.push('smântâna');if(c.has('malai'))side.push('mămăliga');if(c.has('paine'))side.push('pâinea');
+  s.push(serve(c,true,side.length?'Pune alături '+L(side)+'.':''));
+  return s;}},
+
+{id:'ciuperciTigaie',base:['ciuperci'],noun:function(){return 'ciuperci la tigaie';},
+ req:function(c){return c.has('ciuperci');},
+ acc:['ciuperci','ceapa','marar','smantana','salam','telemea','urda','burduf','framantata','oua','lapte','malai','paine','cartofi','nuci'],
+ b:6,st:[2,0,1,-1],mo:[0,3,0],time:25,lvl:'ușor',plate:'mound',
+ qty:{ciuperci:[400,'g'],oua:[2,'buc'],lapte:[100,'ml'],smantana:[100,'g'],malai:[120,'g'],paine:[4,'fel'],cartofi:[3,'buc'],urda:[100,'g']},
+ names:[{t:'Ciupercile din Orașul de Jos {cu2}',f:null},{t:'Pălăriuțele la tigaie din Mărginime {cu2}',f:'palarie'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['ciuperci','fel'],['ceapa','toc'],['cartofi','cub'],['salam','cub'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['nuci','buc'],['marar','toc']]));
+  if(c.has('malai'))s.push(AR(c,'fierbe o mămăligă moale – '+W(600,c)+' cu un vârf de sare și mălaiul turnat în ploaie – circa 15 minute, amestecând.'));
+  if(c.has('cartofi'))s.push(AR(c,'fierbe cuburile de cartof circa 15 minute în apă cu sare și scurge-le.'));
+  s.push(AR(c,'într-o tigaie cu o lingură de ulei, '+(c.has('ceapa')?'călește ceapa 3 minute, apoi adaugă ciupercile':'pune ciupercile')+' și gătește-le circa 8 minute, până lasă apa și se rumenesc'+(c.has('salam')?'; în ultimul minut adaugă salamul':'')+'.'));
+  var lq=c.f(['smantana','lapte']);
+  if(lq.length)s.push('Adaugă '+L(arts(lq))+' și un vârf de sare, apoi lasă 2 minute la foc mic, ca să se lege sosul.');
+  if(c.has('oua'))s.push('Bate ouăle, toarnă-le peste ciuperci și amestecă până se încheagă complet.');
+  if(c.has('paine'))s.push('Rumenește feliile de pâine în prăjitor sau într-o tigaie.');
+  var sp=arts(c.f(['telemea','urda','burduf','framantata','nuci','marar']));
+  var bs=[];if(c.has('malai'))bs.push('mămăliga');if(c.has('cartofi'))bs.push('cartofii');if(c.has('paine'))bs.push('feliile de pâine');
+  s.push((bs.length?'Pune în farfurii '+L(bs)+', apoi ciupercile deasupra':'Pune ciupercile în boluri')+(sp.length?' și presară '+L(sp):'')+'.');
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'ciuperciUmplute',base:['ciuperci'],noun:function(){return 'ciuperci umplute la cuptor';},
+ req:function(c){return c.has('ciuperci')&&c.any(['telemea','urda','burduf','framantata','smantana']);},
+ acc:['ciuperci','telemea','urda','burduf','framantata','smantana','marar','ceapa','salam','nuci','oua','paine'],
+ b:6,st:[0,3,3,0],mo:[-2,2,3],time:40,lvl:'mediu',plate:'caps',
+ qty:{ciuperci:[8,'buc','ciupercă mare, cumpărată','ciuperci mari, cumpărate'],oua:[1,'buc'],paine:[1,'fel'],smantana:[3,'lg'],urda:[100,'g'],nuci:[30,'g'],salam:[50,'g']},
+ names:[{t:'Pălăriuțele din Mărginime, umplute {cu2}',f:'palarie'},{t:'Ciupercile umplute ale breslei imaginare {cu2}',f:null}],
+ steps:function(c){
+  var s=[];
+  s.push('Spală-te pe mâini. Curăță ciupercile cu un șervețel umed, scoate cu grijă cozile și toacă-le mărunt.');
+  var pp=preps(c,[['ceapa','toc'],['marar','toc'],['salam','cubf'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['nuci','buc']]);
+  if(c.has('paine'))pp.push('fărâmițează pâinea în firimituri');
+  if(pp.length)s.push('Pe tocător, cu grijă: '+L(pp)+'.');
+  if(c.has('ceapa'))s.push(AR(c,'călește ceapa cu cozile tocate într-o lingură de ulei, circa 5 minute.'));
+  var fl=arts(c.f(['telemea','urda','burduf','framantata','smantana','salam','nuci','marar']));
+  fl.push(c.has('ceapa')?'ceapa călită cu cozile':'cozile tocate');
+  if(c.has('oua'))fl.push(c.m>1?'ouăle bătute':'oul bătut');
+  s.push('Amestecă într-un bol '+L(fl)+', cu un vârf de sare.');
+  s.push('Umple pălăriile ciupercilor cu amestecul și așază-le într-o tavă unsă cu ulei'+(c.has('paine')?'; presară firimiturile de pâine deasupra':'')+'.');
+  s.push(OV(c,'coace circa 20 de minute la 190 °C, până se rumenesc; scoate tava cu mănuși de bucătărie.'));
+  s.push(serve(c,true));
+  return s;}},
+
+{id:'crema',base:['telemea','urda','burduf','framantata','smantana'],noun:function(c){return 'cremă de '+L(c.f(['urda','framantata','telemea','burduf','smantana']).map(CU));},
+ req:function(c){return c.any(['telemea','urda','burduf','framantata','smantana']);},
+ acc:['telemea','urda','burduf','framantata','smantana','marar','nuci','ceapa','salam','oua','paine','mere','cartofi','varza','prune','lapte','ciuperci'],
+ b:4,st:[1,1,3,3],mo:[2,-1,4],time:15,lvl:'ușor',plate:'dip',
+ qty:{urda:[200,'g'],framantata:[100,'g'],telemea:[100,'g'],burduf:[80,'g'],smantana:[100,'g'],lapte:[3,'lg'],oua:[2,'buc'],varza:[150,'g'],cartofi:[3,'buc'],ciuperci:[150,'g'],ceapa:[1,'buc','ceapă mică','cepe mici'],salam:[50,'g'],prune:[6,'buc']},
+ names:[{t:'Crema „Ochii Sibiului” {cu2}',f:'ochi'},{t:'Crema Podului Minciunilor {cu2}',f:'pod'}],
+ steps:function(c){
+  var s=[],bs=c.f(['urda','framantata','telemea','burduf','smantana']),soft=c.any(['urda','framantata','smantana']);
+  s.push(prep(c,[['telemea','sf'],['burduf','sf'],['framantata','sf'],['ceapa','tocf'],['salam','cubf'],['marar','toc'],['nuci','buc'],['mere','fel'],['prune','buc'],['paine','fel'],['varza','fas'],['ciuperci','toc']]));
+  var ck=[];
+  if(c.has('oua'))ck.push('fierbe ouăle tari, 10 minute, apoi răcește-le, curăță-le și toacă-le');
+  if(c.has('cartofi'))ck.push('fierbe cartofii, bine spălați, în coajă, circa 25 de minute, apoi taie-i în sferturi');
+  if(c.has('ciuperci'))ck.push('călește ciupercile într-o lingură de ulei, circa 7 minute, și lasă-le să se răcească');
+  if(c.has('paine'))ck.push('rumenește feliile de pâine în prăjitor');
+  cookSteps(c,ck,s);
+  s.push('Într-un bol, amestecă '+L(arts(bs))+' cu o furculiță'+(soft?'':' și o lingură de ulei')+', până obții o cremă'+(c.has('lapte')?'; dacă e prea groasă, adaugă câteva linguri de lapte':'')+'.');
+  var mx=[];if(c.has('marar'))mx.push('mărarul');if(c.has('ceapa'))mx.push('ceapa');if(c.has('salam'))mx.push('salamul');if(c.has('oua'))mx.push('ouăle tocate');if(c.has('ciuperci'))mx.push('ciupercile');if(c.has('nuci'))mx.push('nucile (păstrează două jumătăți pentru decor)');
+  if(mx.length)s.push('Adaugă '+L(mx)+' și un vârf de piper, apoi amestecă.');
+  var dp=[];if(c.has('paine'))dp.push('feliile de pâine');if(c.has('mere'))dp.push('feliile de măr');if(c.has('cartofi'))dp.push('cartofii');if(c.has('varza'))dp.push('fâșiile de varză');if(c.has('prune'))dp.push('prunele');
+  s.push('Pune crema într-un bol, în mijlocul farfuriei'+(c.has('nuci')?', cu două jumătăți de nucă deasupra, pe post de „ochi”':'')+(dp.length?', și așază în jur '+L(dp):'')+'.');
+  s.push(serve(c,false));
+  return s;}},
+
+{id:'desertPahar',base:[],noun:function(){return 'desert la pahar';},
+ req:function(c){return (c.any(['mere','prune'])||(c.has('nuci')&&c.any(['urda','smantana'])))&&c.only(['urda','smantana','mere','prune','nuci','paine']);},
+ acc:['urda','smantana','mere','prune','nuci','paine'],
+ b:6,st:[-1,3,3,1],mo:[1,0,4],time:25,lvl:'ușor',plate:'glass',
+ qty:{urda:[200,'g'],smantana:[150,'g'],paine:[1,'fel'],prune:[6,'buc']},
+ names:[{t:'Desertul „Trei inele de ziduri” {cu2}',f:'zid'},{t:'Paharul cu straturi din Piața Mică {cu2}',f:null}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['mere','cub'],['prune','buc'],['nuci','buc']]));
+  if(c.has('paine'))s.push(AR(c,'fărâmițează pâinea și rumenește firimiturile într-o tigaie fără ulei, cu o linguriță de zahăr, circa 3 minute, amestecând. Lasă-le să se răcească.'));
+  var cr=c.f(['urda','smantana']),fr=c.f(['mere','prune']);
+  if(cr.length)s.push('Amestecă '+L(arts(cr))+' cu o linguriță de miere sau zahăr, până obții o cremă.');
+  if(fr.length)s.push('Amestecă '+L(arts(fr))+' cu o linguriță de miere și un vârf de scorțișoară.');
+  var ly=[];if(cr.length)ly.push('cremă');if(fr.length)ly.push(fr.length>1?'fructe':CU(fr[0]));if(c.has('nuci'))ly.push('nuci');if(c.has('paine'))ly.push('firimituri');
+  s.push('În '+(c.m>1?'patru':'două')+' pahare, așază straturi: '+L(ly)+', apoi încă o dată.');
+  s.push('Ține paharele 15 minute la frigider.');
+  s.push(serve(c,false,'',{stana:'Servește în căni de lemn, ca la stână.',sarb:'Așază paharele pe un platou de sărbătoare și servește.',modern:'Servește în pahare transparente, ca să se vadă straturile – simplu și modern.',picnic:'Pentru picnic: folosește borcănele cu capac în loc de pahare și ține-le la rece, în geanta frigorifică.'}));
+  return s;}},
+
+{id:'mereCoapte',base:['mere'],noun:function(){return 'mere coapte';},
+ req:function(c){return c.has('mere')&&c.only(['mere','nuci','prune','urda','smantana','lapte']);},
+ acc:['mere','nuci','prune','urda','smantana','lapte'],
+ b:7,st:[2,3,0,-1],mo:[0,0,4],time:45,lvl:'ușor',plate:'apples',
+ qty:{mere:[2,'buc','măr mare','mere mari'],nuci:[30,'g'],prune:[4,'buc'],urda:[80,'g'],smantana:[100,'g'],lapte:[300,'ml']},
+ names:[{t:'Merele coapte din Piața Mare {cu2}',f:null},{t:'Merele coapte ale bunicii imaginare {cu2}',f:null}],
+ steps:function(c){
+  var s=[];
+  s.push('Spală-te pe mâini și spală merele. Scobește cotorul cu o linguriță, fără să găurești merele la bază – cere ajutor, dacă e greu.');
+  var pp=preps(c,[['nuci','buc'],['prune','buc']]);if(pp.length)s.push('Pe tocător, cu grijă: '+L(pp)+'.');
+  var fl=arts(c.f(['urda','prune','nuci']));
+  s.push(fl.length?'Amestecă '+L(fl)+' cu o linguriță de miere și un vârf de scorțișoară, apoi umple merele.':'Pune în fiecare măr o linguriță de miere și un vârf de scorțișoară.');
+  s.push('Așază merele într-o tavă și toarnă pe fundul tăvii 3–4 linguri de apă.');
+  s.push(OV(c,'coace circa 30 de minute la 180 °C, până merele se înmoaie; scoate tava cu mănuși de bucătărie și lasă merele 5 minute să se răcorească.'));
+  var pre='';if(c.has('smantana'))pre='Servește merele cu câte o lingură de smântână.';
+  if(c.has('lapte'))pre+=(pre?' ':'')+'Cu un adult, la aragaz, încălzește laptele fără să dea în foc și pune-l alături, în căni.';
+  s.push(serve(c,true,pre));
+  return s;}},
+
+{id:'frigarui',base:[],noun:function(){return 'frigărui reci';},
+ req:function(c){return c.f(SKW).length>=2&&c.only(SKW.concat(DIPK));},
+ acc:SKW.concat(DIPK),
+ b:5,st:[0,2,2,4],mo:[0,-1,4],time:20,lvl:'ușor',plate:'skewers',
+ qty:{cartofi:[6,'buc','cartof mic','cartofi mici'],paine:[2,'fel'],smantana:[100,'g'],urda:[100,'g'],framantata:[60,'g'],burduf:[60,'g'],nuci:[30,'g'],prune:[6,'buc']},
+ names:[{t:'Lăncile breslei fierarilor {cu2}',f:'fier'},{t:'Frigăruile cetății {cu2}',f:'zid'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['telemea','cubm'],['salam','frg'],['mere','cubm'],['prune','jum'],['paine','cub']]));
+  if(c.has('cartofi'))s.push(AR(c,'fierbe cartofii întregi, în coajă, circa 20 de minute; lasă-i să se răcească, apoi taie-i în jumătăți.'));
+  var nm={telemea:'telemea',salam:'salam',mere:'măr',prune:'prună',paine:'pâine',cartofi:'cartof'};
+  s.push('Înșiră pe bețe scurte de frigărui, pe rând, câte o bucată de '+L(c.f(SKW).map(function(k){return nm[k];}))+' – ai grijă la vârfurile ascuțite.');
+  var d=c.f(['urda','burduf','framantata','smantana']);
+  if(d.length)s.push('Pentru sosul de înmuiat, amestecă '+L(arts(d))+(c.has('marar')?' cu mărarul':'')+' și un vârf de sare.');
+  else if(c.has('marar'))s.push('Presară mărarul peste frigărui.');
+  if(c.has('nuci'))s.push(d.length?'Presară nucile peste sos.':'Pune nucile într-un bol mic, lângă frigărui.');
+  s.push(serve(c,false));
+  return s;}},
+
+{id:'supa',base:['cartofi','ciuperci','varza','ceapa'],noun:function(c){var v=c.f(['cartofi','ciuperci','varza','ceapa']);return (c.has('cartofi')&&c.any(['lapte','smantana'])?'supă-cremă de ':'supă de ')+L(v.map(CU));},
+ req:function(c){return c.any(['cartofi','ceapa','varza','ciuperci']);},
+ acc:['cartofi','ceapa','varza','ciuperci','marar','smantana','lapte','telemea','urda','burduf','framantata','salam','paine','oua','nuci'],
+ b:4,st:[2,1,1,-3],mo:[-3,4,-1],time:40,lvl:'ușor',plate:'soup',
+ qty:{cartofi:[3,'buc'],varza:[250,'g'],lapte:[200,'ml'],smantana:[100,'g'],oua:[2,'buc'],paine:[2,'fel'],urda:[80,'g'],nuci:[30,'g']},
+ names:[{t:'Supa ceții de pe Cibin {cu2}',f:'cibin'},{t:'Supa de după drumeția de la Păltiniș {cu2}',f:'paltinis'}],
+ steps:function(c){
+  var s=[],v=c.f(['cartofi','ciuperci','varza','ceapa']);
+  s.push(prep(c,[['cartofi','cub'],['varza','fid'],['ceapa','toc'],['ciuperci','fel'],['salam','cub'],['paine','cub'],['telemea','sf'],['burduf','sf'],['framantata','sf'],['nuci','buc'],['marar','toc']]));
+  var first=c.has('ceapa')?'ceapa':v[0],rest=v.filter(function(k){return k!==first;});
+  s.push(AR(c,'într-o oală cu o lingură de ulei, călește '+A(first)+' 3 minute, amestecând.'));
+  s.push('Adaugă '+(rest.length?L(arts(rest))+', ':'')+W(900,c)+' și un vârf de sare, apoi fierbe circa 20 de minute, până se înmoaie totul.');
+  if(c.has('cartofi'))s.push('Dacă vrei o supă-cremă, adultul o pasează cu blenderul vertical.');
+  if(c.has('lapte'))s.push('Adaugă laptele și încălzește 2 minute, fără să dea în foc.');
+  if(c.has('smantana'))s.push('Ia oala de pe foc; amestecă smântâna cu câteva linguri de supă și abia apoi pune amestecul în oală.');
+  var ck=[];if(c.has('salam'))ck.push('rumenește salamul 2 minute într-o tigaie fără ulei');if(c.has('paine'))ck.push('rumenește cuburile de pâine într-o tigaie fără ulei – vor fi crutoane');if(c.has('oua'))ck.push('fierbe ouăle tari, 10 minute, și taie-le în jumătăți');
+  if(ck.length)s.push(cap(ck.join('; '))+'.');
+  var top=[];if(c.has('salam'))top.push('salamul rumenit');if(c.has('paine'))top.push('crutoanele');if(c.has('oua'))top.push('ouăle');top=top.concat(arts(c.ch));if(c.has('nuci'))top.push('nucile');if(c.has('marar'))top.push('mărarul');
+  if(top.length)s.push('Pune supa în boluri și adaugă deasupra '+L(top)+'.');
+  s.push(serve(c,true,'',{picnic:'Pentru picnic: adultul pune supa fierbinte într-un termos, iar ce se pune deasupra iei separat, într-o cutie.'}));
+  return s;}},
+
+{id:'pesto',base:['marar'],noun:function(){return 'sos verde de mărar';},
+ req:function(c){return c.has('marar')&&c.any(['nuci','telemea','burduf']);},
+ acc:['marar','nuci','telemea','burduf','smantana','paine','cartofi','oua','malai'],
+ b:6,st:[-1,0,4,2],mo:[0,1,3],time:15,lvl:'ușor',plate:'pesto',
+ qty:{marar:[1,'leg'],nuci:[40,'g'],telemea:[60,'g'],burduf:[50,'g'],smantana:[100,'g'],oua:[4,'buc'],malai:[150,'g']},
+ names:[{t:'Sosul verde „Dumbrava” {cu2}',f:'dumb'},{t:'Sosul verde de pe Cindrel {cu2}',f:'cindrel'}],
+ steps:function(c){
+  var s=[];
+  s.push('Spală-te pe mâini. Spală mărarul, scutură-l bine și rupe tulpinile groase.');
+  var pp=preps(c,[['nuci','buc'],['telemea','sf'],['burduf','sf']]);if(pp.length)s.push('Pe tocător, cu grijă: '+L(pp)+'.');
+  var ck=[];
+  if(c.has('malai'))ck.push('fierbe o mămăligă – '+W(600,c)+' cu un vârf de sare și mălaiul turnat în ploaie – circa 15 minute');
+  if(c.has('cartofi'))ck.push('fierbe cartofii întregi, în coajă, circa 25 de minute, apoi taie-i în jumătăți');
+  if(c.has('oua'))ck.push('fierbe ouăle tari, 10 minute, apoi curăță-le și taie-le în jumătăți');
+  if(c.has('paine'))ck.push('rumenește feliile de pâine în prăjitor');
+  cookSteps(c,ck,s);
+  s.push('Cu ajutorul unui adult la blender (sau într-un mojar), mărunțește mărarul cu '+L(arts(c.f(['nuci','telemea','burduf'])))+' și 4 linguri de ulei, până obții un sos verde.');
+  if(c.has('smantana'))s.push('Amestecă sosul cu smântâna, ca să fie mai cremos.');
+  var bs=[];if(c.has('paine'))bs.push('feliile de pâine');if(c.has('cartofi'))bs.push('cartofii');if(c.has('oua'))bs.push('ouăle');if(c.has('malai'))bs.push('mămăliga');
+  s.push(bs.length?'Pune sosul peste '+L(bs)+'.':'Pune sosul într-un bol mic, ca să-l folosești la alte preparate.');
+  s.push(serve(c,c.any(['malai','cartofi'])));
+  return s;}},
+
+{id:'shake',base:['lapte'],noun:function(){return 'băutură cremoasă de lapte';},
+ req:function(c){return c.has('lapte')&&c.any(['mere','prune','nuci'])&&c.only(['lapte','mere','prune','nuci','urda','smantana']);},
+ acc:['lapte','mere','prune','nuci','urda','smantana'],
+ b:7,st:[-1,0,3,1],mo:[4,-2,3],time:10,lvl:'ușor',plate:'drink',
+ qty:{lapte:[400,'ml'],prune:[6,'buc'],nuci:[30,'g'],urda:[80,'g'],smantana:[3,'lg']},
+ names:[{t:'Spuma de dimineață din Piața Mică {cu2}',f:null},{t:'Norii de peste Cindrel, la pahar, {cu2}',f:'cindrel'}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['mere','cub'],['prune','buc'],['nuci','buc']]));
+  s.push('Pune în blender '+L(['laptele rece (pasteurizat, din comerț)'].concat(arts(c.f(['mere','prune','nuci','urda','smantana']))).concat(['o linguriță de miere']))+'.');
+  s.push('Cere ajutorul unui adult la blender: închide bine capacul și mixează circa un minut, până se face spumă.');
+  s.push('Toarnă în pahare și presară deasupra un vârf de scorțișoară'+(c.has('nuci')?' și câteva firimituri de nucă':'')+'.');
+  s.push(serve(c,false,'',{nomo:1,stana:'Servește în căni de lemn, ca la stână.',sarb:'Servește în pahare înalte, pe un platou de sărbătoare.',modern:'Servește imediat, în pahare transparente – simplu și modern.',picnic:'Pentru picnic: toarnă în sticle cu capac și ține-le la rece, în geanta frigorifică.'}));
+  return s;}},
+
+{id:'platou',base:[],noun:function(){return 'platou de gustare';},
+ req:function(){return true;},acc:ORDER,
+ b:1,st:[2,2,0,2],mo:[0,0,3],time:30,lvl:'ușor',plate:'board',
+ qty:{malai:[100,'g'],oua:[2,'buc'],cartofi:[4,'buc','cartof mic','cartofi mici'],ciuperci:[200,'g'],varza:[150,'g'],lapte:[400,'ml'],urda:[150,'g'],smantana:[100,'g'],prune:[6,'buc']},
+ names:[{t:'Platoul celor 19 bresle {cu2}',f:'bresle'},{t:'Platoul de la stână {cu2}',f:'past',lead:'Ca la stână: ',iff:function(c){return c.st==='stana';}},{t:'Platoul din Piața Mare {cu2}',f:null}],
+ steps:function(c){
+  var s=[];
+  s.push(prep(c,[['telemea','cub'],['salam','fel'],['varza','fid'],['ceapa','ron'],['mere','fel'],['prune','jum'],['marar','toc'],['paine','fel'],['ciuperci','fel']]));
+  var ck=[];
+  if(c.has('malai'))ck.push('fierbe o mămăliguță din mălai, '+W(400,c)+' și un vârf de sare, circa 15 minute, amestecând; după ce se răcește, mămăliga se taie cuburi');
+  if(c.has('oua'))ck.push('fierbe ouăle tari, 10 minute, apoi curăță-le și taie-le în jumătăți');
+  if(c.has('cartofi'))ck.push('fierbe cartofii, bine spălați, în coajă, circa 20 de minute și taie-i în jumătăți');
+  if(c.has('ciuperci'))ck.push('călește ciupercile într-o lingură de ulei, circa 8 minute');
+  if(c.has('paine'))ck.push('rumenește feliile de pâine în prăjitor');
+  cookSteps(c,ck,s);
+  if(c.has('varza'))s.push('Amestecă varza cu un vârf de sare și o lingură de ulei.');
+  var bd=[];['telemea','salam','varza','malai','oua','cartofi','ciuperci','ceapa','mere','prune','paine'].forEach(function(k){if(c.has(k))bd.push(k==='malai'?'cuburile de mămăligă':k==='paine'?'feliile de pâine':k==='ceapa'?'rondelele de ceapă':A(k));});
+  if(bd.length)s.push('Pe un fund de lemn sau pe un platou, așază pe grupe '+L(bd)+'.');
+  var bw=arts(c.f(['urda','burduf','framantata','smantana','nuci']));
+  if(bw.length)s.push('Pune '+L(bw)+' în boluri mici, în mijlocul platoului.'+(c.has('marar')?' Presară mărarul peste tot.':''));
+  else if(c.has('marar'))s.push('Presară mărarul peste tot.');
+  if(c.has('lapte'))s.push('Alături, pune câte un pahar de lapte rece.');
+  s.push(serve(c,false,'',{stana:'Servește direct pe fundul de lemn, ca la stână.'}));
+  return s;}}
+];
+TECH.forEach(function(t,i){t.i=i;});
+
+/* =====================================================================
+   5. GENERATORUL
+   ===================================================================== */
+function mkC(sel,st,mo,v){
+  var set={};sel.forEach(function(k){set[k]=1;});
+  var c={st:st,mo:mo,v:v,m:st==='sarb'?2:1};
+  c.sel=ORDER.filter(function(k){return set[k];});
+  c.has=function(k){return !!set[k];};
+  c.f=function(a){return ORDER.filter(function(k){return set[k]&&a.indexOf(k)>=0;});};
+  c.any=function(a){return a.some(function(k){return set[k];});};
+  c.only=function(a){return c.sel.every(function(k){return a.indexOf(k)>=0;});};
+  c.ch=c.f(CH);
+  return c;
+}
+function score(t,c){var x=t.b+t.st[STI[c.st]]+t.mo[MOI[c.mo]];if(t.id==='crema'){if(c.any(['urda','framantata']))x+=2;if(!c.ch.length)x-=3;}return x;}
+function candidates(sel,st,mo){
+  var c=mkC(sel,st,mo,0);
+  var a=TECH.filter(function(t){return t.req(c)&&c.only(t.acc);}).map(function(t){return {t:t,s:score(t,c)};});
+  a.sort(function(x,y){return y.s-x.s||x.t.i-y.t.i;});
+  return a.slice(0,6).map(function(o){return o.t;});
+}
+function fmtQ(k,q,m){
+  var v=q[0]*m,u=q[1],I=ING[k];
+  if(u==='g'||u==='ml')return {q:v>=1000?String(v/1000).replace('.',',')+(u==='g'?' kg':' l'):v+' '+u,n:I.ln};
+  if(u==='buc')return {q:String(v),n:v===1?(q[2]||I.sg):(q[3]||I.pl)};
+  if(u==='fel')return {q:v===1?'o felie':v+' felii',n:I.ln};
+  if(u==='lg')return {q:v===1?'o lingură':v+' linguri',n:I.ln};
+  if(u==='leg')return {q:v===.5?'½ legătură':v===1?'o legătură':v+' legături',n:I.ln};
+  return {q:String(v),n:I.ln};
+}
+function hasW(txt,w){return new RegExp('(^|[^a-zăâîșț])'+w+'([^a-zăâîșț]|$)').test(txt);}
+function makeRecipe(sel,st,mo,v){
+  var cands=candidates(sel,st,mo),n=cands.length,t=cands[v%n],cyc=Math.floor(v/n);
+  var c=mkC(sel,st,mo,v);c.t=t;
+  var steps=fit6(t.steps(c));
+  var names=t.names.filter(function(o){return !o.iff||o.iff(c);});
+  var nm=names[cyc%names.length];
+  var base=t.base||[];
+  var feat=PRI.filter(function(k){return c.has(k)&&base.indexOf(k)<0;});
+  var name=nm.t.replace('{cu1}',cuStr(feat.slice(0,1))).replace('{cu2}',cuStr(feat.slice(0,2))).replace('{ch1}',c.ch.length?CU(c.ch[0]):'brânză');
+  name=name.replace(/\s+/g,' ').replace(/\s+,/g,',').replace(/,\s*$/,'').trim();
+  var rest=c.sel.filter(function(k){return base.indexOf(k)<0;});
+  var sub=(t.noun(c)+' '+cuStr(rest)).trim();
+  var ing=c.sel.map(function(k){return fmtQ(k,(t.qty&&t.qty[k])||ING[k].q,c.m);});
+  var txt=steps.join(' ').toLowerCase();
+  var stap=[];
+  if(hasW(txt,'apă')||hasW(txt,'apa'))stap.push('apă');
+  if(hasW(txt,'sare'))stap.push('sare');
+  if(hasW(txt,'piper'))stap.push('piper');
+  if(hasW(txt,'ulei'))stap.push('ulei');
+  if(txt.indexOf('miere sau zahăr')>=0)stap.push('miere sau zahăr');else{if(hasW(txt,'miere'))stap.push('miere');if(hasW(txt,'zahăr'))stap.push('zahăr');}
+  if(txt.indexOf('miere sau zahăr')>=0&&hasW(txt.replace(/miere sau zahăr/g,''),'zahăr')){}
+  if(hasW(txt,'scorțișoară'))stap.push('scorțișoară');
+  var tools=[];
+  if(/aragaz|tigaie|oală|clocot/.test(txt))tools.push('aragaz');
+  if(hasW(txt,'cuptor'))tools.push('cuptor');
+  if(hasW(txt,'blender')||hasW(txt,'blenderul'))tools.push('blender');
+  if(hasW(txt,'prăjitor'))tools.push('prăjitor');
+  var al=['lapte','ou','gluten','nuci'].filter(function(a){return c.sel.some(function(k){return ING[k].al.indexOf(a)>=0;});});
+  /* povestea */
+  var pool=[],seen={};
+  function add(k,lead){if(k&&!seen[k]){seen[k]=1;pool.push({k:k,lead:lead});}}
+  if(nm.f)add(nm.f,nm.lead||'De unde vine numele? ');
+  if(c.has('telemea')){add('tel1','Ingredient cu poveste – telemeaua: ');add('tel2','Ingredient cu poveste – telemeaua: ');}
+  if(c.has('salam')){add('sal1','Ingredient cu poveste – salamul: ');add('sal2','Ingredient cu poveste – salamul: ');add('sal3','Ingredient cu poveste – salamul: ');}
+  if(c.any(['urda','burduf','framantata']))add('branz','Brânzeturi din Mărginime: ');
+  if(c.has('varza'))add('sarm','Rudă cu sarmalele: ');
+  if(c.has('malai')&&c.any(['lapte','smantana','oua','telemea','urda','burduf','framantata']))add('balmos','Rudă cu rețeta ta: ');
+  if(c.has('malai'))add('mama','Despre mămăligă: ');
+  if(c.has('paine')){add('brut','Pâinea și breslele: ');add('brut2','Pâinea și breslele: ');}
+  if(st==='stana'){add('past','Ca la stână: ');add('jina','Ca la stână: ');add('oieri','Ca la stână: ');}
+  else if(st==='picnic')add('dumb','Pentru picnic: ');
+  else add('rge',st==='sarb'?'De sărbătoare: ':'Bucătărie nouă, oraș vechi: ');
+  var sp=pool[v%pool.length],fx=FX[sp.k];
+  var sf=[];
+  if(tools.length)sf.push('la '+L(tools)+' lucrezi doar împreună cu un adult');else sf.push('cuțitul se folosește cu grijă, pe tocător');
+  if(c.has('lapte'))sf.push('laptele e pasteurizat, din comerț');
+  if(c.ch.length)sf.push('brânzeturile sunt cumpărate din comerț, cu etichetă');
+  if(c.has('ciuperci'))sf.push('ciupercile sunt cumpărate – nu culege ciuperci din natură');
+  if(c.has('oua'))sf.push('ouăle se gătesc complet');
+  if(c.any(['urda','smantana','telemea','burduf','framantata','oua','salam','lapte']))sf.push('ce se strică ușor se ține la frigider');
+  return {sel:c.sel.slice(),st:st,mo:mo,v:v,n:n,tech:t.id,plate:t.plate,name:name,sub:cap(sub),kick:'Rețetă reinventată · '+MON[mo]+' · '+STN[st],
+    portii:c.m*2,time:tStr(t.time),lvl:t.lvl,tools:tools,ing:ing,stap:stap,al:al,steps:steps,
+    story:{lead:sp.lead,text:fx[0],src:fx[1],k:sp.k},safe:'Siguranță: '+sf.join('; ')+'.',
+    seed:hashS(c.sel.join(',')+st+mo)+v*7919};
+}
+function hashS(str){var h=2166136261;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* =====================================================================
+   6. DESEN – primitive
+   ===================================================================== */
+var g=null;
+function circ(x,y,r,c){g.fillStyle=c;g.beginPath();g.arc(x,y,Math.max(.1,r),0,6.2832);g.fill();}
+function ell(x,y,rx,ry,rot,c){g.fillStyle=c;g.beginPath();g.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),rot||0,0,6.2832);g.fill();}
+function rrect(x,y,w,h,r){r=Math.min(r,w/2,h/2);g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function frr(x,y,w,h,r,c){g.fillStyle=c;rrect(x,y,w,h,r);g.fill();}
+function ln(x1,y1,x2,y2,c,w){g.strokeStyle=c;g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+function mkBlob(x,y,r,irr,R,n){n=n||16;var p=[];for(var i=0;i<n;i++){var a=i/n*6.2832,k=r*(1+(R()-.5)*irr);p.push([x+Math.cos(a)*k,y+Math.sin(a)*k]);}return p;}
+function blobPath(p){var n=p.length;g.beginPath();g.moveTo((p[n-1][0]+p[0][0])/2,(p[n-1][1]+p[0][1])/2);for(var j=0;j<n;j++){var q=p[(j+1)%n];g.quadraticCurveTo(p[j][0],p[j][1],(p[j][0]+q[0])/2,(p[j][1]+q[1])/2);}g.closePath();}
+function sh(on,b,oy){if(on){g.shadowColor='rgba(40,25,10,.28)';g.shadowBlur=b||5;g.shadowOffsetX=0;g.shadowOffsetY=oy==null?2:oy;}else{g.shadowColor='rgba(0,0,0,0)';g.shadowBlur=0;g.shadowOffsetY=0;}}
+function h2r(h){h=h.replace('#','');var n=parseInt(h,16);return [n>>16&255,n>>8&255,n&255];}
+function mix(a,b,t){var A=h2r(a),B=h2r(b);return '#'+A.map(function(v,i){v=Math.round(v+(B[i]-v)*t);return (v<16?'0':'')+v.toString(16);}).join('');}
+
+/* bucăți de ingrediente, văzute de sus */
+var PC={
+ cube:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);var w=24*s;sh(1,4,2);frr(-w/2,-w/2,w,w,4*s,'#E2DCCB');sh(0);frr(-w/2,-w/2,w-3*s,w-3*s,4*s,'#FBF9F2');circ(-3*s,-4*s,1.6*s,'#EAE3D2');circ(3*s,1*s,1.3*s,'#EAE3D2');circ(-5*s,4*s,1.1*s,'#EAE3D2');g.restore();},
+ crumb:function(x,y,s,a,R,col,dk,k){sh(1,3,1.5);for(var i=0;i<(k||6);i++){var aa=R()*6.28,rr=R()*9*s;circ(x+Math.cos(aa)*rr,y+Math.sin(aa)*rr,(4+R()*4)*s,col);}sh(0);for(var j=0;j<4;j++)circ(x+(R()-.5)*14*s,y+(R()-.5)*14*s,1.2*s,dk);},
+ urda:function(x,y,s,a,R){PC.crumb(x,y,s*1.15,a,R,'#FFFEF8','#E9E3D5',7);},
+ burduf:function(x,y,s,a,R){PC.crumb(x,y,s,a,R,'#F1E2BC','#D3BA84');},
+ fram:function(x,y,s,a,R){PC.crumb(x,y,s,a,R,'#F7F2E3','#DCD1B7');},
+ crumbW:function(x,y,s,a,R){PC.crumb(x,y,s*.8,a,R,'#FBF9F1','#E3DDCD');},
+ salam:function(x,y,s,a,R){var r=17*s;sh(1,4,2);circ(x,y,r,'#D7CDBF');sh(0);circ(x,y,r-2.6*s,'#8E3C35');for(var i=0;i<11;i++){var aa=R()*6.28,rr=Math.sqrt(R())*(r-5.5*s);circ(x+Math.cos(aa)*rr,y+Math.sin(aa)*rr,(1.1+R()*1.5)*s,'#F2D5CA');}for(var j=0;j<4;j++){var b=R()*6.28,q=R()*(r-6*s);circ(x+Math.cos(b)*q,y+Math.sin(b)*q,.9*s,'#3D1714');}},
+ salamCub:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);var w=13*s;sh(1,3,1.5);frr(-w/2,-w/2,w,w,2.5*s,'#8E3C35');sh(0);circ(-2*s,-1.5*s,1.4*s,'#F2D5CA');circ(2.5*s,2*s,1.1*s,'#F2D5CA');g.restore();},
+ shred:function(x,y,s,a,R,cols){cols=cols||['#D9ECB0','#BFDB8A','#E9F4CF'];g.lineCap='round';for(var i=0;i<5;i++){var aa=a+R()*1.4,len=(18+R()*14)*s,x0=x+(R()-.5)*14*s,y0=y+(R()-.5)*14*s;g.strokeStyle=cols[i%3];g.lineWidth=3.2*s;g.beginPath();g.moveTo(x0,y0);g.quadraticCurveTo(x0+Math.cos(aa+.6)*len*.6,y0+Math.sin(aa+.6)*len*.6,x0+Math.cos(aa)*len,y0+Math.sin(aa)*len);g.stroke();}g.lineCap='butt';},
+ varzaGold:function(x,y,s,a,R){PC.shred(x,y,s,a,R,['#D6C874','#BFAE58','#E6DA99']);},
+ strip:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,3,1.5);frr(-20*s,-6*s,40*s,12*s,6*s,'#CFE5A0');sh(0);ln(-16*s,0,16*s,0,'#EEF6DA',1.6*s);g.restore();},
+ mamCube:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);var w=22*s;sh(1,4,2);frr(-w/2,-w/2,w,w,3*s,'#D9A23A');sh(0);frr(-w/2,-w/2,w-3*s,w-3*s,3*s,'#F3C653');g.restore();},
+ dollop:function(x,y,s){sh(1,5,2);circ(x,y,19*s,'#FFFFFF');sh(0);g.strokeStyle='#E6DFD2';g.lineWidth=2*s;g.beginPath();for(var t=0;t<=1.0001;t+=.02){var an=t*12,rr=(1-t)*14*s,px=x+Math.cos(an)*rr,py=y+Math.sin(an)*rr;if(t===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();circ(x-6*s,y-7*s,3*s,'rgba(255,255,255,.95)');},
+ fried:function(x,y,s,a,R){var p=mkBlob(x,y,30*s,.3,R,12);sh(1,5,2);g.fillStyle='#FFFFFF';blobPath(p);g.fill();sh(0);g.strokeStyle='rgba(225,218,205,.9)';g.lineWidth=1.4*s;g.stroke();circ(x+3*s,y-2*s,12.5*s,'#E79A17');circ(x+2*s,y-3*s,11*s,'#F5B52C');circ(x-2*s,y-7*s,3.2*s,'#FCD87A');},
+ half:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,4,2);ell(0,0,21*s,14*s,0,'#FFFFFF');sh(0);g.strokeStyle='#ECE6DA';g.lineWidth=1.5*s;g.beginPath();g.ellipse(0,0,21*s,14*s,0,0,6.2832);g.stroke();circ(1*s,0,8.5*s,'#F2C232');circ(-1*s,-2*s,3*s,'#F8D971');g.restore();},
+ rings:function(x,y,s,a){g.strokeStyle='#E5CFE2';g.lineWidth=3*s;g.beginPath();g.ellipse(x,y,12*s,11*s,a,0,6.2832);g.stroke();g.strokeStyle='#D2B2CE';g.lineWidth=2.2*s;g.beginPath();g.ellipse(x,y,7*s,6.4*s,a,0,6.2832);g.stroke();},
+ onionGold:function(x,y,s,a,R){g.lineCap='round';for(var i=0;i<4;i++){var aa=a+i*.8+R()*.5;g.strokeStyle=i%2?'#C98C33':'#DDAA52';g.lineWidth=3*s;g.beginPath();g.arc(x+(R()-.5)*10*s,y+(R()-.5)*10*s,(7+R()*4)*s,aa,aa+1.6);g.stroke();}g.lineCap='butt';},
+ appleSlice:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,4,2);g.fillStyle='#F7EBC4';g.beginPath();g.arc(0,0,19*s,Math.PI,0);g.closePath();g.fill();sh(0);g.strokeStyle='#C3352B';g.lineWidth=4*s;g.beginPath();g.arc(0,0,19*s,Math.PI+.06,-.06);g.stroke();ell(-4.5*s,-4*s,2*s,3.2*s,.4,'#5B3A22');ell(4.5*s,-4*s,2*s,3.2*s,-.4,'#5B3A22');g.restore();},
+ appleCube:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);var w=15*s;sh(1,3,1.5);frr(-w/2,-w/2,w,w,3*s,'#F5E6BA');sh(0);g.fillStyle='#C3352B';g.fillRect(-w/2+1*s,-w/2,w-2*s,3.2*s);g.restore();},
+ plum:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,4,2);ell(0,0,15*s,12*s,0,'#4A1E46');sh(0);ell(0,0,11*s,8.5*s,0,'#C98B3B');ell(1*s,0,4.5*s,3.3*s,0,'#A86A2C');circ(-7*s,-5*s,2*s,'rgba(255,255,255,.25)');g.restore();},
+ walnut:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,3,1.5);ell(-4.5*s,0,8.5*s,12*s,0,'#A36A33');ell(4.5*s,0,8.5*s,12*s,0,'#B07639');sh(0);g.strokeStyle='#6C421E';g.lineWidth=1.4*s;ln(0,-11*s,0,11*s,'#6C421E',1.4*s);for(var i=-1;i<=1;i++){g.beginPath();g.arc(-5*s,i*6*s,3.4*s,-.6,2);g.stroke();g.beginPath();g.arc(5*s,i*6*s,3.4*s,1.1,3.7);g.stroke();}g.restore();},
+ dill:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);g.lineCap='round';ln(-16*s,0,16*s,-2*s,'#3F7A2B',1.8*s);for(var i=0;i<7;i++){var t=-13+i*4.2;ln(t*s,-.5*s,(t+3)*s,-7*s,'#5FA43F',1.3*s);ln(t*s,-.5*s,(t+3)*s,6*s,'#6FB24C',1.3*s);}g.lineCap='butt';g.restore();},
+ breadSlice:function(x,y,s,a,R,crumb){g.save();g.translate(x,y);g.rotate(a);var w=56*s,h=52*s;sh(1,6,3);g.fillStyle='#A4642E';g.beginPath();g.moveTo(-w/2,h/2);g.lineTo(-w/2,-h/2+14*s);g.bezierCurveTo(-w/2,-h/2-10*s,w/2,-h/2-10*s,w/2,-h/2+14*s);g.lineTo(w/2,h/2);g.closePath();g.fill();sh(0);var i=5*s;g.fillStyle=crumb||'#EED6A2';g.beginPath();g.moveTo(-w/2+i,h/2-i);g.lineTo(-w/2+i,-h/2+14*s);g.bezierCurveTo(-w/2+i,-h/2-4*s,w/2-i,-h/2-4*s,w/2-i,-h/2+14*s);g.lineTo(w/2-i,h/2-i);g.closePath();g.fill();for(var k=0;k<9;k++)ell((R()-.5)*(w-16*s),(R()-.4)*(h-18*s),(1.2+R()*1.5)*s,(.8+R())*s,R()*3,crumb?'rgba(150,90,30,.35)':'#D8BB80');g.restore();},
+ crouton:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);var w=13*s;sh(1,3,1.5);frr(-w/2,-w/2,w,w,2*s,'#B97E32');sh(0);frr(-w/2,-w/2,w-2.5*s,w-2.5*s,2*s,'#DDA650');g.restore();},
+ crumbs:function(x,y,s,a,R){for(var i=0;i<14;i++)circ(x+(R()-.5)*26*s,y+(R()-.5)*26*s,(1+R()*1.5)*s,i%2?'#C99245':'#DDAE62');},
+ potCube:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);var w=16*s;sh(1,3,1.5);frr(-w/2,-w/2,w,w,3*s,'#D2AA50');sh(0);frr(-w/2,-w/2,w-2.5*s,w-2.5*s,3*s,'#F0D684');g.restore();},
+ potHalf:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,4,2);ell(0,0,22*s,16*s,0,'#B88B4A');sh(0);ell(0,0,19*s,13*s,0,'#F1D88A');circ(-6*s,-4*s,3*s,'rgba(255,255,255,.35)');g.restore();},
+ wedge:function(x,y,s,a,R){g.save();g.translate(x,y);g.rotate(a);sh(1,4,2);g.fillStyle='#E9BE55';g.beginPath();g.moveTo(-26*s,9*s);g.quadraticCurveTo(0,-34*s,26*s,9*s);g.quadraticCurveTo(0,4*s,-26*s,9*s);g.closePath();g.fill();sh(0);g.strokeStyle='#A06A22';g.lineWidth=4*s;g.beginPath();g.moveTo(-24*s,8*s);g.quadraticCurveTo(0,-32*s,24*s,8*s);g.stroke();ell(-2*s,-6*s,8*s,3*s,0,'rgba(255,240,200,.45)');for(var i=0;i<4;i++)circ((R()-.5)*30*s,(R()-.8)*8*s,1.4*s,'#B9832F');g.restore();},
+ mushSlice:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,3,1.5);g.fillStyle='#E6D5B3';g.beginPath();g.moveTo(-16*s,0);g.bezierCurveTo(-16*s,-17*s,16*s,-17*s,16*s,0);g.lineTo(5*s,0);g.lineTo(5*s,12*s);g.quadraticCurveTo(0,15*s,-5*s,12*s);g.lineTo(-5*s,0);g.closePath();g.fill();sh(0);g.strokeStyle='#9C7A50';g.lineWidth=1.8*s;g.stroke();for(var i=-3;i<=3;i++)ln(i*3.5*s,-1*s,i*2.5*s,-8*s,'#C7AE85',1*s);g.restore();},
+ mushBrown:function(x,y,s,a){g.save();g.translate(x,y);g.rotate(a);sh(1,3,1.5);g.fillStyle='#B4875A';g.beginPath();g.moveTo(-16*s,0);g.bezierCurveTo(-16*s,-17*s,16*s,-17*s,16*s,0);g.lineTo(5*s,0);g.lineTo(5*s,12*s);g.quadraticCurveTo(0,15*s,-5*s,12*s);g.lineTo(-5*s,0);g.closePath();g.fill();sh(0);g.strokeStyle='#7C5A36';g.lineWidth=1.6*s;g.stroke();g.restore();},
+ dust:function(x,y,s,a,R){for(var i=0;i<10;i++)circ(x+(R()-.5)*30*s,y+(R()-.5)*30*s,1.3*s,'#F2C14E');},
+ green:function(x,y,s,a,R){var p=mkBlob(x,y,12*s,.4,R,9);g.fillStyle='#5E9338';blobPath(p);g.fill();for(var i=0;i<5;i++)circ(x+(R()-.5)*14*s,y+(R()-.5)*14*s,1.3*s,'#8CC062');}
+};
+
+/* ce bucată desenăm pentru fiecare ingredient, după tehnică */
+var COOKED={mamaliga:1,turn:1,bulz:1,piure:1,omleta:1,varzaCalita:1,ciuperciTigaie:1,supa:1,ciuperciUmplute:1,briose:1,friganele:1,cartofiCuptor:1,rulouri:1,tartine:0};
+function pcFor(t,k,r){
+  switch(k){
+   case 'telemea':return t==='crema'||t==='supa'||t==='mamaliga'||t==='piure'?'crumbW':'cube';
+   case 'urda':return 'urda';
+   case 'burduf':return 'burduf';
+   case 'framantata':return 'fram';
+   case 'salam':return ({supa:1,piure:1,mamaliga:1,briose:1,salataCartofi:1,salataVarza:1,varzaCalita:1,omleta:1,ciuperciTigaie:1,crema:1,bulz:1})[t]?'salamCub':'salam';
+   case 'varza':return t==='varzaCalita'?null:t==='crema'?'strip':'shred';
+   case 'malai':return t==='platou'?'mamCube':t==='cartofiCuptor'?'dust':null;
+   case 'smantana':return 'dollop';
+   case 'oua':return ({mamaliga:1,piure:1,varzaCalita:1,cartofiCuptor:1})[t]?'fried':({omleta:1,briose:1,friganele:1,bulz:1,rulouri:1,ciuperciTigaie:1,ciuperciUmplute:1,oualeUmplute:1})[t]?null:'half';
+   case 'lapte':return null;
+   case 'ceapa':return COOKED[t]||(t==='tartine'&&r.sel.indexOf('ciuperci')>=0)?'onionGold':'rings';
+   case 'mere':return t==='mereCoapte'?null:({salataCartofi:1,salataVarza:1,terci:1,desertPahar:1,omleta:0})[t]?'appleCube':'appleSlice';
+   case 'prune':return 'plum';
+   case 'nuci':return 'walnut';
+   case 'marar':return 'dill';
+   case 'paine':return ({tartine:1,friganele:1,pesto:1})[t]?null:({supa:1,piure:1,salataVarza:1})[t]?'crouton':(t==='ciuperciUmplute'||t==='desertPahar')?'crumbs':'breadSlice';
+   case 'cartofi':return ({cartofiCuptor:1,piure:1,frigarui:1,supa:0})[t]?null:(t==='platou'||t==='crema'||t==='pesto')?'potHalf':'potCube';
+   case 'ciuperci':return t==='ciuperciUmplute'?null:t==='ciuperciTigaie'?'mushBrown':'mushSlice';
+  }
+  return null;
+}
+var PCN={cube:6,crumbW:5,urda:4,burduf:4,fram:4,salam:5,salamCub:7,shred:6,strip:5,mamCube:6,dollop:1,fried:2,half:4,rings:5,onionGold:5,appleSlice:5,appleCube:7,plum:5,walnut:5,dill:7,breadSlice:2,crouton:7,crumbs:3,potCube:8,potHalf:4,mushSlice:6,mushBrown:9,dust:4,green:5};
+var PCZ={breadSlice:0,potHalf:1,fried:1,salam:2,half:2,appleSlice:3,cube:3,mushSlice:3,mushBrown:3,potCube:3,shred:2,strip:1,mamCube:2,urda:4,burduf:4,fram:4,crumbW:5,salamCub:4,appleCube:4,rings:5,onionGold:5,plum:5,walnut:6,crouton:6,crumbs:7,dust:7,green:7,dollop:8,dill:9};
+
+function scatterPts(R,n,area,minD,ex){
+  var out=[];
+  for(var i=0;i<n;i++){var best=null,bd=-1;
+    for(var t=0;t<28;t++){var p=area(R),d=1e9;ex.concat(out).forEach(function(q){var dd=Math.hypot(q[0]-p[0],q[1]-p[1]);if(dd<d)d=dd;});if(d>bd){bd=d;best=p;}if(d>minD)break;}
+    out.push(best);}
+  return out;
+}
+function circArea(cx,cy,r){return function(R){var a=R()*6.2832,k=Math.sqrt(R())*r;return [cx+Math.cos(a)*k,cy+Math.sin(a)*k];};}
+/* pune toppingurile peste o zonă */
+function toppings(r,R,area,us,keys,opt){
+  opt=opt||{};
+  var items=[];
+  keys.forEach(function(k){var p=pcFor(r.tech,k,r);if(!p)return;var n=PCN[p];if(opt.few)n=Math.max(1,Math.round(n*.6));if(p==='fried')n=Math.min(2,n);items.push({p:p,n:n});});
+  items.sort(function(a,b){return PCZ[a.p]-PCZ[b.p];});
+  var placed=opt.ex?opt.ex.slice():[];
+  items.forEach(function(it){
+    var pts;
+    if(it.p==='dollop'&&opt.center)pts=[opt.center];
+    else pts=scatterPts(R,it.n,area,26*us,placed);
+    pts.forEach(function(p){PC[it.p](p[0],p[1],us*(it.p==='breadSlice'?.8:1),R()*6.28,R);});
+    placed=placed.concat(pts);
+  });
+}
+
+/* fundal după stil */
+function drawBg(r,R){
+  var st=r.st,W=800;
+  if(st==='stana'){
+    var cols=['#7B4E2A','#86572F','#714624','#835430','#774B28'];
+    for(var i=0;i<6;i++){g.fillStyle=cols[i%cols.length];g.fillRect(0,i*134,W,134);
+      g.strokeStyle='rgba(50,28,12,.28)';g.lineWidth=1.4;for(var k=0;k<7;k++){var y0=i*134+10+k*18+R()*6;g.beginPath();g.moveTo(0,y0);for(var x=0;x<=W;x+=40)g.lineTo(x,y0+Math.sin(x/90+k+i)*4);g.stroke();}
+      ell(R()*W,i*134+67,14,6,0,'rgba(60,32,14,.45)');
+      g.fillStyle='rgba(30,16,6,.55)';g.fillRect(0,i*134+132,W,3);}
+  }else if(st==='sarb'){
+    g.fillStyle='#F6F1E6';g.fillRect(0,0,W,W);
+    g.strokeStyle='rgba(180,165,140,.18)';g.lineWidth=1;for(var x2=0;x2<W;x2+=6){ln(x2,0,x2,W,'rgba(180,165,140,.12)',1);}for(var y2=0;y2<W;y2+=6){ln(0,y2,W,y2,'rgba(180,165,140,.12)',1);}
+    [[18,64],[W-82,W-18]].forEach(function(b){var y=b[0],h=b[1]-b[0];g.fillStyle='#F1EBDD';g.fillRect(0,y,W,h);ln(0,y+4,W,y+4,'#B9583A',3);ln(0,y+h-4,W,y+h-4,'#B9583A',3);
+      for(var x=10;x<W;x+=46){var cy=y+h/2;g.fillStyle='#1B2733';g.beginPath();g.moveTo(x+23,cy-15);g.lineTo(x+38,cy);g.lineTo(x+23,cy+15);g.lineTo(x+8,cy);g.closePath();g.fill();g.fillStyle='#B9583A';g.beginPath();g.moveTo(x+23,cy-8);g.lineTo(x+31,cy);g.lineTo(x+23,cy+8);g.lineTo(x+15,cy);g.closePath();g.fill();circ(x+2,cy,2.6,'#B9583A');}});
+  }else if(st==='modern'){
+    var gr=g.createLinearGradient(0,0,W,W);gr.addColorStop(0,'#2B3743');gr.addColorStop(1,'#1E2832');g.fillStyle=gr;g.fillRect(0,0,W,W);
+    for(var j=0;j<900;j++)circ(R()*W,R()*W,R()*1.2,'rgba(255,255,255,'+(R()*.05).toFixed(3)+')');
+    g.fillStyle='rgba(14,124,134,.85)';g.fillRect(0,690,W,46);ln(0,700,W,700,'rgba(255,255,255,.2)',1);
+  }else{
+    g.fillStyle='#F7F1E4';g.fillRect(0,0,W,W);var sq=50;
+    for(var a=0;a<W;a+=sq*2){g.fillStyle='rgba(185,88,58,.55)';g.fillRect(a,0,sq,W);g.fillRect(0,a,W,sq);}
+    for(var b2=0;b2<W;b2+=sq*2)for(var c2=0;c2<W;c2+=sq*2){g.fillStyle='rgba(150,55,35,.45)';g.fillRect(b2,c2,sq,sq);}
+  }
+}
+function plateBase(r,cx,cy,pr,R){
+  var st=r.st;
+  if(st==='stana'){sh(1,16,8);circ(cx,cy,pr,'#A8743F');sh(0);circ(cx,cy,pr-6,'#C48E55');for(var i=1;i<9;i++){g.strokeStyle='rgba(120,75,35,'+(.12+R()*.12)+')';g.lineWidth=1.5;g.beginPath();g.ellipse(cx+R()*6,cy+R()*6,pr*(.12*i)*.98,pr*(.12*i),0,0,6.2832);g.stroke();}circ(cx,cy,pr*.86,'rgba(255,240,215,.12)');}
+  else if(st==='sarb'){sh(1,16,8);circ(cx,cy,pr,'#FBF8F1');sh(0);g.strokeStyle='#E6DECF';g.lineWidth=2;g.beginPath();g.arc(cx,cy,pr*.78,0,6.2832);g.stroke();
+    for(var k=0;k<24;k++){var a=k/24*6.2832,x=cx+Math.cos(a)*pr*.89,y=cy+Math.sin(a)*pr*.89;g.save();g.translate(x,y);g.rotate(a+Math.PI/2);if(k%2){ell(0,0,4,9,0,'#B9583A');}else{circ(0,0,4.5,'#0E7C86');circ(0,-11,2.2,'#E2A62B');circ(0,11,2.2,'#E2A62B');}g.restore();}
+    var gr=g.createRadialGradient(cx,cy,pr*.2,cx,cy,pr*.78);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(1,'rgba(200,190,170,.18)');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,pr*.78,0,6.2832);g.fill();}
+  else if(st==='modern'){sh(1,22,10);circ(cx,cy,pr,'#F3F0EA');sh(0);g.strokeStyle='#DCD6CB';g.lineWidth=2;g.beginPath();g.arc(cx,cy,pr*.66,0,6.2832);g.stroke();g.strokeStyle='#0E7C86';g.lineWidth=2;g.beginPath();g.arc(cx,cy,pr-8,0,6.2832);g.stroke();}
+  else{sh(1,14,7);circ(cx,cy,pr,'#0E7C86');sh(0);circ(cx,cy,pr-12,'#FBFAF6');var gr2=g.createRadialGradient(cx,cy,pr*.3,cx,cy,pr-12);gr2.addColorStop(0,'rgba(255,255,255,0)');gr2.addColorStop(1,'rgba(160,170,175,.2)');g.fillStyle=gr2;g.beginPath();g.arc(cx,cy,pr-12,0,6.2832);g.fill();}
+}
+function fork(x,y,h,c){c=c||'#C3C9D0';sh(1,4,2);frr(x-5,y+h*.35,10,h*.65,5,c);frr(x-13,y,26,h*.3,6,c);sh(0);for(var j=0;j<3;j++){frr(x-8.5+j*7,y-2,3,h*.2,1.5,'rgba(80,90,100,.35)');}}
+function knife(x,y,h,c){c=c||'#C3C9D0';sh(1,4,2);frr(x-5,y+h*.45,10,h*.55,5,'#8A939C');g.fillStyle=c;g.beginPath();g.moveTo(x-6,y+h*.47);g.lineTo(x-6,y+14);g.quadraticCurveTo(x-6,y,x+6,y);g.lineTo(x+6,y+h*.47);g.closePath();g.fill();sh(0);}
+function spoon(x,y,h,c){c=c||'#C3C9D0';sh(1,4,2);ell(x,y+30,17,30,0,c);frr(x-5,y+52,10,h-52,5,c);sh(0);ell(x-4,y+24,6,14,0,'rgba(255,255,255,.35)');}
+function accessories(r,R){
+  var st=r.st,wood=st==='stana';
+  if(r.mo==='dim'){var mx=706,my=96;sh(1,10,5);circ(mx,my,58,wood?'#8C5A30':st==='modern'?'#E9E5DD':'#F3EFE6');sh(0);frr(mx+46,my-14,34,28,12,wood?'#8C5A30':st==='modern'?'#E9E5DD':'#F3EFE6');circ(mx,my,46,'#A8642A');circ(mx-12,my-12,10,'rgba(255,255,255,.25)');}
+  else if(r.mo==='pranz'){var gx=708,gy=96;sh(1,10,5);circ(gx,gy,52,'rgba(225,238,246,.8)');sh(0);circ(gx,gy,43,'rgba(150,200,230,.75)');circ(gx,gy,36,'rgba(185,220,240,.8)');g.strokeStyle='rgba(255,255,255,.95)';g.lineWidth=5;g.beginPath();g.arc(gx,gy,49,0,6.2832);g.stroke();g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=4;g.beginPath();g.arc(gx,gy,30,3.5,4.7);g.stroke();}
+  else{var nc=st==='modern'?'#E2A62B':st==='picnic'?'#0E7C86':st==='sarb'?'#B9583A':'#E9DDC4';g.save();g.translate(92,712);g.rotate(-.35);sh(1,8,4);frr(-62,-52,124,104,8,nc);sh(0);g.fillStyle='rgba(0,0,0,.12)';g.beginPath();g.moveTo(-62,-8);g.lineTo(62,-8);g.lineTo(62,44);g.quadraticCurveTo(62,52,54,52);g.lineTo(-54,52);g.quadraticCurveTo(-62,52,-62,44);g.closePath();g.fill();ln(-62,-8,62,-8,'rgba(255,255,255,.45)',2);g.strokeStyle='rgba(255,255,255,.6)';g.setLineDash([5,5]);g.lineWidth=2;rrect(-52,-42,104,84,5);g.stroke();g.setLineDash([]);g.restore();}
+  var p=r.plate,useSpoon=({soup:1,glass:1,drink:1})[p]||r.tech==='terci';
+  if(p==='skewers'||p==='board')return;
+  if(useSpoon){spoon(756,250,300,wood?'#B98652':null);return;}
+  if(p==='slices'){knife(756,240,300,null);return;}
+  fork(44,240,300,wood?'#B98652':null);knife(756,240,300,null);
+}
+function lapteGlass(x,y,rad){sh(1,8,4);circ(x,y,rad,'rgba(215,230,240,.7)');sh(0);circ(x,y,rad-7,'#FFFFFF');g.strokeStyle='rgba(255,255,255,.9)';g.lineWidth=4;g.beginPath();g.arc(x,y,rad-2,3.7,4.7);g.stroke();}
+function bowlBase(r,cx,cy,rad,inner){
+  var st=r.st,rim=st==='stana'?'#A87443':st==='modern'?'#E8E4DC':st==='picnic'?'#0E7C86':'#F7F3EA';
+  sh(1,14,6);circ(cx,cy,rad,rim);sh(0);circ(cx,cy,rad*.9,mix(rim,'#000000',.08));circ(cx,cy,rad*.86,inner);
+  if(st==='sarb'){for(var k=0;k<18;k++){var a=k/18*6.2832;circ(cx+Math.cos(a)*rad*.95,cy+Math.sin(a)*rad*.95,3,k%2?'#B9583A':'#0E7C86');}}
+  var gr=g.createRadialGradient(cx-rad*.3,cy-rad*.35,rad*.05,cx,cy,rad*.86);gr.addColorStop(0,'rgba(255,255,255,.28)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,rad*.86,0,6.2832);g.fill();
+}
+
+/* compoziția farfuriei */
+function drawDish(r,R,cx,cy,ri){
+  var us=ri/150,t=r.tech,sel=r.sel,p=r.plate,i,a,x,y;
+  var others=function(ex){return sel.filter(function(k){return ex.indexOf(k)<0;});};
+  if(t==='pesto'){p=r.sel.indexOf('paine')>=0?'slices':r.sel.indexOf('oua')>=0?'eggs':(r.sel.indexOf('malai')>=0||r.sel.indexOf('cartofi')>=0)?'mound':'dip';}
+  if(t==='ciuperciTigaie'&&sel.indexOf('malai')<0)p='bowlM';
+  if(p==='mound'){
+    var col=t==='terci'?(sel.indexOf('lapte')>=0?'#EFD58F':'#EBC264'):t==='piure'?'#F1E2B4':t==='varzaCalita'?'#CFC57C':t==='pesto'&&sel.indexOf('malai')<0?'#F1D88A':'#F0BC45';
+    if(t==='mamaliga'&&sel.indexOf('lapte')>=0)col='#F1C963';
+    var bp=mkBlob(cx,cy,ri*.8,.12,R,18);sh(1,12,5);g.fillStyle=col;blobPath(bp);g.fill();sh(0);
+    g.save();blobPath(bp);g.clip();var gr=g.createRadialGradient(cx-ri*.25,cy-ri*.3,ri*.05,cx,cy,ri*.8);gr.addColorStop(0,'rgba(255,255,255,.4)');gr.addColorStop(1,'rgba(120,70,0,.12)');g.fillStyle=gr;g.fillRect(cx-ri,cy-ri,ri*2,ri*2);
+    if(t==='varzaCalita'){for(i=0;i<40;i++)PC.varzaGold(cx+(R()-.5)*ri*1.3,cy+(R()-.5)*ri*1.3,us*1.1,R()*6.28,R);}
+    else if(t==='piure'){g.strokeStyle='rgba(200,170,110,.5)';g.lineWidth=3*us;for(i=0;i<6;i++){g.beginPath();g.arc(cx+(R()-.5)*ri*.6,cy+(R()-.5)*ri*.6,ri*(.15+R()*.25),R()*6,R()*6+2);g.stroke();}}
+    else{for(i=0;i<60;i++)circ(cx+(R()-.5)*ri*1.4,cy+(R()-.5)*ri*1.4,(1+R()*1.6)*us,'rgba(190,120,20,.22)');}
+    g.restore();
+    var ex=[];if(t==='pesto'){for(i=0;i<6;i++){a=i/6*6.28;PC.green(cx+Math.cos(a)*ri*.38,cy+Math.sin(a)*ri*.38,us*1.6,0,R);}if(sel.indexOf('cartofi')>=0&&sel.indexOf('malai')>=0){}}
+    if(t==='pesto'&&sel.indexOf('cartofi')>=0){for(i=0;i<6;i++){a=i/6*6.28+.5;PC.potHalf(cx+Math.cos(a)*ri*.42,cy+Math.sin(a)*ri*.42,us*1.4,a,R);PC.green(cx+Math.cos(a)*ri*.42,cy+Math.sin(a)*ri*.42,us*.9,0,R);}}
+    var tk=others(['malai','lapte']);if(t==='piure')tk=others(['cartofi','lapte']);if(t==='varzaCalita')tk=others(['varza']);if(t==='terci')tk=others(['malai','lapte']);if(t==='pesto')tk=others(['marar','malai','cartofi','smantana','nuci','telemea','burduf']).concat(sel.indexOf('nuci')>=0?['nuci']:[]);
+    toppings(r,R,circArea(cx,cy,ri*.58),us,tk,{center:[cx+ri*.05,cy-ri*.02]});
+    if(t==='ciuperciTigaie'){toppings(r,R,circArea(cx,cy,ri*.45),us,['ciuperci'],{});}
+  }
+  else if(p==='bowlM'){
+    bowlBase(r,cx,cy,ri*.95,'#8E6A44');
+    for(i=0;i<40;i++)circ(cx+(R()-.5)*ri*1.3,cy+(R()-.5)*ri*1.3,(2+R()*3)*us,'rgba(70,45,20,.25)');
+    var sm=sel.indexOf('smantana')>=0||sel.indexOf('lapte')>=0;if(sm){g.fillStyle='rgba(245,232,205,.55)';blobPath(mkBlob(cx,cy,ri*.6,.2,R,14));g.fill();}
+    toppings(r,R,circArea(cx,cy,ri*.62),us,['ciuperci'],{});
+    var bases=[];if(sel.indexOf('paine')>=0)PC.breadSlice(cx+ri*.95,cy+ri*.7,us*1.1,.4,R);if(sel.indexOf('cartofi')>=0)for(i=0;i<5;i++)PC.potCube(cx-ri*.9+i*14*us,cy+ri*.95,us*1.2,R(),R);
+    toppings(r,R,circArea(cx,cy,ri*.5),us,others(['ciuperci','smantana','lapte','paine','cartofi']),{});
+  }
+  else if(p==='bowl'){
+    var inn=t==='salataCartofi'?'#F0DFA4':'#E1EEC0';
+    bowlBase(r,cx,cy,ri*.98,inn);
+    var area=circArea(cx,cy,ri*.68);
+    if(t==='salataCartofi'){var pp=scatterPts(R,22,area,20*us,[]);pp.forEach(function(q){PC.potCube(q[0],q[1],us*1.25,R()*6.28,R);});
+      if(sel.indexOf('smantana')>=0||sel.indexOf('urda')>=0){for(i=0;i<10;i++)circ(cx+(R()-.5)*ri*1.1,cy+(R()-.5)*ri*1.1,(4+R()*5)*us,'rgba(255,255,255,.75)');}
+      toppings(r,R,area,us,others(['cartofi','smantana','urda']),{});}
+    else{for(i=0;i<26;i++)PC.shred(cx+(R()-.5)*ri*1.2,cy+(R()-.5)*ri*1.2,us*1.2,R()*6.28,R);
+      if(sel.indexOf('smantana')>=0||sel.indexOf('urda')>=0){for(i=0;i<10;i++)circ(cx+(R()-.5)*ri*1.1,cy+(R()-.5)*ri*1.1,(4+R()*5)*us,'rgba(255,255,255,.75)');}
+      toppings(r,R,area,us,others(['varza','smantana','urda']),{});}
+  }
+  else if(p==='soup'){
+    var sc=sel.indexOf('ciuperci')>=0?'#C9A274':sel.indexOf('cartofi')>=0?'#EDD9A0':sel.indexOf('varza')>=0?'#D6CE8B':'#E2C27A';
+    if(sel.indexOf('lapte')>=0||sel.indexOf('smantana')>=0)sc=mix(sc,'#FFFFFF',.3);
+    bowlBase(r,cx,cy,ri*1.02,sc);
+    if(sel.indexOf('smantana')>=0){g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=5*us;g.beginPath();for(var tt=0;tt<=1;tt+=.02){var an=tt*14,rr=(1-tt)*ri*.4,px=cx+Math.cos(an)*rr,py=cy+Math.sin(an)*rr;if(tt===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();}
+    for(i=0;i<14;i++)circ(cx+(R()-.5)*ri*1.2,cy+(R()-.5)*ri*1.2,(2+R()*3)*us,'rgba(230,160,40,.35)');
+    var ex2=[];var vk=['cartofi','ciuperci','varza','ceapa'].filter(function(k){return sel.indexOf(k)>=0;});
+    vk.forEach(function(k){var pc=k==='cartofi'?'potCube':k==='ciuperci'?'mushSlice':k==='varza'?'shred':'onionGold';var q=scatterPts(R,4,circArea(cx,cy,ri*.6),22*us,ex2);q.forEach(function(z){PC[pc](z[0],z[1],us*.9,R()*6.28,R);});ex2=ex2.concat(q);});
+    toppings(r,R,circArea(cx,cy,ri*.55),us,others(['cartofi','ciuperci','varza','ceapa','lapte','smantana']),{few:1,ex:ex2});
+  }
+  else if(p==='slices'){
+    var crumb=t==='friganele'?'#E8B65A':null;
+    var SL=[[-.46,-.14,-.28],[.04,.3,.08],[.46,-.18,.34]];
+    var spread=null;if(t==='tartine'){['urda','framantata','burduf','smantana'].some(function(k){if(sel.indexOf(k)>=0){spread=({urda:'#FFFDF6',framantata:'#F7F1E2',burduf:'#F1E3BF',smantana:'#FFFFFF'})[k];return true;}return false;});}
+    if(t==='pesto')spread=sel.indexOf('smantana')>=0?'#A9C98A':'#6E9F46';
+    var sp=us*1.75;
+    SL.forEach(function(s){var sx=cx+s[0]*ri,sy=cy+s[1]*ri;PC.breadSlice(sx,sy,sp,s[2],R,crumb);if(crumb){for(i=0;i<8;i++)circ(sx+(R()-.5)*50*sp,sy+(R()-.4)*40*sp,(2+R()*3)*sp,'rgba(160,90,25,.35)');}
+      if(spread){g.save();g.translate(sx,sy);g.rotate(s[2]);g.fillStyle=spread;blobPath(mkBlob(0,2*sp,20*sp,.25,R,12));g.fill();g.restore();}});
+    var ex3=[];var slArea=function(R2){var s=SL[Math.floor(R2()*3)],lx=(R2()-.5)*36*sp,ly=(R2()-.4)*34*sp,c=Math.cos(s[2]),sn=Math.sin(s[2]);return [cx+s[0]*ri+lx*c-ly*sn,cy+s[1]*ri+lx*sn+ly*c];};
+    var tk2=others(t==='pesto'?['paine','marar','nuci','telemea','burduf','smantana']:['paine','oua','lapte','urda','framantata','burduf','smantana'].filter(function(k){return t==='tartine'?k!=='oua':true;}));
+    if(t==='tartine'&&spread)tk2=tk2.filter(function(k){return ['urda','framantata','burduf','smantana'].indexOf(k)<0;});
+    if(t==='friganele')tk2=others(['paine','oua','lapte']);
+    toppings(r,R,slArea,us*.95,tk2,{});
+  }
+  else if(p==='wedges'){
+    var wa=circArea(cx,cy,ri*.6),wp=scatterPts(R,12,wa,30*us,[]);wp.forEach(function(q){PC.wedge(q[0],q[1],us*1.05,R()*6.28,R);});
+    if(sel.indexOf('malai')>=0)for(i=0;i<10;i++)PC.dust(cx+(R()-.5)*ri*1.2,cy+(R()-.5)*ri*1.2,us,0,R);
+    var dp=sel.indexOf('smantana')>=0||sel.indexOf('urda')>=0;
+    if(dp){var bx=cx+ri*.62,by=cy+ri*.58;sh(1,8,3);circ(bx,by,ri*.24,'#F3EFE6');sh(0);circ(bx,by,ri*.2,'#FFFFFF');if(sel.indexOf('marar')>=0)for(i=0;i<10;i++)circ(bx+(R()-.5)*ri*.3,by+(R()-.5)*ri*.3,1.6*us,'#5FA43F');}
+    toppings(r,R,circArea(cx-ri*.05,cy-ri*.05,ri*.55),us,others(['cartofi','malai','smantana','urda'].concat(dp?['marar']:[])),{few:1,ex:wp});
+  }
+  else if(p==='balls'){
+    var BP=[[0,0]];for(i=0;i<6;i++){a=i/6*6.2832+.3;BP.push([Math.cos(a)*ri*.54,Math.sin(a)*ri*.54]);}
+    BP.forEach(function(b){var bx=cx+b[0],by=cy+b[1],br=ri*.235;sh(1,10,5);circ(bx,by,br,'#C98D2A');sh(0);var gg=g.createRadialGradient(bx-br*.35,by-br*.4,br*.1,bx,by,br);gg.addColorStop(0,'#F8D27A');gg.addColorStop(.7,'#E5A93E');gg.addColorStop(1,'#B97A22');g.fillStyle=gg;g.beginPath();g.arc(bx,by,br,0,6.2832);g.fill();for(var j=0;j<6;j++)circ(bx+(R()-.5)*br*1.3,by+(R()-.5)*br*1.3,(1.5+R()*2.5)*us,'rgba(120,60,10,.45)');});
+    if(sel.indexOf('smantana')>=0){var sx2=cx+ri*.82,sy2=cy+ri*.62;sh(1,8,3);circ(sx2,sy2,ri*.2,'#F3EFE6');sh(0);circ(sx2,sy2,ri*.16,'#FFFFFF');}
+    if(sel.indexOf('marar')>=0)for(i=0;i<8;i++)PC.dill(cx+(R()-.5)*ri*1.2,cy+(R()-.5)*ri*1.2,us*.8,R()*6.28,R);
+  }
+  else if(p==='stack'){
+    var fc=sel.indexOf('salam')>=0?'#8E3C35':sel.indexOf('ciuperci')>=0?'#C9A274':'#F8F4E8';
+    var TP=[[-.4,-.2],[.4,-.22],[0,.4]];
+    TP.forEach(function(q){var tx=cx+q[0]*ri,ty=cy+q[1]*ri,tr=ri*.36;sh(1,12,6);circ(tx+10*us,ty+14*us,tr,'#C98D2A');sh(0);circ(tx+7*us,ty+10*us,tr,'#E0A53A');circ(tx+4*us,ty+6*us,tr*.99,fc);if(sel.indexOf('smantana')>=0)circ(tx+3*us,ty+4*us,tr*.97,'#FFFFFF');var gg=g.createRadialGradient(tx-tr*.3,ty-tr*.35,tr*.1,tx,ty,tr);gg.addColorStop(0,'#F9D77E');gg.addColorStop(1,'#E9B442');g.fillStyle=gg;g.beginPath();g.arc(tx,ty,tr*.96,0,6.2832);g.fill();
+      var tk3=others(['malai','lapte','smantana']);toppings(r,R,circArea(tx,ty,tr*.5),us*.85,tk3,{few:1});
+      if(sel.indexOf('smantana')>=0)PC.dollop(tx+tr*.1,ty+tr*.05,us*.8);});
+  }
+  else if(p==='omelette'){
+    var oa=-.35;g.save();g.translate(cx-ri*.05,cy+ri*.05);g.rotate(oa);sh(1,12,6);g.fillStyle='#E7AE3B';g.beginPath();g.arc(0,0,ri*.78,Math.PI,0);g.closePath();g.fill();sh(0);
+    var og=g.createLinearGradient(0,-ri*.78,0,0);og.addColorStop(0,'#F9D772');og.addColorStop(1,'#EDB948');g.fillStyle=og;g.beginPath();g.arc(0,0,ri*.74,Math.PI,0);g.closePath();g.fill();
+    for(i=0;i<14;i++){var aa2=Math.PI+R()*Math.PI,rr2=R()*ri*.65;circ(Math.cos(aa2)*rr2,Math.sin(aa2)*rr2,(2+R()*4)*us,'rgba(190,110,20,.3)');}
+    var fk=others(['oua','lapte','smantana','nuci','paine','mere','prune','urda']);if(!isSweetSel(sel))fk=others(['oua','lapte','smantana','paine']);
+    fk.forEach(function(k,j){var pc=pcFor('omleta',k,r);if(!pc)return;for(var q=0;q<3;q++){PC[pc]((-ri*.6+(j*3+q)*ri*.13),ri*.05+R()*ri*.05,us*.9,R()*6.28,R);}});
+    g.restore();
+    var ex4=[[cx,cy]];
+    toppings(r,R,circArea(cx+ri*.1,cy-ri*.15,ri*.35),us,others(['oua','lapte','paine','cartofi','varza','ceapa','ciuperci','salam','telemea','burduf','framantata','marar']).concat(isSweetSel(sel)?[]:[]),{few:1});
+    if(sel.indexOf('paine')>=0)PC.breadSlice(cx+ri*.62,cy+ri*.55,us*1.2,.5,R);
+    if(sel.indexOf('marar')>=0)for(i=0;i<5;i++)PC.dill(cx+(R()-.5)*ri*.8,cy-ri*.2+(R()-.5)*ri*.4,us*.8,R()*6.28,R);
+  }
+  else if(p==='muffins'){
+    var MP=[[0,0]];for(i=0;i<6;i++){a=i/6*6.2832;MP.push([Math.cos(a)*ri*.5,Math.sin(a)*ri*.5]);}
+    MP.forEach(function(m){var mx=cx+m[0],my=cy+m[1],mr=ri*.21;sh(1,8,4);circ(mx,my,mr,'#C8902F');sh(0);circ(mx,my,mr*.9,'#E8B14C');for(var j=0;j<7;j++)circ(mx+(R()-.5)*mr,my+(R()-.5)*mr,mr*(.22+R()*.12),'#F2C764');
+      var fk2=others(['oua','lapte','smantana','urda','malai']);fk2.forEach(function(k){var pc=pcFor('briose',k,r);if(!pc)return;PC[pc](mx+(R()-.5)*mr*.9,my+(R()-.5)*mr*.9,us*.6,R()*6.28,R);});});
+  }
+  else if(p==='eggs'){
+    var fillc=sel.indexOf('smantana')>=0||sel.indexOf('urda')>=0?'#F3E6A8':'#F0D47C';var gr3=t==='pesto';
+    for(i=0;i<6;i++){a=i/6*6.2832+.2;x=cx+Math.cos(a)*ri*.48;y=cy+Math.sin(a)*ri*.48;g.save();g.translate(x,y);g.rotate(a+Math.PI/2);sh(1,6,3);ell(0,0,ri*.17,ri*.26,0,'#FFFFFF');sh(0);g.strokeStyle='#ECE6DA';g.lineWidth=2;g.beginPath();g.ellipse(0,0,ri*.17,ri*.26,0,0,6.2832);g.stroke();
+      if(gr3){ell(0,0,ri*.08,ri*.12,0,'#F2C232');PC.green(0,0,us*1.1,0,R);}else{ell(0,0,ri*.1,ri*.15,0,fillc);g.strokeStyle='rgba(200,160,60,.6)';g.lineWidth=2;for(var j=0;j<3;j++){g.beginPath();g.ellipse(0,0,ri*(.03+j*.025),ri*(.05+j*.035),0,0,6.2832);g.stroke();}}
+      g.restore();
+      if(!gr3){if(sel.indexOf('marar')>=0)PC.dill(x,y,us*.5,R()*6,R);if(sel.indexOf('salam')>=0)PC.salamCub(x+4*us,y-4*us,us*.6,R(),R);}}
+    if(sel.indexOf('paine')>=0&&!gr3)PC.breadSlice(cx,cy,us*1.1,.2,R);
+    else if(sel.indexOf('marar')>=0&&!gr3)for(i=0;i<4;i++)PC.dill(cx+(R()-.5)*ri*.3,cy+(R()-.5)*ri*.3,us,R()*6,R);
+    if(gr3&&sel.indexOf('paine')<0){sh(1,6,3);circ(cx,cy,ri*.2,'#F3EFE6');sh(0);circ(cx,cy,ri*.16,'#6E9F46');}
+  }
+  else if(p==='rolls'){
+    var RL=[];for(var row=0;row<2;row++)for(var col2=0;col2<3;col2++)RL.push([cx+(col2-1)*ri*.5+(row?ri*.12:-ri*.08),cy+(row-.5)*ri*.5]);
+    RL.forEach(function(q){g.save();g.translate(q[0],q[1]);g.rotate(-.35);var w=ri*.58,h=ri*.25;sh(1,8,4);frr(-w/2,-h/2,w,h,h/2,'#7FA552');sh(0);frr(-w/2+3,-h/2+3,w-6,h-8,h/2,'#9DC26B');for(var j=-2;j<=2;j++){g.strokeStyle='rgba(225,240,195,.75)';g.lineWidth=2;g.beginPath();g.moveTo(j*w*.16,-h/2+4);g.quadraticCurveTo(j*w*.16+6,0,j*w*.16,h/2-4);g.stroke();}g.restore();});
+    if(sel.indexOf('smantana')>=0)PC.dollop(cx+ri*.05,cy-ri*.02,us*1.3);
+    if(sel.indexOf('marar')>=0)for(i=0;i<6;i++)PC.dill(cx+(R()-.5)*ri,cy+(R()-.5)*ri*.8,us*.8,R()*6,R);
+  }
+  else if(p==='caps'){
+    var CP=[[0,0]];for(i=0;i<7;i++){a=i/7*6.2832;CP.push([Math.cos(a)*ri*.5,Math.sin(a)*ri*.5]);}
+    var cf=sel.indexOf('smantana')>=0||sel.indexOf('urda')>=0?'#F6F0E2':sel.indexOf('burduf')>=0?'#F1E2BC':'#F3EBD6';
+    CP.forEach(function(q){var mx=cx+q[0],my=cy+q[1],mr=ri*.2;sh(1,8,4);circ(mx,my,mr,'#9E7246');sh(0);circ(mx,my,mr*.86,'#C49A6C');circ(mx,my,mr*.62,cf);
+      ['salam','marar','nuci','ceapa'].forEach(function(k){if(sel.indexOf(k)<0)return;for(var j=0;j<3;j++){var sx=mx+(R()-.5)*mr*.8,sy=my+(R()-.5)*mr*.8;circ(sx,sy,2.2*us,k==='salam'?'#8E3C35':k==='marar'?'#5FA43F':k==='nuci'?'#A36A33':'#D9A64A');}});
+      if(sel.indexOf('paine')>=0)for(var j2=0;j2<10;j2++)circ(mx+(R()-.5)*mr,my+(R()-.5)*mr,1.6*us,'#C98F3E');});
+  }
+  else if(p==='dip'){
+    var dc=t==='pesto'?(sel.indexOf('smantana')>=0?'#A9C98A':'#6E9F46'):sel.indexOf('burduf')>=0&&sel.indexOf('urda')<0?'#F3E6C4':'#FFFDF6';
+    bowlBase(r,cx,cy,ri*.48,dc);
+    g.strokeStyle=t==='pesto'?'rgba(40,80,20,.35)':'rgba(200,190,170,.6)';g.lineWidth=3*us;g.beginPath();for(var tt2=0;tt2<=1;tt2+=.02){var an2=tt2*12,rr3=(1-tt2)*ri*.24;if(tt2===0)g.moveTo(cx+Math.cos(an2)*rr3,cy+Math.sin(an2)*rr3);else g.lineTo(cx+Math.cos(an2)*rr3,cy+Math.sin(an2)*rr3);}g.stroke();
+    var mixk=['marar','salam','ceapa','oua','ciuperci'];mixk.forEach(function(k){if(sel.indexOf(k)<0)return;for(var j=0;j<6;j++){var q=circArea(cx,cy,ri*.26)(R);circ(q[0],q[1],2.2*us,k==='marar'?'#5FA43F':k==='salam'?'#8E3C35':k==='ceapa'?'#D7B9D2':k==='oua'?'#F2C232':'#B4875A');}});
+    if(sel.indexOf('nuci')>=0){PC.walnut(cx-ri*.1,cy-ri*.08,us*.9,0,R);PC.walnut(cx+ri*.1,cy-ri*.08,us*.9,0,R);}
+    if(t==='pesto'&&sel.indexOf('nuci')>=0){}
+    var dips=['paine','mere','cartofi','varza','prune'].filter(function(k){return sel.indexOf(k)>=0;});
+    var tot=Math.max(1,dips.length),slot=0;
+    dips.forEach(function(k){var pc=k==='paine'?'breadSlice':k==='mere'?'appleSlice':k==='cartofi'?'potHalf':k==='varza'?'strip':'plum';var n=k==='paine'?3:5;for(var j=0;j<n;j++){var an3=(slot+j/n)/tot*6.2832-1.2;var rad=ri*(k==='paine'?.8:.76);PC[pc](cx+Math.cos(an3)*rad,cy+Math.sin(an3)*rad,us*(k==='paine'?.8:1.2),an3+Math.PI/2,R);}slot++;});
+    if(!dips.length&&t!=='pesto'){for(i=0;i<8;i++){a=i/8*6.28;PC.dill(cx+Math.cos(a)*ri*.62,cy+Math.sin(a)*ri*.62,us,a,R);}}
+  }
+  else if(p==='glass'||p==='drink'){
+    var GP=[[-.46,0],[.46,0]];
+    GP.forEach(function(q){var gx=cx+q[0]*ri,gy=cy+q[1]*ri,gr4=ri*.42;sh(1,10,5);circ(gx,gy,gr4,'rgba(215,232,242,.65)');sh(0);
+      var top=p==='drink'?(sel.indexOf('prune')>=0?'#D8B9CF':sel.indexOf('mere')>=0?'#F3EAD0':'#F2E9DA'):(sel.indexOf('urda')>=0||sel.indexOf('smantana')>=0?'#FFFDF6':'#E9C78A');
+      circ(gx,gy,gr4*.86,top);
+      if(p==='drink'){for(var j=0;j<18;j++)circ(gx+(R()-.5)*gr4*1.3,gy+(R()-.5)*gr4*1.3,(1.5+R()*3)*us,'rgba(255,255,255,.7)');for(j=0;j<10;j++)circ(gx+(R()-.5)*gr4,gy+(R()-.5)*gr4,1.6*us,'#8B4A1E');
+        g.save();g.translate(gx,gy);g.rotate(-.8);frr(-5*us,-gr4*1.25,10*us,gr4*1.1,4*us,'#0E7C86');for(j=0;j<5;j++)g.fillStyle='#FFFFFF',g.fillRect(-5*us,-gr4*1.2+j*gr4*.22,10*us,gr4*.08);g.restore();}
+      else{toppings(r,R,circArea(gx,gy,gr4*.55),us*.8,others(['urda','smantana']),{few:1});for(var j3=0;j3<8;j3++)circ(gx+(R()-.5)*gr4,gy+(R()-.5)*gr4,1.4*us,'#8B4A1E');}
+      g.strokeStyle='rgba(255,255,255,.9)';g.lineWidth=5*us;g.beginPath();g.arc(gx,gy,gr4-2,0,6.2832);g.stroke();g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=3*us;g.beginPath();g.arc(gx,gy,gr4*.75,3.7,4.6);g.stroke();});
+  }
+  else if(p==='apples'){
+    sh(0);g.fillStyle='rgba(190,120,40,.3)';blobPath(mkBlob(cx,cy,ri*.85,.15,R,14));g.fill();
+    [[-.42,-.08],[.42,-.1]].forEach(function(q){var ax=cx+q[0]*ri,ay=cy+q[1]*ri,ar=ri*.4;sh(1,10,5);circ(ax,ay,ar,'#9E2A22');sh(0);var gg=g.createRadialGradient(ax-ar*.35,ay-ar*.4,ar*.1,ax,ay,ar);gg.addColorStop(0,'#E8604A');gg.addColorStop(1,'#A52C22');g.fillStyle=gg;g.beginPath();g.arc(ax,ay,ar*.97,0,6.2832);g.fill();
+      circ(ax,ay,ar*.5,'#E7C07A');circ(ax,ay,ar*.3,'#8A5A2B');
+      if(sel.indexOf('nuci')>=0)PC.walnut(ax,ay-2,us*1,R(),R);else if(sel.indexOf('prune')>=0)PC.plum(ax,ay,us*1,R(),R);else if(sel.indexOf('urda')>=0)PC.urda(ax,ay,us*.8,0,R);
+      for(var j=0;j<6;j++)circ(ax+(R()-.5)*ar,ay+(R()-.5)*ar,1.5*us,'#5B2E12');});
+    if(sel.indexOf('smantana')>=0)PC.dollop(cx+ri*.25,cy+ri*.6,us*1.2);
+    if(sel.indexOf('lapte')>=0)lapteGlass(704,702,52);
+  }
+  else if(p==='skewers'){
+    var ang=-.55,sk=sel.filter(function(k){return SKW.indexOf(k)>=0;});
+    for(var st2=-1;st2<=1;st2++){var ox=Math.cos(ang+Math.PI/2)*st2*ri*.42,oy=Math.sin(ang+Math.PI/2)*st2*ri*.42;var x1=cx+ox-Math.cos(ang)*ri*.75,y1=cy+oy-Math.sin(ang)*ri*.75,x2=cx+ox+Math.cos(ang)*ri*.75,y2=cy+oy+Math.sin(ang)*ri*.75;
+      g.lineCap='round';ln(x1,y1,x2,y2,'#C9A877',5*us);g.lineCap='butt';
+      for(var j=0;j<5;j++){var f=(j+.8)/6.2,px2=x1+(x2-x1)*f,py2=y1+(y2-y1)*f,k=sk[(j+st2+3)%sk.length];
+        var s2=us*1.25;
+        if(k==='telemea')PC.cube(px2,py2,s2,ang,R);else if(k==='salam')PC.salamCub(px2,py2,s2*1.5,ang,R);else if(k==='mere')PC.appleCube(px2,py2,s2*1.3,ang,R);else if(k==='prune')PC.plum(px2,py2,s2*.9,ang,R);else if(k==='paine')PC.crouton(px2,py2,s2*1.6,ang,R);else PC.potCube(px2,py2,s2*1.3,ang,R);}}
+    var dk=['smantana','urda','framantata','burduf'].some(function(k){return sel.indexOf(k)>=0;});
+    if(dk){var dx=cx+ri*.62,dy=cy+ri*.62;sh(1,8,3);circ(dx,dy,ri*.24,'#F3EFE6');sh(0);circ(dx,dy,ri*.2,'#FFFFFF');if(sel.indexOf('marar')>=0)for(i=0;i<10;i++)circ(dx+(R()-.5)*ri*.28,dy+(R()-.5)*ri*.28,1.6*us,'#5FA43F');if(sel.indexOf('nuci')>=0)PC.walnut(dx,dy,us*.7,0,R);}
+    else{if(sel.indexOf('nuci')>=0)for(i=0;i<4;i++)PC.walnut(cx+ri*.55+(R()-.5)*ri*.3,cy+ri*.6+(R()-.5)*ri*.2,us,R()*6,R);if(sel.indexOf('marar')>=0)for(i=0;i<6;i++)PC.dill(cx+(R()-.5)*ri*1.2,cy+(R()-.5)*ri*1.2,us*.8,R()*6,R);}
+  }
+  else if(p==='board'){
+    var bw=sel.filter(function(k){return ['urda','burduf','framantata','smantana','nuci'].indexOf(k)>=0;});
+    var gr5=sel.filter(function(k){return bw.indexOf(k)<0&&['lapte','marar'].indexOf(k)<0;});
+    var nG=Math.max(1,gr5.length);
+    gr5.forEach(function(k,j){var a0=j/nG*6.2832-1.5,a1=(j+1)/nG*6.2832-1.5,inner=bw.length?ri*.38:ri*.12;
+      var pc=pcFor('platou',k,r);if(!pc)return;var n=Math.min(PCN[pc],pc==='breadSlice'?2:6);
+      var ar2=function(R2){var aa=a0+(.15+R2()*.7)*(a1-a0),k2=inner+(.25+R2()*.6)*(ri*.82-inner);return [cx+Math.cos(aa)*k2,cy+Math.sin(aa)*k2];};
+      scatterPts(R,n,ar2,24*us,[]).forEach(function(q){PC[pc](q[0],q[1],us*(pc==='breadSlice'?.9:1.3),R()*6.28,R);});});
+    bw.forEach(function(k,j){var n=bw.length,a=j/n*6.2832,rad=n>1?ri*.22:0,bx=cx+Math.cos(a)*rad,by=cy+Math.sin(a)*rad,br=n>2?ri*.17:ri*.21;
+      sh(1,6,3);circ(bx,by,br,r.st==='stana'?'#A87443':'#F3EFE6');sh(0);var inn2=k==='nuci'?'#E9DCC6':k==='burduf'?'#F1E2BC':'#FFFFFF';circ(bx,by,br*.82,inn2);
+      if(k==='nuci')PC.walnut(bx,by,us*1,0,R);else if(k==='smantana')PC.dollop(bx,by,us*.85);else PC[k==='urda'?'urda':k==='burduf'?'burduf':'fram'](bx,by,us*.9,0,R);});
+    if(sel.indexOf('marar')>=0)for(i=0;i<8;i++)PC.dill(cx+(R()-.5)*ri*1.3,cy+(R()-.5)*ri*1.3,us*.75,R()*6,R);
+    if(sel.indexOf('lapte')>=0)lapteGlass(704,702,52);
+  }
+}
+function isSweetSel(sel){return sel.some(function(k){return ['mere','prune','nuci'].indexOf(k)>=0;})&&!sel.some(function(k){return SAV.indexOf(k)>=0;});}
+function drawPlate(ctx,r){
+  g=ctx;var R=rng(r.seed);
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,800,800);
+  drawBg(r,R);
+  accessories(r,R);
+  var cx=400,cy=410,pr=300;
+  if(r.plate==='board'){
+    sh(1,18,9);circ(cx,cy,pr+6,'#8A5A2E');sh(0);circ(cx,cy,pr-4,'#B98250');for(var i=1;i<10;i++){g.strokeStyle='rgba(110,65,28,'+(.1+R()*.12)+')';g.lineWidth=1.5;g.beginPath();g.ellipse(cx+R()*5,cy+R()*5,(pr-4)*(.1*i),(pr-4)*(.1*i)*.97,0,0,6.2832);g.stroke();}
+    drawDish(r,R,cx,cy,pr*.86);
+  }else{
+    plateBase(r,cx,cy,pr,R);
+    drawDish(r,R,cx,cy,r.st==='modern'?pr*.66:pr*.75);
+  }
+  sh(0);
+}
+
+/* =====================================================================
+   7. ICONIȚE PENTRU CĂMARĂ (desenate în cod)
+   ===================================================================== */
+var ICO={
+ telemea:function(){sh(1,2,1);frr(8,15,32,20,4,'#E4DDCB');sh(0);frr(8,13,30,20,4,'#FBF9F2');circ(16,22,1.8,'#E3DCCB');circ(27,26,1.6,'#E3DCCB');circ(31,19,1.3,'#E3DCCB');},
+ urda:function(){circ(15,28,8,'#FFFEF8');circ(24,23,9,'#FFFEF8');circ(33,28,8,'#FFFEF8');frr(9,27,30,9,4,'#FFFEF8');circ(22,21,2.5,'#FFFFFF');ln(9,36,39,36,'#D8D0BE',2);},
+ burduf:function(){sh(1,2,1);frr(11,9,26,30,9,'#F1E2BC');sh(0);frr(11,19,26,7,2,'#8A5A2E');circ(19,14,1.6,'#D3BA84');circ(28,32,1.6,'#D3BA84');},
+ framantata:function(){g.fillStyle='#B98652';g.beginPath();g.moveTo(6,24);g.lineTo(42,24);g.quadraticCurveTo(40,40,24,40);g.quadraticCurveTo(8,40,6,24);g.fill();circ(16,22,6,'#F7F2E3');circ(24,19,7,'#F7F2E3');circ(32,22,6,'#F7F2E3');circ(22,20,1.4,'#DCD1B7');circ(30,23,1.2,'#DCD1B7');},
+ salam:function(){frr(5,18,30,13,6.5,'#7A322C');circ(14,21,1.1,'#E8D2C8');circ(22,27,1.1,'#E8D2C8');ln(10,18,10,31,'#E8DCC8',1.6);circ(36,24.5,8.5,'#D7CDBF');circ(36,24.5,7,'#8E3C35');circ(34,22,1.3,'#F2D5CA');circ(38,27,1.2,'#F2D5CA');circ(37,22.5,1,'#F2D5CA');},
+ varza:function(){circ(24,26,16,'#86B35A');circ(24,26,12.5,'#A7CF7A');circ(24,26,7,'#C6E19F');g.strokeStyle='#E7F3D2';g.lineWidth=1.4;for(var i=0;i<5;i++){var a=i/5*6.28;g.beginPath();g.moveTo(24,26);g.quadraticCurveTo(24+Math.cos(a+.4)*8,26+Math.sin(a+.4)*8,24+Math.cos(a)*15,26+Math.sin(a)*15);g.stroke();}},
+ malai:function(){g.fillStyle='#F2C14E';g.beginPath();g.moveTo(8,30);g.quadraticCurveTo(24,6,40,30);g.closePath();g.fill();circ(20,22,1.4,'#FBDD8A');circ(28,18,1.2,'#FBDD8A');g.fillStyle='#B98652';g.beginPath();g.moveTo(5,29);g.lineTo(43,29);g.quadraticCurveTo(41,42,24,42);g.quadraticCurveTo(7,42,5,29);g.fill();},
+ smantana:function(){frr(12,20,24,20,5,'#D6E3E6');frr(12,26,24,7,0,'#0E7C86');circ(24,19,10,'#FFFFFF');circ(24,13,4,'#FFFFFF');circ(21,17,2,'#F3F3F3');},
+ oua:function(){ell(18,27,9,12,-.2,'#F3E5CE');ell(30,28,8.5,11.5,.25,'#E6CFAC');circ(15,22,2.2,'rgba(255,255,255,.7)');circ(27,23,2,'rgba(255,255,255,.6)');},
+ lapte:function(){g.fillStyle='#FFFFFF';g.beginPath();g.moveTo(19,12);g.lineTo(29,12);g.lineTo(29,17);g.lineTo(34,23);g.lineTo(34,42);g.lineTo(14,42);g.lineTo(14,23);g.lineTo(19,17);g.closePath();g.fill();frr(18,7,12,6,2,'#0E7C86');frr(14,28,20,7,0,'#0E7C86');},
+ ceapa:function(){g.fillStyle='#D9A25A';g.beginPath();g.moveTo(24,8);g.quadraticCurveTo(26,15,36,22);g.quadraticCurveTo(44,34,24,41);g.quadraticCurveTo(4,34,12,22);g.quadraticCurveTo(22,15,24,8);g.fill();g.strokeStyle='#B47A36';g.lineWidth=1.3;g.beginPath();g.moveTo(24,12);g.quadraticCurveTo(16,26,24,40);g.stroke();g.beginPath();g.moveTo(24,12);g.quadraticCurveTo(32,26,24,40);g.stroke();ln(24,8,24,4,'#7AA34A',2);},
+ mere:function(){ell(24,28,14,13,0,'#C8372D');ell(19,23,4,5,-.4,'rgba(255,255,255,.3)');ln(24,16,25,10,'#6B4423',2);ell(29,12,5,2.6,-.5,'#5FA43F');},
+ prune:function(){ell(24,27,11,13.5,.1,'#4B2147');ell(20,22,3,5,-.3,'rgba(255,255,255,.25)');ln(24,14,26,8,'#6B4423',2);g.strokeStyle='rgba(30,10,30,.6)';g.lineWidth=1.2;g.beginPath();g.moveTo(24,15);g.quadraticCurveTo(29,27,24,40);g.stroke();},
+ nuci:function(){circ(24,25,14,'#B07A42');g.strokeStyle='#7A4D22';g.lineWidth=1.5;ln(24,11,24,39,'#7A4D22',1.6);for(var i=-1;i<=1;i++){g.beginPath();g.arc(17,25+i*8,4,-.5,2);g.stroke();g.beginPath();g.arc(31,25+i*8,4,1.1,3.7);g.stroke();}},
+ marar:function(){g.lineCap='round';ln(24,42,24,10,'#3F7A2B',2);for(var i=0;i<6;i++){var y=12+i*5;ln(24,y+4,15-i*.5,y-2,'#5FA43F',1.3);ln(24,y+4,33+i*.5,y-2,'#6FB24C',1.3);}g.lineCap='butt';},
+ paine:function(){ell(24,29,19,11,0,'#A4642E');ell(24,26,17,9.5,0,'#C9874A');g.strokeStyle='#EBC890';g.lineWidth=2;for(var i=-1;i<=1;i++){g.beginPath();g.moveTo(24+i*8-4,21);g.lineTo(24+i*8+3,31);g.stroke();}},
+ cartofi:function(){ell(24,26,16,11.5,.25,'#C9A06A');ell(20,22,4,3,0,'rgba(255,255,255,.2)');circ(17,27,1.4,'#8E6A3E');circ(29,23,1.4,'#8E6A3E');circ(28,31,1.2,'#8E6A3E');},
+ ciuperci:function(){frr(19,24,10,16,4,'#F1E7D3');g.fillStyle='#B4875A';g.beginPath();g.moveTo(6,27);g.bezierCurveTo(6,6,42,6,42,27);g.closePath();g.fill();circ(16,18,2,'rgba(255,255,255,.35)');circ(29,15,1.6,'rgba(255,255,255,.3)');}
+};
+function drawIcon(cnv,k){var ctx=cnv.getContext('2d');g=ctx;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,48,48);ICO[k]();sh(0);}
+
+/* =====================================================================
+   8. FIȘA DESCĂRCABILĂ (PNG 1600×1000, desenată în canvas)
+   ===================================================================== */
+function wrapT(x,text,maxW){var words=text.split(' '),lines=[],cur='';words.forEach(function(w){var t=cur?cur+' '+w:w;if(x.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;}else cur=t;});if(cur)lines.push(cur);return lines;}
+function drawCard(r){
+  var W=1600,H=1000,cc=document.createElement('canvas');cc.width=W;cc.height=H;var x=cc.getContext('2d');
+  var SER='"Noto Serif", Georgia, serif',SAN='Inter, system-ui, sans-serif';
+  x.fillStyle='#F5F1EA';x.fillRect(0,0,W,H);
+  x.fillStyle='#0F1720';x.fillRect(0,0,W,92);x.fillRect(0,H-58,W,58);
+  x.font='700 19px '+SAN;var chip='INTERACTIV · I18';if('letterSpacing' in x)x.letterSpacing='2px';var cw=x.measureText(chip).width+40;
+  x.fillStyle='#D6409F';x.beginPath();x.roundRect?x.roundRect(60,26,cw,40,20):x.rect(60,26,cw,40);x.fill();x.fillStyle='#0F1720';x.textBaseline='middle';x.fillText(chip,80,47);if('letterSpacing' in x)x.letterSpacing='0px';
+  x.font='700 30px '+SER;x.fillStyle='#F3EFE6';x.fillText('Generator AI de rețete transilvănene „reinventate”',60+cw+28,47);
+  x.font='500 22px '+SAN;x.fillStyle='#A9B4C0';x.fillText('ACTIV AI · Sibiul meu · Artefact-model generat cu AI',60,H-29);x.textAlign='right';x.fillStyle='#E2A62B';x.font='600 22px '+SAN;x.fillText('#SibiulMeu',W-60,H-29);x.textAlign='left';
+  x.save();x.beginPath();x.roundRect?x.roundRect(60,122,460,460,18):x.rect(60,122,460,460);x.clip();x.drawImage($('cv'),60,122,460,460);x.restore();
+  x.textBaseline='alphabetic';
+  var y=630;x.font='700 26px '+SER;x.fillStyle='#0E7C86';x.fillText('Ingrediente ('+r.portii+' porții)',60,y);y+=36;
+  x.font='400 21px '+SAN;
+  r.ing.forEach(function(it){x.font='700 21px '+SAN;x.fillStyle='#B9583A';x.fillText(it.q,60,y);var qw=x.measureText(it.q+' ').width;x.font='400 21px '+SAN;x.fillStyle='#1B2733';var ls=wrapT(x,it.n,460-qw);ls.forEach(function(l,i){x.fillText(l,60+qw,y);if(i<ls.length-1)y+=26;});y+=31;});
+  x.font='400 18px '+SAN;x.fillStyle='#4A5866';if(r.stap.length){wrapT(x,'Din cămara de bază: '+r.stap.join(', ')+'.',460).forEach(function(l){x.fillText(l,60,y);y+=24;});}
+  y+=4;x.font='700 18px '+SAN;x.fillStyle='#B9583A';var alT=r.al.length?'Alergeni: '+r.al.join(', ')+'.':'Alergeni (lapte, ou, gluten, nuci): niciunul.';wrapT(x,alT,460).forEach(function(l){x.fillText(l,60,y);y+=24;});
+  x.font='italic 400 17px '+SER;x.fillStyle='#4A5866';wrapT(x,'Combinație imaginată din șabloane scrise cu AI – nu e o rețetă tradițională testată. Verifică etichetele produselor cumpărate.',460).forEach(function(l){if(y<H-70){x.fillText(l,60,y);y+=22;}});
+  var X=580,MW=W-X-60;y=128;
+  x.font='700 17px '+SAN;x.fillStyle='#B9583A';if('letterSpacing' in x)x.letterSpacing='1.5px';x.fillText(r.kick.toUpperCase(),X,y);if('letterSpacing' in x)x.letterSpacing='0px';y+=14;
+  var fs=50,nl;for(;fs>=34;fs-=2){x.font='700 '+fs+'px '+SER;nl=wrapT(x,r.name,MW);if(nl.length<=2)break;}
+  nl.forEach(function(l){y+=fs*1.12;x.fillStyle='#1B2733';x.fillText(l,X,y);});
+  y+=34;x.font='italic 400 23px '+SER;x.fillStyle='#4A5866';wrapT(x,r.sub,MW).forEach(function(l){x.fillText(l,X,y);y+=30;});
+  x.font='600 19px '+SAN;x.fillStyle='#36424E';x.fillText([r.portii+' porții',r.time,'nivel: '+r.lvl,r.tools.length?'cu un adult: '+r.tools.join(', '):'fără foc'].join('  ·  '),X,y+2);y+=40;
+  x.font='700 26px '+SER;x.fillStyle='#0E7C86';x.fillText('Pași',X,y);y+=12;
+  var st=r.story.lead+r.story.text,boxTop;
+  x.font='400 20px '+SAN;var stl=wrapT(x,st,MW-48);var boxH=80+stl.length*27;boxTop=H-58-24-boxH;
+  x.font='400 17px '+SAN;var sfl=wrapT(x,r.safe,MW),sfTop=boxTop-12-sfl.length*22;x.fillStyle='#36424E';sfl.forEach(function(l,i){x.fillText(l,X,sfTop+16+i*22);});
+  var avail=sfTop-12-y,sfs=23,sl;
+  for(;sfs>=16;sfs--){x.font='400 '+sfs+'px '+SAN;sl=r.steps.map(function(s){return wrapT(x,s,MW-52);});var hh=sl.reduce(function(a,b){return a+b.length*sfs*1.32+sfs*.55;},0);if(hh<=avail)break;}
+  sl.forEach(function(ls,i){y+=sfs*1.32;x.fillStyle='#0E7C86';x.beginPath();x.arc(X+15,y-sfs*.36,sfs*.72,0,6.2832);x.fill();x.fillStyle='#FFFFFF';x.font='700 '+Math.round(sfs*.82)+'px '+SAN;x.textAlign='center';x.fillText(String(i+1),X+15,y-sfs*.36+sfs*.29);x.textAlign='left';x.font='400 '+sfs+'px '+SAN;x.fillStyle='#1B2733';ls.forEach(function(l,j){if(j)y+=sfs*1.32;x.fillText(l,X+44,y);});y+=sfs*.55;});
+  x.fillStyle='#1B2733';x.beginPath();x.roundRect?x.roundRect(X,boxTop,MW,boxH,14):x.rect(X,boxTop,MW,boxH);x.fill();x.fillStyle='#E2A62B';x.fillRect(X,boxTop,7,boxH);
+  var yy=boxTop+32;x.font='700 18px '+SER;x.fillStyle='#E2A62B';x.fillText('Legătura cu Sibiul',X+26,yy);yy+=4;
+  x.font='400 20px '+SAN;x.fillStyle='#F3EFE6';stl.forEach(function(l){yy+=27;x.fillText(l,X+26,yy);});
+  x.font='400 16px '+SAN;x.fillStyle='#A9B4C0';x.fillText('sursa: '+r.story.src,X+26,yy+28);
+  return cc;
+}
+
+/* =====================================================================
+   9. INTERFAȚA
+   ===================================================================== */
+var state={sel:['telemea','malai','smantana','marar'],st:'sarb',mo:'pranz',v:0,cur:null,curKey:'',dirty:false};
+var cv=$('cv'),cvx=cv.getContext('2d');
+function key(){return state.sel.slice().sort().join(',')+'|'+state.st+'|'+state.mo;}
+function hint(t){$('hint').textContent=t||'';}
+function buildPicks(){
+  var box=$('gIng');box.innerHTML='';
+  ORDER.forEach(function(k){
+    var b=document.createElement('button');b.type='button';b.className='pick ig';b.dataset.v=k;
+    var c=document.createElement('canvas');c.width=48;c.height=48;c.setAttribute('aria-hidden','true');drawIcon(c,k);b.appendChild(c);
+    var s=document.createElement('span');s.textContent=ING[k].n;b.appendChild(s);
+    b.addEventListener('click',function(){toggle(k);});box.appendChild(b);
+  });
+  [['gSt',STY,'st'],['gMo',MOM,'mo']].forEach(function(gq){
+    var bx=$(gq[0]);bx.innerHTML='';
+    gq[1].forEach(function(it){var b=document.createElement('button');b.type='button';b.className='pick';b.dataset.v=it[0];b.textContent=it[1];b.addEventListener('click',function(){state[gq[2]]=it[0];changed();});bx.appendChild(b);});
+  });
+}
+function sync(){
+  var n=state.sel.length;
+  Array.prototype.forEach.call($('gIng').children,function(b){var on=state.sel.indexOf(b.dataset.v)>=0;b.setAttribute('aria-pressed',String(on));b.classList.toggle('full',!on&&n>=4);});
+  Array.prototype.forEach.call($('gSt').children,function(b){b.setAttribute('aria-pressed',String(b.dataset.v===state.st));});
+  Array.prototype.forEach.call($('gMo').children,function(b){b.setAttribute('aria-pressed',String(b.dataset.v===state.mo));});
+  $('cnt').innerHTML='· ai ales <b>'+n+'</b> din 2–4';
+  $('gen').disabled=n<2;$('variant').disabled=n<2;
+  var stale=state.cur&&key()!==state.curKey;
+  $('fisa').classList.toggle('stale',!!stale);$('stmsg').hidden=!stale;$('gen').classList.toggle('pulse',!!stale&&n>=2);
+  $('dl').disabled=!!stale;
+}
+function changed(){hint('');sync();}
+function toggle(k){
+  var i=state.sel.indexOf(k);
+  if(i>=0){state.sel.splice(i,1);if(state.sel.length<2)hint('Alege cel puțin 2 ingrediente din cămară.');else hint('');}
+  else if(state.sel.length>=4){hint('Poți alege cel mult 4 ingrediente – scoate unul ca să adaugi „'+ING[k].n+'”.');return;}
+  else {state.sel.push(k);hint('');}
+  sync();
+}
+function el(tag,txt,cls){var e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e;}
+function render(r){
+  $('rKick').textContent=r.kick+(r.v?' · varianta '+(r.v+1):'');
+  $('rName').textContent=r.name;$('rSub').textContent=r.sub;
+  var tg=$('rTags');tg.innerHTML='';[r.portii+' porții',r.time,'nivel: '+r.lvl,r.tools.length?'cu un adult: '+r.tools.join(', '):'fără foc'].forEach(function(t){tg.appendChild(el('li',t));});
+  var il=$('rIng');il.innerHTML='';r.ing.forEach(function(it){var li=el('li');li.appendChild(el('b',it.q));li.appendChild(document.createTextNode(' '+it.n));il.appendChild(li);});
+  $('rStap').textContent=r.stap.length?'Din cămara de bază: '+r.stap.join(', ')+'.':'';
+  var al=$('rAl');al.innerHTML='';
+  if(r.al.length){al.appendChild(document.createTextNode('Alergeni: '));r.al.forEach(function(a){al.appendChild(el('span',a,'p'));});}
+  else al.appendChild(document.createTextNode('Alergeni (lapte, ou, gluten, nuci): niciunul. '));
+  al.appendChild(document.createTextNode(' Verifică etichetele produselor cumpărate.'));
+  var ol=$('rSteps');ol.innerHTML='';r.steps.forEach(function(s){ol.appendChild(el('li',s));});
+  var sy=$('rStory');sy.innerHTML='';sy.appendChild(el('b','Legătura cu Sibiul. '));sy.appendChild(document.createTextNode(r.story.lead+r.story.text+' '));sy.appendChild(el('small','(sursa: '+r.story.src+')'));
+  $('rSafe').innerHTML='';$('rSafe').appendChild(el('b','Combinație imaginată, nu rețetă testată. '));$('rSafe').appendChild(document.createTextNode(r.safe));
+  drawPlate(cvx,r);
+  cv.setAttribute('aria-label','Farfuria rețetei „'+r.name+'”, desenată schematic, văzută de sus.');
+  window.__r=r;
+}
+function generate(next){
+  if(state.sel.length<2){hint('Alege cel puțin 2 ingrediente din cămară.');return;}
+  var k=key();
+  if(state.cur&&k===state.curKey){if(next)state.v++;else state.v++;}else state.v=0;
+  var r=makeRecipe(state.sel,state.st,state.mo,state.v);
+  state.cur=r;state.curKey=k;hint('');render(r);sync();
+  if(window.innerWidth<=1100&&state.started)$('fisa').scrollIntoView({behavior:'smooth',block:'start'});
+  state.started=true;
+}
+$('gen').addEventListener('click',function(){generate(false);});
+$('variant').addEventListener('click',function(){generate(true);});
+$('rand').addEventListener('click',function(){
+  var pool=ORDER.slice(),n=2+Math.floor(Math.random()*3),s=[];
+  while(s.length<n){var i=Math.floor(Math.random()*pool.length);s.push(pool.splice(i,1)[0]);}
+  state.sel=s;state.st=STY[Math.floor(Math.random()*4)][0];state.mo=MOM[Math.floor(Math.random()*3)][0];state.cur=null;sync();generate(false);
+});
+$('dl').addEventListener('click',function(){
+  if(!state.cur)return;
+  var cc=drawCard(state.cur),url=cc.toDataURL('image/png');window.__dl=url;
+  var a=document.createElement('a');a.download='reteta_reinventata_'+state.cur.tech+'_'+state.cur.sel.join('-')+'.png';a.href=url;document.body.appendChild(a);a.click();a.remove();
+});
+window.__gen={make:makeRecipe,cands:function(sel,st,mo){return candidates(sel,st,mo).map(function(t){return t.id;});},ORDER:ORDER,STY:STY.map(function(s){return s[0];}),MOM:MOM.map(function(s){return s[0];}),
+  plate:function(r){var c=document.createElement('canvas');c.width=c.height=800;drawPlate(c.getContext('2d'),r);return c.toDataURL('image/png');},
+  set:function(sel,st,mo){state.sel=sel.slice();state.st=st;state.mo=mo;sync();},card:function(){return drawCard(state.cur).toDataURL('image/png');}};
+
+buildPicks();sync();generate(false);
+if(document.fonts&&document.fonts.load){
+  Promise.all(['700 40px "Noto Serif"','italic 400 24px "Noto Serif"','700 20px Inter','400 20px Inter','600 20px Inter','500 20px Inter'].map(function(f){return document.fonts.load(f).catch(function(){});})).then(function(){if(state.cur)render(state.cur);window.READY=true;});
+}else window.READY=true;
+})();
+</script>
+</body>
+</html>
