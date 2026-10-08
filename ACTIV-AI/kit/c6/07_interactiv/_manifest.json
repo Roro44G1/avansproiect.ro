@@ -1,0 +1,30 @@
+[
+ {
+  "cod": "I20",
+  "categorie": "Interactiv",
+  "titlu": "Joc AI: ghicește personajul din scenele de teatru, după indicii",
+  "fisiere": [
+   "07_interactiv/I20_ghiceste_personajul.html",
+   "07_interactiv/I20_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, ilustrații SVG",
+  "descriere": "Zece mini-scene originale despre personaje celebre din teatrul clasic – de la Hamlet și Harpagon la Cațavencu și Chirița. Indiciile vin pe rând (didascalie, replică, obiect de recuzită desenat), iar cu cât ghicești mai devreme, cu atât iei mai multe puncte; la final afli piesa, autorul și anul, plus un panou cu repere din istoria teatrului la Sibiu.",
+  "status": "realizat",
+  "nota": "Didascaliile și replicile sunt scrise cu AI, NU sunt fragmente din piese (mesaj permanent pe ecran și la fiecare răspuns); ecourile de replici celebre sunt foarte scurte, traduse liber, cu autorul. Personaje doar din piese în domeniul public (autori morți înainte de 1956): Hamlet și Julieta (Shakespeare), Harpagon (Molière), Nae Cațavencu și Rică Venturiano (Caragiale), Truffaldino (Goldoni), Hlestakov (Gogol), Cyrano (Rostand), Chirița (Alecsandri), Nina Zarecinaia (Cehov). Autorii, anii și faptele de la final – verificate pe en.wikipedia (plus old.cimec.ro pentru premiera din 13 noiembrie 1884 și cinepub.ro pentru Chirița), cu citatele în 07_interactiv/_fapte_noi_I20.md; datările aproximative (Hamlet 1599–1601, Romeo și Julieta 1591–1595) sunt declarate. Obiectele de recuzită sunt desenate în cod SVG. Panoul „Teatrul la Sibiu” folosește doar fișa de fapte (Sala Thalia 1787–1788 cu divergența de dată, 1868, Teatrul „Gong” 1949, Teatrul „Radu Stanca”, FITS 1993, Sala Thalia – Filarmonica 2004) și precizează că jocul NU afirmă că piesele s-au jucat la Sibiu; fără persoane în viață. Punctaj 3/2/1/0 după numărul de indicii, maximum 30; rundele și variantele se amestecă la fiecare joc; tastatură 1–4, I (indiciu), Enter. Testat cu Playwright la 1920×1080 și 390×844 (start, panou Sibiu, indicii deschise, răspuns corect, răspuns greșit, ecran final; toate cele 10 runde încap fără derulare la 1920×1080), fără erori în consolă; text ≥ 20 px, butoane ≥ 56 px, focus vizibil, prefers-reduced-motion; hunspell fără greșeli reale."
+ },
+ {
+  "cod": "I21",
+  "categorie": "Interactiv",
+  "titlu": "Prezentare interactivă AI: muzeele Sibiului, câte un minut fiecare",
+  "fisiere": [
+   "07_interactiv/I21_muzeele_sibiului.html",
+   "07_interactiv/I21_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, ilustrații SVG",
+  "descriere": "Un tur prin nouă muzee din Sibiu, câte 60 de secunde fiecare: în fiecare sală, un desen, 3–4 fapte verificate cu sursa și o întrebare „Ce ai căuta acolo?”. La final vezi traseul tău – sălile vizitate și timpul petrecut în fiecare.",
+  "status": "realizat",
+  "nota": "Săli: Galeria de artă Brukenthal, Biblioteca Brukenthal, Muzeul de Istorie – Casa Altemberger, Muzeul de Istorie a Farmaciei, Muzeul de Istorie Naturală, Muzeul de Arme și Trofee de Vânătoare (Casa Spiess), Muzeul ASTRA în aer liber, Muzeul „Franz Binder”, Muzeul „Emil Sigerus” (Muzeul Civilizației Transilvane apare ca fapt în sala 9). Ecran de start cu cuprins și „Muzeul Brukenthal – primul muzeu din România (1817)”. Cronometru de 60 s pe sală cu bară segmentată, trecere automată, Start/Pauză, Înapoi, Înainte, Cuprins, tastele ← → și Spațiu, glisare pe ecran tactil; respectă prefers-reduced-motion (fără animații, bara avansează pe secunde). Fapte doar din fișa de fapte, cu sursa la fiecare; divergențele sunt arătate în caseta „Sursele diferă” (Istorie Naturală 1894/1895 și Str. Cetății 1/2; Sigerus 1997/1998; ASTRA 1963/1964, deschis 1967, peste 300/400 de clădiri; Farmacie 6.600–6.900/6.000 de piese). Pentru Muzeul de Arme, fișa nu descrie piesele – spus explicit pe ecran. Fără programe, orare, prețuri sau persoane în viață. Patru informații generale (incunabul, miniat, muzeu în aer liber, etnografie) verificate pe en.wikipedia și dexonline – vezi 07_interactiv/_fapte_noi_I21.md. Ilustrații SVG originale, schematice, nu fotografii și nu copii ale unor opere sau exponate reale (mențiune sub fiecare). Testat cu Playwright la 1920×1080 și 390×844 (start, sală în derulare, pauză, trecere automată, cuprins, final cu 1 și cu 9 săli, mod reduced-motion), fără erori în consolă."
+ }
+]

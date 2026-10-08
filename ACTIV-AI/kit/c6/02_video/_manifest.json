@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "M22",
+  "categorie": "Video",
+  "titlu": "Trailer AI pentru o piesă de teatru despre Podul Minciunilor",
+  "fisiere": [
+   "02_video/M22_trailer_podul_minciunilor.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "Trailer de un minut pentru „Fontă și adevăr”, o comedie imaginară despre Podul Minciunilor: cortina se deschide, podul de fontă apare noaptea, trei personaje fictive își spun replica, iar legenda („cine minte pe pod, cade”) pune totul sub semnul întrebării.",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "PIESĂ IMAGINARĂ, declarată în cadre (eticheta permanentă „Piesă imaginară · trailer generat cu AI”, cortina de la început, cardul de titlu și cadrul final de onestitate): titlul „Fontă și adevăr” (verificat 8 octombrie 2026 – nu am găsit o piesă reală cu acest titlu), personajele fictive Ucenica, Negustorul de umbrele și Podul (siluete fără fețe, cu eticheta „personaj fictiv”), replicile și „premiera” („pe nicio scenă – doar în imaginația ta”) sunt inventate; nu se pretinde că vreun teatru joacă piesa. Fapte despre pod – doar din fișa de fapte („Monumente” și „Premierele Sibiului”, patrimoniu.sibiu.ro): terminat în 1859, inaugurat la 17 decembrie 1860, primul pod din fontă din România, inscripțiile „1859” și „FRIEDRICHSHÜTTE”, leagă Orașul de Sus de Orașul de Jos (Piața Mică); prăbușirea mincinoșilor e prezentată explicit ca legendă („așa spune legenda”). „Oraș cu ochi” – porecla din fișă (lucarnele). Stilizat, nu reproducere exactă: forma podului (arc, rozete, balustradă), forma și așezarea plăcilor cu inscripții, casele, felinarele. Fără fapte noi. Muzica: temă originală în stil de trailer – comedie cu mister (96 BPM, re minor → Re major; cutie muzicală/celestă, pizzicato, clarinet și fagot sintetizați, alămuri, lovituri de trailer), cu efecte sintetizate (cortină, lovitură în fontă, scârțâit de metal, pocnet), sincronizată cu tăieturile; nu citează melodii existente (script: 02_video/_audio/M22_tema_trailer.py; MP3 −14,0 LUFS; în MP4: −14,2 LUFS, true peak −3,4 dBTP). Text pe ecran, fără voce. Sursă HTML: _tools/video/M22_trailer_podul_minciunilor.html."
+ },
+ {
+  "cod": "M23",
+  "categorie": "Video",
+  "titlu": "Videoclip AI: „Orașul care citește” — cărți care zboară peste acoperișuri",
+  "fisiere": [
+   "02_video/M23_orasul_care_citeste.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "La apus, din „ochii” acoperișurilor își iau zborul sute de cărți care se adună în stol și desenează pe cer anii și cifrele cărții la Sibiu: 1525, 1544, 1869, 300.000, 813.551. La final se întorc acasă: „Deschide o carte.”",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "Animație poetică IMAGINATĂ, desenată în cod (eticheta permanentă „Animație imaginată · cifre din surse” și cadrul final „Cum a fost făcut acest videoclip”): cărțile zburătoare, acoperișurile cu lucarne-„ochi” și turnurile din fundal sunt stilizate, nu clădiri anume. Faptele de pe ecran, fiecare cu sursa în subtitrare, toate din fișa de fapte (secțiunea „Cultură vie… – completări pentru Calupul 6” și „Premierele Sibiului”): 1525 – prima tipografie din Transilvania, a doua ca vechime de pe actualul teritoriu al României (patrimoniu.sibiu.ro, konferencijos.lnb.lt); 1544 – prima carte în limba română de pe actualul teritoriu al României, Catehismul, tipărit la Sibiu de Filip Moldoveanul (patrimoniu.sibiu.ro, en.wikipedia); 1869 – prima bibliotecă publică românească din Transilvania, Biblioteca Asociațiunii (ASTRA) (patrimoniu.sibiu.ro, musikland.sonoro.org); Biblioteca Brukenthal – circa 300.000 de unități (manuscrise, incunabule, cărți rare, carte românească veche; en.wikipedia); Biblioteca Județeană ASTRA – 813.551 de documente, cea mai veche carte din 1511 (musikland.sonoro.org, „cele mai recente statistici ale sursei”). Nu se afirmă nimic despre aspectul Catehismului sau despre exemplare păstrate. Fără fapte noi. Cifrele sunt desenate de stol (puncte eșantionate din fontul Noto Serif), cu o umbră discretă a cifrei pentru lizibilitate. Muzica: temă originală în stil de vals poetic (3/4, 90 BPM, Fa major / re minor; harpă și celestă prin sinteză modală, flaut, coarde, bas ciupit), cu foșnet de „aripi-pagini” sintetizat (zgomot filtrat, nu înregistrare) și sclipiri de celestă la fiecare formare de cifre; nu citează melodii existente (script: 02_video/_audio/M23_vals_orasul_care_citeste.py; MP3 −14,0 LUFS; în MP4: −14,2 LUFS, true peak −2,7 dBTP). MP4 comprimat din nou (CRF 30), 10,9 MB. Text pe ecran, fără voce. Sursă HTML: _tools/video/M23_orasul_care_citeste.html."
+ },
+ {
+  "cod": "M24",
+  "categorie": "Video",
+  "titlu": "Istoria tiparului la Sibiu (1525, 1544) — animație AI",
+  "fisiere": [
+   "02_video/M24_istoria_tiparului.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală și sunete de atelier sintetizate în cod",
+  "descriere": "Cum se tipărea o carte cu litere mobile, în 8 pași – de la literele turnate la legare – și apoi cronologia tiparului la Sibiu: prima tipografie din Transilvania (1525), prima carte în limba română (1544) și ce a urmat, până la 1583.",
+  "status": "realizat",
+  "durata_s": 74.0,
+  "nota": "Partea I (procesul GENERAL al tiparului cu litere mobile, sec. XV–XVI, declarat pe ecran „în linii mari – nu atelierul din Sibiu”): literele turnate dintr-un aliaj de plumb, staniu și stibiu, în tipar de mână cu matriță; culegerea în vingalac, de la stânga la dreapta, cu susul în jos, cu spații pentru umplerea rândului; galionul și forma (rama de metal cu literele strânse); cerneala pe bază de ulei, cu două tampoane de piele umplute cu lână sau păr de cal; coala umezită, din cârpe de cânepă și in, prinsă în rame; presa cu șurub, înrudită cu teascurile de vin și de ulei („în jurul anului 1600: 1.500–3.600 de imprimări pe zi”); uscarea și refolosirea literelor; împăturirea în caiete, cusutul la cotor, coperțile îmbrăcate în piele sau pergament. Verificat pe en.wikipedia (Movable type, Type metal, Composing stick, Chase (printing), Printing press, Papermaking, Letterpress printing, Bookbinding) și dexonline (vingalac, galion); citatele în 02_video/_fapte_noi_M24.md. Partea a II-a – doar din fișa de fapte („Tiparul la Sibiu”): 1525 prima tipografie din Transilvania, a doua ca vechime de pe actualul teritoriu al României (Lukas Trapoldner, dascăl și notar al orașului; Valentinus Corvinus, preot); 5 ianuarie 1525 – calendarul de perete în latină, cel mai vechi tipar datat; 1529 – gramatica latină a lui Thomas Gemmarius, cu divergența arătată pe ecran („o sursă o datează 1529, alta nu o datează”); 1544 – Catehismul, prima carte în limba română, tipărit de Filip Moldoveanul (Philippus Pictor); 1550 – primul Tetraevanghel slavo-român; 1573 – moara de hârtie a orașului (permisiune la 12 martie 1573, distrusă în 1599); 1575 – tipografia refondată (circa 30 de cărți în 25 de ani); 1583 – cartea de legi a sașilor (Georg Greus, în latină și germană). ONESTITATE: Catehismul NU e arătat „cum era” – cartea desenată poartă eticheta „carte desenată, aspect imaginat”, iar pe ecran: „Sursele consultate nu spun cum arăta cartea”; nu se afirmă dacă s-a păstrat vreun exemplar. Calendarul și celelalte cărți sunt desene cu aspect imaginat (etichetate), celelalte pictograme – „pictogramă simbolică”; moara de hârtie e desenată fără roată de apă (sursele nu spun cum era acționată). Fără portrete: persoanele istorice apar doar cu numele. Atelierul, presa și uneltele sunt desene generice în cod. Muzica: temă originală în stil renascentist (dans în 3/4, re doric, 90 BPM; flaut drept, lăută Karplus-Strong, violă de gambă, tobă cu ramă), fără citate din lucrări existente; sunetele de atelier (metal topit, clinchet de litere, ciocănele, tampoane, hârtie, picături, scârțâitul șurubului, bufnitura presei, carul, cusutul, coperta) sunt sintetizate și sincronizate cu imaginea; script și MP3: 02_video/_audio/M24_tema_tiparului.py și .mp3 (−14 LUFS). Cadru final de onestitate cu sursele: patrimoniu.sibiu.ro, typographia.oszk.hu, konferencijos.lnb.lt, en.wikipedia. Text pe ecran, fără voce. Sursă HTML: _tools/video/M24_istoria_tiparului.html."
+ }
+]

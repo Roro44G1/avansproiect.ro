@@ -1,0 +1,125 @@
+[
+ {
+  "cod": "A21",
+  "categorie": "Audio",
+  "titlu": "Uvertură AI pentru un oraș — compoziție instrumentală în 3 mișcări",
+  "titlu_creativ": "Piață, pagină, cortină",
+  "fisiere": [
+   "04_audio/A21_uvertura_pentru_un_oras.md",
+   "04_audio/A21_uvertura_pentru_un_oras.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – compoziție, orchestrație și sinteză audio procedurală (Python/numpy)",
+  "descriere": "O uvertură de concert originală, în trei mișcări: o dimineață în Piața Mare (vioaie), o pagină citită la lumina lămpii (lentă) și o cortină care se ridică (festivă), legate de un „motiv al orașului” de șase note. Orchestra este sintetizată în cod.",
+  "status": "realizat",
+  "nota": "Temă originală în stil de uvertură de concert (ordinea repede – lent – repede, ca în uvertura italiană): melodii, armonii și orchestrație compuse pentru acest artefact, fără citate din lucrări existente; titlul și titlurile mișcărilor sunt inventate (căutare web a titlului exact, 8 octombrie 2026: fără rezultat). Orchestra este SINTETIZATĂ în cod (oscilatoare, sinteză aditivă și modală, Karplus-Strong, zgomot filtrat, reverberație sintetică) – nu e o înregistrare și nu folosește mostre; piesa nu a fost cântată de Filarmonica din Sibiu și nici în Sala Thalia. Mișcări: I „Piața se trezește” – Allegro, Re major, 4/4, 144 BPM, 40 de măsuri (0:00,3); II „Pagini în lumina lămpii” – Andante, Si bemol major, 3/4, 72 BPM, 26 de măsuri (1:11,4); III „Cortina se ridică” – Maestoso 76 BPM, apoi Allegro 132 BPM, Re major, 4/4, 4 + 28 de măsuri (2:21,8); câte 1,6 s de liniște între mișcări. Fapte (fapte_verificate.md, „Cultură vie… – Muzică / Teatru / Biblioteci”, „Teatrul din 1788”): 1774 – primul concert al unei orchestre profesioniste la curtea lui Brukenthal; Mozart (1792) și Haydn (1800) cântați la Sibiu; Filarmonica de Stat – 1 ianuarie 1949, din 2004 în Sala Thalia; Sala Thalia 1787–1788 (divergența 1787–iunie 1788 / 1 iunie 1788 arătată); 1869 – prima bibliotecă publică românească din Transilvania. Informații generale (uvertură, mișcare, tempo, acordajul timpanelor) – en.wikipedia, în 04_audio/_fapte_noi_A21.md. Verificare: −14,1 LUFS, true peak −1,5 dBTP, fără clipping și fără clicuri izolate, liniște digitală între mișcări, tonalitățile și tempourile estimate confirmă partitura, 217/217 note ale melodiilor principale recunoscute în MP3 (207 la octava exactă, restul la octava de jos, unde tema e dublată).",
+  "audio": "04_audio/A21_uvertura_pentru_un_oras.mp3",
+  "tts_text": null,
+  "tts_lang": null,
+  "durata_s": 210.34,
+  "loudness_lufs": -14.1,
+  "true_peak_dbtp": -1.5,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "marcaje_s": [
+   0.3,
+   71.37,
+   141.77
+  ],
+  "miscari": [
+   {
+    "nr": "I",
+    "titlu": "Piața se trezește",
+    "indicatie": "Allegro",
+    "tonalitate": "Re major",
+    "masura": "4/4",
+    "tempo": "144 de pătrimi pe minut",
+    "masuri": 40,
+    "inceput_s": 0.3,
+    "sfarsit_sunet_s": 69.77
+   },
+   {
+    "nr": "II",
+    "titlu": "Pagini în lumina lămpii",
+    "indicatie": "Andante",
+    "tonalitate": "Si bemol major",
+    "masura": "3/4",
+    "tempo": "72 de pătrimi pe minut",
+    "masuri": 26,
+    "inceput_s": 71.37,
+    "sfarsit_sunet_s": 140.17
+   },
+   {
+    "nr": "III",
+    "titlu": "Cortina se ridică",
+    "indicatie": "Maestoso – Allegro",
+    "tonalitate": "Re major",
+    "masura": "4/4",
+    "tempo": "76, apoi 132 de pătrimi pe minut",
+    "masuri": 32,
+    "inceput_s": 141.77,
+    "sfarsit_sunet_s": 209.91
+   }
+  ],
+  "tempo": "I: 144 · II: 72 · III: 76, apoi 132 de pătrimi pe minut",
+  "tonalitate": "Re major (I) · Si bemol major (II) · Re major (III)",
+  "masura": "4/4 (I) · 3/4 (II) · 4/4 (III)",
+  "cod_sursa": [
+   "04_audio/_src/A21_uvertura_pentru_un_oras.py",
+   "04_audio/_src/A21_marcaje.json",
+   "04_audio/_src/verificare_A21.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "fapte_noi": "04_audio/_fapte_noi_A21.md",
+  "verificare": [
+   "04_audio/_verificare/A21_uvertura_pentru_un_oras_spectrograma.png",
+   "04_audio/_verificare/A21_uvertura_pentru_un_oras_forma_unda.png",
+   "04_audio/_verificare/raport_A21.json"
+  ]
+ },
+ {
+  "cod": "A22",
+  "categorie": "Audio",
+  "titlu": "Audiobook AI de 3 minute: „Primul meu bilet la teatru”",
+  "titlu_creativ": "Rândul cinci, locul doisprezece",
+  "fisiere": [
+   "04_audio/A22_primul_bilet_la_teatru.md",
+   "04_audio/A22_primul_bilet_la_teatru.txt"
+  ],
+  "tip": "scenariu",
+  "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+  "descriere": "Miruna, o elevă inventată, povestește prima ei seară la teatru în Sibiu: biletul primit de la bunica, liniștea din sală și un spectacol imaginar cu păpuși despre un ceasornicar care și-a pierdut miercurea.",
+  "status": "realizat",
+  "nota": "Miruna și bunica sunt personaje fictive (o singură voce, persoana I). Spectacolul „Ceasornicarul care a pierdut miercurea” este imaginar, cu titlu inventat (căutare web 8 octombrie 2026: nicio potrivire); nu s-a jucat la Teatrul „Gong”. Teatrul „Gong” e folosit doar ca loc; sala, biletul și scena sunt imaginate, nu descriu interiorul real. Fapte din fapte_verificate.md („Cultură vie… – Teatru”; „Premierele Sibiului”): Teatrul „Gong” – 1949, pentru copii și tineret, spectacole de animație, cu păpuși și cu actori la vedere (zilesinopti.ro; en.wikipedia „Sibiu”); Sala Thalia – construită între 1787 și 1788, prima clădire de teatru de pe actualul teritoriu al României (en.wikipedia „Thalia Hall, Sibiu”; patrimoniu.sibiu.ro); divergența 1787–1788 / 1788 explicată în md. Fără fapte noi (vezi 04_audio/_fapte_noi_A22_A23.md). Textul pentru TTS: 9 replici prefixate cu „Miruna:”, numerele în litere, „Activ A I”, fără paranteze sau indicații de regie; 409 cuvinte rostite (400 fără prefixe). Durata reală depinde de voce și de viteza de citire.",
+  "audio": null,
+  "tts_text": "04_audio/A22_primul_bilet_la_teatru.txt",
+  "tts_lang": "ro-RO",
+  "durata_s": null,
+  "durata_estimata_s": 175,
+  "cuvinte_rostite": 409,
+  "fapte_noi": "04_audio/_fapte_noi_A22_A23.md"
+ },
+ {
+  "cod": "A23",
+  "categorie": "Audio",
+  "titlu": "Lecție-podcast AI: cum se făcea o carte în 1544",
+  "titlu_creativ": "Plumb, cerneală și cârpe vechi",
+  "fisiere": [
+   "04_audio/A23_cum_se_facea_o_carte_1544.md",
+   "04_audio/A23_cum_se_facea_o_carte_1544.txt"
+  ],
+  "tip": "scenariu",
+  "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+  "descriere": "Într-un podcast imaginar, gazda Tudor și istorica Irina, personaje inventate, explică pas cu pas cum se făcea de regulă o carte în secolul al XVI-lea – litere de plumb, vingalac, presă cu șurub, hârtie din cârpe – și spun cinstit ce nu știm despre Catehismul tipărit la Sibiu în 1544.",
+  "status": "realizat",
+  "nota": "Tudor și Irina sunt personaje fictive; podcastul „Ora de tipar” e imaginar (căutare web 8 octombrie 2026: nicio potrivire). Fapte despre Sibiu din fapte_verificate.md („Tiparul la Sibiu”): 1525 – prima tipografie din Transilvania (Lukas Trapoldner, Valentinus Corvinus), calendarul de perete în latină din 5 ianuarie 1525, ultima dată cunoscută a atelierului 1530; 1544 – Catehismul, prima carte în limba română, tipărit de Filip Moldoveanul (Filip Pictorul), om de legătură al cancelariei Sibiului cu Țările Române; 1550 – Tetraevanghelul slavo-român; moara de hârtie – permisiune 1573, distrusă 1599. Se spune explicit că sursele NU precizează numărul de pagini, aspectul, tirajul Catehismului, dacă s-a păstrat vreun exemplar, atelierul lui Filip și proveniența hârtiei în 1544. Procesul tiparului = practică europeană generală a secolului al XVI-lea, verificată pe en.wikipedia (Movable type, Type metal, Composing stick, Printing press, Letterpress printing, Johannes Gutenberg, Paper, Papermaking, History of paper, Bookbinding) și dexonline (vingalac, zețar), cu citate în 04_audio/_fapte_noi_A22_A23.md, formulată prudent („de regulă”, „de obicei”, „adesea”); uscarea colilor e o deducție prudentă, declarată. Textul pentru TTS: 17 replici prefixate cu „Tudor:” sau „Irina:”, anii în litere, „Activ A I”, fără paranteze sau indicații de regie; 548 de cuvinte rostite (531 fără prefixe). Durata reală depinde de voce și de viteza de citire.",
+  "audio": null,
+  "tts_text": "04_audio/A23_cum_se_facea_o_carte_1544.txt",
+  "tts_lang": "ro-RO",
+  "durata_s": null,
+  "durata_estimata_s": 235,
+  "cuvinte_rostite": 548,
+  "fapte_noi": "04_audio/_fapte_noi_A22_A23.md"
+ }
+]

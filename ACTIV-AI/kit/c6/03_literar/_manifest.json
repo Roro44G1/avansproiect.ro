@@ -1,0 +1,32 @@
+[
+  {
+    "cod": "L29",
+    "categorie": "Literar",
+    "titlu": "O scenă de teatru: „ochii Sibiului” deschid ochii — text dramatic scurt",
+    "titlu_creativ": "Familia comică de pe acoperiș: ochii Sibiului se trezesc",
+    "fisiere": [
+      "03_literar/L29_ochii_sibiului_scena.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Înainte de răsărit, lucarnele de pe acoperișurile din jurul Pieței Mari deschid ochii și află de la Turnul Sfatului că n-au fost făcute ca să privească, ci ca să aerisească podurile. O scenă scurtă de comedie, cu Sala Thalia și Podul Minciunilor printre replici.",
+    "status": "realizat",
+    "nota": "Personaje fictive, declarate: Bunica Pleoapă, Clipici, Sprânceana (lucarne), Turnul Sfatului ca personaj, un porumbel (rol mut). Scena, replicile, glumele, turista și ghidul, ora și „vârstele” personajelor sunt imaginate. Piesa nu atribuie nicio vechime vreunei clădiri reale din Piața Mare. Fapte din fapte_verificate.md: „ochii Sibiului” – lucarne în formă de pleoapă, rolul real de ventilare a podurilor, unele din secolul al XV-lea, cele mai multe din secolul al XIX-lea; porecla „Orașul cu ochi” (en.wikipedia, „Sibiu”, marcată de sursă cu „[better source needed]”, lucru spus în notă); Turnul Sfatului – între Piața Mare și Piața Mică, reconstruit de mai multe ori, depozit de grâne, punct de observație pentru incendii, azi spațiu expozițional; Sala Thalia – 1787–1788, tipograful Martin Hochmeister, zona Turnului Gros, „în centru nu era loc”, inaugurare la 1 iunie 1788 cu „Familia comică” de Johann Karl Wetzel (tnrs.ro), cu divergența „în 1788 a pus fundația” arătată în notă; Podul Minciunilor – fontă, 1859 / 17 decembrie 1860, legenda spusă ca legendă. Definiția lucarnei (DEX) e în 03_literar/_fapte_noi_L29_L30.md. Siguranță: replica „Pe acoperiș nu joacă nimeni” și precizarea „Pe acoperișuri nu se urcă”. Corpul textului: aproximativ 825 de cuvinte.",
+    "extras": "Noi, în taină, suntem mai degrabă nări.\nTeatrul nu e minciună, drăguță. E o poveste despre care toată lumea știe că e poveste.\nOricine ți-ar face poze, tu doar respiră."
+  },
+  {
+    "cod": "L30",
+    "categorie": "Literar",
+    "titlu": "Cronica unui spectacol imaginar jucat pe acoperișuri",
+    "titlu_creativ": "Cu capul pe spate: „Pleoape de țiglă”, un spectacol imaginar deasupra Pieței Mari",
+    "fisiere": [
+      "03_literar/L30_cronica_spectacol_acoperisuri.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Un cronicar inventat scrie, în stil de presă culturală, despre un spectacol care nu a avut loc: lucarnele Sibiului puse în scenă pe platforme amenajate deasupra Pieței Mari, cu publicul jos, în piață. Are fișă tehnică, laude, reproșuri și o notă: patru țigle din cinci.",
+    "status": "realizat",
+    "nota": "Inventate și declarate: spectacolul „Pleoape de țiglă”, compania „Coșarii de Lună”, regizoarea Ilinca Nor-de-Seară, scenograful Petru Jgheab, actorii Sanda Streașină, Mara Clipeală și Gelu Paratrăsnet, cronicarul Teofil Pană-de-Gâscă, gazeta și rubrica „Văzut de jos”, seara, durata, muzica, citatele și nota finală. Numele sunt jocuri de cuvinte, vădit imaginare. O căutare web nu a găsit trupe sau spectacole reale cu aceste nume. Spectacolul nu e legat de FITS sau de alt festival real (spus explicit). Siguranță: nimeni nu calcă pe țiglă (platforme cu balustrade, hamuri, public la sol), cu încheierea „De jos, cu picioarele pe pământ”. Fapte din fapte_verificate.md: Sala Thalia (1787–1788, Hochmeister, zona Turnului Gros, „în centru nu era loc”; divergența despre 1788 arătată în notă); FITS – fondat în 1993, spectacole și în biserici, cafenele, parcuri; „ochii Sibiului” (ventilarea podurilor, secolele al XV-lea și al XIX-lea); Turnul Sfatului (observație pentru incendii, grâne); Podul Minciunilor (fontă, 1859, legenda). Termenii „site-specific”, „deus ex machina” și Thalia, muza comediei, au fost verificați pe en.wikipedia (03_literar/_fapte_noi_L29_L30.md). Nu se afirmă de unde vine numele Sălii Thalia. Corpul textului: aproximativ 820 de cuvinte.",
+    "extras": "Am plecat acasă cu o seară bună în minte și cu o ceafă care încă protestează.\nAcoperișurile sunt ale lucarnelor și ale porumbeilor. Noi doar le împrumutăm cerul.\nNota cronicarului: patru țigle din cinci."
+  }
+]

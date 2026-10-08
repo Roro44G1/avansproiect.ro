@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "V31",
+  "categorie": "Vizual",
+  "titlu": "Afiș AI pentru un festival imaginar de teatru pe acoperișurile din Piața Mare",
+  "fisiere": [
+   "01_vizual/V31_card_canva.png",
+   "01_vizual/canva_miniaturi/V31_festival_acoperisuri.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Afiș ilustrat, fără text, pentru un festival imaginar: noaptea, deasupra unei piețe medievale cu acoperișuri roșii și lucarne ca niște ochi pe jumătate deschiși; pe acoperișuri, scene mici de lemn cu balustrade, actori-siluete, o cortină, o lună de recuzită, reflectoare; publicul stă jos, în piață.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXcDNdEB8",
+    "url": "https://www.canva.com/M/MAHXcDNdEB8",
+    "eticheta": "interpretare liberă, nu o redare fidelă a Pieței Mari"
+   }
+  ],
+  "nota": "Festivalul este imaginar – nu e FITS și nici alt festival real. Fapte (fișa de fapte): „ochii Sibiului” sunt lucarne în formă de pleoapă, care ventilează podurile; Turnul Sfatului stă între Piața Mare și Piața Mică; FITS a fost fondat în 1993. Scenele de pe acoperișuri sunt imaginate – pe acoperișuri nu se urcă. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ },
+ {
+  "cod": "V32",
+  "categorie": "Vizual",
+  "titlu": "Biblioteca viselor — interior AI inspirat de prima bibliotecă publică românească din Transilvania (1869)",
+  "fisiere": [
+   "01_vizual/V32_card_canva.png",
+   "01_vizual/canva_miniaturi/V32_biblioteca_viselor.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Sala de lectură a unei biblioteci publice din jurul anului 1870, ca într-un vis: rafturi înalte de lemn cu scări, mese lungi cu lămpi verzi, o galerie cu balustradă de fier forjat, o fereastră arcuită spre acoperișuri cu lucarne; câteva cărți plutesc, iar paginile se fac păsări. Fără oameni, fără text.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXcNoX-O4",
+    "url": "https://www.canva.com/M/MAHXcNoX-O4",
+    "eticheta": "interior imaginat, inspirat de anul 1869"
+   }
+  ],
+  "nota": "Fapte (patrimoniu.sibiu.ro; musikland.sonoro.org; en.wikipedia): 1869 – prima bibliotecă publică românească din Transilvania, a Asociațiunii ASTRA (fondată în 1861 la Sibiu); azi Biblioteca Județeană ASTRA are 813.551 de documente, iar cea mai veche carte e din 1511. Interiorul e imaginat: sursele nu descriu sala din 1869. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ }
+]

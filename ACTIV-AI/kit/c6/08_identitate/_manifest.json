@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "P19",
+    "categorie": "Identitate",
+    "titlu": "Afișul spectacolului vieții mele — design AI (personaj fictiv)",
+    "fisiere": [
+      "08_identitate/P19_afisul_spectacolului_vietii.svg",
+      "08_identitate/P19_afisul_spectacolului_vietii.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Afișul de teatru al „spectacolului vieții” lui Matei S., 16 ani (personaj fictiv): „Pe pod nu se minte”, cu distribuție din roluri, trei acte și decorul pe Podul Minciunilor, plus 5 pași pentru propriul afiș și o notă despre afișele de teatru.",
+    "status": "realizat",
+    "nota": "Inventate: Matei S., titlul, „stagiunea a XVI-a”, distribuția (roluri, fără nume reale), actele, pauza, ora și durata; spectacolul nu există. Fapte din fișă: Podul Minciunilor (1859, inaugurat 17 decembrie 1860, primul pod din fontă din România, inscripțiile „1859” și „FRIEDRICHSHÜTTE”, legenda), Sala Thalia (1787–1788, prima clădire de teatru din țară). Nota despre afișe și programul de sală: en.wikipedia, „Poster” și „Playbill” (vezi _fapte_noi_P19_P21.md). Ilustrația (case cu „ochi”, Turnul Sfatului, pod) e simplificată, nu la scară."
+  },
+  {
+    "cod": "P20",
+    "categorie": "Identitate",
+    "titlu": "Ex-libris personal — marcă de carte desenată AI",
+    "fisiere": [
+      "08_identitate/P20_ex_libris.svg",
+      "08_identitate/P20_ex_libris.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Ex-librisul Ilincăi T. (posesoare fictivă), cu „ochii Sibiului”, Turnul Sfatului și Podul Minciunilor peste o carte deschisă și deviza „Cu ochii în cărți”, arătat mare color, mic lipit în carte și alb-negru pentru ștampilă.",
+    "status": "realizat",
+    "nota": "Inventate: posesoarea, deviza și desenul (original, simplificat, nu reproduce stema Sibiului); mărimea „circa 6 × 8 cm” e o propunere; varianta pentru ștampilă e o alegere de design. Ce este un ex-libris: en.wikipedia, „Bookplate” (vezi _fapte_noi_P19_P21.md). Fapte din fișă: Biblioteca Județeană ASTRA – colecție de ex-libris, 813.551 de documente, cea mai veche carte din 1511, „Sbornicul slavonesc” (Coresi, 1580); 1869 – prima bibliotecă publică românească din Transilvania; ASTRA fondată în 1861; „ochii Sibiului”, Turnul Sfatului, Podul Minciunilor."
+  },
+  {
+    "cod": "P21",
+    "categorie": "Identitate",
+    "titlu": "Playlistul meu sibian — copertă de album AI și 10 piese imaginare",
+    "fisiere": [
+      "08_identitate/P21_playlistul_meu_sibian.svg",
+      "08_identitate/P21_playlistul_meu_sibian.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Albumul imaginar „Hartă pentru căști” al Dariei M., 17 ani (personaj fictiv): o copertă cu un acoperiș sibian cu „ochi” și căști și zece piese inventate, fiecare legată de un loc din Sibiu și de un fapt real despre el.",
+    "status": "realizat",
+    "nota": "Piese imaginare – nu există înregistrări (bandă pe copertă). Inventate: Daria M., albumul, cele 10 titluri (nu sunt titluri de cântece reale și nu sună a piese populare), stilurile și duratele (total 33:44); coperta și discul – desen original, fără logo-uri sau coperți reale. Faptele despre locuri – din fișă: „ochii Sibiului”, Turnul Sfatului, Podul Minciunilor, Pasajul și Turnul Scărilor (1542), Sala Thalia (482 de locuri, 1787–1788, Filarmonica din 2004), Biblioteca ASTRA (1869, 813.551 de documente), Muzeul Brukenthal (1817, circa 1.200 de lucrări), Catedrala Evanghelică (73,34 m, orga Sauer 1915), Parcul Sub Arini (1856, 95 de specii de păsări), Muzeul ASTRA în aer liber (peste 300 de case și alte construcții; alte surse: peste 400)."
+  }
+]

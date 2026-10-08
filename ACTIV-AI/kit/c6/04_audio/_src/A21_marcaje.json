@@ -1,0 +1,1891 @@
+{
+ "titlu_creativ": "Piață, pagină, cortină",
+ "durata_s": 210.31,
+ "marcaje_s": [
+  0.3,
+  71.37,
+  141.77
+ ],
+ "pauza_intre_miscari_s": 1.6,
+ "miscari": [
+  {
+   "nr": "I",
+   "titlu": "Piața se trezește",
+   "indicatie": "Allegro",
+   "tonalitate": "Re major",
+   "masura": "4/4",
+   "tempo": "144 de pătrimi pe minut",
+   "masuri": 40,
+   "inceput_s": 0.3,
+   "sfarsit_muzica_s": 66.97,
+   "sfarsit_sunet_s": 69.77,
+   "sectiuni": [
+    {
+     "nume": "Introducere: motivul orașului la corni",
+     "masura": 1,
+     "t_s": 0.3
+    },
+    {
+     "nume": "Tema A (viori)",
+     "masura": 5,
+     "t_s": 6.97
+    },
+    {
+     "nume": "Tema A, cu flaut și alămuri",
+     "masura": 13,
+     "t_s": 20.3
+    },
+    {
+     "nume": "Episod în si minor (clarinet, apoi flaut)",
+     "masura": 21,
+     "t_s": 33.63
+    },
+    {
+     "nume": "Revenirea temei A, tutti",
+     "masura": 29,
+     "t_s": 46.97
+    },
+    {
+     "nume": "Coda: motivul orașului la trompete",
+     "masura": 37,
+     "t_s": 60.3
+    }
+   ]
+  },
+  {
+   "nr": "II",
+   "titlu": "Pagini în lumina lămpii",
+   "indicatie": "Andante",
+   "tonalitate": "Si bemol major",
+   "masura": "3/4",
+   "tempo": "72 de pătrimi pe minut",
+   "masuri": 26,
+   "inceput_s": 71.37,
+   "sfarsit_muzica_s": 136.37,
+   "sfarsit_sunet_s": 140.17,
+   "sectiuni": [
+    {
+     "nume": "Introducere: harpa",
+     "masura": 1,
+     "t_s": 71.37
+    },
+    {
+     "nume": "Tema lirică (clarinet)",
+     "masura": 3,
+     "t_s": 76.37
+    },
+    {
+     "nume": "Mijloc (flaut, corni)",
+     "masura": 11,
+     "t_s": 96.37
+    },
+    {
+     "nume": "Tema, la viori",
+     "masura": 15,
+     "t_s": 106.37
+    },
+    {
+     "nume": "Coda: motivul orașului, încet",
+     "masura": 23,
+     "t_s": 126.37
+    }
+   ]
+  },
+  {
+   "nr": "III",
+   "titlu": "Cortina se ridică",
+   "indicatie": "Maestoso – Allegro",
+   "tonalitate": "Re major",
+   "masura": "4/4",
+   "tempo": "76, apoi 132 de pătrimi pe minut",
+   "masuri": 32,
+   "inceput_s": 141.77,
+   "sfarsit_muzica_s": 205.31,
+   "sfarsit_sunet_s": 209.91,
+   "sectiuni": [
+    {
+     "nume": "Maestoso: motivul orașului la alămuri, glissando de harpă",
+     "masura": 1,
+     "t_s": 141.77
+    },
+    {
+     "nume": "Allegro: tema festivă (trompete și viori)",
+     "masura": 5,
+     "t_s": 154.4
+    },
+    {
+     "nume": "Tema festivă, tutti",
+     "masura": 13,
+     "t_s": 168.94
+    },
+    {
+     "nume": "Punte: motivul trece din voce în voce",
+     "masura": 21,
+     "t_s": 183.49
+    },
+    {
+     "nume": "Tema A din mișcarea I, la alămuri",
+     "masura": 25,
+     "t_s": 190.76
+    },
+    {
+     "nume": "Final",
+     "masura": 29,
+     "t_s": 198.03
+    }
+   ]
+  }
+ ],
+ "motivul_orasului": {
+  "I": [
+   "A4:1 D5:1.5 E5:.5 F#5:1",
+   "B5:1 A5:3"
+  ],
+  "II": [
+   "F4:1 Bb4:1.5 C5:.5",
+   "D5:1 G5:1 F5:1"
+  ],
+  "III": [
+   "A3:1 D4:1.5 E4:.5 F#4:1",
+   "B4:1 A4:3"
+  ]
+ },
+ "melodii_principale": [
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 6.967,
+   "d": 0.208,
+   "midi": 69
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 7.175,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 7.383,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 7.592,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 7.8,
+   "d": 0.417,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 8.217,
+   "d": 0.417,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 8.633,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 8.842,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 9.05,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 9.258,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 9.467,
+   "d": 0.833,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 10.3,
+   "d": 0.208,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 10.508,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 10.717,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 10.925,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 11.133,
+   "d": 0.417,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 11.55,
+   "d": 0.417,
+   "midi": 83
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 11.967,
+   "d": 0.312,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 12.279,
+   "d": 0.104,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 12.383,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 12.592,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 12.8,
+   "d": 0.833,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 13.633,
+   "d": 0.208,
+   "midi": 69
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 13.842,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 14.05,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 14.258,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 14.467,
+   "d": 0.417,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 14.883,
+   "d": 0.417,
+   "midi": 83
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 15.3,
+   "d": 0.208,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 15.508,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 15.717,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 15.925,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 16.133,
+   "d": 0.417,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 16.55,
+   "d": 0.417,
+   "midi": 86
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 16.967,
+   "d": 0.208,
+   "midi": 83
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 17.175,
+   "d": 0.208,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 17.383,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 17.592,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 17.8,
+   "d": 0.417,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 18.217,
+   "d": 0.417,
+   "midi": 85
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 18.633,
+   "d": 0.417,
+   "midi": 86
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 19.05,
+   "d": 0.208,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 19.258,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Tema A",
+   "instrument": "viori I",
+   "t": 19.467,
+   "d": 0.417,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 33.633,
+   "d": 0.208,
+   "midi": 66
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 33.842,
+   "d": 0.208,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 34.05,
+   "d": 0.208,
+   "midi": 73
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 34.258,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 34.467,
+   "d": 0.417,
+   "midi": 73
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 34.883,
+   "d": 0.417,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 35.3,
+   "d": 0.208,
+   "midi": 69
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 35.508,
+   "d": 0.208,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 35.717,
+   "d": 0.208,
+   "midi": 73
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 35.925,
+   "d": 0.208,
+   "midi": 69
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 36.133,
+   "d": 0.833,
+   "midi": 66
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 36.967,
+   "d": 0.208,
+   "midi": 67
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 37.175,
+   "d": 0.208,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 37.383,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 37.592,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 37.8,
+   "d": 0.417,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 38.217,
+   "d": 0.417,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 38.633,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 38.842,
+   "d": 0.208,
+   "midi": 73
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 39.05,
+   "d": 0.208,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 39.258,
+   "d": 0.208,
+   "midi": 70
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "clarinet",
+   "t": 39.467,
+   "d": 0.833,
+   "midi": 71
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 40.3,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 40.508,
+   "d": 0.208,
+   "midi": 83
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 40.717,
+   "d": 0.208,
+   "midi": 85
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 40.925,
+   "d": 0.208,
+   "midi": 86
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 41.133,
+   "d": 0.417,
+   "midi": 85
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 41.55,
+   "d": 0.417,
+   "midi": 83
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 41.967,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 42.175,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 42.383,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 42.592,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 42.8,
+   "d": 0.833,
+   "midi": 73
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 43.633,
+   "d": 0.208,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 43.842,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 44.05,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 44.258,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 44.467,
+   "d": 0.417,
+   "midi": 81
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 44.883,
+   "d": 0.208,
+   "midi": 79
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 45.092,
+   "d": 0.208,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 45.3,
+   "d": 0.417,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 45.717,
+   "d": 0.417,
+   "midi": 73
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Episod",
+   "instrument": "flaut",
+   "t": 46.133,
+   "d": 0.417,
+   "midi": 69
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "trompete",
+   "t": 60.3,
+   "d": 0.417,
+   "midi": 69
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "trompete",
+   "t": 60.717,
+   "d": 0.625,
+   "midi": 74
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "trompete",
+   "t": 61.342,
+   "d": 0.208,
+   "midi": 76
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "trompete",
+   "t": 61.55,
+   "d": 0.417,
+   "midi": 78
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "trompete",
+   "t": 61.967,
+   "d": 0.417,
+   "midi": 83
+  },
+  {
+   "miscare": "I",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "trompete",
+   "t": 62.383,
+   "d": 1.25,
+   "midi": 81
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 76.367,
+   "d": 1.25,
+   "midi": 65
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 77.617,
+   "d": 0.417,
+   "midi": 67
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 78.033,
+   "d": 0.833,
+   "midi": 70
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 78.867,
+   "d": 1.667,
+   "midi": 74
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 80.533,
+   "d": 0.833,
+   "midi": 72
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 81.367,
+   "d": 0.833,
+   "midi": 70
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 82.2,
+   "d": 0.417,
+   "midi": 69
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 82.617,
+   "d": 0.417,
+   "midi": 67
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 83.033,
+   "d": 0.833,
+   "midi": 63
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 83.867,
+   "d": 1.667,
+   "midi": 72
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 85.533,
+   "d": 0.833,
+   "midi": 69
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 86.367,
+   "d": 1.25,
+   "midi": 65
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 87.617,
+   "d": 0.417,
+   "midi": 67
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 88.033,
+   "d": 0.833,
+   "midi": 70
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 88.867,
+   "d": 1.667,
+   "midi": 77
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 90.533,
+   "d": 0.833,
+   "midi": 74
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 91.367,
+   "d": 0.833,
+   "midi": 75
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 92.2,
+   "d": 0.417,
+   "midi": 74
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 92.617,
+   "d": 0.417,
+   "midi": 72
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 93.033,
+   "d": 0.833,
+   "midi": 69
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema lirică",
+   "instrument": "clarinet",
+   "t": 93.867,
+   "d": 2.5,
+   "midi": 70
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 96.367,
+   "d": 0.833,
+   "midi": 74
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 97.2,
+   "d": 1.25,
+   "midi": 79
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 98.45,
+   "d": 0.417,
+   "midi": 77
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 98.867,
+   "d": 0.833,
+   "midi": 75
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 99.7,
+   "d": 1.25,
+   "midi": 82
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 100.95,
+   "d": 0.417,
+   "midi": 79
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 101.367,
+   "d": 0.833,
+   "midi": 77
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 102.2,
+   "d": 1.25,
+   "midi": 84
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 103.45,
+   "d": 0.417,
+   "midi": 81
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 103.867,
+   "d": 1.667,
+   "midi": 82
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Mijloc",
+   "instrument": "flaut",
+   "t": 105.533,
+   "d": 0.833,
+   "midi": 81
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 106.367,
+   "d": 1.25,
+   "midi": 77
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 107.617,
+   "d": 0.417,
+   "midi": 79
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 108.033,
+   "d": 0.833,
+   "midi": 82
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 108.867,
+   "d": 1.667,
+   "midi": 86
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 110.533,
+   "d": 0.833,
+   "midi": 84
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 111.367,
+   "d": 0.833,
+   "midi": 82
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 112.2,
+   "d": 0.417,
+   "midi": 81
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 112.617,
+   "d": 0.417,
+   "midi": 79
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 113.033,
+   "d": 0.833,
+   "midi": 75
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 113.867,
+   "d": 1.667,
+   "midi": 84
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 115.533,
+   "d": 0.833,
+   "midi": 81
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 116.367,
+   "d": 1.25,
+   "midi": 77
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 117.617,
+   "d": 0.417,
+   "midi": 79
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 118.033,
+   "d": 0.833,
+   "midi": 82
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 118.867,
+   "d": 1.667,
+   "midi": 89
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 120.533,
+   "d": 0.833,
+   "midi": 86
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 121.367,
+   "d": 0.833,
+   "midi": 87
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 122.2,
+   "d": 0.417,
+   "midi": 86
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 122.617,
+   "d": 0.417,
+   "midi": 84
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 123.033,
+   "d": 0.833,
+   "midi": 81
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Tema, la viori",
+   "instrument": "viori I",
+   "t": 123.867,
+   "d": 2.5,
+   "midi": 82
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "clarinet",
+   "t": 126.367,
+   "d": 0.833,
+   "midi": 65
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "clarinet",
+   "t": 127.2,
+   "d": 1.25,
+   "midi": 70
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "clarinet",
+   "t": 128.45,
+   "d": 0.417,
+   "midi": 72
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "clarinet",
+   "t": 128.867,
+   "d": 0.833,
+   "midi": 74
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "clarinet",
+   "t": 129.7,
+   "d": 0.833,
+   "midi": 79
+  },
+  {
+   "miscare": "II",
+   "sectiune": "Coda: motivul orașului",
+   "instrument": "clarinet",
+   "t": 130.533,
+   "d": 0.833,
+   "midi": 77
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Maestoso: motivul orașului",
+   "instrument": "trompete, corni și tromboni, în octave",
+   "t": 144.925,
+   "d": 0.789,
+   "midi": 69
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Maestoso: motivul orașului",
+   "instrument": "trompete, corni și tromboni, în octave",
+   "t": 145.714,
+   "d": 1.184,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Maestoso: motivul orașului",
+   "instrument": "trompete, corni și tromboni, în octave",
+   "t": 146.898,
+   "d": 0.395,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Maestoso: motivul orașului",
+   "instrument": "trompete, corni și tromboni, în octave",
+   "t": 147.293,
+   "d": 0.789,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Maestoso: motivul orașului",
+   "instrument": "trompete, corni și tromboni, în octave",
+   "t": 148.082,
+   "d": 0.789,
+   "midi": 83
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Maestoso: motivul orașului",
+   "instrument": "trompete, corni și tromboni, în octave",
+   "t": 148.872,
+   "d": 2.368,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 154.398,
+   "d": 0.682,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 155.08,
+   "d": 0.227,
+   "midi": 69
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 155.307,
+   "d": 0.455,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 155.762,
+   "d": 0.455,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 156.216,
+   "d": 0.341,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 156.557,
+   "d": 0.114,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 156.671,
+   "d": 0.455,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 157.126,
+   "d": 0.455,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 157.58,
+   "d": 0.455,
+   "midi": 73
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 158.035,
+   "d": 0.682,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 158.716,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 158.944,
+   "d": 0.455,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 159.398,
+   "d": 0.455,
+   "midi": 86
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 159.853,
+   "d": 0.682,
+   "midi": 83
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 160.535,
+   "d": 0.227,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 160.762,
+   "d": 0.909,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 161.671,
+   "d": 0.682,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 162.353,
+   "d": 0.227,
+   "midi": 83
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 162.58,
+   "d": 0.455,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 163.035,
+   "d": 0.455,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 163.489,
+   "d": 0.455,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 163.944,
+   "d": 0.455,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 164.398,
+   "d": 0.455,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 164.853,
+   "d": 0.455,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 165.307,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 165.535,
+   "d": 0.227,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 165.762,
+   "d": 0.455,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 166.216,
+   "d": 0.227,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 166.444,
+   "d": 0.227,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 166.671,
+   "d": 0.455,
+   "midi": 73
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema festivă",
+   "instrument": "trompete și viori",
+   "t": 167.126,
+   "d": 0.909,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 190.762,
+   "d": 0.227,
+   "midi": 69
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 190.989,
+   "d": 0.227,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 191.216,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 191.444,
+   "d": 0.227,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 191.671,
+   "d": 0.455,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 192.126,
+   "d": 0.455,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 192.58,
+   "d": 0.227,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 192.807,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 193.035,
+   "d": 0.227,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 193.262,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 193.489,
+   "d": 0.909,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 194.398,
+   "d": 0.227,
+   "midi": 71
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 194.626,
+   "d": 0.227,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 194.853,
+   "d": 0.227,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 195.08,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 195.307,
+   "d": 0.455,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 195.762,
+   "d": 0.455,
+   "midi": 83
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 196.216,
+   "d": 0.341,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 196.557,
+   "d": 0.114,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 196.671,
+   "d": 0.227,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 196.898,
+   "d": 0.227,
+   "midi": 79
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Tema A din mișcarea I",
+   "instrument": "trompete, viori, flaut",
+   "t": 197.126,
+   "d": 0.909,
+   "midi": 81
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Final: motivul orașului",
+   "instrument": "trompete, viori, flaut",
+   "t": 198.035,
+   "d": 0.455,
+   "midi": 69
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Final: motivul orașului",
+   "instrument": "trompete, viori, flaut",
+   "t": 198.489,
+   "d": 0.682,
+   "midi": 74
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Final: motivul orașului",
+   "instrument": "trompete, viori, flaut",
+   "t": 199.171,
+   "d": 0.227,
+   "midi": 76
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Final: motivul orașului",
+   "instrument": "trompete, viori, flaut",
+   "t": 199.398,
+   "d": 0.455,
+   "midi": 78
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Final: motivul orașului",
+   "instrument": "trompete, viori, flaut",
+   "t": 199.853,
+   "d": 0.455,
+   "midi": 83
+  },
+  {
+   "miscare": "III",
+   "sectiune": "Final: motivul orașului",
+   "instrument": "trompete, viori, flaut",
+   "t": 200.307,
+   "d": 1.364,
+   "midi": 81
+  }
+ ]
+}

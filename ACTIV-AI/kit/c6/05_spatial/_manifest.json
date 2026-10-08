@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "S21",
+    "categorie": "Spațial",
+    "titlu": "Harta culturală a Sibiului — teatre, biblioteci, muzee, schematic",
+    "fisiere": [
+      "05_spatial/S21_harta_culturala.svg",
+      "05_spatial/S21_harta_culturala.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă schematică a centrului istoric cu teatrele, sala Filarmonicii, bibliotecile și muzeele Sibiului, marcate cu pictograme pe tipuri, și o coloană cu șase repere în timp, de la Sala Thalia (1788) la Muzeul „Franz Binder” (1993).",
+    "status": "realizat",
+    "nota": "Surse: fișa de fapte, secțiunea „Cultură vie” (en.wikipedia; patrimoniu.sibiu.ro; zilesinopti.ro; musikland.sonoro.org; ghidulmuzeelor.cimec.ro) și „Prima farmacie (1494)” (sibiu-turism.ro). Repere: 1788 – Sala Thalia (construcție 1787–1788, Martin Hochmeister); 1817 – Muzeul Brukenthal (colecția putea fi vizitată din 1790); 1869 – Biblioteca Asociațiunii ASTRA; 1894 / 1895 – Muzeul de Istorie Naturală (divergență cimec / patrimoniu.sibiu.ro); 1949 – Filarmonica de Stat și Teatrul „Gong”; 1993 – Muzeul „Franz Binder”. Divergențe arătate pe hartă: Emil Sigerus 1997 / 1998; Muzeul de Istorie Naturală, Str. Cetății nr. 1 / 2. Muzeul ASTRA în aer liber – săgeată spre SV (Pădurea Dumbrava, circa 4 km, deschis în 1967). Fără persoane în viață. Geometria: sibiu_map.py; pozițiile instituțiilor sunt cele ORIENTATIVE din c6/AGENT_COMMON.md, cu mici decalaje ca să nu se suprapună pictogramele; parcurile – contururi orientative. Pe piesă: „Hartă schematică, poziții orientative – nu la scară”."
+  },
+  {
+    "cod": "S22",
+    "categorie": "Spațial",
+    "titlu": "Traseul unui festival imaginar prin oraș — hartă ilustrată AI",
+    "fisiere": [
+      "05_spatial/S22_traseul_festivalului.svg",
+      "05_spatial/S22_traseul_festivalului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă ilustrată a unui festival inventat, „Festivalul Lucarnelor Curioase”, cu șapte opriri prin locuri reale ale centrului, de la Turnul Scărilor la Sala Thalia. La fiecare oprire: un spectacol imaginar și un fapt real despre loc.",
+    "status": "realizat",
+    "nota": "IMAGINAR (declarat pe piesă): festivalul („festival imaginar · ediția zero”; „Inventat de AI: nu e FITS și nici alt festival real”), cele șapte spectacole (etichetate „IMAGINAR”), traseul și ordinea opririlor. Numele a fost căutat pe web la 8 octombrie 2026 – niciun festival real cu acest nume. REAL (fișa de fapte): Turnul Scărilor – sec. al XIII-lea, refăcut în 1542, singura poartă păstrată a primei incinte (patrimoniu.sibiu.ro); prima incintă 1191–1224, în jurul Bisericii Sf. Maria – azi Piața Huet (patrimoniu.sibiu.ro); Podul Minciunilor – terminat 1859, inaugurat 17 decembrie 1860, primul pod din fontă, legenda; Muzeul de Istorie a Farmaciei – Piața Mică nr. 26, 1972, fosta farmacie „La Ursul Negru” (sibiu-turism.ro; mesageruldesibiu.ro); Palatul Brukenthal – muzeu deschis oficial în 1817 (poziția în Piața Mare – din AGENT_COMMON.md); Strada Cetății – turnurile Archebuzierilor (1357–1366), Olarilor, Dulgherilor (patrimoniu.sibiu.ro); Sala Thalia – 1787–1788, Martin Hochmeister, Filarmonica din 2004, 482 de locuri (en.wikipedia; tnrs.ro). ORIENTATIV: decupaj mărit din sibiu_map.py; Podul Minciunilor desenat între Piața Huet și Piața Mică. Pe piesă: „Festival și spectacole imaginare · hartă schematică, poziții orientative”. Vezi _fapte_noi_S21_S22.md."
+  }
+]

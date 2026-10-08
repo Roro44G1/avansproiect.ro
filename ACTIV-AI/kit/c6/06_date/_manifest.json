@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "D18",
+    "categorie": "Date",
+    "titlu": "Sibiu, Capitală Culturală Europeană 2007 — ce înseamnă titlul, infografic AI",
+    "fisiere": [
+      "06_date/D18_capitala_culturala_2007.svg",
+      "06_date/D18_capitala_culturala_2007.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Ce este programul european „Capitala Europeană a Culturii”, cum a purtat Sibiul titlul în 2007, împreună cu Luxemburg, și ce a urmat. Cele 337 de proiecte și 2.062 de evenimente sunt desenate la scară, câte un pătrățel pentru fiecare.",
+    "status": "realizat",
+    "nota": "Informațiile generale despre program (lansat în vara lui 1985, cu Atena; ideea din 1983; noul nume din 1999; cine desemnează; câte orașe pe an; beneficii posibile) au fost verificate pe en.wikipedia („European Capital of Culture”) și sunt notate în 06_date/_fapte_noi_D18_D20.md. Faptele despre Sibiu vin din fapte_verificate.md (culturaltourism-network.eu, patrimoniu.sibiu.ro, en.wikipedia „Sibiu” și FITS). Formulările au fost recitite în PDF-ul sursei. Nu apar cifre de vizitatori sau bugete. Media de circa 6 evenimente pe proiect e un calcul propriu, marcat pe piesă. Pentru hoteluri și capacitatea de cazare, sursa nu dă anul final, iar piesa spune asta. Omologul francez al Melinei Mercouri nu e numit, pentru că e persoană în viață. Medalioanele cu orașele sunt ilustrații generice și nu reproduc monumente reale ale Luxemburgului."
+  },
+  {
+    "cod": "D19",
+    "categorie": "Date",
+    "titlu": "Linia timpului culturii sibiene, de la 1525 la 2019 — ilustrată AI",
+    "fisiere": [
+      "06_date/D19_linia_timpului_culturii.svg",
+      "06_date/D19_linia_timpului_culturii.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Douăzeci de repere ale culturii sibiene, de la prima tipografie (1525) la FITS 2019, cu pictograme pentru carte, teatru, muzică și muzee. Dedesubt, o riglă la scară arată cât de departe sunt anii unii de alții.",
+    "status": "realizat",
+    "nota": "Toate reperele vin din fapte_verificate.md. Nu s-au folosit fapte noi. Axa principală nu e la scară: reperele sunt puse la distanțe egale, cu un salt marcat între 1550 și 1774. Piesa declară asta în subtitlu, iar rigla de jos arată aceleași repere la scară. Divergențele sunt marcate „2 surse” și explicate pe piesă: Sala Thalia 1787–1788 (en.wikipedia) sau inaugurare la 1 iunie 1788 (tnrs.ro); Muzeul de Istorie Naturală 1894 (cimec) sau 1895 (patrimoniu.sibiu.ro). La 1544 se păstrează formularea „de pe actualul teritoriu al României”. La 1792 piesa spune că Mozart a fost cântat la Sibiu, nu că a fost aici. La FITS 2019 nu apar cifre de spectatori. Pictogramele sunt generice. Pe piesă nu e numită nicio persoană în viață."
+  },
+  {
+    "cod": "D20",
+    "categorie": "Date",
+    "titlu": "Cât citește clasa mea — infografic AI cu date fictive, declarate",
+    "fisiere": [
+      "06_date/D20_cat_citeste_clasa_mea.svg",
+      "06_date/D20_cat_citeste_clasa_mea.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Un exemplu de lucru: cum ar arăta rezultatele unui sondaj despre lectură într-o clasă imaginară de 26 de elevi. Piesa arată câte cărți citesc elevii, ce genuri preferă, unde citesc, pe hârtie sau pe ecran, ce autori au citit, plus cinci pași ca să faceți sondajul în clasa voastră.",
+    "status": "realizat",
+    "nota": "TOATE datele sunt FICTIVE. Clasa a X-a F, cei 26 de elevi și răspunsurile sunt inventate. Asta e declarat în subtitlu, pe o bandă vizibilă („DATE FICTIVE – exemplu de lucru, nu un sondaj real”), cu eticheta „date fictive” pe fiecare grafic și într-o notă la subsol. Piesa nu se compară cu statistici reale. Autorii sunt doar clasici, morți de peste 100 de ani, cu opere în domeniul public: Ion Creangă, Jules Verne, Mark Twain, plus basme populare (autor anonim). Anii lor sunt verificați pe en.wikipedia și notați în 06_date/_fapte_noi_D18_D20.md. Toate graficele sunt la scară, cu o singură scară pe grafic; un pătrat sau o siluetă înseamnă un elev. Totalurile sunt verificate în cod: 26 de răspunsuri la fiecare întrebare și 43 de cărți."
+  }
+]
