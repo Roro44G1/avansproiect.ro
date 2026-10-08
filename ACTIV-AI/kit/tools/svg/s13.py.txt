@@ -1,0 +1,425 @@
+# -*- coding: utf-8 -*-
+"""S13 – Harta originilor numelor de cartiere (Calupul 3). Rulat din /home/claude/expo/_tools/svg.
+Modulul expune și elementele comune (coordonate, pictograme, text bogat) folosite de s14.py și s15.py."""
+import math
+from lib import *
+import sibiu_map as SM
+
+OUT = "/home/claude/expo/c3/05_spatial/S13_harta_numelor.svg"
+INK = "#3B3326"; INK2 = "#5A4D38"; OCRU_D = "#9A6A10"
+GREEN1 = "#5F9C7B"; GREEN2 = "#3E7F6A"; WATER = "#8EC9CC"; STONE = "#8B5E3C"
+
+# ---------------- coordonate normalizate COMUNE (x spre est, y spre sud) ----------------
+NB = {
+    "Centrul istoric": (0.0, 0.0, "v"),
+    "Trei Stejari": (0.05, 0.28, "v"),
+    "Terezian": (0.0, -0.45, "v"),
+    "Țiglari": (-0.3, -0.78, "v"),
+    "Lazaret": (0.45, -0.15, "v"),
+    "Broscărie": (0.82, 0.05, "v"),
+    "Vasile Aaron": (0.62, 0.45, "v"),
+    "Ștrand": (-0.62, 0.1, "v"),
+    "Turnișor": (-0.88, -0.3, "v"),
+    "Valea Aurie": (-0.55, 0.78, "v"),
+    "Gușterița": (0.75, -0.62, "o"),
+    "Hipodrom": (0.25, 0.65, "o"),
+    "Dumbrăvii": (-0.15, 0.72, "o"),
+    "Piața Cluj": (-0.48, -0.45, "o"),
+}
+UNLOCATED = ["Lupeni", "Reșița", "Tilișca", "Tineretului", "Veteranilor de Război", "Viile Sibiului"]
+
+
+def mk_proj(cx, cy, sx, sy):
+    def P(nx, ny):
+        return (cx + nx * sx, cy + ny * sy)
+    return P
+
+
+# ---------------- text ----------------
+def halo(x, y, s, size, fill=INK, weight=700, italic=False, anchor="start", hw=6, hcol=PARCH, fam="sans"):
+    return text(x, y, s, size, fill, fam, weight, italic, anchor,
+                extra=f'stroke="{hcol}" stroke-width="{hw}" stroke-linejoin="round" paint-order="stroke"')
+
+
+def rich(x, y, parts, size, anchor="start", hcol=None, hw=5, fam="sans"):
+    """parts: list of (text, fill, weight, italic[, size])"""
+    ff = SANS if fam == "sans" else SERIF
+    h = (f' stroke="{hcol}" stroke-width="{hw}" stroke-linejoin="round" paint-order="stroke"' if hcol else "")
+    out = f'<text x="{x:.1f}" y="{y:.1f}" font-family="{ff}" font-size="{size}" text-anchor="{anchor}" xml:space="preserve"{h}>'
+    for p in parts:
+        t, fill, w, it = p[:4]
+        sz = p[4] if len(p) > 4 else size
+        pf = p[5] if len(p) > 5 else fam
+        pff = SANS if pf == "sans" else SERIF
+        out += (f'<tspan fill="{fill}" font-weight="{w}" font-size="{sz}" font-family="{pff}"'
+                f'{" font-style=" + chr(34) + "italic" + chr(34) if it else ""}>{esc(t)}</tspan>')
+    return out + "</text>\n"
+
+
+def rich_width(parts, size, fam="sans"):
+    w = 0
+    for p in parts:
+        t, fill, wt, it = p[:4]
+        sz = p[4] if len(p) > 4 else size
+        pf = p[5] if len(p) > 5 else fam
+        w += measure(t, sz, pf, wt, it)
+    return w
+
+
+# ---------------- coliziuni (verificare automată a etichetelor) ----------------
+class Boxes:
+    def __init__(self):
+        self.items = []
+
+    def add(self, name, x0, y0, x1, y1):
+        self.items.append((name, min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)))
+
+    def text(self, name, x, y, w, size, anchor="start"):
+        x0 = x if anchor == "start" else (x - w / 2 if anchor == "middle" else x - w)
+        self.add(name, x0, y - size * 0.78, x0 + w, y + size * 0.24)
+
+    def report(self, bounds=None, ignore=()):
+        bad = []
+        it = self.items
+        for i in range(len(it)):
+            for j in range(i + 1, len(it)):
+                a, b = it[i], it[j]
+                if a[0].split(":")[0] == b[0].split(":")[0]:
+                    continue
+                if (a[0], b[0]) in ignore or (b[0], a[0]) in ignore:
+                    continue
+                if a[1] < b[3] and b[1] < a[3] and a[2] < b[4] and b[2] < a[4]:
+                    bad.append((a[0], b[0]))
+        if bounds:
+            X0, Y0, X1, Y1 = bounds
+            for a in it:
+                if a[1] < X0 or a[2] < Y0 or a[3] > X1 or a[4] > Y1:
+                    bad.append((a[0], "OUT"))
+        for b in bad:
+            print("  overlap:", b)
+        return bad
+
+
+# ---------------- pictograme (centrate în 0,0, cutie aprox. ±28) ----------------
+def G(x, y, sc, body, filt=True):
+    f = ' filter="url(#shs)"' if filt else ""
+    return f'<g transform="translate({x:.1f},{y:.1f}) scale({sc:.3f})"{f}>{body}</g>\n'
+
+
+def ic_crown():
+    s = (f'<polygon points="-24,12 -27,-10 -13,1 0,-18 13,1 27,-10 24,12" fill="{OCRU}" stroke="{INK}" '
+         f'stroke-width="2" stroke-linejoin="round"/>')
+    s += f'<rect x="-24" y="5" width="48" height="9" rx="2" fill="#C98E1F" stroke="{INK}" stroke-width="1.6"/>'
+    for (px, py) in [(-27, -10), (0, -18), (27, -10)]:
+        s += f'<circle cx="{px}" cy="{py}" r="3.4" fill="{VAR}" stroke="{INK}" stroke-width="1.3"/>'
+    for (px, c) in [(-12, TIGLA), (0, PETROL), (12, TIGLA)]:
+        s += f'<circle cx="{px}" cy="9.5" r="2.4" fill="{c}"/>'
+    return s
+
+
+def ic_tiles():
+    s = f'<polygon points="-29,13 0,-17 29,13" fill="{TIGLA}" stroke="{INK}" stroke-width="2" stroke-linejoin="round"/>'
+    for yy in (-6, 1, 8):
+        hw = 29 * (yy + 17) / 30 - 2
+        n = max(1, int(2 * hw // 8))
+        w = 2 * hw / n
+        d = f"M{-hw:.1f},{yy}"
+        for i in range(n):
+            d += f" a{w/2:.2f},{w/2.4:.2f} 0 0 0 {w:.2f},0"
+        s += f'<path d="{d}" fill="none" stroke="#7E3520" stroke-width="1.5"/>'
+    s += f'<rect x="10" y="-15" width="6" height="12" fill="#963F27" stroke="{INK}" stroke-width="1.4"/>'
+    return s
+
+
+def ic_lazaret():
+    s = f'<circle cx="-7" cy="-24" r="3.2" fill="none" stroke="{INK}" stroke-width="1.8"/>'
+    s += f'<polygon points="-18,-14 -7,-21 4,-14" fill="{INK2}" stroke="{INK}" stroke-width="1.4"/>'
+    s += f'<rect x="-16" y="-14" width="18" height="21" rx="2" fill="#F6D77A" stroke="{INK}" stroke-width="2"/>'
+    s += f'<ellipse cx="-7" cy="-2" rx="3.2" ry="5.5" fill="{OCRU}"/>'
+    s += f'<line x1="-10" y1="-14" x2="-10" y2="7" stroke="{INK}" stroke-width="1"/><line x1="-4" y1="-14" x2="-4" y2="7" stroke="{INK}" stroke-width="1"/>'
+    s += f'<rect x="-19" y="7" width="24" height="5" rx="1.5" fill="{INK2}" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<circle cx="15" cy="6" r="12" fill="{VAR}" stroke="{INK}" stroke-width="1.8"/>'
+    s += f'<rect x="12" y="-2" width="6" height="16" fill="{TIGLA}"/><rect x="7" y="3" width="16" height="6" fill="{TIGLA}"/>'
+    return s
+
+
+def oak(x, y, r=8.0, c1=GREEN1, c2=GREEN2):
+    return (f'<rect x="{x-1.8:.1f}" y="{y:.1f}" width="3.6" height="{r*1.2:.1f}" fill="#6B4A2E"/>'
+            f'<circle cx="{x-r*0.55:.1f}" cy="{y-r*0.1:.1f}" r="{r*0.72:.1f}" fill="{c2}"/>'
+            f'<circle cx="{x+r*0.55:.1f}" cy="{y-r*0.1:.1f}" r="{r*0.72:.1f}" fill="{c2}"/>'
+            f'<circle cx="{x:.1f}" cy="{y-r*0.6:.1f}" r="{r*0.8:.1f}" fill="{c1}"/>')
+
+
+def ic_oaks():
+    s = f'<path d="M-28,18 L28,18 M3,6 L-6,28" stroke="#C9B48E" stroke-width="5" stroke-linecap="round" fill="none"/>'
+    s += oak(-15, 4, 8.5) + oak(15, 4, 8.5) + oak(0, -6, 9.5)
+    return s
+
+
+def ic_tower():
+    s = f'<line x1="-24" y1="22" x2="24" y2="22" stroke="#C9B48E" stroke-width="3"/>'
+    s += f'<rect x="-8" y="-6" width="16" height="28" fill="{ZID}" stroke="{INK}" stroke-width="2"/>'
+    s += f'<polygon points="-11,-6 0,-30 11,-6" fill="{TIGLA}" stroke="{INK}" stroke-width="1.8" stroke-linejoin="round"/>'
+    s += f'<circle cx="0" cy="2" r="4.5" fill="{VAR}" stroke="{INK}" stroke-width="1.4"/>'
+    s += f'<path d="M0,2 L0,-1 M0,2 L2.4,3" stroke="{INK}" stroke-width="1.1"/>'
+    s += f'<path d="M-3.5,22 v-6 a3.5,3.5 0 0 1 7,0 v6 Z" fill="{INK2}"/>'
+    s += f'<rect x="-20" y="10" width="9" height="12" fill="#F1E6D2" stroke="{INK}" stroke-width="1.2"/><polygon points="-21.5,10 -15.5,4 -9.5,10" fill="{TIGLA}"/>'
+    return s
+
+
+def ic_pool():
+    s = f'<rect x="-28" y="-4" width="44" height="24" rx="5" fill="{WATER}" stroke="{INK}" stroke-width="2"/>'
+    for yy in (4, 12):
+        s += f'<line x1="-24" y1="{yy}" x2="12" y2="{yy}" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="4 3"/>'
+    s += f'<path d="M-24,-8 v12 M-19,-8 v12 M-24,-4 h5 M-24,0 h5" stroke="{INK2}" stroke-width="1.5"/>'
+    s += f'<line x1="22" y1="-26" x2="22" y2="20" stroke="{INK}" stroke-width="3"/>'
+    for yy, ln in ((-24, 12), (-14, 10), (-4, 8)):
+        s += f'<line x1="{22-ln}" y1="{yy}" x2="22" y2="{yy}" stroke="{TIGLA}" stroke-width="3" stroke-linecap="round"/>'
+    return s
+
+
+def ic_horseshoe():
+    s = (f'<path d="M-13,-17 C-24,-2 -18,17 0,17 C18,17 24,-2 13,-17" fill="none" stroke="#6E6A60" '
+         f'stroke-width="10" stroke-linecap="round"/>')
+    s += (f'<path d="M-13,-17 C-24,-2 -18,17 0,17 C18,17 24,-2 13,-17" fill="none" stroke="#9A968A" '
+          f'stroke-width="4" stroke-linecap="round"/>')
+    for (px, py) in [(-17, -6), (-15, 6), (-7, 14), (7, 14), (15, 6), (17, -6)]:
+        s += f'<circle cx="{px}" cy="{py}" r="1.6" fill="{INK}"/>'
+    return s
+
+
+def ic_inn():
+    s = f'<rect x="-24" y="-4" width="30" height="24" fill="#F1E6D2" stroke="{INK}" stroke-width="2"/>'
+    s += f'<polygon points="-28,-4 -9,-22 10,-4" fill="{TIGLA}" stroke="{INK}" stroke-width="1.8" stroke-linejoin="round"/>'
+    s += f'<rect x="-14" y="6" width="9" height="14" fill="{INK2}"/><rect x="-21" y="2" width="5" height="5" fill="#CFE3E6" stroke="{INK}" stroke-width="0.8"/>'
+    s += f'<path d="M6,0 H26" stroke="{INK}" stroke-width="2.2"/><path d="M14,0 v5 M24,0 v5" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<rect x="11" y="5" width="16" height="12" rx="2" fill="{OCRU}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<circle cx="19" cy="11" r="3" fill="#FFF3C4"/>'
+    return s
+
+
+def ic_street():
+    s = f'<line x1="0" y1="-4" x2="0" y2="24" stroke="{INK2}" stroke-width="3.5"/>'
+    s += f'<rect x="-28" y="-22" width="56" height="20" rx="3" fill="#2F5D9E" stroke="{VAR}" stroke-width="2.2"/>'
+    s += f'<rect x="-28" y="-22" width="56" height="20" rx="3" fill="none" stroke="{INK}" stroke-width="1"/>'
+    s += f'<text x="0" y="-8" font-family="{SANS}" font-size="10.5" font-weight="700" fill="{VAR}" text-anchor="middle">V. Aaron</text>'
+    s += f'<path d="M-26,22 H26" stroke="{TIGLA}" stroke-width="2.4" stroke-dasharray="5 4"/>'
+    return s
+
+
+def ic_signpost():
+    s = f'<line x1="2" y1="-12" x2="2" y2="24" stroke="{INK2}" stroke-width="3.5"/>'
+    s += f'<polygon points="-28,-22 14,-22 26,-12 14,-2 -28,-2" fill="{OCRU}" stroke="{INK}" stroke-width="1.8" stroke-linejoin="round"/>'
+    s += f'<text x="-8" y="-7" font-family="{SANS}" font-size="13" font-weight="700" fill="{INK}" text-anchor="middle">Cluj</text>'
+    s += f'<line x1="-16" y1="24" x2="20" y2="24" stroke="#C9B48E" stroke-width="3"/>'
+    return s
+
+
+def ic_fortchurch():
+    s = f'<ellipse cx="0" cy="10" rx="27" ry="13" fill="#E9DCC2" stroke="{STONE}" stroke-width="4"/>'
+    s += f'<ellipse cx="0" cy="10" rx="27" ry="13" fill="none" stroke="#C9A27E" stroke-width="1.6" stroke-dasharray="3 4"/>'
+    s += f'<rect x="-15" y="-2" width="20" height="14" fill="{ZID}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<polygon points="-17,-2 -5,-12 7,-2" fill="{TIGLA}" stroke="{INK}" stroke-width="1.3"/>'
+    s += f'<rect x="5" y="-20" width="10" height="32" fill="{ZID}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<polygon points="3,-20 10,-32 17,-20" fill="{TIGLA}" stroke="{INK}" stroke-width="1.3"/>'
+    s += f'<rect x="8" y="-14" width="4" height="5" fill="{INK2}"/>'
+    return s
+
+
+def ic_marsh():
+    s = f'<ellipse cx="-4" cy="14" rx="25" ry="8" fill="{WATER}" stroke="{INK2}" stroke-width="1.4"/>'
+    for (px, h) in [(-20, 22), (-13, 28), (-6, 20), (2, 26)]:
+        s += f'<line x1="{px}" y1="14" x2="{px+2}" y2="{14-h}" stroke="{GREEN2}" stroke-width="2"/>'
+        s += f'<ellipse cx="{px+2}" cy="{14-h+5}" rx="2.2" ry="5" fill="#7A5A3A"/>'
+    for (px, h) in [(10, 18), (16, 24)]:
+        s += f'<line x1="{px}" y1="14" x2="{px+2}" y2="{14-h}" stroke="{GREEN1}" stroke-width="2"/>'
+    return s
+
+
+def fir(x, y, h=30, c=GREEN2):
+    w = h * 0.55
+    return (f'<rect x="{x-2:.1f}" y="{y-4:.1f}" width="4" height="8" fill="#6B4A2E"/>'
+            f'<polygon points="{x:.1f},{y-h:.1f} {x+w/2:.1f},{y-h*0.45:.1f} {x-w/2:.1f},{y-h*0.45:.1f}" fill="{c}"/>'
+            f'<polygon points="{x:.1f},{y-h*0.75:.1f} {x+w*0.62:.1f},{y-h*0.15:.1f} {x-w*0.62:.1f},{y-h*0.15:.1f}" fill="{c}"/>'
+            f'<polygon points="{x:.1f},{y-h*0.5:.1f} {x+w*0.75:.1f},{y-4:.1f} {x-w*0.75:.1f},{y-4:.1f}" fill="{c}"/>')
+
+
+def ic_forest():
+    return fir(-14, 20, 34, GREEN2) + fir(14, 20, 32, "#2F6B59") + fir(0, 24, 40, GREEN1)
+
+
+def ic_center():
+    s = f'<circle cx="0" cy="2" r="25" fill="#EFE3CC" stroke="{STONE}" stroke-width="4"/>'
+    s += f'<circle cx="0" cy="2" r="25" fill="none" stroke="#C9A27E" stroke-width="1.6" stroke-dasharray="4 4"/>'
+    for a in range(0, 360, 60):
+        px = 25 * math.cos(math.radians(a)); py = 2 + 25 * math.sin(math.radians(a))
+        s += f'<rect x="{px-4:.1f}" y="{py-4:.1f}" width="8" height="8" fill="{STONE}"/>'
+    s += f'<rect x="-5" y="-14" width="10" height="26" fill="{ZID}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<polygon points="-7,-14 0,-27 7,-14" fill="{TIGLA}" stroke="{INK}" stroke-width="1.3"/>'
+    s += f'<rect x="-2" y="-8" width="4" height="5" fill="{INK2}"/>'
+    s += f'<rect x="-19" y="2" width="9" height="8" fill="#F1E6D2" stroke="{INK}" stroke-width="1"/><polygon points="-20,2 -14.5,-3 -9,2" fill="{TIGLA}"/>'
+    s += f'<rect x="10" y="2" width="9" height="8" fill="#F1E6D2" stroke="{INK}" stroke-width="1"/><polygon points="9,2 14.5,-3 20,2" fill="{TIGLA}"/>'
+    return s
+
+
+ICONS = {
+    "Centrul istoric": ic_center, "Terezian": ic_crown, "Țiglari": ic_tiles, "Lazaret": ic_lazaret,
+    "Trei Stejari": ic_oaks, "Turnișor": ic_tower, "Ștrand": ic_pool, "Hipodrom": ic_horseshoe,
+    "Valea Aurie": ic_inn, "Vasile Aaron": ic_street, "Piața Cluj": ic_signpost, "Gușterița": ic_fortchurch,
+    "Broscărie": ic_marsh, "Dumbrăvii": ic_forest,
+}
+
+
+def medallion(x, y, name, status, r=34):
+    if status == "v":
+        ring = f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#FBF7EE" stroke="{PETROL}" stroke-width="3.5"/>'
+    else:
+        ring = (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#FBF7EE" stroke="{OCRU_D}" stroke-width="3.2" '
+                f'stroke-dasharray="7 5"/>')
+    sc = (r - 5) / 30
+    return f'<g filter="url(#shs)">{ring}</g>\n' + G(x, y + 1, sc, ICONS[name](), filt=False)
+
+
+def qbadge(x, y, r=11):
+    return (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="{VIOLET}" stroke="{VAR}" stroke-width="2"/>'
+            + text(x, y + r * 0.5, "?", round(r * 1.45), VAR, "serif", 700, anchor="middle"))
+
+
+# ---------------- S13 ----------------
+def main():
+    B = Boxes()
+    s = frame_head("SPAȚIAL · S13", PETROL, "Harta originilor numelor de cartiere",
+                   "de unde vine numele fiecărui cartier · ilustrată AI")
+
+    MX, MY, MW, MH = 80, 230, 1270, 770
+    P = mk_proj(MX + 655, MY + 380, 560, 370)
+    s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+    s += f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.30"/>\n'
+
+    # oraș (pată difuză) + râul Cibin, schematic
+    cx0, cy0 = P(0, 0)
+    s += f'<ellipse cx="{cx0:.1f}" cy="{cy0+10:.1f}" rx="560" ry="350" fill="#E9DFC8" opacity="0.55" filter="url(#blur8)"/>\n'
+    riv = [P(-0.42, -0.15), P(-0.25, -0.18), P(0.0, -0.2), P(0.3, -0.25), P(0.58, -0.3)]
+    rd = smooth_path(riv, closed=False)
+    a0, a1 = riv[0], riv[-1]
+    s += (f'<linearGradient id="rivg" gradientUnits="userSpaceOnUse" x1="{a0[0]:.1f}" y1="{a0[1]:.1f}" x2="{a1[0]:.1f}" y2="{a1[1]:.1f}">'
+          f'<stop offset="0" stop-color="#8FBFD1" stop-opacity="0"/><stop offset="0.18" stop-color="#8FBFD1" stop-opacity="0.9"/>'
+          f'<stop offset="0.82" stop-color="#8FBFD1" stop-opacity="0.9"/><stop offset="1" stop-color="#8FBFD1" stop-opacity="0"/></linearGradient>\n')
+    s += f'<path d="{rd}" fill="none" stroke="url(#rivg)" stroke-width="14" stroke-linecap="round"/>\n'
+    rx_, ry_ = P(0.2, -0.235)
+    s += halo(rx_ + 10, ry_ - 16, "râul Cibin (schematic) →", 15, "#2F7A91", 600, True, "middle", hw=4)
+    B.text("river", rx_ + 10, ry_ - 16, measure("râul Cibin (schematic) →", 15, "sans", 600, True), 15, "middle")
+
+    # drumuri radiale foarte discrete (spre cartiere)
+    for nm, (nx, ny, st) in NB.items():
+        if nm == "Centrul istoric":
+            continue
+        X, Y = P(nx, ny)
+        s += f'<line x1="{cx0:.1f}" y1="{cy0:.1f}" x2="{X:.1f}" y2="{Y:.1f}" stroke="#CDBB9C" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round"/>\n'
+
+    # etichete: (nume, linia „de unde vine numele” ca părți, plasare dx, dy, ancoră, badge „?”)
+    O = OCRU_D
+    LBL = {
+        "Centrul istoric": ([("prima atestare a orașului: 1191 (Cibinium)", INK2, 400, True)], 50, 2, "start", False),
+        "Terezian": ([("după împărăteasa Maria Tereza – orfelinat, 1767–1771", INK2, 400, True)], 44, -6, "start", False),
+        "Țiglari": ([("fabrica de țiglă a lui Gustav Binder, sec. al XIX-lea", INK2, 400, True)], 44, -6, "start", False),
+        "Lazaret": ([("fost lazaret – loc de izolare a bolnavilor", INK2, 400, True)], 44, -6, "start", False),
+        "Trei Stejari": ([("trei stejari la o răscruce, pe un drum care ieșea din cetate", INK2, 400, True)], 0, 57, "middle", False),
+        "Turnișor": ([("„turn mic” · germ. Neppendorf · atestat ", INK2, 400, True), ("1336 / 1327", O, 700, False)], -40, 58, "start", False),
+        "Ștrand": ([("ștrandul ridicat aici în ", INK2, 400, True), ("anii 1920 / 1936", O, 700, False)], -44, 58, "start", False),
+        "Hipodrom": ([("hipodromul cavaleriei, începutul sec. al XIX-lea", INK2, 400, True)], 44, -6, "start", False),
+        "Valea Aurie": ([("după un han local cu același nume", INK2, 400, True)], -44, -6, "end", False),
+        "Vasile Aaron": ([("strada-limită cu Șelimbăr", INK2, 400, True)], 44, -6, "start", False),
+        "Piața Cluj": ([("după orașul Cluj", INK2, 400, True)], 0, 57, "middle", False),
+        "Gușterița": ([("fost sat, germ. Hammersdorf · atestat ", INK2, 400, True), ("1309 / sec. XIII", O, 700, False)], -44, -6, "end", True),
+        "Broscărie": ([("mlaștină desecată · numele: doar ipoteză", INK2, 400, True)], 40, 55, "end", True),
+        "Dumbrăvii": ([("spre Pădurea Dumbrava", INK2, 400, True)], 0, 57, "middle", True),
+    }
+
+    for nm, (nx, ny, st) in NB.items():
+        X, Y = P(nx, ny)
+        r = 40 if nm == "Centrul istoric" else 33
+        s += medallion(X, Y, nm, st, r)
+        B.add(nm + ":med", X - r, Y - r, X + r, Y + r)
+        parts, dx, dy, anc, q = LBL[nm]
+        tx, ty = X + dx, Y + dy
+        name_parts = [(nm, INK, 700, False, 23, "serif")]
+        if st == "o":
+            name_parts.append(("  · poziție orientativă", O, 600, True, 14, "sans"))
+        nw = rich_width(name_parts, 23)
+        ow = rich_width(parts, 15)
+        s += rich(tx, ty, name_parts, 23, anc, PARCH, 6)
+        s += rich(tx, ty + 22, parts, 15, anc, PARCH, 5)
+        B.text(nm + ":name", tx, ty, nw, 23, anc)
+        B.text(nm + ":orig", tx, ty + 22, ow, 15, anc)
+        if q:
+            bx = X + r * 0.72; by = Y - r * 0.72
+            s += qbadge(bx, by)
+
+    # busolă + mențiune
+    s += SM.compass(MX + MW - 70, MY + 82, r=32)
+    B.add("compass", MX + MW - 120, MY + 26, MX + MW - 20, MY + 140)
+    note = "Hartă schematică, poziții aproximative – nu la scară"
+    s += text(MX + 24, MY + MH - 22, note, 19, INK2, "sans", 400, True)
+    B.text("note", MX + 24, MY + MH - 22, measure(note, 19, "sans", 400, True), 19)
+    s += "</g>\n"
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+    # ---------------- coloana dreaptă ----------------
+    LX, LW = 1374, 466
+    # legendă
+    LY, LH = 230, 262
+    s += card(LX, LY, LW, LH)
+    y = LY + 44
+    s += text(LX + 28, y, "Legendă", 26, VAR, "serif", 700)
+    y += 40
+    s += f'<circle cx="{LX+48}" cy="{y-6}" r="16" fill="#FBF7EE" stroke="{PETROL}" stroke-width="3.5"/>\n'
+    p, _ = para(LX + 80, y - 8, "direcție confirmată de surse (loc aproximativ)", 16, LW - 104, CEATA, lh=20)
+    s += p
+    y += 48
+    s += f'<circle cx="{LX+48}" cy="{y-6}" r="16" fill="#FBF7EE" stroke="{OCRU}" stroke-width="3.2" stroke-dasharray="7 5"/>\n'
+    p, _ = para(LX + 80, y - 8, "poziție orientativă, fără sursă pentru loc", 16, LW - 104, CEATA, lh=20)
+    s += p
+    y += 48
+    s += qbadge(LX + 48, y - 6, 13)
+    p, _ = para(LX + 80, y - 8, "originea numelui nu e explicată în sursele noastre", 16, LW - 104, CEATA, lh=20)
+    s += p
+    y += 48
+    s += text(LX + 28, y - 1, "1336 / 1327", 15, OCRU, "sans", 700)
+    s += text(LX + 130, y - 1, "surse diferite – arătăm ambele", 16, CEATA)
+    assert y + 14 <= LY + LH, ("legend", y)
+
+    # nume de cercetat
+    RY, RH = 510, 490
+    s += card(LX, RY, LW, RH, fill="#1E2B38", stroke=OCRU)
+    y = RY + 44
+    s += text(LX + 28, y, "Nume de cercetat de clasă", 26, VAR, "serif", 700)
+    y += 26
+    s += text(LX + 28, y, "nu sunt pe hartă: de localizat de elevi pe o hartă reală", 15, OCRU, "sans", 400, True)
+    y += 34
+    Q = [
+        ("Lupeni", "Ce crezi că înseamnă numele? Mai există și alte locuri numite așa?"),
+        ("Reșița", "Poartă numele orașului Reșița. De ce ar primi un cartier al Sibiului numele altui oraș?"),
+        ("Tilișca", "Tilișca e și o comună din Munții Cindrel, la circa 26 km de Sibiu. Ce legătură o fi?"),
+        ("Tineretului", "Pentru cine a fost gândit un cartier „al tineretului”? Când a apărut?"),
+        ("Veteranilor de Război", "Despre ce veterani și ce război e vorba? De când poartă acest nume?"),
+        ("Viile Sibiului", "Au fost aici vii odinioară? Caută o hartă veche și verifică!"),
+    ]
+    for nm, qq in Q:
+        s += f'<rect x="{LX+28}" y="{y-14}" width="12" height="12" rx="2" fill="none" stroke="{OCRU}" stroke-width="2"/>\n'
+        s += text(LX + 50, y - 2, nm, 18, VAR, "sans", 700)
+        p, yn = para(LX + 50, y + 19, qq, 15, LW - 78, CEATA, lh=19, italic=True)
+        s += p
+        y = yn + 3
+    assert y - 3 <= RY + RH - 12, ("research box overflow", y, RY + RH)
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    bad = B.report(bounds=(MX + 6, MY + 6, MX + MW - 6, MY + MH - 6))
+    print("overlaps:", len(bad))
+
+
+if __name__ == "__main__":
+    main()

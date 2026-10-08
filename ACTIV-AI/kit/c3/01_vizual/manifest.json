@@ -1,0 +1,95 @@
+[
+ {
+  "cod": "V23",
+  "categorie": "Vizual",
+  "titlu": "Fiecare cartier ca un personaj — galerie de 6 portrete AI (Terezian, Lazaret, Turnișor, Țiglari, Hipodrom, Ștrand)",
+  "fisiere": [
+   "01_vizual/V23_card_canva.png",
+   "01_vizual/canva_miniaturi/V23a_terezian.jpg",
+   "01_vizual/canva_miniaturi/V23b_lazaret.jpg",
+   "01_vizual/canva_miniaturi/V23c_turnisor.jpg",
+   "01_vizual/canva_miniaturi/V23d_tiglari.jpg",
+   "01_vizual/canva_miniaturi/V23e_hipodrom.jpg",
+   "01_vizual/canva_miniaturi/V23f_strand.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Șase cartiere ca personaje imaginate: o bătrână cu o biserică în miniatură (Terezian), un îngrijitor cu felinar lângă gară (Lazaret), o tânără între turnul bisericii și blocuri (Turnișor), un meșter cu o țiglă (Țiglari), un călăreț (Hipodrom), o înotătoare (Ștrand).",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXZzWocyY",
+    "url": "https://www.canva.com/M/MAHXZzWocyY",
+    "eticheta": "Terezian"
+   },
+   {
+    "media_id": "MAHXZ1ohuKk",
+    "url": "https://www.canva.com/M/MAHXZ1ohuKk",
+    "eticheta": "Lazaret"
+   },
+   {
+    "media_id": "MAHXZ1oart0",
+    "url": "https://www.canva.com/M/MAHXZ1oart0",
+    "eticheta": "Turnișor"
+   },
+   {
+    "media_id": "MAHXZ99ofwA",
+    "url": "https://www.canva.com/M/MAHXZ99ofwA",
+    "eticheta": "Țiglari"
+   },
+   {
+    "media_id": "MAHXZwsbD4w",
+    "url": "https://www.canva.com/M/MAHXZwsbD4w",
+    "eticheta": "Hipodrom"
+   },
+   {
+    "media_id": "MAHXZ5bONP8",
+    "url": "https://www.canva.com/M/MAHXZ5bONP8",
+    "eticheta": "Ștrand"
+   }
+  ],
+  "nota": "Personaje fictive, alegorice; fiecare pornește de la originea reală a numelui cartierului (fișa de fapte, secțiunea „Cartierele Sibiului”). Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ },
+ {
+  "cod": "V24",
+  "categorie": "Vizual",
+  "titlu": "Fabrica de țiglă a lui Gustav Binder, reimaginată AI — Țiglari în secolul al XIX-lea",
+  "fisiere": [
+   "01_vizual/V24_card_canva.png",
+   "01_vizual/canva_miniaturi/V24_fabrica_tigla_binder.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "O fabrică de țiglă la marginea de nord a unui oraș transilvan, în secolul al XIX-lea: gropi de lut cu apă de ploaie, cuptoare cu coșuri înalte, șoproane cu țigle puse la uscat, o căruță încărcată și, în depărtare, acoperișurile și turnurile orașului vechi.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXZw1uoYQ",
+    "url": "https://www.canva.com/M/MAHXZw1uoYQ",
+    "eticheta": "reconstituire liberă, nu documentară"
+   }
+  ],
+  "nota": "Fapt verificat: cartierul Țiglari își trage numele de la fabrica de țiglă a lui Gustav Binder, secolul al XIX-lea (turnulsfatului.ro, 2014; en.wikipedia). Fișa nu descrie fabrica: imaginea e o reconstituire liberă. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ },
+ {
+  "cod": "V25",
+  "categorie": "Vizual",
+  "titlu": "Ștrandul din anii 1920 — scenă de vară reconstituită AI, în stil de carte poștală veche",
+  "fisiere": [
+   "01_vizual/V25_card_canva.png",
+   "01_vizual/canva_miniaturi/V25_strand_carte_postala.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Carte poștală interbelică colorată manual: un bazin mare cu apă turcoaz, un bazin mic pentru copii, o trambulină înaltă de beton, cabine albe, înotători văzuți de departe, plopi și munții albaștri la orizont. Fără text pe imagine.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXZ8bUnN4",
+    "url": "https://www.canva.com/M/MAHXZ8bUnN4",
+    "eticheta": "carte poștală imaginată, stil interbelic"
+   }
+  ],
+  "nota": "Sursele diferă: „anii 1920” (turnulsfatului.ro, 2014; en.wikipedia) sau inaugurarea la 12 iulie 1936, cu bazin olimpic, bazin pentru copii și, ulterior, trambulina „Turnul lui Phleps” (tribuna.ro). Nu reproduce o carte poștală reală. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "D11",
+    "categorie": "Date",
+    "titlu": "Cartierele Sibiului: cel mai vechi, cel mai nou, cel mai populat — infografic AI",
+    "fisiere": [
+      "06_date/D11_vechi_nou_populat.svg",
+      "06_date/D11_vechi_nou_populat.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Trei podiumuri construite doar din ce spun sursele: cel mai vechi (centrul istoric, 1191, apoi Terezian), cel mai nou (Valea Aurie, ultimul cartier de blocuri, cu o mini-cronologie 1948–1972) și cel mai populat, unde podiumul rămâne gol, pentru că nu există date oficiale de populație pe cartiere. Treptele punctate arată unde sursele nu dau un răspuns.",
+    "status": "realizat",
+    "nota": "Surse: en.wikipedia (Sibiu, Terezian, Gușterița, Turnișor, Valea Aurie), kirchenburgen.org, turnulsfatului.ro (2014, 2016), recensământul 2021, toate preluate din fapte_verificate.md. Nicio cifră de populație pe cartier și niciun grafic de populație. Pentru Hipodrom se folosește doar formularea „cartierul care s-a dezvoltat cel mai mult până în ’89”, cu precizarea că asta nu înseamnă „cel mai populat”. Divergențele sunt arătate ca atare: Gușterița 1309 sau „secolul al XIII-lea”, Turnișor 1336 sau 1327. Anul cartierului Valea Aurie nu e dat de sursă. Criteriile podiumurilor sunt formulate de autorii artefactului, iar ilustrațiile (zid, case, blocuri, biserici fortificate) sunt schematice, nu reproduc clădiri reale."
+  },
+  {
+    "cod": "D12",
+    "categorie": "Date",
+    "titlu": "Linia timpului cartierului Ștrand, din anii 1920 până azi — ilustrată AI",
+    "fisiere": [
+      "06_date/D12_linia_timpului_strand.svg",
+      "06_date/D12_linia_timpului_strand.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Linie a timpului ilustrată, pe două rânduri. Începe cu un preludiu: Livada Măcelarilor, canalul aprobat de Leopold I (1702–1703) și calea ferată din 1897. Urmează nașterea ștrandului, cu cele două date din surse („anii 1920” sau 12 iulie 1936), bazinele proiectate de Walther Schöpp și Turnul lui Phleps. Continuă cu Ștrandul CSM (1948), cartierul Ștrand (1970), închiderea din 2002, „Aqua Fun” (2008) și redeschiderea din 23 iunie 2021.",
+    "status": "realizat",
+    "nota": "Surse: old.tribuna.ro („Cartierele Sibiului, ieri și azi – Ștrandul”, partea I), turnulsfatului.ro (2014, 2016) și en.wikipedia (Ștrand), preluate din fapte_verificate.md. Divergența dintre „anii 1920” (turnulsfatului.ro, en.wikipedia) și „12 iulie 1936” (old.tribuna.ro) este afișată explicit, cu două noduri pe linie. Anul trambulinei nu e dat de surse, așa că apare „câțiva ani mai târziu”. Anul închiderii din pandemie nu este precizat. Intervalele nu sunt la scară, iar desenele (canal, tren, bazine, trambulină, blocuri, poartă, valuri) sunt schematice."
+  }
+]

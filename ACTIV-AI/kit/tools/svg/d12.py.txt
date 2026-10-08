@@ -1,0 +1,360 @@
+# -*- coding: utf-8 -*-
+"""D12 – Linia timpului cartierului Ștrand, din anii 1920 până azi – ilustrată.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md, „Ștrandul și cartierul Ștrand” + „Cartierele de blocuri”.
+Divergența „anii 1920” (turnulsfatului.ro, en.wikipedia) vs. „12 iulie 1936” (old.tribuna.ro) e arătată ca atare."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c3/06_date/D12_linia_timpului_strand.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+GREY = "#8A96A3"
+LINE = "#2A3845"
+WATER = "#1F9AA8"
+WATER_L = "#63C6CF"
+DECK = "#CFC5B3"
+GRASS = "#3E8E5A"
+GRASS_D = "#2F6E46"
+
+s = frame_head("DATE · D12", BLUE, "Linia timpului cartierului Ștrand, din anii 1920 până azi",
+               "linie a timpului ilustrată · de la Livada Măcelarilor la azi · intervalele nu sunt la scară",
+               title_size=56)
+
+# ------------------------------------------------------------------ geometrie
+ROW = {
+    "A": dict(lab=240, box=252, bh=104, line=386, year=436, title=462, body=488, bottom=578),
+    "B": dict(lab=622, box=634, bh=104, line=768, year=818, title=844, body=870, bottom=962),
+}
+G = 16
+
+
+def node(x, y, col, r=19):
+    return (f'<circle cx="{x:.1f}" cy="{y}" r="{r}" fill="{BG}" stroke="{col}" stroke-width="5" filter="url(#glow)"/>'
+            f'<circle cx="{x:.1f}" cy="{y}" r="7" fill="{col}"/>\n')
+
+
+def period(x0, x1, y, label, col):
+    o = text(x0, y, label, 15, col, "sans", 700, extra='letter-spacing="1.5"')
+    lw = measure(label, 15, "sans", 700, letter_spacing=1.5)
+    o += f'<line x1="{x0+lw+14:.1f}" y1="{y-5}" x2="{x1}" y2="{y-5}" stroke="{col}" stroke-width="2" opacity="0.55"/>\n'
+    return o
+
+
+def box(x, y, w, h):
+    return f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="{h}" rx="14" fill="{CARD}" stroke="#2A3845" stroke-width="1.5"/>\n'
+
+
+def clip_open(cid, x, y, w, h):
+    return (f'<clipPath id="{cid}"><rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="{h}" rx="14"/></clipPath>'
+            f'<g clip-path="url(#{cid})">\n')
+
+
+def event_text(x, w, r, year, title, body, col, ysize=30):
+    R = ROW[r]
+    o = text(x + w / 2, R["year"], year, ysize, col, "serif", 700, anchor="middle")
+    o += text(x + w / 2, R["title"], title, 18, VAR, "sans", 700, anchor="middle")
+    yy = R["body"]
+    for ln in wrap(body, w - 24, 16):          # „~” = spațiu care nu se rupe (ex. „10~m”)
+        o += text(x + w / 2, yy, ln.replace("~", "\u00a0"), 16, CEATA, anchor="middle")
+        yy += 21
+    assert yy - 21 <= R["bottom"], (year, yy)
+    return o
+
+
+# ------------------------------------------------------------------ ilustrații (cx = centrul cutiei, by = baza cutiei)
+def waves(x0, x1, y, col=WATER_L, amp=4, step=16, sw=2.5):
+    d = f"M{x0:.1f},{y}"
+    x = x0
+    up = True
+    while x < x1:
+        d += f" q{step/2:.1f},{-amp if up else amp} {step:.1f},0"
+        x += step
+        up = not up
+    return f'<path d="{d}" fill="none" stroke="{col}" stroke-width="{sw}" stroke-linecap="round"/>\n'
+
+
+def ic_meadow(cx, by):
+    o = f'<rect x="{cx-140}" y="{by-26}" width="280" height="26" fill="{GRASS_D}"/>\n'
+    for dx, r in [(-80, 20), (-10, 24), (66, 19)]:
+        o += f'<rect x="{cx+dx-3}" y="{by-50}" width="6" height="26" fill="#6B4E2E"/>\n'
+        o += f'<circle cx="{cx+dx}" cy="{by-58-r/2}" r="{r}" fill="{GRASS}"/>\n'
+        for ax, ay in [(-8, -4), (6, -12), (9, 4), (-3, 8)]:
+            o += f'<circle cx="{cx+dx+ax*r/20:.1f}" cy="{by-58-r/2+ay*r/20:.1f}" r="3" fill="{TIGLA}"/>\n'
+    for gx in range(-130, 140, 22):
+        o += f'<path d="M{cx+gx},{by-26} l3,-8 l3,8" fill="none" stroke="#5DAA74" stroke-width="2"/>\n'
+    return o
+
+
+def ic_canal(cx, by):
+    o = f'<rect x="{cx-140}" y="{by-104}" width="280" height="104" fill="{GRASS_D}"/>\n'
+    o += f'<path d="M{cx-140},{by-62} C{cx-60},{by-74} {cx+40},{by-46} {cx+140},{by-58} L{cx+140},{by-30} C{cx+40},{by-18} {cx-60},{by-46} {cx-140},{by-34} Z" fill="{WATER}"/>\n'
+    o += waves(cx - 120, cx - 40, by - 50, WATER_L, 2.5, 12, 2)
+    o += waves(cx + 40, cx + 120, by - 40, WATER_L, 2.5, 12, 2)
+    # plută cu lăzi
+    o += f'<rect x="{cx-30}" y="{by-52}" width="56" height="10" rx="3" fill="#8A6A42"/>\n'
+    o += f'<rect x="{cx-24}" y="{by-66}" width="18" height="14" fill="#C9A26B"/><rect x="{cx-4}" y="{by-64}" width="22" height="12" fill="#B48A55"/>\n'
+    o += text(cx - 130, by - 82, "Gura Râului", 13, VAR, "sans", 600)
+    o += text(cx + 130, by - 82, "Citadelă →", 13, VAR, "sans", 600, anchor="end")
+    return o
+
+
+def ic_train(cx, by):
+    o = f'<rect x="{cx-140}" y="{by-22}" width="280" height="22" fill="#24313D"/>\n'
+    o += f'<line x1="{cx-140}" y1="{by-26}" x2="{cx+140}" y2="{by-26}" stroke="{GREY}" stroke-width="3"/>\n'
+    for tx in range(-136, 140, 16):
+        o += f'<rect x="{cx+tx}" y="{by-25}" width="8" height="5" fill="#5A4632"/>\n'
+    # locomotivă
+    lx = cx - 70
+    o += f'<rect x="{lx}" y="{by-62}" width="70" height="28" rx="4" fill="#3B4654"/>\n'
+    o += f'<rect x="{lx+46}" y="{by-80}" width="28" height="46" rx="3" fill="#4A5767"/>\n'
+    o += f'<rect x="{lx+52}" y="{by-74}" width="14" height="12" fill="{OCRU}" opacity="0.8"/>\n'
+    o += f'<rect x="{lx+12}" y="{by-78}" width="12" height="16" fill="#3B4654"/>\n'
+    for wx in (lx + 14, lx + 40, lx + 62):
+        o += f'<circle cx="{wx}" cy="{by-32}" r="8" fill="{TIGLA}" stroke="{BG}" stroke-width="2"/>\n'
+    # vagon
+    o += f'<rect x="{cx+14}" y="{by-64}" width="70" height="30" rx="4" fill="{TIGLA}"/>\n'
+    for wx2 in (cx + 22, cx + 42, cx + 62):
+        o += f'<rect x="{wx2}" y="{by-58}" width="14" height="10" fill="{VAR}" opacity="0.85"/>\n'
+    for wx in (cx + 28, cx + 70):
+        o += f'<circle cx="{wx}" cy="{by-32}" r="7" fill="#3B4654" stroke="{BG}" stroke-width="2"/>\n'
+    o += f'<line x1="{cx}" y1="{by-48}" x2="{cx+14}" y2="{by-48}" stroke="#3B4654" stroke-width="4"/>\n'
+    # fum
+    for i, (dx, dy, r) in enumerate([(18, -88, 8), (6, -96, 10), (-10, -98, 12)]):
+        o += f'<circle cx="{lx+dx}" cy="{by+dy}" r="{r}" fill="{CEATA}" opacity="{0.55 - i*0.12:.2f}"/>\n'
+    return o
+
+
+def ic_pools(x, by, w):
+    """Bazin olimpic + bazin pentru copii, cu etichete."""
+    o = f'<rect x="{x}" y="{by-104}" width="{w}" height="104" fill="#26343F"/>\n'
+    px, py, pw, ph = x + 26, by - 86, 214, 66
+    o += f'<rect x="{px-8}" y="{py-8}" width="{pw+16}" height="{ph+16}" rx="4" fill="{DECK}"/>\n'
+    o += f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" fill="{WATER}"/>\n'
+    for i in range(1, 6):
+        yy = py + i * ph / 6
+        o += f'<line x1="{px+6}" y1="{yy:.1f}" x2="{px+pw-6}" y2="{yy:.1f}" stroke="{VAR}" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.8"/>\n'
+    o += waves(px + 20, px + 120, py + 14, WATER_L, 2, 10, 1.5)
+    kx, ky, kw, kh = px + pw + 32, by - 64, 62, 44
+    o += f'<rect x="{kx-7}" y="{ky-7}" width="{kw+14}" height="{kh+14}" rx="18" fill="{DECK}"/>\n'
+    o += f'<rect x="{kx}" y="{ky}" width="{kw}" height="{kh}" rx="14" fill="{WATER_L}"/>\n'
+    o += waves(kx + 10, kx + kw - 10, ky + 22, VAR, 2, 10, 1.5)
+    # etichete
+    lx = kx + kw + 24
+    o += text(lx, by - 78, "bazin olimpic", 14, VAR, "sans", 600)
+    o += text(lx, by - 60, "+ bazin pentru copii", 14, VAR, "sans", 600)
+    o += text(lx, by - 34, "planuri: arhitectul", 13, CEATA, "sans", 400, True)
+    o += text(lx, by - 17, "Walther Schöpp", 14, OCRU, "sans", 700)
+    return o
+
+
+def ic_tower(cx, by, removed_top=False):
+    o = f'<rect x="{cx-180}" y="{by-22}" width="360" height="22" fill="{WATER}"/>\n'
+    o += waves(cx - 170, cx + 170, by - 14, WATER_L, 2.5, 14, 2)
+    tx = cx - 50
+    o += f'<rect x="{tx}" y="{by-98}" width="10" height="78" fill="{CEATA}"/>\n'
+    o += f'<rect x="{tx+30}" y="{by-98}" width="10" height="78" fill="{CEATA}"/>\n'
+    for k in range(7):
+        yy = by - 30 - k * 10
+        o += f'<line x1="{tx+10}" y1="{yy}" x2="{tx+30}" y2="{yy}" stroke="{GREY}" stroke-width="2"/>\n'
+    plats = [(3, by - 38, 52), (5, by - 60, 72), (10, by - 96, 92)]
+    for m, py, ln in plats:
+        if removed_top and m == 10:
+            o += f'<rect x="{tx+30}" y="{py-4}" width="{ln}" height="8" fill="none" stroke="{TIGLA}" stroke-width="2" stroke-dasharray="5 4"/>\n'
+            o += text(tx + 40 + ln, py + 5, "10 m – demontată", 13, TIGLA, "sans", 700)
+        else:
+            o += f'<rect x="{tx+30}" y="{py-4}" width="{ln}" height="8" rx="2" fill="{OCRU}"/>\n'
+            o += text(tx + 40 + ln, py + 5, f"{m} m", 14, VAR, "sans", 700)
+    return o
+
+
+def ic_csm(cx, by):
+    o = f'<rect x="{cx-180}" y="{by-104}" width="360" height="104" fill="#26343F"/>\n'
+    o += f'<rect x="{cx-110}" y="{by-58}" width="170" height="46" fill="{DECK}"/>\n'
+    o += f'<rect x="{cx-102}" y="{by-52}" width="154" height="34" fill="{WATER}"/>\n'
+    o += waves(cx - 92, cx + 40, by - 36, WATER_L, 2, 10, 1.5)
+    # panou cu nume
+    o += f'<rect x="{cx+76}" y="{by-90}" width="4" height="78" fill="{CEATA}"/>\n'
+    o += f'<rect x="{cx+46}" y="{by-94}" width="88" height="30" rx="4" fill="{VIOLET}"/>\n'
+    o += text(cx + 90, by - 73, "CSM", 17, VAR, "sans", 700, anchor="middle", extra='letter-spacing="2"')
+    o += text(cx - 110, by - 76, "„Ștrandul CSM”", 15, VAR, "serif", 700, True)
+    return o
+
+
+def ic_district(cx, by):
+    o = f'<rect x="{cx-180}" y="{by-104}" width="360" height="104" fill="#26343F"/>\n'
+    # pantă cu vile
+    o += f'<path d="M{cx-180},{by} L{cx-180},{by-74} C{cx-90},{by-62} {cx-40},{by-30} {cx-10},{by-14} L{cx-10},{by} Z" fill="{GRASS_D}"/>\n'
+    for vx, vy in [(-124, -70), (-92, -56), (-60, -38)]:
+        o += f'<rect x="{cx+vx}" y="{by+vy}" width="20" height="14" fill="#E3D9C6"/>\n'
+        o += poly([(cx + vx - 3, by + vy), (cx + vx + 10, by + vy - 10), (cx + vx + 23, by + vy)], fill=TIGLA)
+    # blocuri tip
+    for k, (bx, nfl) in enumerate([(0, 8), (34, 9), (68, 8), (102, 9)]):
+        h = 10 + nfl * 8
+        o += f'<rect x="{cx+bx}" y="{by-h}" width="28" height="{h}" fill="#C9D3DC"/>\n'
+        for f in range(nfl):
+            for c in range(3):
+                o += f'<rect x="{cx+bx+4+c*8}" y="{by-h+5+f*8}" width="4" height="4" fill="{BG}" opacity="0.6"/>\n'
+    # etichete I / II
+    for lab, lx in [("I", cx - 70), ("II", cx + 64)]:
+        o += f'<rect x="{lx-16}" y="{by-102}" width="32" height="22" rx="11" fill="{VIOLET}"/>\n'
+        o += text(lx, by - 86, lab, 14, VAR, "sans", 700, anchor="middle")
+    return o
+
+
+def ic_closed(cx, by):
+    o = f'<rect x="{cx-180}" y="{by-104}" width="360" height="104" fill="#26343F"/>\n'
+    # gard / poartă
+    for k in range(-5, 6):
+        x = cx + k * 20
+        o += f'<rect x="{x-3}" y="{by-84}" width="6" height="74" fill="{GREY}"/>\n'
+        o += poly([(x - 5, by - 84), (x, by - 94), (x + 5, by - 84)], fill=GREY)
+    o += f'<rect x="{cx-110}" y="{by-70}" width="220" height="6" fill="{GREY}"/>\n'
+    o += f'<rect x="{cx-110}" y="{by-30}" width="220" height="6" fill="{GREY}"/>\n'
+    # lanț și lacăt
+    o += f'<path d="M{cx-60},{by-62} Q{cx},{by-36} {cx+60},{by-62}" fill="none" stroke="{CEATA}" stroke-width="4" stroke-dasharray="6 3"/>\n'
+    o += f'<path d="M{cx-11},{by-50} v-8 a11,11 0 0 1 22,0 v8" fill="none" stroke="{OCRU}" stroke-width="5"/>\n'
+    o += f'<rect x="{cx-17}" y="{by-50}" width="34" height="28" rx="5" fill="{OCRU}"/>\n'
+    o += f'<circle cx="{cx}" cy="{by-38}" r="4" fill="{BG}"/>\n'
+    o += f'<rect x="{cx+66}" y="{by-104+8}" width="62" height="26" rx="13" fill="{TIGLA}"/>\n'
+    o += text(cx + 97, by - 104 + 26, "6 ani", 15, VAR, "sans", 700, anchor="middle")
+    return o
+
+
+def ic_aquafun(cx, by):
+    o = f'<rect x="{cx-180}" y="{by-104}" width="360" height="104" fill="#26343F"/>\n'
+    o += f'<rect x="{cx-180}" y="{by-22}" width="360" height="22" fill="{WATER}"/>\n'
+    o += ic_tower(cx - 70, by, removed_top=True)
+    o += waves(cx + 60, cx + 160, by - 14, WATER_L, 2.5, 14, 2)
+    o += f'<rect x="{cx+34}" y="{by-66}" width="124" height="26" rx="13" fill="{PETROL}"/>\n'
+    o += text(cx + 96, by - 48, "5.000 de locuri", 13, VAR, "sans", 700, anchor="middle")
+    return o
+
+
+def ic_reopen(cx, by):
+    o = f'<rect x="{cx-180}" y="{by-104}" width="360" height="104" fill="#26343F"/>\n'
+    o += f'<rect x="{cx-180}" y="{by-30}" width="360" height="30" fill="{WATER}"/>\n'
+    o += waves(cx - 170, cx + 170, by - 20, WATER_L, 3, 14, 2.5)
+    o += waves(cx - 160, cx + 160, by - 8, WATER_L, 2, 12, 1.8)
+    # soare
+    sx, sy = cx + 80, by - 66
+    for k in range(10):
+        a = k * math.pi / 5
+        o += (f'<line x1="{sx+22*math.cos(a):.1f}" y1="{sy+22*math.sin(a):.1f}" x2="{sx+30*math.cos(a):.1f}" '
+              f'y2="{sy+30*math.sin(a):.1f}" stroke="{OCRU}" stroke-width="3" stroke-linecap="round"/>\n')
+    o += f'<circle cx="{sx}" cy="{sy}" r="16" fill="{OCRU}"/>\n'
+    # poartă deschisă
+    o += f'<rect x="{cx-110}" y="{by-88}" width="8" height="58" fill="{CEATA}"/><rect x="{cx-30}" y="{by-88}" width="8" height="58" fill="{CEATA}"/>\n'
+    o += poly([(cx - 102, by - 84), (cx - 76, by - 74), (cx - 76, by - 34), (cx - 102, by - 36)], fill="none", stroke=CEATA, stroke_width=3)
+    o += poly([(cx - 30, by - 84), (cx - 56, by - 74), (cx - 56, by - 34), (cx - 30, by - 36)], fill="none", stroke=CEATA, stroke_width=3)
+    o += text(cx - 66, by - 94, "deschis", 13, VAR, "sans", 700, anchor="middle")
+    return o
+
+
+# ------------------------------------------------------------------ RÂNDUL A: preludiu + nașterea ștrandului
+RA = ROW["A"]
+by = RA["box"] + RA["bh"]
+# linia rândului A (segment gri pentru preludiu, ocru pentru ștrand)
+PW = 280
+pre_x = [80 + i * (PW + G) for i in range(3)]          # 80, 376, 672 -> se termină la 952
+DX0, DX1 = 972, 1500                                    # divergența
+PX0, PX1 = 1520, 1840                                   # Turnul lui Phleps
+
+s += f'<line x1="80" y1="{RA["line"]}" x2="{DX0-10}" y2="{RA["line"]}" stroke="{GREY}" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 0"/>\n'
+s += f'<line x1="{DX0-10}" y1="{RA["line"]}" x2="1812" y2="{RA["line"]}" stroke="{OCRU}" stroke-width="8"/>\n'
+s += poly([(1812, RA["line"] - 13), (1838, RA["line"]), (1812, RA["line"] + 13)], fill=OCRU)
+
+s += period(80, 952, RA["lab"], "PRELUDIU · ÎNAINTE DE ȘTRAND", GREY)
+s += period(DX0, 1840, RA["lab"], "NAȘTEREA ȘTRANDULUI · ANII 1920 SAU 1936, DUPĂ SURSĂ", OCRU)
+
+pre = [
+    ("numele vechi", "Livada Măcelarilor",
+     "Zona se numea „Fleischhauer Wiese” – Pajiștea sau Livada Măcelarilor.", ic_meadow, 24),
+    ("1702–1703", "Un canal pentru Citadelă",
+     "Leopold I aprobă (1702) canalul care aducea materiale de la Gura Râului; gata în 1703, folosit circa 50 de ani.", ic_canal, 30),
+    ("1897", "Vine trenul",
+     "Calea ferată Sibiu – Vințu de Jos taie zona.", ic_train, 30),
+]
+for i, (yr, ti, body, ic, ysz) in enumerate(pre):
+    x = pre_x[i]
+    s += box(x, RA["box"], PW, RA["bh"])
+    s += clip_open(f"cA{i}", x, RA["box"], PW, RA["bh"]) + ic(x + PW / 2, by) + "</g>\n"
+    s += f'<line x1="{x+PW/2}" y1="{by}" x2="{x+PW/2}" y2="{RA["line"]-19}" stroke="{GREY}" stroke-width="2"/>\n'
+    s += node(x + PW / 2, RA["line"], GREY)
+    s += event_text(x, PW, "A", yr, ti, body, GREY if i == 0 else CEATA, ysz)
+
+# divergența: o singură ilustrație, două date
+DW = DX1 - DX0
+s += box(DX0, RA["box"], DW, RA["bh"])
+s += clip_open("cAd", DX0, RA["box"], DW, RA["bh"]) + ic_pools(DX0, by, DW) + "</g>\n"
+na, nb = DX0 + DW * 0.25, DX0 + DW * 0.75
+s += f'<path d="M{na},{by} L{na},{by+8} M{nb},{by} L{nb},{by+8}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += f'<line x1="{na}" y1="{by+8}" x2="{na}" y2="{RA["line"]-19}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += f'<line x1="{nb}" y1="{by+8}" x2="{nb}" y2="{RA["line"]-19}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += node(na, RA["line"], OCRU) + node(nb, RA["line"], OCRU)
+# insignă „sau” între cele două noduri
+PILL = "două surse, două date"
+sw_ = measure(PILL, 14, "sans", 700) + 28
+assert sw_ < (nb - na) - 2 * 19 - 8, sw_
+s += f'<rect x="{(na+nb)/2 - sw_/2:.1f}" y="{RA["line"]-15}" width="{sw_:.1f}" height="30" rx="15" fill="{BG}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += text((na + nb) / 2, RA["line"] + 5, PILL, 14, OCRU, "sans", 700, anchor="middle")
+half = DW / 2
+s += event_text(DX0, half, "A", "anii 1920", "„Singurul ștrand al Sibiului”",
+                "se construiește aici – turnulsfatului.ro (2014); en.wikipedia: 1920, primul complex de bazine în aer liber.", OCRU)
+s += event_text(DX0 + half, half, "A", "12 iulie 1936", "Inaugurarea Strandbad-ului",
+                "pe locul unde se află și azi, pe strada Vasile Cârlova – Ștrandului – old.tribuna.ro.", OCRU)
+s += f'<line x1="{DX0+half}" y1="{RA["year"]-26}" x2="{DX0+half}" y2="{RA["bottom"]-10}" stroke="{LINE}" stroke-width="2" stroke-dasharray="4 5"/>\n'
+
+# Turnul lui Phleps
+PWp = PX1 - PX0
+s += box(PX0, RA["box"], PWp, RA["bh"])
+s += clip_open("cAp", PX0, RA["box"], PWp, RA["bh"]) + ic_tower(PX0 + PWp / 2, by) + "</g>\n"
+s += f'<line x1="{PX0+PWp/2}" y1="{by}" x2="{PX0+PWp/2}" y2="{RA["line"]-19}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += node(PX0 + PWp / 2, RA["line"], OCRU)
+s += event_text(PX0, PWp, "A", "câțiva ani mai târziu", "Turnul lui Phleps",
+                "Trambulină cu sărituri de la 3, 5 și 10~m, finanțată de dr. Erich Phleps în memoria tatălui său, Robert Phleps.",
+                OCRU, 24)
+
+# ------------------------------------------------------------------ RÂNDUL B: 1948 → azi
+RB = ROW["B"]
+by = RB["box"] + RB["bh"]
+BW = (1760 - 4 * G) / 5
+bx = [80 + i * (BW + G) for i in range(5)]
+cols = [VIOLET, VIOLET, TIGLA, PETROL, PETROL]
+# linia rândului B pe segmente colorate
+seg = [(80, bx[2] - G / 2, VIOLET), (bx[2] - G / 2, bx[3] - G / 2, TIGLA), (bx[3] - G / 2, 1812, PETROL)]
+for x0, x1, c in seg:
+    s += f'<line x1="{x0:.1f}" y1="{RB["line"]}" x2="{x1:.1f}" y2="{RB["line"]}" stroke="{c}" stroke-width="8"/>\n'
+s += poly([(1812, RB["line"] - 13), (1838, RB["line"]), (1812, RB["line"] + 13)], fill=PETROL)
+s += text(1840, RB["line"] + 44, "azi", 18, "#3FB0BA", "sans", 700, True, anchor="end")
+
+s += period(bx[0], bx[1] + BW, RB["lab"], "ȘTRANDUL CSM ȘI CARTIERUL", "#8F7BE0")
+s += period(bx[2], bx[2] + BW, RB["lab"], "PORȚI ÎNCHISE", TIGLA)
+s += period(bx[3], bx[4] + BW, RB["lab"], "„AQUA FUN”", "#3FB0BA")
+
+evB = [
+    ("1948", "Ștrandul CSM", "Ștrandul este naționalizat și devine „Ștrandul CSM”.", ic_csm),
+    ("1970", "Se naște cartierul Ștrand",
+     "Încep lucrările: întâi vile pe pantă, apoi blocuri tip. Cartierul are două părți: Ștrand I și Ștrand II.", ic_district),
+    ("2002", "Porți închise",
+     "Ștrandul este revendicat de Biserica Evanghelică și rămâne închis șase ani.", ic_closed),
+    ("2008", "Redeschis ca „Aqua Fun”",
+     "Concesionat pe 49 de ani, se redeschide la începutul lui august, cu 5.000 de locuri; platforma de 10~m e demontată.", ic_aquafun),
+    ("23 iunie 2021", "Din nou deschis",
+     "După închiderea din pandemie, ștrandul se redeschide la 23 iunie 2021.", ic_reopen),
+]
+ycol = {VIOLET: "#8F7BE0", TIGLA: "#D8775A", PETROL: "#3FB0BA"}
+for i, (yr, ti, body, ic) in enumerate(evB):
+    x = bx[i]; c = cols[i]
+    s += box(x, RB["box"], BW, RB["bh"])
+    s += clip_open(f"cB{i}", x, RB["box"], BW, RB["bh"]) + ic(x + BW / 2, by) + "</g>\n"
+    s += f'<line x1="{x+BW/2:.1f}" y1="{by}" x2="{x+BW/2:.1f}" y2="{RB["line"]-19}" stroke="{c}" stroke-width="2"/>\n'
+    s += node(x + BW / 2, RB["line"], c)
+    s += event_text(x, BW, "B", yr, ti, body, ycol[c], 30)
+
+# ------------------------------------------------------------------ surse
+s += text(80, 994, "Surse: old.tribuna.ro („Cartierele Sibiului, ieri și azi – Ștrandul”, partea I); turnulsfatului.ro (2014; 2016 – cartierele de blocuri); "
+          "en.wikipedia (Ștrand). Anul trambulinei nu e dat de surse.", 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

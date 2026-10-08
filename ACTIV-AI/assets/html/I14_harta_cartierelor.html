@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Harta cartierelor</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--violet2:#8B76E6;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+  --dot:46px;--dotc:66px;--hit:64px;--lf:21px;--lsf:16px;--lg:6px;--lgv:4px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px 32px;flex-wrap:wrap;padding:clamp(14px,1.5vw,30px) 0 clamp(10px,1vw,20px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.2vw,44px);line-height:1.12;margin:0}
+h1 .sub{display:block;font-size:.66em;color:var(--ceata);margin-top:.12em}
+.tools{display:flex;align-items:center;gap:clamp(10px,.9vw,16px);flex-wrap:wrap}
+.count{display:flex;flex-direction:column;gap:6px;min-width:clamp(200px,15vw,300px);color:var(--ceata)}
+.count b{font-family:var(--serif);color:var(--var);font-size:1.3em;font-variant-numeric:tabular-nums}
+.count .bar{height:10px;border-radius:99px;background:var(--surf);overflow:hidden}
+.count .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--petrol),var(--ocru));border-radius:99px;transition:width .5s ease}
+.count.all{color:var(--ocru);font-weight:700}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;min-width:56px;padding:.55em 1.1em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s;touch-action:manipulation;user-select:none}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}}
+.btn:active{transform:scale(.96)}
+.btn:focus-visible,.pin:focus-visible .dot,.sb:focus-visible,h2:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.ghost[aria-pressed="true"]{border-color:var(--ocru);background:rgba(226,166,43,.12)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+
+main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) clamp(380px,33vw,640px);gap:clamp(16px,2vw,40px);min-height:0;padding-bottom:clamp(10px,1vw,20px)}
+main.list{display:block}
+
+/* hartă */
+.mapcard{background:var(--surf);border-radius:24px;display:flex;flex-direction:column;min-height:0;padding:clamp(10px,.8vw,16px);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.mapwrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.stage{position:relative;border-radius:18px;overflow:hidden;background:#15202B}
+#map{position:absolute;inset:0;width:100%;height:100%;display:block}
+.lab{position:absolute;left:12px;top:12px;color:var(--ceata);font-size:.85em;background:rgba(15,23,32,.78);padding:.25em .8em;border-radius:99px;z-index:3;pointer-events:none}
+.compass{position:absolute;right:10px;bottom:10px;width:clamp(44px,4.2vw,84px);height:auto;z-index:3;pointer-events:none}
+.mlab{position:absolute;white-space:nowrap;font-style:italic;color:#7FC4CA;font-size:calc(var(--lsf)*1.06);transform:translate(-50%,-50%);pointer-events:none;text-shadow:0 0 6px #15202B,0 0 3px #15202B;z-index:1}
+.mlab.forest{color:#8FC2A4}
+.mlab .m{display:none}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;padding:12px 6px 2px;color:var(--ceata);font-size:.85em}
+.legend span{display:inline-flex;align-items:center;gap:.5em}
+.legend i{width:1.1em;height:1.1em;border-radius:50%;display:inline-block;flex:none}
+.legend .lv{background:var(--petrol);border:3px solid var(--var)}
+.legend .lo{background:var(--bg);border:3px dashed var(--ocru)}
+.legend .ld{background:var(--ocru);border:3px solid var(--var)}
+.legend .note{font-style:italic}
+
+/* pinuri */
+.pin{--d:var(--dot);position:absolute;width:var(--hit);height:var(--hit);margin:calc(var(--hit)/-2) 0 0 calc(var(--hit)/-2);padding:0;border:0;background:none;color:var(--var);font:inherit;cursor:pointer;border-radius:50%;touch-action:manipulation;z-index:2}
+.pin.c{--d:var(--dotc);width:max(var(--hit),var(--dotc));height:max(var(--hit),var(--dotc));margin:calc(max(var(--hit),var(--dotc))/-2) 0 0 calc(max(var(--hit),var(--dotc))/-2)}
+.pin .dot{position:absolute;left:50%;top:50%;width:var(--d);height:var(--d);margin:calc(var(--d)/-2) 0 0 calc(var(--d)/-2);border-radius:50%;display:grid;place-items:center;transition:transform .2s,background .3s,box-shadow .3s;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.pin .dot::after{content:"";width:30%;height:30%;border-radius:50%;background:var(--var)}
+.pin .dot svg{width:58%;height:58%;display:none}
+.pin.v .dot{background:var(--petrol);border:3px solid var(--var)}
+.pin.o .dot{background:var(--bg);border:3px dashed var(--ocru)}
+.pin.o .dot::after{background:var(--ocru)}
+.pin.c .dot{background:var(--violet);border:3px solid var(--var)}
+.pin.c .dot::after{display:none}
+.pin.c .dot .tw{display:block;color:var(--var)}
+.pin.done .dot{background:var(--ocru);border-color:var(--var)}
+.pin.done .dot::after{display:none}
+.pin.done .dot .ck{display:block;color:var(--bg)}
+.pin.c.done .dot .ck{display:none}
+.pin.c.done .dot .tw{color:var(--bg)}
+.pin.sel .dot{animation:pulse 1.6s ease-out infinite;transform:scale(1.08)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(226,166,43,.65)}100%{box-shadow:0 0 0 22px rgba(226,166,43,0)}}
+@media (hover:hover){.pin:hover .dot{transform:scale(1.1)}}
+.pin .lbl{position:absolute;white-space:nowrap;font-weight:600;font-size:var(--lf);line-height:1.15;background:rgba(15,23,32,.8);border-radius:8px;padding:.12em .45em;color:var(--var)}
+.pin .lbl small{display:block;font-size:var(--lsf);font-weight:500;font-style:italic;color:var(--ocru)}
+.pin.c .lbl small{font-style:normal;color:var(--ceata)}
+.pin.done .lbl .nm{color:var(--ocru)}
+.pin.ls-r .lbl{left:calc(50% + var(--d)/2 + var(--lg));top:50%;transform:translateY(-50%);text-align:left}
+.pin.ls-l .lbl{right:calc(50% + var(--d)/2 + var(--lg));top:50%;transform:translateY(-50%);text-align:right}
+.pin.ls-t .lbl{bottom:calc(50% + var(--d)/2 + var(--lgv));left:50%;transform:translateX(-50%);text-align:center}
+.pin.ls-b .lbl{top:calc(50% + var(--d)/2 + var(--lgv));left:50%;transform:translateX(-50%);text-align:center}
+.pin.ls-bs .lbl{top:calc(50% + var(--d)/2 + var(--lgv));left:calc(50% - var(--d)/2);text-align:left}
+.pin.ls-be .lbl{top:calc(50% + var(--d)/2 + var(--lgv));right:calc(50% - var(--d)/2);text-align:right}
+
+/* coloana dreaptă */
+.side{display:flex;flex-direction:column;gap:clamp(12px,1.2vw,22px);min-height:0;position:relative}
+.info{flex:1;min-height:0;display:flex;flex-direction:column}
+.card{background:var(--surf);border-radius:22px;padding:clamp(16px,1.25vw,24px) clamp(18px,1.7vw,32px);display:flex;flex-direction:column;gap:clamp(8px,.65vw,12px);overflow:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.info .card{flex:1;min-height:0}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.78em;margin:0}
+.card h2{font-family:var(--serif);font-size:clamp(26px,1.85vw,38px);line-height:1.1;margin:0}
+#card h2.long{font-size:clamp(22px,1.5vw,30px)}
+.card p{margin:0}
+.card .lead{font-size:1.1em;color:var(--var)}
+.card .small{color:var(--ceata);font-size:.92em}
+.card .small b{color:var(--var)}
+#card{border:2px solid var(--line)}
+#card .ch{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
+#card .cbtn{display:flex;gap:10px;flex:none;margin-left:auto}
+#card .close{flex:none}
+.sec{font-family:var(--sans);font-size:.8em;letter-spacing:.12em;text-transform:uppercase;color:var(--ceata);margin:.3em 0 0;font-weight:700}
+.cur{font-size:1.05em;color:var(--var)}
+.src{color:var(--ceata);font-style:italic;font-size:.88em}
+.q{background:rgba(110,86,207,.16);border-left:6px solid var(--violet2);border-radius:12px;padding:.7em 1em;display:flex;flex-direction:column;gap:.35em}
+.q b{color:var(--violet2);font-size:.85em;letter-spacing:.08em;text-transform:uppercase}
+.q p{color:var(--var)}
+.q p+p{margin-top:.45em}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:.2em}
+.shelf{background:var(--surf);border-radius:22px;padding:clamp(14px,1.1vw,20px) clamp(16px,1.5vw,28px);display:flex;flex-direction:column;gap:clamp(8px,.7vw,12px);border:2px dashed var(--line)}
+.shelf h2{font-family:var(--serif);font-size:1.25em;margin:0}
+.shelf p{margin:0;color:var(--ceata);font-size:.9em}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:10px}
+.sb{font:inherit;font-weight:600;min-height:58px;display:flex;align-items:center;gap:.55em;background:var(--bg);color:var(--var);border:2px dashed var(--line);border-radius:14px;padding:.35em .7em;text-align:left;cursor:pointer;line-height:1.15;touch-action:manipulation;transition:border-color .2s,background .2s}
+.sb .g{flex:none;width:1.3em;height:1.3em;border-radius:50%;border:2px dashed var(--ceata);display:grid;place-items:center}
+.sb .g svg{width:80%;height:80%;display:none;color:var(--bg)}
+.sb.done{border-style:solid;border-color:var(--ocru)}
+.sb.done .g{background:var(--ocru);border:0}
+.sb.done .g svg{display:block}
+.sb.sel{background:rgba(226,166,43,.14);border-color:var(--ocru)}
+@media (hover:hover){.sb:hover{border-color:var(--petrol2)}}
+
+/* listă */
+#listView{display:flex;flex-direction:column;gap:clamp(18px,1.6vw,30px)}
+#listView .intro{color:var(--ceata);margin:0;max-width:60em}
+.grp{margin-bottom:clamp(20px,1.8vw,34px)}
+.grp h2{font-family:var(--serif);font-size:1.4em;margin:0 0 .5em;display:flex;align-items:center;gap:.6em}
+.grp h2 i{width:.9em;height:.9em;border-radius:50%;display:inline-block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:14px;margin:0;padding:0;list-style:none}
+.it{background:var(--surf);border-radius:18px;padding:16px 20px;display:flex;flex-direction:column;gap:6px;border:2px solid transparent}
+.it.done{border-color:rgba(226,166,43,.55)}
+.it h3{font-family:var(--serif);margin:0;font-size:1.2em;display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap}
+.it h3 .mk{font-family:var(--sans);font-size:.65em;color:var(--ocru);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.it .k{color:var(--ceata);font-size:.85em;margin:0}
+.it p{margin:0}
+.it .q{margin-top:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (min-width:1000px){
+  .app{height:100vh;height:100dvh}
+  .app.listmode{height:auto;min-height:100vh}
+}
+/* ecrane mari, dar joase: fișa acoperă toată coloana, ca să nu fie nevoie de derulare */
+@media (min-width:1000px) and (max-height:900px){
+  #card{position:absolute;inset:0;z-index:5;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+}
+@media (max-width:999px){
+  :root{--dot:30px;--dotc:42px;--hit:56px;--lf:12.5px;--lsf:10px;--lg:4px;--lgv:2px}
+  .top{display:grid;grid-template-columns:1fr;gap:12px}
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tools .count{grid-column:1/-1;min-width:0}
+  .tools .btn{padding:.4em .6em;font-size:.95em}
+  main{grid-template-columns:1fr}
+  .mapcard{padding:0;overflow:hidden;border-radius:20px}
+  .stage{border-radius:0}
+  .legend{padding:10px 14px 12px;font-size:.8em;gap:6px 14px}
+  .legend .note{flex-basis:100%}
+  .pin.c .lbl small{display:none}
+  .compass{right:4px;bottom:4px}
+  .mlab{font-size:10.5px}
+  .mlab .d{display:none}.mlab .m{display:inline}
+  .pin .lbl{padding:.08em .35em;border-radius:6px}
+  .pin .dot{border-width:2px!important}
+  .pin.sel .dot{animation:pulse 1.6s ease-out infinite}
+  .side .shelf{order:1}
+  .side .info{order:2}
+  .sgrid{grid-template-columns:1fr 1fr}
+  #card{position:fixed;left:8px;right:8px;bottom:8px;max-height:55vh;max-height:55dvh;z-index:20;box-shadow:0 -12px 40px rgba(0,0,0,.6);animation:up .35s cubic-bezier(.2,.8,.2,1) both;padding:14px 16px 16px}
+  #card h2{font-size:26px}
+  #card .cur{font-size:1em}
+  .card .lead{font-size:1em}
+}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <span class="chip">INTERACTIV · I14</span>
+      <h1>Hartă interactivă AI: 20 de cartiere, <span class="sub">câte o curiozitate la atingere</span></h1>
+    </div>
+    <div class="tools">
+      <div class="count" id="count" role="status" aria-live="polite">
+        <span id="countTxt">Ai descoperit <b id="nFound">0</b> din <b id="nAll">20</b></span><span id="countAll" hidden>Ai descoperit toate cele 20!</span>
+        <span class="bar" aria-hidden="true"><i id="bar"></i></span>
+      </div>
+      <button class="btn ghost" id="listBtn" type="button" aria-pressed="false">☰ Arată tot ca listă</button>
+      <button class="btn ghost" id="resetBtn" type="button">↺ Reia</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="mapcard" id="mapView" aria-label="Harta schematică a cartierelor">
+      <div class="mapwrap" id="mapwrap">
+        <div class="stage" id="stage">
+          <svg id="map" viewBox="-1250 -1040 2500 2080" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="riv" x1="-1300" y1="0" x2="1300" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#3FA7B0" stop-opacity="0"/>
+                <stop offset=".2" stop-color="#3FA7B0" stop-opacity=".7"/>
+                <stop offset=".8" stop-color="#3FA7B0" stop-opacity=".7"/>
+                <stop offset="1" stop-color="#3FA7B0" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="glow" cx="0" cy="0" r="520" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#6E56CF" stop-opacity=".22"/>
+                <stop offset="1" stop-color="#6E56CF" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect x="-1500" y="-1300" width="3000" height="2600" fill="#15202B"/>
+            <g id="grid" stroke="#1E2C39" stroke-width="1" vector-effect="non-scaling-stroke"></g>
+            <circle cx="0" cy="0" r="520" fill="url(#glow)"/>
+            <g fill="none" stroke="#2A3C4E" stroke-width="1.5" stroke-dasharray="6 9">
+              <circle cx="0" cy="0" r="300" vector-effect="non-scaling-stroke"/>
+              <circle cx="0" cy="0" r="600" vector-effect="non-scaling-stroke"/>
+              <circle cx="0" cy="0" r="900" vector-effect="non-scaling-stroke"/>
+            </g>
+            <path d="M0 -1300 V1300 M-1500 0 H1500" stroke="#273A4C" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            <g id="forest"></g>
+            <path id="river" d="M-1320 -60 C-1050 -95 -800 -125 -520 -160 S-160 -205 180 -245 S620 -305 1320 -350" fill="none" stroke="url(#riv)" stroke-width="30" stroke-linecap="round"/>
+            <path d="M-1320 -60 C-1050 -95 -800 -125 -520 -160 S-160 -205 180 -245 S620 -305 1320 -350" fill="none" stroke="#BFE6E8" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="10 14" vector-effect="non-scaling-stroke"/>
+            <ellipse cx="0" cy="0" rx="140" ry="108" fill="#24364A" stroke="#E2A62B" stroke-opacity=".7" stroke-width="2" stroke-dasharray="5 5" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <span class="mlab river" data-d="380,-330,-7" data-m="330,-300,-7"><span class="d">râul Cibin · traseu aproximativ</span><span class="m">Cibin · aproximativ</span></span>
+          <span class="mlab forest" data-d="-640,965,0" data-m="-760,985,0">Pădurea Dumbrava</span>
+          <svg class="compass" viewBox="0 0 84 84" aria-hidden="true">
+            <circle cx="42" cy="42" r="40" fill="#0F1720" fill-opacity=".85" stroke="#2E4153" stroke-width="2"/>
+            <path d="M42 22 L49 42 L42 39 L35 42 Z" fill="#E2A62B"/>
+            <path d="M42 62 L49 42 L42 45 L35 42 Z" fill="#A9B4C0" fill-opacity=".55"/>
+            <text x="42" y="19" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="15" fill="#E2A62B">N</text>
+            <text x="71" y="47" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="#A9B4C0">E</text>
+            <text x="13" y="47" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="#A9B4C0">V</text>
+            <text x="42" y="76" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="#A9B4C0">S</text>
+          </svg>
+          <div id="pins"></div>
+        </div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="lv"></i>direcție după surse</span>
+        <span><i class="lo"></i>poziție orientativă (fără sursă)</span>
+        <span><i class="ld"></i>descoperit</span>
+        <span class="note">Hartă schematică: poziții aproximative, nu la scară.</span>
+      </div>
+    </section>
+
+    <section class="side" id="side">
+      <div class="info">
+        <div class="card" id="idle">
+          <p class="kicker" id="idleKick">Cum funcționează</p>
+          <h2 id="idleTitle">Atinge un cartier</h2>
+          <p class="lead" id="idleLead">Fiecare punct de pe hartă ascunde o curiozitate despre numele sau istoria cartierului. Acolo unde sursele tac, primești o întrebare de cercetare pentru clasă.</p>
+          <p class="small" id="idleN1"><b>De ce „20”?</b> Lista cartierelor de pe en.wikipedia are 19 nume (Hipodrom are patru părți, I–IV), la care se adaugă centrul istoric: 20 de locuri de descoperit. Sursa spune „circa 20 de cartiere”.</p>
+          <p class="small" id="idleN2">Curiozitățile vin dintr-o fișă de fapte verificate; sursa e scrisă sub fiecare. Harta e schematică: arată direcția față de centru, nu adresa exactă.</p>
+          <div class="row" id="idleRow" hidden><button class="btn accent" id="againBtn" type="button">↺ Reia de la capăt</button></div>
+        </div>
+        <article class="card" id="card" hidden aria-labelledby="cName" aria-live="polite">
+          <p class="kicker" id="cKind"></p>
+          <div class="ch">
+            <h2 id="cName" tabindex="-1"></h2>
+            <div class="cbtn">
+              <button class="btn" id="cNext" type="button" aria-label="Următorul cartier nedescoperit">Următorul →</button>
+              <button class="btn ghost close" id="cClose" type="button" aria-label="Închide fișa">✕</button>
+            </div>
+          </div>
+          <p class="sec" id="cSec"></p>
+          <p class="cur" id="cText"></p>
+          <p class="src" id="cSrc"></p>
+          <div class="q" id="cQ"><b>Întrebare de cercetare pentru clasă</b><div id="cQt"></div></div>
+        </article>
+      </div>
+      <section class="shelf" aria-labelledby="shelfT">
+        <h2 id="shelfT">De pus pe hartă de voi</h2>
+        <p>Sursele nu le dau poziția: atinge un nume, apoi căutați-l pe o hartă reală.</p>
+        <div class="sgrid" id="shelf"></div>
+      </section>
+    </section>
+
+    <section id="listView" hidden aria-label="Toate cartierele, ca listă">
+      <p class="intro">Aceleași informații ca pe hartă, ca listă. Contorul de sus numără doar ce descoperi atingând harta sau raftul.</p>
+      <div id="listBody"></div>
+      <div class="row"><button class="btn" id="backBtn" type="button">← Înapoi la hartă</button></div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ---------- Date (doar din fișa de fapte verificate) ----------
+   t: c = centrul istoric, v = poziție după surse (direcție), o = poziție orientativă, u = nelocalizat
+   x, y: coordonatele normalizate comune ale calupului ×1000 (x spre est, y spre sud; centrul = 0,0)
+   sd / sm: partea etichetei pe ecran mare / pe telefon (r, l, t, b) */
+var D=[
+ {id:'centru',n:'Centrul istoric',t:'c',x:0,y:0,sd:'r',sm:'r',dir:'Orașul de Sus și Orașul de Jos',
+  sec:'Curiozitate',txt:'Aici începe povestea orașului: prima atestare documentară a Sibiului este din 1191, sub numele latin Cibinium. Centrul are două părți, Orașul de Sus și Orașul de Jos, legate, printre altele, de Podul Minciunilor, primul pod din fontă din România, terminat în 1859.',
+  src:'en.wikipedia (Sibiu); patrimoniu.sibiu.ro'},
+ {id:'terezian',n:'Terezian',t:'v',x:0,y:-450,sd:'r',sm:'r',dir:'nord',
+  sec:'Curiozitate',txt:'Numele vine de la împărăteasa Maria Tereza, care a finanțat un orfelinat romano-catolic și o biserică: complexul orfelinatului și biserica Sf. Elisabeta au fost construite între 1767 și 1771. Terezian este considerat al doilea cel mai vechi cartier, după centru. Parcul Terezian de azi a fost odinioară Târgul Vitelor.',
+  src:'turnulsfatului.ro (2014); en.wikipedia (Terezian)'},
+ {id:'tiglari',n:'Țiglari',t:'v',x:-300,y:-780,sd:'r',sm:'r',dir:'nord, spre nord-vest',
+  sec:'Curiozitate',txt:'Numele vine de la fabrica de țiglă a lui Gustav Binder, din secolul al XIX-lea; muncitorii ei s-au așezat în zonă. Tot aici se află Lacul lui Binder, descris drept „singurul lac din municipiu”.',
+  src:'turnulsfatului.ro (2014); agerpres.ro (2020)'},
+ {id:'lazaret',n:'Lazaret',t:'v',x:450,y:-150,sd:'r',sm:'r',dir:'est, lângă gară',
+  sec:'Curiozitate',txt:'Numele vine de la un lazaret – un loc de izolare a bolnavilor – amenajat în clădirile unei mici mănăstiri dominicane, în zona gării și a autogării de azi. Când orașul a crescut, lazaretul a fost împins spre margine, apoi închis, iar zona a devenit cartier de locuințe.',
+  src:'en.wikipedia (Lazaret); turnulsfatului.ro (2014)'},
+ {id:'broscarie',n:'Broscărie',t:'v',x:820,y:50,sd:'b',sm:'be',dir:'est, lângă zona industrială',
+  sec:'Curiozitate',txt:'Cartierul a fost construit pe o mlaștină desecată, în programul de industrializare din 1970, pentru muncitorii zonei industriale din est.',
+  q:['Sursele noastre nu spun de unde vine numele. Are legătură cu broaștele din fosta mlaștină? Deocamdată e doar o ipoteză – ce poți afla tu?'],
+  src:'en.wikipedia (Broscărie)'},
+ {id:'vasile',n:'Vasile Aaron',t:'v',x:620,y:450,sd:'r',sm:'l',dir:'est / sud-est, spre Șelimbăr',
+  sec:'Curiozitate',txt:'Cartierul poartă numele străzii Vasile Aaron, care marca odinioară limita dintre oraș și comuna Șelimbăr. A fost construit în anii 1970, cu blocuri tipice acelei perioade.',
+  src:'en.wikipedia (Vasile Aaron); turnulsfatului.ro (2014)'},
+ {id:'strand',n:'Ștrand',t:'v',x:-620,y:100,sd:'l',sm:'l',dir:'vest',
+  sec:'Curiozitate',txt:'Numele vine de la ștrandul orașului, din zona numită odinioară „Fleischhauer Wiese” – Pajiștea Măcelarilor. Când a apărut ștrandul? Sursele diferă: „în anii 1920” (turnulsfatului.ro, en.wikipedia) sau inaugurat la 12 iulie 1936 (old.tribuna.ro).',
+  src:'turnulsfatului.ro (2014); en.wikipedia; old.tribuna.ro'},
+ {id:'turnisor',n:'Turnișor',t:'v',x:-880,y:-300,sd:'b',sm:'bs',dir:'vest / nord-vest',
+  sec:'Curiozitate',txt:'A fost un sat de sine stătător, numit în germană Neppendorf; numele românesc înseamnă „turn mic”. Prima atestare: 1336 sau 1327, după sursă. Din 1734 s-au așezat aici landlerii, protestanți strămutați din Austria de azi.',
+  src:'en.wikipedia (Turnișor); kirchenburgen.org; Răzvan Pop, zilesinopti.ro (2023)'},
+ {id:'valea',n:'Valea Aurie',t:'v',x:-550,y:780,sd:'l',sm:'t',dir:'sud-vest, aproape de Dumbrava',
+  sec:'Curiozitate',txt:'Numele vine de la un han local care purta același nume. Valea Aurie este ultimul cartier de blocuri construit în Sibiu și se află aproape de Dumbrava.',
+  src:'en.wikipedia (Valea Aurie); turnulsfatului.ro (2016)'},
+ {id:'stejari',n:'Trei Stejari',t:'v',x:50,y:280,sd:'r',sm:'l',dir:'lângă centru, spre sud',
+  sec:'Curiozitate',txt:'Numele vine de la trei stejari care stăteau la o răscruce, pe unul dintre drumurile care ieșeau din cetate. Același nume l-a purtat și o fabrică de bere, construită în 1912–1913 și închisă în 2000.',
+  src:'en.wikipedia (Trei Stejari); sibiucityapp.ro'},
+ {id:'gusterita',n:'Gușterița',t:'o',x:750,y:-620,sd:'b',sm:'l',dir:'nord-est',
+  sec:'Curiozitate',txt:'Fost sat săsesc (în germană Hammersdorf), atestat în 1309 (en.wikipedia) sau „din secolul al XIII-lea” (turnulsfatului.ro) – sursele diferă. A fost inclus în Sibiu în 1940. Se crede că aici a fost castrul roman Cedonia.',
+  src:'en.wikipedia (Gușterița); turnulsfatului.ro (2014)'},
+ {id:'hipodrom',n:'Hipodrom',t:'o',x:250,y:650,sd:'r',sm:'r',dir:'sud-est',
+  sec:'Curiozitate',txt:'Numele vine de la hipodromul pentru cavalerie, amenajat de autoritățile habsburgice la începutul secolului al XIX-lea. În iunie 1924, regele Ferdinand I și regina Maria au participat pe hipodrom la concursurile hipice ale Școlii de cavalerie. Este singurul cartier împărțit în patru: Hipodrom I–IV.',
+  src:'Răzvan Pop, zilesinopti.ro (2024); en.wikipedia (Sibiu)'},
+ {id:'dumbravii',n:'Dumbrăvii',t:'o',x:-150,y:720,sd:'b',sm:'b',dir:'sud, spre Pădurea Dumbrava',
+  sec:'Ce știm sigur',txt:'Cartierul se află spre Pădurea Dumbrava. Tramvaiul orașului a ajuns la marginea Pădurii Dumbrava la 15 mai 1910.',
+  q:['Sursele noastre nu spun de unde vine numele cartierului. Are legătură cu pădurea? Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu); patrimoniu.sibiu.ro (istoria tramvaiului)'},
+ {id:'cluj',n:'Piața Cluj',t:'o',x:-480,y:-450,sd:'t',sm:'b',dir:'nord-vest',
+  sec:'Ce știm sigur',txt:'Poartă numele orașului Cluj. Tramvaiul a ajuns aici la 25 septembrie 1927, când linia a fost prelungită de la Piața Cibin la gara Turnișor și la Piața Cluj.',
+  q:['Sursele noastre nu spun de ce un cartier din Sibiu poartă numele altui oraș. Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu); patrimoniu.sibiu.ro (istoria tramvaiului)'},
+ {id:'lupeni',n:'Lupeni',t:'u',
+  sec:'Ce știm sigur',txt:'Apare în lista cartierelor Sibiului, dar sursele noastre nu spun nimic despre istoria lui și nici unde se află exact.',
+  q:['Sursele noastre nu spun de unde vine numele. Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu) – lista cartierelor'},
+ {id:'resita',n:'Reșița',t:'u',
+  sec:'Ce știm sigur',txt:'Poartă numele orașului Reșița. Sursele noastre nu spun de ce și nici unde se află exact cartierul.',
+  q:['De ce ar purta un cartier din Sibiu numele altui oraș? Sursele noastre nu spun. Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu) – lista cartierelor'},
+ {id:'tilisca',n:'Tilișca',t:'u',
+  sec:'Ce știm sigur',txt:'Același nume îl poartă o comună din Munții Cindrel, la circa 26 km vest de Sibiu. Despre cartier, sursele noastre nu spun mai mult.',
+  q:['Are cartierul vreo legătură cu comuna Tilișca? Sursele noastre nu spun. Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu; Tilișca)'},
+ {id:'tineretului',n:'Tineretului',t:'u',
+  sec:'Ce știm sigur',txt:'Apare în lista cartierelor Sibiului, dar sursele noastre nu spun nimic despre istoria lui și nici unde se află exact.',
+  q:['Sursele noastre nu spun de unde vine numele. Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu) – lista cartierelor'},
+ {id:'veteranilor',n:'Veteranilor de Război',t:'u',
+  sec:'Ce știm sigur',txt:'Apare în lista cartierelor Sibiului, dar sursele noastre nu spun nimic despre istoria lui și nici unde se află exact.',
+  q:['De la cine sau de la ce și-a luat cartierul numele? Sursele noastre nu spun. Ce poți afla tu?'],
+  src:'en.wikipedia (Sibiu) – lista cartierelor'},
+ {id:'viile',n:'Viile Sibiului',t:'u',
+  sec:'Ce știm sigur',txt:'Apare în lista cartierelor Sibiului, dar sursele noastre nu spun nimic despre istoria lui și nici unde se află exact.',
+  q:['Numele pomenește de vii. Au fost cândva vii acolo? Sursele noastre nu spun – verificați!'],
+  src:'en.wikipedia (Sibiu) – lista cartierelor'}
+];
+var TOTAL=D.length;
+var BY={};D.forEach(function(d){BY[d.id]=d;});
+var Q_O='Poziția de pe hartă e orientativă: verificați pe o hartă reală unde se află cartierul.';
+var Q_U='Găsiți cartierul pe o hartă reală și adăugați-l pe harta clasei.';
+function kind(d){
+  if(d.t==='c')return 'Centrul istoric · '+d.dir;
+  if(d.t==='v')return 'Poziție după surse: '+d.dir;
+  if(d.t==='o')return 'Poziție orientativă: '+d.dir+' (fără sursă)';
+  return 'Nelocalizat · de pus pe hartă de voi';
+}
+function questions(d){
+  var a=(d.q||[]).slice();
+  if(d.t==='o')a.push(Q_O);
+  if(d.t==='u')a.push(Q_U);
+  return a;
+}
+
+/* ---------- Harta: grilă și pădure (forme schematice) ---------- */
+(function(){
+  var g='';for(var i=-1400;i<=1400;i+=200){g+='<path d="M'+i+' -1300 V1300 M-1500 '+i+' H1500" vector-effect="non-scaling-stroke"/>';}
+  $('grid').innerHTML=g;
+  var s=7,r=function(){s=(s*16807)%2147483647;return (s-1)/2147483646;},f='',cols=['#1B4842','#225A52','#163D38','#2A6A5F'];
+  var pts=[];
+  for(var k=0;k<400&&pts.length<46;k++){var u=r()*2-1,v=r()*2-1;if(u*u+v*v<1){pts.push([-430+u*470,1010+v*125]);}}
+  pts.sort(function(a,b){return a[1]-b[1];});
+  pts.forEach(function(p,i){f+='<circle cx="'+p[0].toFixed(0)+'" cy="'+p[1].toFixed(0)+'" r="'+(26+r()*18).toFixed(0)+'" fill="'+cols[i%cols.length]+'"/>';});
+  $('forest').innerHTML=f;
+})();
+
+/* ---------- Pinuri și raft ---------- */
+var CK='<svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+var TW='<svg class="tw" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 21V9.5L12 3l3 6.5V21z"/><path d="M4 21v-7l2.5-2 2.5 2v7zM15 21v-7l2.5-2 2.5 2v7z" opacity=".75"/></svg>';
+var PIN={},SB={};
+D.forEach(function(d){
+  if(d.t==='u'){
+    var b=document.createElement('button');b.type='button';b.className='sb';b.dataset.id=d.id;
+    b.innerHTML='<span class="g" aria-hidden="true">'+CK+'</span><span class="nm"></span>';
+    b.querySelector('.nm').textContent=d.n;
+    b.addEventListener('click',function(){open(d.id);});
+    $('shelf').appendChild(b);SB[d.id]=b;return;
+  }
+  var p=document.createElement('button');p.type='button';p.className='pin '+d.t;p.dataset.id=d.id;
+  p.innerHTML='<span class="dot" aria-hidden="true">'+(d.t==='c'?TW:'')+CK+'</span><span class="lbl" aria-hidden="true"><span class="nm"></span>'+(d.t==='o'?'<small>poziție orientativă</small>':'')+(d.t==='c'?'<small>1191</small>':'')+'</span>';
+  p.querySelector('.nm').textContent=d.n;
+  p.addEventListener('click',function(){open(d.id);});
+  $('pins').appendChild(p);PIN[d.id]=p;
+});
+
+/* ---------- Așezare (viewBox diferit pe ecran mare și pe telefon) ---------- */
+var VB_D=[-1100,-900,2250,1900],VB_M=[-1060,-960,2060,2000],desk=true,vb=VB_D;
+var mq=window.matchMedia('(min-width:1000px)'),RM=window.matchMedia('(prefers-reduced-motion:reduce)');
+function layout(){
+  desk=mq.matches;vb=(desk?VB_D:VB_M).slice();
+  var wrap=$('mapwrap'),st=$('stage'),ar=vb[2]/vb[3];
+  var W=wrap.clientWidth,H=desk?wrap.clientHeight:Infinity,w=W,h=w/ar;
+  if(h>H){h=H;w=h*ar;}
+  /* dacă rămâne loc pe orizontală, lărgim zona vizibilă (aceeași scară, aceleași poziții) */
+  if(desk&&W>w+1){var nw=vb[3]*W/h;vb[0]-=(nw-vb[2])/2;vb[2]=nw;w=W;}
+  $('map').setAttribute('viewBox',vb.join(' '));
+  st.style.width=Math.floor(w)+'px';st.style.height=Math.floor(h)+'px';
+  /* pe ecran mare, pinurile și etichetele se scalează cu harta (atingere minimă 56 px) */
+  var k=Math.max(.6,Math.min(1.15,h/790)),SZ={'--dot':46,'--dotc':66,'--lf':21,'--lsf':16};
+  Object.keys(SZ).forEach(function(n){if(desk)st.style.setProperty(n,Math.max(n==='--lf'?13:n==='--lsf'?11:28,Math.round(SZ[n]*k))+'px');else st.style.removeProperty(n);});
+  if(desk)st.style.setProperty('--hit',Math.max(56,Math.round(64*k))+'px');else st.style.removeProperty('--hit');
+  D.forEach(function(d){
+    var p=PIN[d.id];if(!p)return;
+    p.style.left=((d.x-vb[0])/vb[2]*100)+'%';p.style.top=((d.y-vb[1])/vb[3]*100)+'%';
+    p.classList.remove('ls-r','ls-l','ls-t','ls-b','ls-bs','ls-be');p.classList.add('ls-'+(desk?d.sd:d.sm));
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.mlab'),function(el){
+    var a=(desk?el.dataset.d:el.dataset.m).split(',').map(Number);
+    el.style.left=((a[0]-vb[0])/vb[2]*100)+'%';el.style.top=((a[1]-vb[1])/vb[3]*100)+'%';
+    el.style.transform='translate(-50%,-50%) rotate('+a[2]+'deg)';
+  });
+}
+
+/* ---------- Stare ---------- */
+var found={},sel=null,nFound=0;
+function isAll(){return nFound===TOTAL;}
+function refresh(){
+  nFound=Object.keys(found).length;
+  $('nFound').textContent=nFound;$('nAll').textContent=TOTAL;
+  $('bar').style.width=(nFound/TOTAL*100)+'%';
+  var all=isAll();
+  $('count').classList.toggle('all',all);
+  $('countTxt').hidden=all;$('countAll').hidden=!all;$('countAll').textContent='Ai descoperit toate cele '+TOTAL+'!';
+  D.forEach(function(d){
+    var el=PIN[d.id]||SB[d.id];
+    el.classList.toggle('done',!!found[d.id]);el.classList.toggle('sel',sel===d.id);
+    el.setAttribute('aria-label',d.n+', '+kindShort(d)+(found[d.id]?', descoperit':''));
+    if(SB[d.id])el.setAttribute('aria-pressed',String(sel===d.id));
+  });
+  /* ecranul de repaus devine ecran de final */
+  if(all){
+    $('idleKick').textContent='Provocarea clasei';$('idleTitle').textContent='Ai descoperit toate cele '+TOTAL+'!';
+    $('idleLead').textContent='Alegeți un cartier și căutați o curiozitate nouă, cu sursa ei. Apoi puneți pe harta clasei cele șase cartiere din raft.';
+    $('idleRow').hidden=false;
+  }else{
+    $('idleKick').textContent='Cum funcționează';$('idleTitle').textContent='Atinge un cartier';
+    $('idleLead').textContent='Fiecare punct de pe hartă ascunde o curiozitate despre numele sau istoria cartierului. Acolo unde sursele tac, primești o întrebare de cercetare pentru clasă.';
+    $('idleRow').hidden=true;
+  }
+}
+function kindShort(d){return d.t==='c'?'centrul istoric':d.t==='v'?'poziție după surse':d.t==='o'?'poziție orientativă':'nelocalizat, de pus pe hartă';}
+function open(id){
+  var d=BY[id];if(!d)return;
+  sel=id;found[id]=true;refresh();
+  $('cKind').textContent=kind(d);$('cName').textContent=d.n;$('cName').classList.toggle('long',d.n.length>16);
+  $('cSec').textContent=d.sec;$('cText').textContent=d.txt;$('cSrc').textContent='Sursa: '+d.src;
+  var qs=questions(d),qt=$('cQt');qt.innerHTML='';
+  qs.forEach(function(s){var p=document.createElement('p');p.textContent=s;qt.appendChild(p);});
+  $('cQ').hidden=!qs.length;
+  $('cNext').textContent=isAll()?'Provocarea finală →':'Următorul →';$('cNext').setAttribute('aria-label',isAll()?'Vezi provocarea finală':'Următorul cartier nedescoperit');
+  $('idle').hidden=true;$('card').hidden=false;
+  var c=$('card');c.scrollTop=0;
+  if(!desk){c.style.animation='none';void c.offsetWidth;c.style.animation='';$('cName').focus({preventScroll:true});
+    var top=$('stage').getBoundingClientRect().top+window.pageYOffset-8;window.scrollTo({top:Math.max(0,top),behavior:RM.matches?'auto':'smooth'});}
+}
+function closeCard(){
+  var was=sel;sel=null;$('card').hidden=true;$('idle').hidden=false;refresh();
+  if(!desk&&was){var el=PIN[was]||SB[was];if(el)el.focus({preventScroll:true});}
+}
+function next(){
+  if(isAll()){closeCard();if(!desk)$('idle').scrollIntoView({behavior:'smooth',block:'center'});return;}
+  var start=sel?D.indexOf(BY[sel])+1:0;
+  for(var i=0;i<TOTAL;i++){var d=D[(start+i)%TOTAL];if(!found[d.id]){open(d.id);return;}}
+}
+$('cClose').addEventListener('click',closeCard);
+$('cNext').addEventListener('click',next);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&sel)closeCard();});
+
+/* ---------- Vederea „listă” ---------- */
+var GROUPS=[['c','Centrul istoric','#6E56CF'],['v','Poziție după surse (direcție față de centru)','#0E7C86'],['o','Poziție orientativă (fără sursă)','#E2A62B'],['u','De pus pe hartă de voi (nelocalizate)','#A9B4C0']];
+function buildList(){
+  var body=$('listBody');body.innerHTML='';
+  GROUPS.forEach(function(g){
+    var items=D.filter(function(d){return d.t===g[0];});
+    var sec=document.createElement('section');sec.className='grp';
+    var h=document.createElement('h2');h.innerHTML='<i aria-hidden="true" style="background:'+g[2]+'"></i>';h.appendChild(document.createTextNode(g[1]+' · '+items.length));
+    sec.appendChild(h);
+    var ul=document.createElement('ul');ul.className='grid';
+    items.forEach(function(d){
+      var li=document.createElement('li');li.className='it'+(found[d.id]?' done':'');
+      var h3=document.createElement('h3');h3.textContent=d.n;
+      if(found[d.id]){var mk=document.createElement('span');mk.className='mk';mk.textContent='✓ descoperit';h3.appendChild(mk);}
+      li.appendChild(h3);
+      var k=document.createElement('p');k.className='k';k.textContent=kind(d)+' · '+d.sec;li.appendChild(k);
+      var t=document.createElement('p');t.textContent=d.txt;li.appendChild(t);
+      var qs=questions(d);
+      if(qs.length){var q=document.createElement('div');q.className='q';q.innerHTML='<b>Întrebare de cercetare pentru clasă</b>';qs.forEach(function(s){var p=document.createElement('p');p.textContent=s;q.appendChild(p);});li.appendChild(q);}
+      var s=document.createElement('p');s.className='src';s.textContent='Sursa: '+d.src;li.appendChild(s);
+      ul.appendChild(li);
+    });
+    sec.appendChild(ul);body.appendChild(sec);
+  });
+}
+var listOn=false;
+function setList(on){
+  listOn=on;
+  if(on){buildList();if(sel){sel=null;$('card').hidden=true;$('idle').hidden=false;refresh();}}
+  $('mapView').hidden=on;$('side').hidden=on;$('listView').hidden=!on;
+  $('main').classList.toggle('list',on);$('app').classList.toggle('listmode',on);
+  $('listBtn').setAttribute('aria-pressed',String(on));
+  $('listBtn').textContent=on?'◎ Înapoi la hartă':'☰ Arată tot ca listă';
+  window.scrollTo(0,0);
+  if(!on)layout();
+}
+$('listBtn').addEventListener('click',function(){setList(!listOn);});
+$('backBtn').addEventListener('click',function(){setList(false);});
+function reset(){found={};sel=null;$('card').hidden=true;$('idle').hidden=false;if(listOn)setList(false);refresh();window.scrollTo(0,0);}
+$('resetBtn').addEventListener('click',reset);
+$('againBtn').addEventListener('click',reset);
+
+window.addEventListener('resize',layout);
+if(mq.addEventListener)mq.addEventListener('change',layout);
+layout();refresh();
+window.__h14={open:open,close:closeCard,list:setList,reset:reset,found:function(){return Object.keys(found).length;},total:TOTAL};
+})();
+</script>
+</body>
+</html>

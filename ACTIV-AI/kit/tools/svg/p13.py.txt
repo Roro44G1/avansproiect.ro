@@ -1,0 +1,217 @@
+# -*- coding: utf-8 -*-
+"""P13 – Steagul cartierului meu – vexilologie AI, cu simbolurile explicate (steaguri imaginare)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math
+
+OUT = "/home/claude/expo/c3/08_identitate/P13_steagul_cartierului.svg"
+ORANGE = "#F76B15"
+s = frame_head("IDENTITATE · P13", ORANGE, "Steagul cartierului meu",
+               "steaguri imaginare · design generat cu AI")
+
+GREEN = "#3B6E3A"; GREEN_D = "#24502A"; LAKE = "#2E6DA4"
+MUTED = "#7E8A96"
+
+s += ('<defs>'
+      '<linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">'
+      '<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.10"/><stop offset="0.18" stop-color="#000000" stop-opacity="0.10"/>'
+      '<stop offset="0.38" stop-color="#FFFFFF" stop-opacity="0.09"/><stop offset="0.6" stop-color="#000000" stop-opacity="0.13"/>'
+      '<stop offset="0.8" stop-color="#FFFFFF" stop-opacity="0.08"/><stop offset="1" stop-color="#000000" stop-opacity="0.12"/></linearGradient>'
+      '<linearGradient id="pole" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9CED4"/><stop offset="0.75" stop-color="#8C939B"/>'
+      '<stop offset="1" stop-color="#8C939B" stop-opacity="0"/></linearGradient>'
+      '<linearGradient id="poleh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/><stop offset="1" stop-color="#000000" stop-opacity="0.25"/></linearGradient>'
+      '</defs>\n')
+
+def oak_leaf(L, fill, vein=None, n=4.5, base=0.45, p=0.25, fwd=0.05, W=0.27, N=300):
+    """Frunză de stejar stilizată (contur parametric: lobi rotunjiți, sinusuri înguste), tulpina în (0,0), vârful în sus."""
+    def env(t):
+        return W * L * (math.sin(math.pi * min(1.0, t ** 1.25)) ** 0.8)
+    left = []
+    for i in range(N + 1):
+        t = 0.06 + 0.94 * i / N
+        lob = abs(math.sin(math.pi * n * (t - 0.06) / 0.94)) ** p
+        h = env(t) * (base + (1 - base) * lob)
+        left.append((-h, -t * L - fwd * h * lob))
+    right = [(-x, y) for x, y in reversed(left)]
+    pts = [(0, -0.02 * L)] + left + right
+    d = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + " Z"
+    o = f'<path d="{d}" fill="{fill}" stroke="{fill}" stroke-width="{L*0.012:.1f}" stroke-linejoin="round"/>'
+    o += f'<line x1="0" y1="{0.05*L:.1f}" x2="0" y2="{-0.03*L:.1f}" stroke="{fill}" stroke-width="{L*0.045:.1f}" stroke-linecap="round"/>'
+    if vein:
+        o += f'<line x1="0" y1="{-0.02*L:.1f}" x2="0" y2="{-0.88*L:.1f}" stroke="{vein}" stroke-width="{L*0.02:.1f}" stroke-linecap="round"/>'
+    return o
+
+def flag_trei_stejari(x, y, w, h, callouts=False):
+    o = f'<g filter="url(#sh)"><rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{GREEN}"/></g>\n'
+    cx, cy = x + w / 2, y + h / 2
+    b = h * 0.12
+    o += f'<rect x="{x}" y="{cy-b/2}" width="{w}" height="{b}" fill="{VAR}"/>\n'
+    o += f'<rect x="{cx-b/2}" y="{y}" width="{b}" height="{h}" fill="{VAR}"/>\n'
+    R = h * 0.27
+    o += f'<circle cx="{cx}" cy="{cy}" r="{R+b*0.32}" fill="{VAR}"/>\n'
+    o += f'<circle cx="{cx}" cy="{cy}" r="{R}" fill="{OCRU}"/>\n'
+    L = R * 0.90
+    for ang in (0, 120, 240):   # trei frunze în treflă = cei trei stejari
+        o += f'<g transform="translate({cx:.1f},{cy:.1f}) rotate({ang})">{oak_leaf(L, GREEN_D, OCRU)}</g>\n'
+    o += f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{R*0.07:.1f}" fill="{GREEN_D}"/>\n'
+    o += f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#cloth)"/>\n'
+    if callouts:
+        def co(n, px, py):
+            return (f'<circle cx="{px}" cy="{py}" r="19" fill="{BG}" stroke="{ORANGE}" stroke-width="3"/>'
+                    + text(px, py + 7, str(n), 20, VAR, "sans", 700, anchor="middle"))
+        o += co(1, x + w * 0.86, cy)
+        o += co(2, cx + R * 0.58, cy - R * 0.56)
+        o += co(3, cx, cy + R * 0.70)
+    return o
+
+def flag_tiglari(x, y, w, h):
+    o = f'<g filter="url(#sh)"><rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{LAKE}"/></g>\n'
+    top = h * 0.40
+    n = 5; r = w / n / 2
+    # câmp de țiglă cu marginea inferioară în „solzi” (profil de țiglă)
+    arcs = ""
+    for k in range(n, 0, -1):
+        xa = x + k * 2 * r; xb = xa - 2 * r
+        arcs += f"A{r:.1f},{r:.1f} 0 0 1 {xb:.1f},{y+top:.1f} "
+    o += f'<path d="M{x},{y} H{x+w} V{y+top} {arcs}Z" fill="{TIGLA}"/>\n'
+    o += f'<path d="M{x+w},{y+top} {arcs}" fill="none" stroke="{VAR}" stroke-width="{h*0.035:.1f}" stroke-linejoin="round"/>\n'
+    # val de var pe lac
+    wy = y + h * 0.80; amp = h * 0.05; seg = w / 4
+    d = f"M{x},{wy:.1f} "
+    for k in range(4):
+        d += f"q{seg/4:.1f},{-amp*2:.1f} {seg/2:.1f},0 t{seg/2:.1f},0 "
+    o += f'<path d="{d}" fill="none" stroke="{VAR}" stroke-width="{h*0.05:.1f}" stroke-linecap="round"/>\n'
+    o += f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#cloth)"/>\n'
+    return o
+
+def flag_strand(x, y, w, h):
+    o = f'<g filter="url(#sh)"><rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{PETROL}"/></g>\n'
+    # două valuri de var
+    amp = h * 0.05; seg = w / 4
+    for wy in (y + h * 0.66, y + h * 0.84):
+        d = f"M{x},{wy:.1f} "
+        for k in range(4):
+            d += f"q{seg/4:.1f},{-amp*2:.1f} {seg/2:.1f},0 t{seg/2:.1f},0 "
+        o += f'<path d="{d}" fill="none" stroke="{VAR}" stroke-width="{h*0.06:.1f}" stroke-linecap="round"/>\n'
+    # turnul trambulinei: corp plin, în ocru, cu zăbrele decupate; o platformă sus; arcul săriturii punctat
+    px = x + w * 0.19; pb = y + h * 0.62; pt = y + h * 0.20
+    hb, ht = w * 0.075, w * 0.035          # semi-lățimea la bază / sus
+    o += f'<polygon points="{px-hb:.1f},{pb:.1f} {px-ht:.1f},{pt:.1f} {px+ht:.1f},{pt:.1f} {px+hb:.1f},{pb:.1f}" fill="{OCRU}"/>\n'
+    def half_at(yy):
+        f = (pb - yy) / (pb - pt)
+        return hb + (ht - hb) * f
+    for (y1, y2) in ((pb - (pb - pt) * 0.08, pb - (pb - pt) * 0.50), (pb - (pb - pt) * 0.50, pb - (pb - pt) * 0.86)):
+        h1, h2 = half_at(y1) * 0.62, half_at(y2) * 0.62
+        o += (f'<g stroke="{PETROL}" stroke-width="{h*0.022:.1f}" stroke-linecap="round">'
+              f'<line x1="{px-h1:.1f}" y1="{y1:.1f}" x2="{px+h2:.1f}" y2="{y2:.1f}"/>'
+              f'<line x1="{px+h1:.1f}" y1="{y1:.1f}" x2="{px-h2:.1f}" y2="{y2:.1f}"/></g>\n')
+    sl = h * 0.05
+    o += f'<rect x="{px-ht-w*0.02:.1f}" y="{pt-sl:.1f}" width="{w*0.30:.1f}" height="{sl:.1f}" rx="{sl/2:.1f}" fill="{OCRU}"/>\n'
+    tx0, ty0 = px - ht - w * 0.02 + w * 0.30, pt - sl / 2
+    o += (f'<path d="M{tx0:.1f},{ty0:.1f} q{w*0.14:.1f},{-h*0.14:.1f} {w*0.25:.1f},{h*0.40:.1f}" fill="none" stroke="{VAR}" '
+          f'stroke-width="{h*0.028:.1f}" stroke-dasharray="{h*0.04:.1f} {h*0.05:.1f}" stroke-linecap="round"/>\n')
+    o += f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#cloth)"/>\n'
+    return o
+
+# =================================================================== STÂNGA: steagul principal
+LX = 80
+s += text(LX, 262, "STEAGUL PRINCIPAL · TREI STEJARI", 16, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(LX, 290, "originea numelui (en.wikipedia): trei stejari care stăteau la o răscruce, pe un drum care ieșea din cetate",
+          16, CEATA, "sans", 400, True)
+FX, FY, FW, FH = 140, 330, 600, 400
+# catarg
+s += f'<circle cx="{FX-12}" cy="{FY-22}" r="11" fill="{OCRU}"/>\n'
+s += f'<rect x="{FX-18}" y="{FY-12}" width="12" height="{FH+40}" fill="url(#pole)"/>\n'
+s += flag_trei_stejari(FX, FY, FW, FH, callouts=True)
+
+# ---- culorile (coloana din dreapta steagului)
+KX = 790; KW = 1070 - KX
+s += text(KX, 352, "Culorile", 28, VAR, "serif", 700)
+s += text(KX, 378, "trei culori de bază", 15, MUTED, "sans", 400, True)
+colors = [(GREEN, "Verde de stejar", "frunzele stejarilor care au dat numele cartierului"),
+          (VAR, "Var", "drumurile răscrucii; același var apare și la celelalte două steaguri"),
+          (OCRU, "Ocru", "ghinda și lumina de toamnă – inima răscrucii, unde se întâlnesc oamenii")]
+yy = 414
+for col, name, why in colors:
+    s += f'<rect x="{KX}" y="{yy}" width="46" height="46" rx="8" fill="{col}" stroke="#2A3845" stroke-width="1.5"/>\n'
+    s += text(KX + 62, yy + 18, name, 19, VAR, "sans", 700)
+    p, y2 = para(KX + 62, yy + 42, why, 16, KW - 62, CEATA, "sans", 400, lh=21)
+    s += p
+    yy = max(y2, yy + 46) + 22
+
+# ---- simbolurile (sub steag)
+SY = 790
+sym = [("1", "Crucea de var = răscrucea", "Două drumuri care se întâlnesc. Stejarii stăteau la o răscruce, pe un drum care ieșea din cetate."),
+       ("2", "Trei frunze de stejar", "Cei trei stejari de la care vine numele. Frunze, nu copaci întregi: se desenează ușor din memorie."),
+       ("3", "Discul de ocru = întâlnirea", "Mijlocul răscrucii. Sens propus pentru acest steag imaginar, nu o tradiție a cartierului.")]
+colw = 318
+for i, (n, ttl, body) in enumerate(sym):
+    x = LX + i * (colw + 22)
+    s += f'<circle cx="{x+19}" cy="{SY-7}" r="19" fill="{BG}" stroke="{ORANGE}" stroke-width="3"/>' + text(x + 19, SY, n, 20, VAR, "sans", 700, anchor="middle")
+    p, y2 = para(x + 50, SY, ttl, 18, colw - 50, VAR, "sans", 700, lh=23)
+    s += p
+    p, _ = para(x, y2 + 6, body, 16, colw, CEATA, "sans", 400, lh=22)
+    s += p
+
+# ---- mențiunea de onestitate (vizibilă)
+NY = 948
+s += f'<rect x="{LX}" y="{NY}" width="{1070-LX}" height="52" rx="12" fill="{BG}" stroke="{ORANGE}" stroke-width="1.8"/>\n'
+s += text(LX + 22, NY + 33, "Steaguri imaginare – nu sunt simboluri oficiale ale cartierelor sau ale municipiului", 19, VAR, "sans", 600)
+
+# =================================================================== DREAPTA: variante + reguli
+RX = 1120; RW = 1840 - RX
+def variant(y, h, name, drawer, origin, symbols, cols):
+    o = card(RX, y, RW, h, fill="#141E28")
+    fw, fh = 210, 140
+    o += drawer(RX + 28, y + (h - fh) / 2 + 8, fw, fh)
+    tx = RX + 28 + fw + 30; tw = RX + RW - 28 - tx
+    o += text(tx, y + 42, name, 26, VAR, "serif", 700)
+    nw = measure(name, 26, "serif", 700)
+    o += text(tx + nw + 12, y + 42, "· variantă mică", 15, MUTED, "sans", 400, True)
+    p, y2 = para(tx, y + 72, origin, 16, tw, CEATA, "sans", 400, lh=21)
+    o += p
+    p, y3 = para(tx, y2 + 6, symbols, 16, tw, VAR, "sans", 500, lh=21)
+    o += p
+    cy_ = y3 + 12
+    o += text(tx, cy_, "culori:", 15, MUTED, "sans", 400, True)
+    cx_ = tx + measure("culori:", 15, "sans", 400, True) + 14
+    for hexc, nm in cols:
+        o += f'<rect x="{cx_:.1f}" y="{cy_-14}" width="18" height="18" rx="4" fill="{hexc}" stroke="#3A4856" stroke-width="1"/>'
+        o += text(cx_ + 26, cy_, nm, 15, CEATA, "sans", 500)
+        cx_ += 26 + measure(nm, 15, "sans", 500) + 22
+    assert cx_ < RX + RW, name
+    return o, cy_
+
+v1, e1 = variant(230, 250, "Țiglari", flag_tiglari,
+                 "Numele vine de la fabrica de țiglă a lui Gustav Binder (secolul al XIX-lea). În cartier e Lacul lui Binder, „singurul lac din municipiu” (agerpres.ro, 2020).",
+                 "Sus: țigla, cu marginea în solzi. Jos: lacul, albastru, cu un val de var.",
+                 [(TIGLA, "țiglă"), (LAKE, "albastru de lac"), (VAR, "var")])
+s += v1
+v2, e2 = variant(500, 250, "Ștrand", flag_strand,
+                 "Numele vine de la ștrandul de aici: construit în anii 1920 sau inaugurat la 12 iulie 1936, după sursă. Mai târziu: trambulina „Turnul lui Phleps” (3, 5 și 10 m).",
+                 "Valuri de var pe petrol: apa. În ocru: turnul trambulinei; punctat: săritura.",
+                 [(PETROL, "petrol"), (VAR, "var"), (OCRU, "ocru")])
+s += v2
+
+# ---- 5 reguli de vexilologie
+BY = 770; BH = 1000 - BY
+s += card(RX, BY, RW, BH, fill=BG, stroke=ORANGE)
+s += text(RX + 28, BY + 40, "5 reguli de vexilologie", 26, OCRU, "serif", 700)
+s += text(RX + RW - 28, BY + 40, "vexilologia = studiul steagurilor", 15, MUTED, "sans", 400, True, anchor="end")
+rules = [("Simplu:", "un copil îl poate desena din memorie."),
+         ("Simboluri cu sens:", "fiecare formă spune ceva despre loc."),
+         ("2–3 culori de bază,", "care se văd bine una lângă alta."),
+         ("Fără litere sau sigle:", "steagul se citește de departe, fără cuvinte."),
+         ("Distinct, dar înrudit cu vecinii:", "aici, varul e firul comun.")]
+ry = BY + 80
+for i, (a, b) in enumerate(rules, 1):
+    s += text(RX + 40, ry, f"{i}.", 18, OCRU, "sans", 700, anchor="middle")
+    s += text(RX + 60, ry, a, 18, VAR, "sans", 700)
+    aw = measure(a, 18, "sans", 700)
+    s += text(RX + 60 + aw + 7, ry, b, 18, CEATA, "sans", 400)
+    assert RX + 60 + aw + 7 + measure(b, 18) < RX + RW - 24, (a, b)
+    ry += 29
+
+s += frame_foot()
+write(OUT, s)
+print(OUT)

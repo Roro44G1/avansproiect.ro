@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "I12",
+  "categorie": "Interactiv",
+  "titlu": "Quiz AI: ghicește cartierul după indiciu",
+  "fisiere": [
+   "07_interactiv/I12_quiz_cartiere.html",
+   "07_interactiv/I12_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS",
+  "descriere": "Douăsprezece indicii despre cartierele Sibiului – originea numelui, un an, o clădire sau o poveste adevărată – și câte patru variante. După fiecare răspuns afli dacă ai ghicit, cu o explicație scurtă și sursa ei; la final primești scorul și poți juca din nou, cu întrebările amestecate.",
+  "status": "realizat",
+  "nota": "Indiciile și explicațiile sunt scrise cu AI doar din fapte_verificate.md (secțiunile despre cartiere, Terezian, tramvai și completările pentru Calupul 3); fiecare explicație își numește sursa (en.wikipedia, turnulsfatului.ro 2014/2016, zilesinopti.ro – Răzvan Pop, old.tribuna.ro, agerpres.ro, sibiucityapp.ro, kirchenburgen.org, patrimoniu.sibiu.ro). Răspunsuri corecte doar din cartierele cu fapte: Hipodrom, Țiglari, Lazaret, Terezian, Turnișor, Gușterița, Ștrand, Trei Stejari, Vasile Aaron, Broscărie, Valea Aurie, Piața Cluj; Lupeni, Reșița, Tilișca, Tineretului, Veteranilor de Război și Viile Sibiului apar doar ca variante greșite, fără fapte despre ele. Divergențele sunt arătate (Turnișor 1336/1327, Gușterița 1309/„secolul al XIII-lea”, ștrandul anii 1920/12 iulie 1936); la Broscărie se spune explicit că originea numelui nu e documentată. Variantele greșite se aleg aleator (3 din 5, verificate să nu se potrivească indiciului), iar ordinea întrebărilor se amestecă la fiecare joc. Fără cifre de populație pe cartiere. Pictogramele sunt schematice. Testat Playwright la 1920×1080 și 390×844 (start, răspuns corect, răspuns greșit, scor final): fără erori în consolă, butoane ≥ 56 px, fără depășiri."
+ },
+ {
+  "cod": "I13",
+  "categorie": "Interactiv",
+  "titlu": "Generator AI de cărți poștale din cartierul tău — alegi cartierul, primești o carte poștală ilustrată cu text",
+  "fisiere": [
+   "07_interactiv/I13_carti_postale.html",
+   "07_interactiv/I13_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS",
+  "descriere": "Alegi unul dintre 13 cartiere, anotimpul, momentul zilei și stilul (vintage, modern sau afiș), iar aplicația desenează o carte poștală „Salutări din…” cu un mesaj scurt care conține un fapt adevărat despre cartier. Poți cere altă variantă de text și poți descărca imaginea.",
+  "status": "realizat",
+  "nota": "Carte poștală 1200×800 desenată procedural pe canvas (cer după moment, munți, anotimp – flori, frunze, zăpadă – și motivul cartierului: țiglă și lac la Țiglari, bazin și trambulină la Ștrand, pistă la Hipodrom, trei stejari la răscruce, gară la Lazaret, biserică cu ceas la Turnișor, biserică fortificată la Gușterița, tramvai la Piața Cluj și Dumbrăvii etc.); ilustrațiile sunt schematice, declarate în pagină ca nefiind fotografii sau redări exacte ale clădirilor. Textul (2–3 propoziții) e compus din șabloane scrise cu AI și include un singur fapt din fapte_verificate.md, cu sursa afișată pe carte și sub ea; „Altă variantă” schimbă șablonul și faptul. Pe carte: „Carte poștală generată – artefact-model ACTIV AI”; timbrul și ștampila poartă doar „ACTIV AI”, „Sibiul meu” și „#SibiulMeu”. Cartierele fără fapte nu sunt incluse; fără cifre de populație. Descărcare PNG prin canvas.toDataURL. Fără resurse externe. Testat Playwright la 1920×1080 și 390×844 (start, Ștrand/vară/amiază/modern, altă variantă, Hipodrom/iarnă/noapte/afiș, descărcare): fără erori în consolă, pe ecranul mic previzualizarea rămâne fixă sus."
+ },
+ {
+  "cod": "I14",
+  "categorie": "Interactiv",
+  "titlu": "Hartă interactivă AI: 20 de cartiere, câte o curiozitate la atingere",
+  "fisiere": [
+   "07_interactiv/I14_harta_cartierelor.html",
+   "07_interactiv/I14_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, hartă SVG",
+  "descriere": "O hartă schematică a Sibiului cu centrul istoric și cartierele: atinge un punct și afli de unde vine numele cartierului sau ce spun sursele despre el. Șase cartiere fără poziție în surse stau pe un raft separat, ca să le puneți voi pe harta clasei.",
+  "status": "realizat",
+  "nota": "Toate textele vin din fapte_verificate.md (en.wikipedia, turnulsfatului.ro 2014/2016, zilesinopti.ro, kirchenburgen.org, old.tribuna.ro, agerpres.ro, sibiucityapp.ro, patrimoniu.sibiu.ro), cu sursa scurtă sub fiecare curiozitate; divergențele sunt arătate ca atare (Ștrand: anii 1920 sau 1936; Turnișor: 1336 sau 1327; Gușterița: 1309 sau secolul al XIII-lea). Harta e schematică, cu coordonatele comune ale calupului: 9 cartiere cu direcție după surse, plus centrul istoric; Gușterița, Hipodrom, Dumbrăvii și Piața Cluj au contur punctat și eticheta „poziție orientativă”; Lupeni, Reșița, Tilișca, Tineretului, Veteranilor de Război și Viile Sibiului nu sunt puse pe hartă (raftul „De pus pe hartă de voi”, cu întrebări de cercetare). Traseul Cibinului și Pădurea Dumbrava sunt desenate aproximativ, cu mențiunea „traseu aproximativ”. Contorul numără 20 de locuri: lista en.wikipedia are 19 nume de cartiere (Hipodrom I–IV contează ca unul) plus centrul istoric. Nu apar cifre de populație pe cartiere. Broscărie: originea numelui nu e dată de surse și e prezentată doar ca întrebare."
+ }
+]

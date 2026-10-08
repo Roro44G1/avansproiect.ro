@@ -1,0 +1,276 @@
+# -*- coding: utf-8 -*-
+"""D11 – Cartierele Sibiului: cel mai vechi, cel mai nou, cel mai populat – trei podiumuri construite onest.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md (secțiunea „Cartierele Sibiului – completări pentru Calupul 3”).
+Fără cifre de populație pe cartiere (nu există date verificate)."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c3/06_date/D11_vechi_nou_populat.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+DASH = "#56657A"
+
+s = frame_head("DATE · D11", BLUE, "Cartierele Sibiului: cel mai vechi, cel mai nou, cel mai populat",
+               "trei podiumuri · treaptă punctată = sursele nu dau un răspuns · fără cifre inventate",
+               title_size=54)
+
+# ------------------------------------------------------------------ geometrie
+Y0, H = 222, 744          # cardurile coloanelor
+CW, CG = 560, 40
+XS = [80 + i * (CW + CG) for i in range(3)]
+BASE = 634                # baza podiumului
+SW = 156                  # lățimea unei trepte
+HSTEP = {1: 116, 2: 80, 3: 52}
+TOPD = 16                 # adâncimea fețelor de sus (pseudo-3D)
+
+
+def lighten(hexc, k):
+    hexc = hexc.lstrip("#")
+    r, g, b = int(hexc[0:2], 16), int(hexc[2:4], 16), int(hexc[4:6], 16)
+    r = int(r + (255 - r) * k); g = int(g + (255 - g) * k); b = int(b + (255 - b) * k)
+    return f"#{r:02X}{g:02X}{b:02X}"
+
+
+def step(x, rank, col=None, numcol=VAR):
+    """Treaptă de podium; col=None -> treaptă goală (punctată)."""
+    h = HSTEP[rank]
+    top = BASE - h
+    o = ""
+    if col:
+        o += poly([(x, top), (x + 10, top - TOPD), (x + SW + 10, top - TOPD), (x + SW, top)], fill=lighten(col, 0.35))
+        o += poly([(x + SW, top), (x + SW + 10, top - TOPD), (x + SW + 10, BASE - TOPD), (x + SW, BASE)], fill=col, opacity="0.55")
+        o += f'<rect x="{x}" y="{top}" width="{SW}" height="{h}" fill="{col}"/>\n'
+        o += text(x + SW / 2, top + min(h - 14, 64), str(rank), 50 if rank == 1 else 42, numcol, "serif", 700, anchor="middle")
+    else:
+        o += (f'<rect x="{x}" y="{top}" width="{SW}" height="{h}" fill="none" stroke="{DASH}" '
+              f'stroke-width="2.5" stroke-dasharray="9 7"/>\n')
+        o += text(x + SW / 2, top + min(h - 14, 60), "?", 40 if rank != 3 else 34, DASH, "serif", 700, anchor="middle")
+        o += text(x + SW / 2, top - 12, f"locul {rank}", 15, MUTED, "sans", 500, True, anchor="middle")
+    return o
+
+
+def podium_x(cx):
+    # ordinea clasică: 2 (stânga) – 1 (mijloc) – 3 (dreapta)
+    return {2: cx - SW * 1.5, 1: cx - SW / 2, 3: cx + SW / 2}
+
+
+def column_head(x, color, label, labcol, criterion, srcnote):
+    o = card(x, Y0, CW, H)
+    o += f'<rect x="{x}" y="{Y0}" width="{CW}" height="7" rx="3" fill="{color}"/>\n'
+    pw = measure(label, 19, "sans", 700, letter_spacing=2) + 36
+    o += f'<rect x="{x+28}" y="{Y0+24}" width="{pw:.1f}" height="38" rx="19" fill="{color}"/>\n'
+    o += text(x + 28 + pw / 2, Y0 + 50, label, 19, labcol, "sans", 700, anchor="middle", extra='letter-spacing="2"')
+    o += text(x + 28, Y0 + 90, criterion, 18, VAR, "sans", 500, True)
+    o += text(x + 28, Y0 + 114, srcnote, 15, MUTED, "sans", 400, True)
+    return o
+
+
+PETROL_T = lighten(PETROL, 0.3)   # petrol mai deschis, pentru text lizibil pe fond închis
+LAB1 = 374                        # linia de bază a etichetei pentru locul 1
+
+
+def scaled(svg, x, y, k):
+    return f'<g transform="translate({x:.1f},{y:.1f}) scale({k})">\n{svg}</g>\n'
+
+
+# ------------------------------------------------------------------ ilustrații
+def ic_center(cx, by):
+    """Centrul istoric: zid cu creneluri, turn de biserică înalt, turn de poartă."""
+    o = ""
+    o += f'<rect x="{cx-62}" y="{by-34}" width="124" height="34" fill="#C9BFAE"/>\n'
+    for i in range(7):
+        o += f'<rect x="{cx-62+i*18}" y="{by-42}" width="10" height="9" fill="#C9BFAE"/>\n'
+    # turn de biserică
+    o += f'<rect x="{cx-6}" y="{by-84}" width="26" height="84" fill="{VAR}"/>\n'
+    o += poly([(cx - 9, by - 84), (cx + 7, by - 118), (cx + 23, by - 84)], fill=TIGLA)
+    o += f'<rect x="{cx+3}" y="{by-72}" width="8" height="12" rx="4" fill="{BG}"/>\n'
+    # turn de poartă
+    o += f'<rect x="{cx-50}" y="{by-64}" width="26" height="64" fill="{ZID}"/>\n'
+    o += poly([(cx - 54, by - 64), (cx - 37, by - 86), (cx - 20, by - 64)], fill=TIGLA)
+    o += f'<path d="M{cx-44},{by} v-14 a7,7 0 0 1 14,0 v14 Z" fill="{BG}"/>\n'
+    # case în spate
+    o += f'<rect x="{cx+30}" y="{by-50}" width="26" height="50" fill="#E3D9C6"/>\n'
+    o += poly([(cx + 27, by - 50), (cx + 43, by - 66), (cx + 59, by - 50)], fill=TIGLA)
+    return o
+
+
+def ic_suburb(cx, by):
+    """Suburbie: case mici și o biserică."""
+    o = ""
+    for dx, w, h in [(-62, 30, 26), (-28, 30, 30), (32, 30, 24)]:
+        o += f'<rect x="{cx+dx}" y="{by-h}" width="{w}" height="{h}" fill="#E3D9C6"/>\n'
+        o += poly([(cx + dx - 3, by - h), (cx + dx + w / 2, by - h - 16), (cx + dx + w + 3, by - h)], fill=TIGLA)
+        o += f'<rect x="{cx+dx+10}" y="{by-h+8}" width="9" height="9" fill="{BG}" opacity="0.7"/>\n'
+    # biserică cu turn
+    o += f'<rect x="{cx+6}" y="{by-58}" width="20" height="58" fill="{VAR}"/>\n'
+    o += poly([(cx + 4, by - 58), (cx + 16, by - 82), (cx + 28, by - 58)], fill=TIGLA)
+    o += f'<rect x="{cx+12}" y="{by-46}" width="8" height="11" rx="4" fill="{BG}"/>\n'
+    return o
+
+
+def blocks(x, by, n_floors, w=24, col="#C9D3DC"):
+    h = 6 + n_floors * 7
+    o = f'<rect x="{x}" y="{by-h}" width="{w}" height="{h}" fill="{col}"/>\n'
+    for f in range(n_floors):
+        for c in range(3):
+            o += f'<rect x="{x+3+c*7:.1f}" y="{by-h+4+f*7}" width="4" height="4" fill="{BG}" opacity="0.65"/>\n'
+    return o
+
+
+def tree(cx, by, r=13, col="#3E8E5A"):
+    return (f'<rect x="{cx-2}" y="{by-14}" width="4" height="14" fill="#6B4E2E"/>'
+            f'<circle cx="{cx}" cy="{by-14-r+3}" r="{r}" fill="{col}"/>\n')
+
+
+def ic_newest(cx, by):
+    """Valea Aurie: blocuri lângă pădure (Dumbrava)."""
+    o = ""
+    o += blocks(cx - 64, by, 8, 26)
+    o += blocks(cx - 32, by, 10, 26, "#DCE3E9")
+    o += blocks(cx, by, 8, 26)
+    o += tree(cx + 40, by, 14, "#2F7A4B") + tree(cx + 58, by, 12, "#3E8E5A") + tree(cx + 50, by - 2, 9, "#4FA36A")
+    return o
+
+
+def ic_fortchurch(cx, by, sc=1.0):
+    """Biserică fortificată de sat (schematic)."""
+    o = f'<g transform="translate({cx},{by}) scale({sc})">'
+    o += '<rect x="-34" y="-16" width="68" height="16" fill="#8C8270"/>'
+    o += '<rect x="-20" y="-30" width="34" height="18" fill="#E3D9C6"/>'
+    o += f'<polygon points="-23,-30 -3,-42 17,-30" fill="{TIGLA}"/>'
+    o += f'<rect x="10" y="-52" width="14" height="40" fill="{VAR}"/>'
+    o += f'<polygon points="8,-52 17,-66 26,-52" fill="{TIGLA}"/>'
+    o += '</g>\n'
+    return o
+
+
+# ------------------------------------------------------------------ coloana 1: cel mai vechi
+x = XS[0]; cx = x + CW / 2
+s += column_head(x, OCRU, "CEL MAI VECHI", BG, "criteriu: vechimea ca parte a orașului",
+                 "locurile 1 și 2 – en.wikipedia; locul 3 nu e numit")
+px = podium_x(cx)
+s += step(px[2], 2, "#A87A1E")
+s += step(px[1], 1, OCRU, BG)
+s += step(px[3], 3, None)
+# etichete + ilustrații
+t1 = BASE - HSTEP[1] - TOPD
+s += scaled(ic_center(0, 0), px[1] + SW / 2 + 4, t1 + 4, 0.85)
+s += text(px[1] + SW / 2, LAB1, "Centrul istoric", 22, VAR, "serif", 700, anchor="middle")
+s += text(px[1] + SW / 2, LAB1 + 22, "1191 – prima atestare", 16, OCRU, "sans", 600, anchor="middle")
+t2 = BASE - HSTEP[2] - TOPD
+s += scaled(ic_suburb(0, 0), px[2] + SW / 2 + 4, t2 + 4, 0.85)
+s += text(px[2] + SW / 2, t2 - 94, "Terezian", 22, VAR, "serif", 700, anchor="middle")
+s += text(px[2] + SW / 2, t2 - 72, "secolele XVII–XVIII", 16, OCRU, "sans", 600, anchor="middle")
+
+ty = BASE + 34
+o, ty = para(x + 28, ty, "Terezian este „al doilea cel mai vechi cartier, după centru” (en.wikipedia): "
+             "a început ca suburbie a cetății.", 17, CW - 56, CEATA, lh=24)
+s += o
+# casetă de nuanță
+bx, by_, bw, bh = x + 20, ty - 4, CW - 40, Y0 + H - 20 - (ty - 4)
+s += f'<rect x="{bx}" y="{by_}" width="{bw}" height="{bh}" rx="14" fill="{BG}" opacity="0.55"/>\n'
+s += f'<rect x="{bx}" y="{by_}" width="5" height="{bh}" rx="2" fill="{OCRU}"/>\n'
+s += text(bx + 22, by_ + 30, "Nuanță: două sate înglobate", 18, VAR, "serif", 700)
+s += text(bx + 22, by_ + 52, "au atestări mai vechi decât multe cartiere", 15, CEATA, "sans", 400, True)
+rows = [("Gușterița", "(Hammersdorf)", "1309 sau „secolul al XIII-lea”, după sursă · inclusă în oraș în 1940"),
+        ("Turnișor", "(Neppendorf)", "1336 sau 1327, după sursă · înglobat după al Doilea Război Mondial")]
+ry = by_ + 86
+for nm, de, body in rows:
+    s += ic_fortchurch(bx + 52, ry + 30, 0.95)
+    s += text(bx + 104, ry, nm, 18, OCRU, "sans", 700)
+    s += text(bx + 104 + measure(nm, 18, "sans", 700) + 8, ry, de, 15, MUTED, "sans", 400, True)
+    o, ny = para(bx + 104, ry + 22, body, 15, bw - 124, CEATA, lh=20)
+    s += o
+    ry = ny + 12
+assert ry - 12 <= by_ + bh - 6, ("caseta col1", ry, by_ + bh)
+
+# ------------------------------------------------------------------ coloana 2: cel mai nou
+x = XS[1]; cx = x + CW / 2
+s += column_head(x, PETROL, "CEL MAI NOU", VAR, "criteriu: ultimul cartier de blocuri construit",
+                 "doar locul 1 e numit de sursă (turnulsfatului.ro, 2016)")
+px = podium_x(cx)
+s += step(px[2], 2, None)
+s += step(px[1], 1, PETROL)
+s += step(px[3], 3, None)
+s += scaled(ic_newest(0, 0), px[1] + SW / 2 + 2, t1 + 4, 1.0)
+s += text(px[1] + SW / 2, LAB1, "Valea Aurie", 22, VAR, "serif", 700, anchor="middle")
+s += text(px[1] + SW / 2, LAB1 + 22, "anul nu e dat de sursă", 16, PETROL_T, "sans", 600, anchor="middle")
+
+ty = BASE + 34
+o, ty = para(x + 28, ty, "„Ultimul cartier de blocuri construit”, aproape de Dumbrava. Cum s-a ajuns aici:",
+             17, CW - 56, CEATA, lh=24)
+s += o
+chron = [("circa 1948–1949", "primele blocuri militare, lângă aeroport", 2),
+         ("1957", "Terezian – blocurile de pe Strada Lungă", 3),
+         ("1970", "Ștrand și Broscărie", 4),
+         ("1972", "Hipodrom I, terminat", 5),
+         ("anii 1970", "Vasile Aaron", 6),
+         ("apoi", "Valea Aurie – ultimul construit", 7)]
+ry = ty + 8
+for i, (yr, lab, fl) in enumerate(chron):
+    last = i == len(chron) - 1
+    if last:
+        s += f'<rect x="{x+20}" y="{ry-30}" width="{CW-40}" height="42" rx="10" fill="{PETROL}" opacity="0.35"/>\n'
+    s += text(x + 28, ry, yr, 17, PETROL_T if not last else VAR, "serif", 700)
+    s += blocks(x + 174, ry + 6, fl // 2 + 1, 20, "#C9D3DC" if not last else VAR)
+    assert x + 208 + measure(lab, 17, "sans", 700 if last else 400) <= x + CW - 24, lab
+    s += text(x + 208, ry, lab, 17, VAR if last else CEATA, "sans", 700 if last else 400)
+    ry += 42
+assert ry - 42 + 12 <= Y0 + H - 12, ("col2", ry)
+
+# ------------------------------------------------------------------ coloana 3: cel mai populat
+x = XS[2]; cx = x + CW / 2
+s += column_head(x, VIOLET, "CEL MAI POPULAT", VAR, "criteriu: numărul de locuitori",
+                 "nicio sursă verificată nu dă cifre pe cartiere")
+px = podium_x(cx)
+s += step(px[2], 2, None)
+s += step(px[1], 1, None)
+s += step(px[3], 3, None)
+# mesajul principal, deasupra podiumului gol
+msg = "Nu există date oficiale verificate de populație pe cartiere."
+ny = LAB1 + 14
+for ln in ["Nu există date oficiale", "verificate de populație", "pe cartiere."]:
+    assert measure(ln, 28, "serif", 700) < CW - 60
+    s += text(cx, ny, ln, 28, VAR, "serif", 700, anchor="middle")
+    ny += 36
+assert ny - 36 < BASE - HSTEP[1] - 36, ("mesaj col3", ny)
+
+ty = BASE + 34
+s += text(x + 28, ty, "Ce știm sigur", 20, VAR, "serif", 700)
+# Hipodrom I–IV
+gy = ty + 22
+gx = x + 28
+for k, lab in enumerate(["I", "II", "III", "IV"]):
+    xx = gx + (k % 2) * 40; yy = gy + (k // 2) * 40
+    s += f'<rect x="{xx}" y="{yy}" width="36" height="36" rx="6" fill="{VIOLET}" opacity="{0.95 if k == 0 else 0.6}"/>\n'
+    s += text(xx + 18, yy + 24, lab, 14, VAR, "sans", 700, anchor="middle")
+o, ny = para(x + 124, ty + 40, "Hipodrom – „cartierul care s-a dezvoltat cel mai mult până în ’89” "
+             "(turnulsfatului.ro, 2016); singurul împărțit în patru: Hipodrom I–IV (en.wikipedia).",
+             16, CW - 152, CEATA, lh=22)
+s += o
+ty = max(ny, gy + 80) + 8
+# populația orașului
+s += f'<line x1="{x+28}" y1="{ty-14}" x2="{x+CW-28}" y2="{ty-14}" stroke="{LINE}" stroke-width="1.5"/>\n'
+s += text(x + 28, ty + 34, "134.309", 44, OCRU, "serif", 700)
+nx = x + 28 + measure("134.309", 44, "serif", 700) + 18
+s += text(nx, ty + 12, "locuitori în tot orașul", 17, VAR, "sans", 600)
+s += text(nx, ty + 34, "recensământul din 2021", 16, CEATA)
+ty += 72
+o, ny = para(x + 28, ty, "„S-a dezvoltat cel mai mult” nu înseamnă automat „are cei mai mulți locuitori”. "
+             "Fără date pe cartiere, orice grafic ar fi inventat – de aceea nu desenăm unul.",
+             16, CW - 56, CEATA, italic=True, lh=22)
+s += o
+q = "Pentru clasă: unde ați căuta date oficiale pe cartiere?"
+o, ny = para(x + 28, ny + 14, q, 16, CW - 56, OCRU, "sans", 600, lh=22)
+s += o
+assert ny - 22 <= Y0 + H - 14, ("col3", ny)
+
+# ------------------------------------------------------------------ surse
+s += text(80, 994, "Surse: en.wikipedia (Sibiu, Terezian, Gușterița, Turnișor, Valea Aurie); kirchenburgen.org (Turnișor, 1327); "
+          "turnulsfatului.ro (2014; 2016 – „Cum au apărut în Sibiu cartierele de blocuri”); recensământul 2021, via en.wikipedia.",
+          14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

@@ -1,0 +1,69 @@
+[
+  {
+    "cod": "A14",
+    "categorie": "Audio",
+    "titlu": "Imnul neoficial al cartierului — cântec AI cu versuri originale",
+    "titlu_creativ": "Unu, doi – Ștrand!",
+    "fisiere": [
+      "04_audio/A14_imnul_cartierului.md",
+      "04_audio/A14_imnul_cartierului.mp3"
+    ],
+    "tip": "audio",
+    "instrument": "Claude (Anthropic) – versuri, melodie, acorduri și aranjament + sinteză audio procedurală (Python/numpy)",
+    "descriere": "Un imn vesel pentru cartierul Ștrand, de cântat în clasă: versuri originale despre ștrandul cu bazin olimpic și bazin pentru copii, Turnul lui Phleps și blocurile din 1970, pe o temă originală în stil de imn pop/marș vesel. În instrumental, melodia vocii e cântată de un instrument solo, ca ghid.",
+    "status": "realizat",
+    "nota": "Temă originală în stil de imn pop/marș vesel (nu e prelucrarea unei melodii existente); melodia notată (note și acorduri pe versuri) și marcajele de timp sunt în md. Vocea nu e generată – versurile se cântă în clasă peste instrumental. Fapte din fapte_verificate.md („Ștrandul și cartierul Ștrand”): Livada Măcelarilor, bazin de dimensiuni olimpice și bazin pentru copii, Turnul lui Phleps cu sărituri de 3, 5 și 10 m („pe vremuri” – platforma de 10 m a fost demontată în 2008), 1970 – întâi vile, apoi blocuri, Ștrand I și II; data ștrandului apare cu divergența surselor („anii 1920 sau 1936, după sursă”). Restul versurilor sunt imagini poetice, marcate în tabelul din md. Sunete integral sintetizate, fără mostre; verificare tehnică în 04_audio/_verificare/.",
+    "audio": "04_audio/A14_imnul_cartierului.mp3",
+    "tts_text": null,
+    "tts_lang": null,
+    "durata_s": 87.25,
+    "loudness_lufs": -14.1,
+    "true_peak_dbtp": -1.5,
+    "sample_rate_hz": 44100,
+    "canale": 2,
+    "bitrate_kbps": 192,
+    "tempo_bpm": 120,
+    "tonalitate": "Sol major",
+    "masura": "4/4",
+    "cod_sursa": [
+      "04_audio/_src/A14_imnul_cartierului.py",
+      "../04_audio/_src/audiolib.py"
+    ],
+    "marcaje_s": {
+      "Intro": 0.0,
+      "Strofa 1": 8.0,
+      "Refren": 24.0,
+      "Strofa 2": 40.0,
+      "Punte": 56.0,
+      "Refren (reluare)": 64.0,
+      "Final": 80.0,
+      "Acord final": 84.0
+    },
+    "verificare": [
+      "04_audio/_verificare/A14_imnul_cartierului_spectrograma.png",
+      "04_audio/_verificare/A14_imnul_cartierului_forma_unda.png",
+      "04_audio/_verificare/raport_verificare.json"
+    ]
+  },
+  {
+    "cod": "A15",
+    "categorie": "Audio",
+    "titlu": "Interviu radio imaginar cu cel mai bătrân stejar din Trei Stejari",
+    "titlu_creativ": "Stejarul are cuvântul",
+    "fisiere": [
+      "04_audio/A15_interviu_stejar.md",
+      "04_audio/A15_interviu_stejar.txt"
+    ],
+    "tip": "scenariu",
+    "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+    "descriere": "Reportera fictivă Sânziana stă de vorbă cu un stejar imaginat despre numele cartierului Trei Stejari și despre locul fabricii de bere, de la velnița de pe la 1740 până la închiderea din 2000.",
+    "status": "realizat",
+    "nota": "Ambele personaje sunt fictive; stejarul se declară imaginat și spune că sursele nu precizează dacă cei trei stejari adevărați mai există. Fapte din fapte_verificate.md (Trei Stejari – en.wikipedia, turnulsfatului.ro; fabrica de bere – sibiucityapp.ro), cu tabel „fapt – sursă” în md. Nu se dau vârsta stejarilor, locul exact al răscrucii sau ce se află azi pe locul fabricii. Textul pentru TTS: 19 replici prefixate cu numele vorbitorului, cifrele în litere, „Activ A I”, fără indicații de regie. Durata reală depinde de voce și de viteza de citire.",
+    "audio": null,
+    "tts_text": "04_audio/A15_interviu_stejar.txt",
+    "tts_lang": "ro-RO",
+    "durata_s": null,
+    "durata_estimata_s": 185,
+    "cuvinte_rostite": 454
+  }
+]

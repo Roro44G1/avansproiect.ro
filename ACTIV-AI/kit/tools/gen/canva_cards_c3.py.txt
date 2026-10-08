@@ -1,0 +1,80 @@
+import json, base64, subprocess, html, os
+from PIL import Image
+ROOT='/home/claude/expo'; V=f'{ROOT}/c3/01_vizual'
+FOLDER='https://www.canva.com/folder/FAHXN57WmTs'
+ITEMS = [
+ ('V23','Fiecare cartier ca un personaj — galerie de 6 portrete AI (Terezian, Lazaret, Turnișor, Țiglari, Hipodrom, Ștrand)',
+  [('V23a_terezian.jpg','MAHXZzWocyY','Terezian'),('V23b_lazaret.jpg','MAHXZ1ohuKk','Lazaret'),('V23c_turnisor.jpg','MAHXZ1oart0','Turnișor'),
+   ('V23d_tiglari.jpg','MAHXZ99ofwA','Țiglari'),('V23e_hipodrom.jpg','MAHXZwsbD4w','Hipodrom'),('V23f_strand.jpg','MAHXZ5bONP8','Ștrand')],
+  'Șase cartiere ca personaje imaginate: o bătrână cu o biserică în miniatură (Terezian), un îngrijitor cu felinar lângă gară (Lazaret), o tânără între turnul bisericii și blocuri (Turnișor), un meșter cu o țiglă (Țiglari), un călăreț (Hipodrom), o înotătoare (Ștrand).',
+  'Personaje fictive, alegorice; fiecare pornește de la originea reală a numelui cartierului (fișa de fapte, secțiunea „Cartierele Sibiului”).'),
+ ('V24','Fabrica de țiglă a lui Gustav Binder, reimaginată AI — Țiglari în secolul al XIX-lea',
+  [('V24_fabrica_tigla_binder.jpg','MAHXZw1uoYQ','reconstituire liberă, nu documentară')],
+  'O fabrică de țiglă la marginea de nord a unui oraș transilvan, în secolul al XIX-lea: gropi de lut cu apă de ploaie, cuptoare cu coșuri înalte, șoproane cu țigle puse la uscat, o căruță încărcată și, în depărtare, acoperișurile și turnurile orașului vechi.',
+  'Fapt verificat: cartierul Țiglari își trage numele de la fabrica de țiglă a lui Gustav Binder, secolul al XIX-lea (turnulsfatului.ro, 2014; en.wikipedia). Fișa nu descrie fabrica: imaginea e o reconstituire liberă.'),
+ ('V25','Ștrandul din anii 1920 — scenă de vară reconstituită AI, în stil de carte poștală veche',
+  [('V25_strand_carte_postala.jpg','MAHXZ8bUnN4','carte poștală imaginată, stil interbelic')],
+  'Carte poștală interbelică colorată manual: un bazin mare cu apă turcoaz, un bazin mic pentru copii, o trambulină înaltă de beton, cabine albe, înotători văzuți de departe, plopi și munții albaștri la orizont. Fără text pe imagine.',
+  'Sursele diferă: „anii 1920” (turnulsfatului.ro, 2014; en.wikipedia) sau inaugurarea la 12 iulie 1936, cu bazin olimpic, bazin pentru copii și, ulterior, trambulina „Turnul lui Phleps” (tribuna.ro). Nu reproduce o carte poștală reală.'),
+]
+def b64(p): return 'data:image/jpeg;base64,'+base64.b64encode(open(p,'rb').read()).decode()
+def esc(s): return html.escape(s, quote=True)
+def wrap(s, n):
+    out=[]; line=''
+    for w in s.split():
+        if len(line)+len(w)+1>n and line: out.append(line); line=w
+        else: line=(line+' '+w).strip()
+    if line: out.append(line)
+    return out
+man=[]
+for cod,titlu,imgs,desc,nota in ITEMS:
+    assert len(desc)<=330, (cod,len(desc))
+    tl=wrap(titlu, 50); fs=54 if len(tl)==1 else 46; lh=58
+    title_svg=''.join(f'<text x="80" y="{180+i*lh}" font-family="Noto Serif" font-weight="700" font-size="{fs}" fill="#F3EFE6">{esc(l)}</text>' for i,l in enumerate(tl))
+    top=180+(len(tl)-1)*lh+50
+    parts=[]; n=len(imgs)
+    if n==1:
+        p=f'{V}/canva_miniaturi/{imgs[0][0]}'; w,h=Image.open(p).size
+        boxW,boxH=1080,1000-top-60; s=min(boxW/w,boxH/h); dw,dh=w*s,h*s; x=80+(boxW-dw)/2; y=top+(boxH-dh)/2
+        parts.append(f'<image x="{x:.0f}" y="{y:.0f}" width="{dw:.0f}" height="{dh:.0f}" href="{b64(p)}" preserveAspectRatio="xMidYMid meet"/>')
+        parts.append(f'<text x="{80+boxW/2:.0f}" y="{y+dh+34:.0f}" text-anchor="middle" font-family="Inter" font-size="22" fill="#A9B4C0">{esc(imgs[0][2])}</text>')
+    else:
+        cols=3; gap=22; boxW=(1080-(cols-1)*gap)/cols
+        for i,(f,mid,cap) in enumerate(imgs):
+            p=f'{V}/canva_miniaturi/{f}'; w,h=Image.open(p).size; dh=h*boxW/w
+            r,c=divmod(i,cols); x=80+c*(boxW+gap); y=top+10+r*(dh+70)
+            parts.append(f'<rect x="{x-3:.0f}" y="{y-3:.0f}" width="{boxW+6:.0f}" height="{dh+6:.0f}" rx="6" fill="#1B2733"/>')
+            parts.append(f'<image x="{x:.0f}" y="{y:.0f}" width="{boxW:.0f}" height="{dh:.0f}" href="{b64(p)}"/>')
+            parts.append(f'<text x="{x+boxW/2:.0f}" y="{y+dh+38:.0f}" text-anchor="middle" font-family="Inter" font-weight="600" font-size="26" fill="#F3EFE6">{esc(cap)}</text>')
+    py=top
+    dl=wrap(desc, 38)
+    desc_svg=''.join(f'<text x="1250" y="{py+110+i*40}" font-family="Inter" font-size="27" fill="#F3EFE6">{esc(l)}</text>' for i,l in enumerate(dl))
+    yy=py+110+len(dl)*40+30
+    foot=['Generat cu: Canva AI (generator de imagini).','Previzualizare redusă; rezoluția completă','în folderul Canva „ACTIV AI – Expoziție”.']
+    foot_svg=''.join(f'<text x="1250" y="{yy+i*32}" font-family="Inter" font-size="22" fill="#A9B4C0">{esc(l)}</text>' for i,l in enumerate(foot))
+    ph=min(1000-py, yy+3*32+10-py)
+    svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect width="1920" height="1080" fill="#0F1720"/>
+<rect x="80" y="62" rx="22" width="190" height="44" fill="#E2A62B"/><text x="175" y="92" text-anchor="middle" font-family="Inter" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">VIZUAL · {cod}</text>
+{title_svg}
+<rect x="1210" y="{py}" width="630" height="{ph}" rx="24" fill="#1B2733"/>
+<text x="1250" y="{py+60}" font-family="Inter" font-weight="700" font-size="21" letter-spacing="2" fill="#E2A62B">CE A PRIMIT GENERATORUL AI</text>
+{desc_svg}
+{foot_svg}
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80" y="1056" font-family="Inter" font-size="22" fill="#A9B4C0">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840" y="1056" text-anchor="end" font-family="Inter" font-weight="600" font-size="22" fill="#E2A62B">#SibiulMeu</text>
+{''.join(parts)}
+</svg>'''
+    out=f'{V}/{cod}_card_canva'
+    open(out+'.svg','w').write(svg)
+    subprocess.run(['rsvg-convert','-w','1920','-h','1080',out+'.svg','-o',out+'.png'],check=True)
+    os.remove(out+'.svg')
+    man.append({'cod':cod,'categorie':'Vizual','titlu':titlu,
+        'fisiere':[f'01_vizual/{cod}_card_canva.png']+[f'01_vizual/canva_miniaturi/{f}' for f,_,_ in imgs],
+        'tip':'imagine','instrument':'Canva AI (generator de imagini), prompt scris cu Claude',
+        'descriere':desc,'status':'realizat',
+        'canva':[{'media_id':mid,'url':f'https://www.canva.com/M/{mid}','eticheta':cap} for _,mid,cap in imgs],
+        'nota':nota+' Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: '+FOLDER+'. Local există doar miniaturi (~200 px).'})
+json.dump(man, open(f'{V}/_manifest.json','w'), ensure_ascii=False, indent=1)
+print(len(man))

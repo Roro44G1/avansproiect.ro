@@ -1,0 +1,30 @@
+[
+ {
+  "cod": "M15",
+  "categorie": "Video",
+  "titlu": "De la sat la cartier: Turnișor (Neppendorf) — animație AI de transformare",
+  "fisiere": [
+   "02_video/M15_de_la_sat_la_cartier_turnisor.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: piesa A03 a expoziției („Dimineață în cartier”, peisaj sonor original)",
+  "descriere": "Aceeași priveliște se schimbă sub ochii tăi, cu un contor de an: satul cu bazilica romanică de la sfârșitul secolului al XII-lea, prima atestare (1336 sau 1327, după sursă), sosirea landlerilor în 1734, ceasul de lemn din 1781 și cel de fier din 1862, biserica ortodoxă Sf. Nicolae, tramvaiul din 1927, apoi blocurile de după al Doilea Război Mondial, până la cartierul de azi, cu biserica veche tot în mijloc.",
+  "status": "realizat",
+  "durata_s": 58.0,
+  "nota": "Fapte: fișa de fapte, secțiunea „Cartierele Sibiului – completări” (Turnișor), după en.wikipedia.org (Turnișor), kirchenburgen.org (Neppendorf) și Răzvan Pop, „Sibiu Walks: Turnișor”, zilesinopti.ro (2023); tramvaiul din 25 septembrie 1927 (Piața Cibin – gara Turnișor) după fișa „Tramvaiul” (patrimoniu.sibiu.ro). Divergența privind prima atestare (1336 vs. 1327) este arătată pe ecran și pe cartela finală. Contorul afișează „sec. XII”, „sec. XX” și „după 1945” acolo unde sursele nu dau un an exact; anul înglobării în oraș nu e dat de surse și se spune explicit. Reconstituire schematică, imagini imaginate: casele cu fronton, oamenii, carul landlerilor, documentul, culorile, poziția stației și a bisericii Sf. Nicolae nu reproduc surse de epocă; bisericile sunt scheme, nu la scară. Durata (58 s) e mai scurtă decât piesa A03 (84 s), folosită de la început, cu estompare finală de 2 s. Sursă HTML: _tools/video/M15_de_la_sat_la_cartier_turnisor.html."
+ },
+ {
+  "cod": "M16",
+  "categorie": "Video",
+  "titlu": "Plimbare animată AI prin 5 cartiere în 60 de secunde",
+  "fisiere": [
+   "02_video/M16_plimbare_prin_5_cartiere.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: piesa A04 a expoziției („Ochi de țiglă”, instrumental original)",
+  "descriere": "Un personaj fictiv pornește din centrul istoric și se plimbă pe o hartă schematică prin Terezian, Țiglari, Ștrand, Hipodrom și Lazaret. La fiecare oprire apare o mică ilustrație animată (orfelinatul și parcul, fabrica de țiglă și lacul, bazinul cu trambulina, pista cu cai care devine cartier de blocuri, gara cu felinarul) și două fapte verificate.",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "Fapte: fișa de fapte (Cartiere – originea numelor; Terezian – completări; Cartierele Sibiului – completări: Țiglari, Ștrandul, Hipodrom, Lazaret, cartierele de blocuri), după turnulsfatului.ro (2014, 2016), en.wikipedia.org, agerpres.ro (2020), old.tribuna.ro și zilesinopti.ro (Răzvan Pop, 2024). Divergența privind ștrandul (anii 1920 vs. 12 iulie 1936) este arătată ca atare. Hartă schematică, poziții aproximative, cu coordonatele comune ale calupului; Hipodrom, Gușterița, Dumbrăvii și Piața Cluj sunt marcate „poziție orientativă”; cartierele nelocalizate de surse nu apar pe hartă. Traseul (Terezian → Țiglari → Ștrand → Hipodrom → Lazaret) e ales pentru fluență, nu e un itinerar real. Personajul și săritorul de la trambulină sunt fictivi; clădirile, vacile din fostul Târg al Vitelor, caii, trenul și felinarul sunt ilustrații imaginate, nu reproduc locurile reale. Muzica: primele 60 s din A04, cu estompare finală de 2 s; strălucirea personajului urmează volumul muzicii. Sursă HTML: _tools/video/M16_plimbare_prin_5_cartiere.html."
+ }
+]

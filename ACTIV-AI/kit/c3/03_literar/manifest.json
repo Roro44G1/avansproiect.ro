@@ -1,0 +1,47 @@
+[
+  {
+    "cod": "L21",
+    "categorie": "Literar",
+    "titlu": "Ghidul turistic al cartierului meu, scris de un extraterestru — text umoristic",
+    "titlu_creativ": "Unde sunt caii? Ghidul Hipodromului pentru vizitatori din altă galaxie",
+    "fisiere": [
+      "03_literar/L21_ghid_extraterestru.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "„Unde sunt caii?” – Kvelt, un ghid turistic extraterestru inventat, vizitează cartierul Hipodrom: caută zadarnic caii, ia balcoanele drept steaguri de familie și coada la cozonac drept ceremonie a răbdării, dar istoria hipodromului de cavalerie o spune corect, cu sursele la vedere.",
+    "status": "realizat",
+    "nota": "Ficțiune umoristică declarată în text: Kvelt, planeta Brumm și toate observațiile despre viața de zi cu zi (balcoane, bătător, interfon, coada la cozonac) sunt inventate și nu descriu persoane sau locuri anume; umorul vizează neînțelegerile personajului, nu locuitorii. Faptele (hipodromul cavaleriei de la începutul secolului al XIX-lea, Cazarma 90, poziția între străzile Nicolae Iorga, Vasile Milea și Hipodromului, concursurile hipice din iunie 1924 cu regele Ferdinand I și regina Maria, Henri Rang – argint la Berlin 1936, „conform sursei”, demolarea fără an precizat, Hipodrom I definitivat în 1972, arhitecți din Brașov/Sibiu, singurul cartier împărțit în patru, proiectele tip cu 4 sau 8 etaje, cel mai des parter + 8, populația orașului 134.309 în 2021) provin din fapte_verificate.md (zilesinopti.ro – Răzvan Pop, 2024; turnulsfatului.ro, 2016; en.wikipedia) și sunt separate în nota „Ce e real”. Nu se dă nicio cifră de populație pentru cartier. Proiectele tip sunt prezentate ca regulă generală, nu ca măsurătoare a fiecărui bloc din Hipodrom. Corpul textului: aproximativ 865 de cuvinte.",
+    "extras": "Cai, zero.\nPe planeta mea, cine inventează un an e trimis să numere asteroizi.\nNu deduceți, verificați."
+  },
+  {
+    "cod": "L22",
+    "categorie": "Literar",
+    "titlu": "Poveștile numelor: Lazaret, Țiglari, Trei Stejari — mini-legende AI pornite de la originea reală a numelor",
+    "titlu_creativ": "Ce poveste are un nume? Lazaret, Țiglari, Trei Stejari",
+    "fisiere": [
+      "03_literar/L22_povestile_numelor.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Trei cartiere, trei nume, trei legende scrise azi: pentru fiecare, întâi o casetă „Ce spun sursele” cu originea reală a numelui (lazaretul din mănăstirea dominicană de lângă gară, fabrica de țiglă a lui Gustav Binder, cei trei stejari de la răscruce), apoi o mini-legendă imaginată, declarată ca atare.",
+    "status": "realizat",
+    "nota": "Legende inventate în 2026 cu AI, nu legende populare: fiecare începe cu formula „Iată o legendă imaginată azi” și își asumă finalul inventat; personajele Matei, Toma și Lina sunt fictive. Gustav Binder apare doar cu faptele din fișă, fără replici sau fapte inventate. Casetele „Ce spun sursele” folosesc doar fapte_verificate.md: lazaretul (loc de izolare a bolnavilor, „leprozerie” la turnulsfatului.ro, 2014) în clădirile unei mici mănăstiri dominicane, pe locul actualei gări (en.wikipedia) sau în zona autogării (turnulsfatului.ro) – ambele variante sunt date; Țiglari – fabrica de țiglă a lui Gustav Binder, secolul al XIX-lea, muncitorii așezați în zonă, Lacul lui Binder „singurul lac din municipiu” (agerpres.ro, 2020); Trei Stejari – trei stejari la o răscruce, pe un drum care ieșea din cetate. Textul spune explicit ce nu știu sursele: de ce lacul poartă numele lui Binder, când s-a închis lazaretul, ce s-a întâmplat cu cei trei stejari. Corpul textului (casete + legende): aproximativ 880 de cuvinte.",
+    "extras": "Abia la apus a înțeles: al treilea stejar nu răspundea, ci asculta.\n„Acolo, la țiglari”. Cu timpul, răspunsul a devenit nume.\nDacă vrei să-l auzi pe Toma, ascultă ploaia de sub o streașină."
+  },
+  {
+    "cod": "L23",
+    "categorie": "Literar",
+    "titlu": "Scrisoare de dragoste către blocul meu — poem în proză",
+    "titlu_creativ": "Dragă blocule: scrisoare de la etajul șapte",
+    "fisiere": [
+      "03_literar/L23_scrisoare_blocului.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Un adolescent fictiv de la etajul șapte îi scrie blocului său din cartierul Vasile Aaron: despre scara cu ecou de catedrală mică, despre ferestrele aprinse ca un careu de cuvinte încrucișate și despre faptul că locuiește pe o fostă margine dintre oraș și Șelimbăr.",
+    "status": "realizat",
+    "nota": "Narator fictiv, fără nume; blocul nu este o clădire anume (s-a ales varianta de proiect tip cea mai des întâlnită, parter + 8, declarat ca atare). Vecinii, familia, liftul și amintirile sunt inventate. Faptele provin din fapte_verificate.md: criza locuințelor de după al Doilea Război Mondial și proiectele tip (apartamente cu 1–3 camere, blocuri cu 4 sau 8 etaje, cel mai des parter + 8) – turnulsfatului.ro, 14 februarie 2016; Vasile Aaron construit în anii 1970 (turnulsfatului.ro, 2014), numele de la strada care marca odinioară limita dintre oraș și comuna Șelimbăr (en.wikipedia); „ochii Sibiului” – lucarne care ventilează podurile. Cine a fost Vasile Aaron nu apare în fișă, așa că naratorul lasă întrebarea deschisă. Corpul textului: aproximativ 780 de cuvinte.",
+    "extras": "Pe numele tău n-a venit niciodată nimic. Așa că asta e prima.\nNu-i știu numele. Îl știu după acord.\nBănuiesc că e ceva simplu, ca „acasă”."
+  }
+]

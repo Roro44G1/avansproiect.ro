@@ -183,7 +183,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const catOf = it => CATS.find(c => c[0] === it.categorie) || CATS[0];
 let filter = "Toate"; let calup = "toate";
-const CALUPURI = {0:"Expoziția inițială (73 de teme)",1:"Calupul 1 · Cetatea: ziduri, turnuri, porți",2:"Calupul 2 · Premierele Sibiului"};
+const CALUPURI = {0:"Expoziția inițială (73 de teme)",1:"Calupul 1 · Cetatea: ziduri, turnuri, porți",2:"Calupul 2 · Premierele Sibiului",3:"Calupul 3 · Cartierele Sibiului"};
 const inCalup = it => calup === "toate" || String(it.calup||0) === calup;
 
 function stats(){

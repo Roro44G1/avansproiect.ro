@@ -1,0 +1,504 @@
+"""A14 – „Unu, doi – Ștrand!” – imnul neoficial al cartierului Ștrand (instrumental demo, ~87 s).
+
+Temă originală în stil de imn pop / marș vesel: melodia, acordurile și versurile au fost
+compuse pentru expoziția ACTIV AI și nu se bazează pe nicio melodie existentă.
+Instrumentalul este un demo pentru clasă: melodia vocii este cântată de un instrument solo
+(alamă sintetizată), ca ghid; vocea NU este generată – versurile se cântă în clasă.
+
+Sol major, 4/4, 120 BPM (pătrimea) – o măsură = 2 s.
+Forma: Intro (4 măsuri) – Strofa 1 (8) – Refren (8) – Strofa 2 (8) – Punte (4) –
+Refren (8) – Final (2) + acordul final (coroană pe ultima silabă).
+
+Notație în cod: fiecare șir = o măsură de 4/4; token = „silabă|notă|durată în pătrimi”;
+„~” la sfârșitul silabei = cuvântul continuă; „_” = spațiu în textul afișat; nota „R” = pauză.
+
+Sunete (toate sintetizate din formule, fără mostre): solo de alamă (dinte de fierăstrău cu
+filtru care se închide după atac + vibrato), glockenspiel (sinteză modală), chitară acustică
+(coardă ciupită Karplus-Strong, acorduri deschise, ciupite „în strum”), bas, pad, tobe de marș
+și pop (toba mare, toba mică, hi-hat, palme, bețe, cinel).
+
+Folosește biblioteca comună audiolib.py din /home/claude/expo/04_audio/_src (adăugată prin sys.path).
+
+Rulare:  python3 A14_imnul_cartierului.py             -> ../A14_imnul_cartierului.mp3
+         python3 A14_imnul_cartierului.py --notatie   -> tipărește notația pentru fișa .md
+"""
+import json
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+
+from audiolib import (SR, add, additive, bp, clap, env_adsr, env_ar, env_exp, finalize, hat, hp,
+                      hz, kick, ks_pluck, lp, make_ir, match_lufs, modal, ns, peaking, report,
+                      reverb, rng_of, saw, stereo, t_axis)
+
+BPM = 120
+BEAT = 60.0 / BPM          # 0,5 s
+BAR = 4 * BEAT             # 2 s
+OUT = os.path.join(HERE, "..", "A14_imnul_cartierului.mp3")
+TAIL = 3.2                 # acordul final răsună după ultima măsură
+FERMATA = 2.0              # ultima silabă („deschis!”) se ține peste acordul final
+
+# ------------------------------------------------------------------ melodia (înălțimi reale)
+STROFA_1 = [
+    ["Un~|D4|1.5 de-n|E4|0.5 vest|G4|1.5 a|G4|0.5", "fost|B4|1.5 li~|A4|0.5 va~|G4|1 dă,|E4|1"],
+    ["s-a|E4|1 fă~|G4|1 cut|C5|1 un|B4|1", "ștrand|A4|1 a~|B4|1 ici:|A4|2"],
+    ["un|G4|1.5 ba~|A4|0.5 zin|B4|1.5 o~|D5|0.5", "lim~|E5|1.5 pic,|D5|0.5 ma~|C5|1 re,|A4|1"],
+    ["și-u~|E4|0.5 nul|E4|0.5 mic,|A4|1 pen~|C5|1 tru|B4|0.5 cei|A4|0.5", "mici!|D5|3 ·|R|1"],
+]
+STROFA_2 = [
+    ["Tur~|D4|1 nul|E4|0.5 lui|F#4|0.5 Phleps,|G4|1.5 pe|G4|0.5", "vre~|B4|1.5 mu~|A4|0.5 ri,|G4|2"],
+    ["trei,|E4|1 cinci,|G4|1 ze~|C5|1 ce|B4|1", "me~|A4|1 tri:|B4|1 sus!|D5|2"],
+    ["Vi~|G4|1.5 le~|A4|0.5 -ntâi,|B4|1.5 pe|D5|0.5", "ur~|E5|1.5 mă|D5|0.5 blo~|C5|1 curi,|A4|1"],
+    ["din|E4|0.5 șap~|E4|0.5 te~|A4|1 zeci,|C5|1 spre|B4|0.5 a~|A4|0.5", "pus!|D5|3 ·|R|1"],
+]
+REFREN = [
+    ["U~|G4|0.5 nu,|G4|0.5 doi_–|B4|1 Ștrand|D5|1 u~|E5|0.5 nu,|D5|0.5", "doi!|C5|2 ·|R|2"],
+    ["Car~|B4|1 ti~|B4|1 e~|D5|1 rul|B4|1", "cân~|C5|1 tă-n|B4|1 noi!|A4|2"],
+    ["Bloc|D5|1.5 cu|D5|0.5 bloc|D5|1 și|B4|1", "vis|E5|1.5 cu|E5|0.5 vis,|C5|2"],
+    ["ves~|C5|1 tul|B4|1 stă|A4|1 cu|A4|1", "geam|B4|1 des~|A4|1 chis!|G4|2"],
+]
+PUNTE = [
+    ["A~|E4|0.5 nii|E4|0.5 dou~|G4|0.5 ă~|G4|0.5 zeci?|B4|1 ·|R|1",
+     "Sau|G4|0.5 trei~|G4|0.5 zeci|A4|0.5 și|B4|0.5 șa~|C5|1 se?|D5|1"],
+    ["Dou~|E5|1.5 ă|E5|0.5 sur~|C5|1.5 se,|C5|0.5", "dou~|D5|1.5 ă|D5|0.5 da~|A4|1 te!|F#4|1"],
+]
+FINAL = [
+    ["ves~|C5|1 tul|B4|1 stă|A4|1 cu|A4|1", "geam|B4|1 des~|A4|1 chis!|G4|2"],
+]
+# introducerea: instrumentul solo cântă „cârligul” refrenului (măsurile 1–2 și 7–8 ale refrenului)
+INTRO = [[REFREN[0][0], REFREN[0][1]], [REFREN[3][0], REFREN[3][1]]]
+
+# acorduri: câte o listă pe măsură (o măsură poate avea două acorduri, câte o doime)
+CH_INTRO = [["G"], ["C"], ["D7"], ["G"]]
+CH_STROFA = [["G"], ["Em"], ["C"], ["D"], ["G"], ["C"], ["Am"], ["D7"]]
+CH_REFREN = [["G"], ["C"], ["G"], ["D7"], ["G"], ["C"], ["D7"], ["G"]]
+CH_PUNTE = [["Em"], ["C"], ["Am"], ["D7"]]
+CH_FINAL = [["C", "D7"], ["G"]]
+
+SECTIONS = [  # (nume, versuri, acorduri, cu text?)
+    ("Intro", INTRO, CH_INTRO, False),
+    ("Strofa 1", STROFA_1, CH_STROFA, True),
+    ("Refren", REFREN, CH_REFREN, True),
+    ("Strofa 2", STROFA_2, CH_STROFA, True),
+    ("Punte", PUNTE, CH_PUNTE, True),
+    ("Refren (reluare)", REFREN, CH_REFREN, True),
+    ("Final", FINAL, CH_FINAL, True),
+]
+
+# voicing-uri de chitară (acorduri deschise, acordaj standard)
+VOICING = {
+    "G": ["G2", "B2", "D3", "G3", "B3", "G4"], "C": ["C3", "E3", "G3", "C4", "E4"],
+    "D": ["D3", "A3", "D4", "F#4"], "D7": ["D3", "A3", "C4", "F#4"],
+    "Em": ["E2", "B2", "E3", "G3", "B3", "E4"], "Am": ["A2", "E3", "A3", "C4", "E4"],
+}
+PAD = {"G": ["G3", "B3", "D4"], "C": ["G3", "C4", "E4"], "D": ["F#3", "A3", "D4"],
+       "D7": ["F#3", "A3", "C4"], "Em": ["G3", "B3", "E4"], "Am": ["A3", "C4", "E4"]}
+ROOT = {"G": "G2", "C": "C2", "D": "D2", "D7": "D2", "Em": "E2", "Am": "A2"}
+FIFTH = {"G": "D2", "C": "G2", "D": "A2", "D7": "A2", "Em": "B2", "Am": "E2"}
+
+
+# ------------------------------------------------------------------ parsare, cronologie
+def parse_bar(s):
+    out = []
+    for tok in s.split():
+        syl, note, d = tok.split("|")
+        out.append((syl, None if note == "R" else note, float(d)))
+    tot = sum(d for *_, d in out)
+    assert abs(tot - 4.0) < 1e-9, f"măsura „{s}” are {tot} pătrimi, nu 4"
+    return out
+
+
+def timeline():
+    """Listează secțiunile cu timpul de început și măsurile (cu acordurile lor)."""
+    t, secs = 0.0, []
+    for name, lines, chords, lyr in SECTIONS:
+        bars = [b for ln in lines for b in ln]
+        assert len(bars) == len(chords), f"{name}: {len(bars)} măsuri de melodie, {len(chords)} de acorduri"
+        secs.append(dict(name=name, t0=t, bars=bars, chords=chords, lyrics=lyr, lines=lines))
+        t += len(bars) * BAR
+    return secs, t
+
+
+def note_events():
+    """Toate notele solistului: (t0, durată_s, notă, silabă, secțiune)."""
+    secs, end_t = timeline()
+    ev = []
+    for s in secs:
+        for bi, b in enumerate(s["bars"]):
+            pos = s["t0"] + bi * BAR
+            for syl, nm, d in parse_bar(b):
+                if nm is not None:
+                    ev.append((pos, d * BEAT, nm, syl if s["lyrics"] else "", s["name"]))
+                pos += d * BEAT
+    return ev
+
+
+# ------------------------------------------------------------------ instrumente
+def lead_note(f, dur, rng, hold=0.0):
+    """O notă de „alamă” sintetizată: atac strălucitor care se închide, vibrato întârziat."""
+    L = max(0.08, dur - 0.045) + hold
+    n = ns(L + 0.07)
+    t = t_axis(n)
+    vib = 2 ** ((0.16 * np.clip((t - 0.2) / 0.25, 0, 1)
+                 * np.sin(2 * np.pi * 5.3 * t + rng.uniform(0, 6.28))) / 12)
+    fr = f * vib * (1 - 0.006 * np.exp(-t / 0.025))       # mică intrare „de jos” în notă
+    raw = saw(fr) * 0.8 + 0.2 * np.sin(2 * np.pi * np.cumsum(fr) / SR)
+    dark = lp(raw, 1100, order=2)
+    bright = lp(raw, 3600, order=2)
+    be = 0.35 + 0.65 * np.exp(-t / 0.09)
+    x = dark * (1 - be) + bright * be
+    x = peaking(x, 1250, 4.0, 1.2)
+    x = peaking(x, 2600, 2.0, 1.5)
+    breath = bp(rng.standard_normal(n), 1200, 4500) * 0.035
+    env = env_adsr(n, 0.016, 0.12, 0.8, 0.07)
+    return hp((x + breath) * env, 160, order=2)
+
+
+def glock_note(f, rng, dur=1.8):
+    ratios = [1.0, 2.756, 5.404, 8.933]
+    x = modal([f * r for r in ratios], [1.0, 0.32, 0.1, 0.04], [1.5, 0.55, 0.22, 0.1], dur,
+              rng=rng, attack=0.0006)
+    n = len(x)
+    x += hp(rng.standard_normal(n), 5000) * env_exp(n, 0.004) * 0.25
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def bass_note(f, dur, rng):
+    n = ns(dur)
+    x = 0.65 * lp(saw(f, n), 650) + 0.7 * np.sin(2 * np.pi * f * t_axis(n) + rng.uniform(0, 6.28))
+    return x * env_adsr(n, 0.005, 0.09, 0.65, min(0.06, dur * 0.3))
+
+
+def strum(chord, rng, down=True, ring=1.1, dur=0.6, spread=0.011, bright=0.5, damp=0.0, upper=4):
+    notes = VOICING[chord] if down else VOICING[chord][::-1][:upper]
+    total = dur + spread * len(notes) + 0.02
+    out = np.zeros(ns(total))
+    for i, nm in enumerate(notes):
+        x = ks_pluck(hz(nm), dur, t60=ring, bright=bright, pos=0.19, rng=rng, damp=damp)
+        x[-ns(0.04):] *= np.linspace(1, 0, ns(0.04))
+        k = ns(i * spread * rng.uniform(0.8, 1.2))
+        g = 0.75 + 0.25 * (i / max(1, len(notes) - 1)) if down else 1.0
+        out[k:k + len(x)] += g * x
+    return out
+
+
+def pad_chord(chord, dur, rng):
+    n = ns(dur)
+    x = np.zeros(n)
+    for nm in PAD[chord]:
+        for det in (-0.07, 0.07):
+            x += additive(hz(nm) * 2 ** (det / 12), [1, 0.35, 0.18, 0.08, 0.04], n, phase0=rng.uniform())
+    return lp(x, 2500) * env_adsr(n, 0.3, 0.3, 0.8, 0.5)
+
+
+def snare(rng, dur=0.28):
+    n = ns(dur)
+    t = t_axis(n)
+    body = (0.8 * np.sin(2 * np.pi * 185 * t) + 0.4 * np.sin(2 * np.pi * 332 * t)) * env_ar(n, 0.001, 0.09)
+    wires = bp(rng.standard_normal(n), 1500, 9000) * env_ar(n, 0.001, 0.17)
+    x = body + wires
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def sticks(rng):
+    f0 = rng.uniform(2350, 2450)
+    x = modal([f0, f0 * 1.62, f0 * 2.6], [1.0, 0.5, 0.2], [0.05, 0.03, 0.02], 0.1, rng=rng)
+    n = len(x)
+    x += bp(rng.standard_normal(n), 2000, 8000) * env_exp(n, 0.006) * 0.6
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def crash(rng, dur=3.0):
+    n = ns(dur)
+    nz = hp(rng.standard_normal(n), 3500, order=2) * env_ar(n, 0.002, 2.2)
+    fr = rng.uniform(3000, 9000, 24)
+    metal = modal(list(fr), list(rng.uniform(0.2, 1.0, 24)), list(rng.uniform(0.8, 2.4, 24)), dur, rng=rng)
+    x = nz + 0.3 * metal / (np.max(np.abs(metal)) + 1e-12)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+# ------------------------------------------------------------------ randare
+def render(seed=1970):
+    rng = rng_of(seed)
+    secs, end_t = timeline()
+    total = end_t + TAIL
+    names = ["lead", "glock", "bass", "guitar", "pad", "kick", "snare", "hats", "claps", "sticks", "crash"]
+    S = {k: stereo(total) for k in names}
+
+    # --- solistul (ghidul pentru voce) și glockenspielul (dublează la octavă în intro, refrene, final)
+    ev = note_events()
+    for i, (t0, d, nm, syl, sec) in enumerate(ev):
+        last = i == len(ev) - 1
+        x = lead_note(hz(nm), d, rng, hold=FERMATA if last else 0.0)
+        add(S["lead"], x, t0, gain=1.0, pan=0.0)
+        if sec in ("Intro", "Refren", "Refren (reluare)", "Final"):
+            add(S["glock"], glock_note(hz(nm, 12), rng), t0, gain=0.9 if d >= BEAT else 0.7, pan=0.28)
+
+    # --- acompaniament, măsură cu măsură
+    for s in secs:
+        name = s["name"]
+        nb = len(s["bars"])
+        for bi, chs in enumerate(s["chords"]):
+            tb = s["t0"] + bi * BAR
+            # acordul pe fiecare pătrime a măsurii
+            beat_ch = [chs[0]] * 4 if len(chs) == 1 else [chs[0]] * 2 + [chs[1]] * 2
+            last_bar = bi == nb - 1
+
+            # ---------- pad
+            if name != "Strofa 1":
+                g = 0.55 if name == "Strofa 2" else 1.0
+                for k, c in enumerate(chs):
+                    L = BAR / len(chs)
+                    add(S["pad"], pad_chord(c, L + 0.45, rng), tb + k * L, gain=g, pan=-0.4)
+                    add(S["pad"], pad_chord(c, L + 0.45, rng), tb + k * L, gain=g, pan=0.4)
+
+            # ---------- bas
+            if name == "Intro":
+                for h in range(2):
+                    f = hz(ROOT[beat_ch[2 * h]])
+                    add(S["bass"], bass_note(f, 2 * BEAT * 0.95, rng), tb + 2 * h * BEAT, gain=0.9)
+            elif name.startswith("Strofa"):
+                for b_ in (0, 2):  # „um-pa”: fundamentala pe 1, cvinta pe 3
+                    c = beat_ch[b_]
+                    f = hz(ROOT[c] if b_ == 0 else FIFTH[c])
+                    add(S["bass"], bass_note(f, BEAT * 0.8, rng), tb + b_ * BEAT, gain=1.0)
+                if last_bar:  # notă de trecere (fa diez) spre secțiunea următoare
+                    add(S["bass"], bass_note(hz("F#2"), BEAT * 0.8, rng), tb + 3 * BEAT, gain=0.85)
+            elif name.startswith("Refren"):
+                for e in range(8):
+                    c = beat_ch[e // 2]
+                    f = hz(ROOT[c]) * (2 if e in (3, 7) else 1)
+                    add(S["bass"], bass_note(f, BEAT / 2 * 0.85, rng), tb + e * BEAT / 2, gain=0.95)
+            elif name == "Punte":
+                if bi < nb - 1:
+                    add(S["bass"], bass_note(hz(ROOT[chs[0]]), BAR * 0.95, rng), tb, gain=0.9)
+                else:
+                    for b_ in range(4):
+                        add(S["bass"], bass_note(hz(ROOT[chs[0]]), BEAT * 0.8, rng), tb + b_ * BEAT,
+                            gain=0.8 + 0.07 * b_)
+            elif name == "Final":
+                for k, c in enumerate(chs):
+                    L = BAR / len(chs)
+                    add(S["bass"], bass_note(hz(ROOT[c]), L * 0.92, rng), tb + k * L, gain=0.95)
+
+            # ---------- chitara
+            if name == "Intro":
+                for k, c in enumerate(chs):
+                    add(S["guitar"], strum(c, rng, ring=1.6, dur=BAR - 0.05), tb, gain=0.9, pan=-0.25)
+                if last_bar:
+                    add(S["guitar"], strum(beat_ch[2], rng, ring=1.0, dur=BAR / 2 - 0.05), tb + 2 * BEAT,
+                        gain=0.8, pan=-0.25)
+            elif name.startswith("Strofa"):
+                for b_ in (1, 3):  # „pa” pe 2 și 4 – acord scurt, înăbușit
+                    add(S["guitar"], strum(beat_ch[b_], rng, ring=0.22, dur=0.3, bright=0.45, damp=0.2),
+                        tb + b_ * BEAT, gain=1.0, pan=-0.3)
+            elif name.startswith("Refren"):
+                for e in range(8):
+                    c = beat_ch[e // 2]
+                    down = e % 2 == 0
+                    acc = 1.0 if e in (2, 6) else (0.8 if down else 0.55)
+                    add(S["guitar"], strum(c, rng, down=down, ring=0.6, dur=BEAT / 2 + 0.06, bright=0.55),
+                        tb + e * BEAT / 2, gain=acc, pan=-0.3 if down else -0.18)
+            elif name == "Punte":
+                if bi < nb - 1:
+                    for b_ in (0, 2):
+                        add(S["guitar"], strum(chs[0], rng, ring=1.0, dur=BAR / 2 - 0.03), tb + b_ * BEAT,
+                            gain=0.85, pan=-0.25)
+                else:
+                    for e in range(8):
+                        add(S["guitar"], strum(chs[0], rng, down=e % 2 == 0, ring=0.5, dur=BEAT / 2 + 0.05),
+                            tb + e * BEAT / 2, gain=0.5 + 0.06 * e, pan=-0.25)
+            elif name == "Final":
+                for k, c in enumerate(chs):
+                    L = BAR / len(chs)
+                    add(S["guitar"], strum(c, rng, ring=0.9, dur=L - 0.03), tb + k * L, gain=0.9, pan=-0.25)
+
+            # ---------- tobe
+            if name == "Intro" and last_bar:  # numărătoarea „1, 2, 3, 4” pe bețe, pentru clasă
+                for b_ in range(4):
+                    add(S["sticks"], sticks(rng), tb + b_ * BEAT, gain=1.0 if b_ == 0 else 0.85, pan=0.1)
+            elif name.startswith("Strofa"):
+                for b_ in range(4):
+                    if b_ in (0, 2):
+                        add(S["kick"], kick(rng=rng), tb + b_ * BEAT, gain=0.85)
+                    if b_ in (1, 3) and name == "Strofa 2":
+                        add(S["snare"], snare(rng), tb + b_ * BEAT, gain=0.55)
+                for e in range(8):
+                    add(S["hats"], hat(rng=rng), tb + e * BEAT / 2, gain=0.6 if e % 2 else 0.35, pan=0.3)
+                if last_bar:  # tranziție de tobă mică spre refren
+                    for k in range(8):
+                        add(S["snare"], snare(rng, 0.18), tb + 2 * BEAT + k * BEAT / 4, gain=0.25 + 0.07 * k)
+            elif name.startswith("Refren"):
+                for b_ in range(4):
+                    if b_ in (0, 2):
+                        add(S["kick"], kick(rng=rng), tb + b_ * BEAT, gain=1.0)
+                    else:
+                        add(S["snare"], snare(rng), tb + b_ * BEAT, gain=0.95)
+                        if name == "Refren (reluare)":  # palmele clasei, pe 2 și 4
+                            add(S["claps"], clap(rng=rng), tb + b_ * BEAT + 0.004, gain=0.9, pan=-0.1)
+                            add(S["claps"], clap(rng=rng), tb + b_ * BEAT + 0.013, gain=0.7, pan=0.2)
+                if bi % 2 == 1:
+                    add(S["kick"], kick(rng=rng), tb + 3.5 * BEAT, gain=0.6)
+                for e in range(8):
+                    open_ = (e == 7 and bi % 2 == 1)
+                    add(S["hats"], hat(rng=rng, open_=open_), tb + e * BEAT / 2,
+                        gain=(0.5 if open_ else (0.85 if e % 2 else 0.6)), pan=0.3)
+            elif name == "Punte":
+                if bi < 2:
+                    add(S["kick"], kick(rng=rng), tb, gain=0.85)
+                    add(S["kick"], kick(rng=rng), tb + 2 * BEAT, gain=0.7)
+                    for b_ in (1, 3):
+                        add(S["snare"], snare(rng), tb + b_ * BEAT, gain=0.6)
+                else:  # rulou de marș în crescendo pe ultimele două măsuri
+                    add(S["kick"], kick(rng=rng), tb, gain=0.85)
+                    for k in range(16):
+                        u = ((bi - 2) * 16 + k) / 31
+                        add(S["snare"], snare(rng, 0.16), tb + k * BEAT / 4, gain=0.22 + 0.7 * u ** 1.3)
+            elif name == "Final":
+                for b_ in range(4):
+                    if bi == 0:
+                        if b_ in (0, 2):
+                            add(S["kick"], kick(rng=rng), tb + b_ * BEAT, gain=1.0)
+                        else:
+                            add(S["snare"], snare(rng), tb + b_ * BEAT, gain=0.9)
+                            add(S["claps"], clap(rng=rng), tb + b_ * BEAT + 0.004, gain=0.8)
+                if bi == 1:
+                    add(S["kick"], kick(rng=rng), tb, gain=1.0)
+                    for k in range(8):
+                        add(S["snare"], snare(rng, 0.16), tb + 2 * BEAT + k * BEAT / 4, gain=0.35 + 0.08 * k)
+
+    # --- acordul final (pe măsura „43”): lovitură de tobă, cinel, chitară, bas, pad, glockenspiel
+    tf = end_t
+    add(S["kick"], kick(rng=rng), tf, gain=1.0)
+    add(S["snare"], snare(rng), tf, gain=0.8)
+    add(S["crash"], crash(rng, TAIL), tf, gain=1.0, pan=0.15)
+    add(S["guitar"], strum("G", rng, ring=2.6, dur=TAIL - 0.1, spread=0.018), tf, gain=1.0, pan=-0.25)
+    m = ns(TAIL)
+    xb = 0.6 * lp(saw(hz("G1"), m), 600) + 0.8 * np.sin(2 * np.pi * hz("G1") * t_axis(m))
+    add(S["bass"], xb * env_ar(m, 0.005, 2.4), tf, gain=1.0)
+    add(S["pad"], pad_chord("G", TAIL, rng), tf, gain=1.0, pan=-0.4)
+    add(S["pad"], pad_chord("G", TAIL, rng), tf, gain=1.0, pan=0.4)
+    for k, nm in enumerate(["G5", "B5", "D6", "G6"]):
+        add(S["glock"], glock_note(hz(nm), rng, dur=2.5), tf + 0.06 * k, gain=0.6, pan=0.28)
+
+    # --- mix
+    ir = make_ir(t60=1.5, predelay=0.02, seed=14)
+    targets = {"lead": (-17.0, 0.18), "glock": (-27.0, 0.3), "bass": (-21.5, 0.0),
+               "guitar": (-23.0, 0.14), "pad": (-29.5, 0.3), "kick": (-22.5, 0.03),
+               "snare": (-26.0, 0.15), "hats": (-31.5, 0.08), "claps": (-27.0, 0.2),
+               "sticks": (-27.0, 0.1), "crash": (-31.0, 0.2)}
+    mix = stereo(total)
+    for k in names:
+        tgt, wet = targets[k]
+        x = match_lufs(S[k], tgt)
+        report(x, k)
+        mix += reverb(x, ir, wet=wet, dry=1.0)
+    mix = peaking(mix, 250, -1.0, 0.8)
+    return mix, secs, end_t
+
+
+# ------------------------------------------------------------------ notația pentru fișa .md
+DUR_NAME = {0.5: "o", 1.0: "p", 1.5: "p.", 2.0: "d", 3.0: "d.", 4.0: "î"}
+
+
+def disp(syl):
+    return syl.rstrip("~").replace("_", " ")
+
+
+def line_text(bars):
+    """Textul unui vers și, pentru fiecare silabă: (poziția în text, timpul în pătrimi de la începutul versului)."""
+    txt, marks, pos = "", [], 0.0
+    for b in bars:
+        for syl, nm, d in parse_bar(b):
+            if nm is not None:
+                marks.append((len(txt), pos))
+                txt += disp(syl)
+                if not syl.endswith("~"):
+                    txt += " "
+            pos += d
+    return txt.rstrip(), marks
+
+
+def chord_sheet():
+    secs, _ = timeline()
+    out = []
+    for s in secs:
+        if not s["lyrics"]:
+            continue
+        out.append(f"[{s['name']}]")
+        bi = 0
+        for ln in s["lines"]:
+            txt, marks = line_text(ln)
+            row = ""
+            for j in range(len(ln)):
+                chs = s["chords"][bi + j]
+                for k, c in enumerate(chs):
+                    beat = 4 * j + k * 4 / len(chs)
+                    col = next(cp for cp, bp_ in marks if bp_ >= beat - 1e-9)
+                    row = row.ljust(col) + c + " "
+            out.append(row.rstrip())
+            out.append(txt)
+            bi += len(ln)
+        out.append("")
+    return "\n".join(out)
+
+
+def syl_join(syls):
+    """Silabe despărțite prin cratimă în interiorul cuvântului („Vi-le-ntâi”, „U-nu”)."""
+    out = ""
+    for k, syl in enumerate(syls):
+        piece = disp(syl)
+        if k and syls[k - 1].endswith("~") and not piece.startswith("-"):
+            out += "-"
+        elif k and not syls[k - 1].endswith("~"):
+            out += " "
+        out += piece
+    return out
+
+
+def notation_tables():
+    secs, _ = timeline()
+    out = []
+    bar_no = 0
+    for s in secs:
+        out.append(f"### {s['name']} ({fmt_t(s['t0'])}–{fmt_t(s['t0'] + len(s['bars']) * BAR)})\n")
+        out.append("| Măs. | Timp | Acord | Silabe | Note (durată) |")
+        out.append("|---|---|---|---|---|")
+        for bi, b in enumerate(s["bars"]):
+            bar_no += 1
+            notes = parse_bar(b)
+            syls = [syl for syl, nm, d in notes if nm is not None]
+            syl_txt = syl_join(syls) + ("-" if syls[-1].endswith("~") else "") if s["lyrics"] else "(instrumental)"
+            nt = " · ".join(("pauză" if nm is None else nm) + f" {DUR_NAME[d]}" for _, nm, d in notes)
+            chs = " / ".join(s["chords"][bi])
+            out.append(f"| {bar_no} | {fmt_t(s['t0'] + bi * BAR)} | {chs} | {syl_txt} | {nt} |")
+        out.append("")
+    return "\n".join(out)
+
+
+def fmt_t(t):
+    return f"{int(t // 60)}:{int(round(t % 60)):02d}"
+
+
+if __name__ == "__main__":
+    if "--notatie" in sys.argv:
+        print(chord_sheet())
+        print(notation_tables())
+        sys.exit(0)
+    mix, secs, end_t = render()
+    out = finalize(mix, OUT, "A14 Unu, doi – Ștrand! (imnul neoficial al cartierului Ștrand) – instrumental demo",
+                   "Temă originală în stil de imn pop/marș vesel; melodia vocii cântată de un instrument solo "
+                   "ca ghid; vocea nu e generată – sinteză procedurală, ACTIV AI, calupul Cartierele Sibiului",
+                   target_lufs=-14.0, fin=0.05, fout=1.6)
+    report(out, "A14 final")
+    marks = {s["name"]: round(s["t0"], 2) for s in secs}
+    marks["Acord final"] = round(end_t, 2)
+    print("marcaje:", json.dumps(marks, ensure_ascii=False))
+    with open(os.path.join(HERE, "A14_marcaje.json"), "w", encoding="utf-8") as fh:
+        json.dump({"bpm": BPM, "masura_s": BAR, "marcaje_s": marks,
+                   "note": [dict(t=round(t0, 3), d=round(d, 3), nota=nm, silaba=syl, sectiune=sec)
+                            for t0, d, nm, syl, sec in note_events()]}, fh, ensure_ascii=False, indent=1)

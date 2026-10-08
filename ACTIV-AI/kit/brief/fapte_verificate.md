@@ -10,7 +10,7 @@ Folosiți DOAR aceste fapte când un artefact afirmă ceva istoric/statistic. Or
 - Suprafață: 121 km²; altitudine: 415 m. Râul Cibin, afluent al Oltului.
 - Capitală Culturală Europeană: 2007 (împreună cu Luxemburg).
 - Regiune Gastronomică Europeană: 2019.
-- Cartiere (en.wikipedia): Centrul istoric (Orașul de Sus / Orașul de Jos), Broscărie, Dumbrăvii, Gușterița, Hipodrom, Lazaret, Lupeni, Piața Cluj, Reșița, Ștrand, Terezian, Tilișca, Tineretului, Trei Stejari, Turnișor, Țiglari, Valea Aurie, Vasile Aaron, Veteranilor de Război, Viile Sibiului. Cele mai populate: Hipodrom, Ștrand, Vasile Aaron, Valea Aurie.
+- Cartiere (en.wikipedia): Centrul istoric (Orașul de Sus / Orașul de Jos), Broscărie, Dumbrăvii, Gușterița, Hipodrom, Lazaret, Lupeni, Piața Cluj, Reșița, Ștrand, Terezian, Tilișca, Tineretului, Trei Stejari, Turnișor, Țiglari, Valea Aurie, Vasile Aaron, Veteranilor de Război, Viile Sibiului. ATENȚIE: formularea anterioară „cele mai populate: Hipodrom, Ștrand, Vasile Aaron, Valea Aurie” NU se mai regăsește în en.wikipedia la reverificarea din 8 octombrie 2026 și nu are altă sursă – nu se folosește (vezi secțiunea „Cartierele Sibiului – completări pentru Calupul 3”).
 
 ## Premiere (conform patrimoniu.sibiu.ro/istorie/premiere – formulare „conform sursei”)
 - 1292 – primul spital de pe actualul teritoriu al României
@@ -150,3 +150,56 @@ Pagina oficială enumeră 38 de premiere. Pentru artefacte se folosesc cele de m
 
 ## Muzeul Brukenthal – completări (en.wikipedia)
 - Colecțiile încep în jurul anului 1790; deschidere publică oficială 1817; Galeria de artă: circa 1.200 de lucrări ale școlilor europene din secolele XV–XVIII; Biblioteca Brukenthal: aproximativ 300.000 de unități (manuscrise, incunabule, cărți rare, carte românească veche); colecții de gravuri, numismatică, minerale; Breviarul Brukenthal (carte de rugăciuni miniată, secolul al XVI-lea).
+
+## Cartierele Sibiului – completări pentru Calupul 3 (documentare 8 octombrie 2026)
+
+Surse: en.wikipedia.org (articolele Sibiu, Terezian, Lazaret, Țiglari, Ștrand, Turnișor, Trei Stejari, Valea Aurie, Vasile Aaron, Broscărie, Gușterița), kirchenburgen.org (Neppendorf/Turnișor), zilesinopti.ro (Răzvan Pop, „Sibiu Walks: Turnișor”, 2023; „Sibiu Walks: Hipodromul Sibiului”, 2024; fișa Parcului Sub Arini), turnulsfatului.ro („Cum au apărut în Sibiu cartierele de blocuri”, 14 februarie 2016), old.tribuna.ro („Cartierele Sibiului, ieri și azi – Ștrandul”, partea I), agerpres.ro (19 august 2020, Lacul lui Binder), sibiucityapp.ro (Fabrica de bere Trei Stejari).
+
+### Lista oficială a cartierelor
+- en.wikipedia (Sibiu): centrul istoric (Orașul de Sus și Orașul de Jos) și circa 20 de cartiere: Broscărie, Dumbrăvii, Gușterița, Hipodrom I–IV, Lazaret, Lupeni, Piața Cluj, Reșița, Ștrand, Terezian, Tilișca, Tineretului, Trei Stejari, Turnișor, Țiglari, Valea Aurie, Vasile Aaron, Veteranilor de Război, Viile Sibiului. „Unele au fost sate înglobate de oraș pe măsură ce a crescut, altele au fost construite pe măsură ce orașul s-a dezvoltat.” Piața Cluj și Reșița poartă numele orașelor Cluj și Reșița.
+- ATENȚIE: sursele verificate NU dau numărul de locuitori pe cartiere. Nu se afișează cifre de populație pe cartier. Populația totală a orașului: 134.309 (recensământul 2021).
+
+### Vechime
+- Centrul istoric: prima atestare a orașului – 1191.
+- Terezian: „al doilea cel mai vechi cartier, după centru” (en.wikipedia); a început în secolele XVII–XVIII ca suburbie a cetății, locuită mai ales de români.
+- Gușterița (germ. Hammersdorf): atestată în 1309 ca așezare săsească (en.wikipedia, după H. Fabini); turnulsfatului.ro (2014) spune „atestat ca sat din secolul al XIII-lea” – DIVERGENȚĂ, se pot menționa ambele. Biserica fortificată începută la începutul secolului al XIII-lea; corpul principal gotic la sfârșitul secolului al XV-lea. Inclusă în Sibiu în 1940. Se crede că aici a fost castrul roman Cedonia.
+- Turnișor (germ. Neppendorf; numele românesc înseamnă „turn mic”): prima atestare 1336 (en.wikipedia; Răzvan Pop – tranzacție funciară între comitele Nicolaus din Tălmaciu și Michael și Paul, fiii lui Nicolaus din Turnișor) sau 1327 (kirchenburgen.org) – DIVERGENȚĂ. Numele german vine, după Răzvan Pop, din latinescul „villa Epponis” (satul lui Epponius). Sat săsesc până în 1734; din 1734 se așază landlerii (protestanți strămutați din Austria de azi, din ordinul împăraților Carol al VI-lea și Maria Tereza – „transmigrarea”). Biserica: bazilică romanică de la sfârșitul secolului al XII-lea, interior mai ales baroc (altar 1759, amvon 1782); ceas de lemn montat în 1781, înlocuit cu unul de fier în 1862. Biserica ortodoxă Sf. Nicolae – construită de români la începutul secolului XX. Înglobat în Sibiu după al Doilea Război Mondial, în extinderea spre vest (anul exact nu e dat de surse).
+- Cel mai nou cartier de blocuri: Valea Aurie – „ultimul construit”, „amplasat aproape de Dumbravă” (turnulsfatului.ro, 2016; anul nu e dat). Numele vine de la un han local cu același nume (en.wikipedia).
+
+### Originea numelor – completări
+- Lazaret: o mică mănăstire dominicană pe locul actualei gări (en.wikipedia) / zona actualei autogări (turnulsfatului.ro, 2014) – gara și autogara sunt vecine; clădirile au devenit „lazaret” (loc de izolare a bolnavilor); orașul a crescut, lazaretul a fost împins spre margine, apoi închis; zona a devenit cartier de locuințe. Est.
+- Țiglari: în nordul orașului; numele vine de la fosta fabrică de țiglă (en.wikipedia), a lui Gustav Binder, secolul al XIX-lea (turnulsfatului.ro, 2014). În Țiglari se află Lacul lui Binder, „singurul lac din municipiu” (agerpres.ro, 2020); contract de amenajare semnat la 24 mai 2018 (plajă de nisip, terenuri de volei, instalație pe cablu pentru wakeboard, loc de joacă plutitor gonflabil); în august 2020 constructorul a cerut încetarea contractului, cu circa 80% din lucrări gata.
+- Trei Stejari: aproape de centru; după trei stejari care stăteau la o răscruce, pe unul dintre drumurile care ieșeau din cetate (en.wikipedia). Fabrica de bere Trei Stejari (sibiucityapp.ro): pe același loc, o velniță construită pe la 1740 de sași din Cisnădie; 1782 – proprietatea cumpărată de doctorul Ioan Piuariu-Molnar; fabrica de bere construită în 1912–1913 („Thomas Binder & fiii”); naționalizată în 1948 („Bere Sadu”); privatizată în 1995; închisă în 2000.
+- Vasile Aaron: în est; numele vine de la strada Vasile Aaron, care marca odinioară limita dintre oraș și comuna Șelimbăr; construit în anii 1970 (turnulsfatului.ro, 2014), în perioada comunistă, cu blocuri tipice.
+- Broscărie: în est, lângă zona industrială; construit pe o mlaștină desecată, în programul de industrializare din 1970, pentru muncitorii zonei industriale (en.wikipedia). Originea numelui NU e dată de surse (legătura cu „broaște” și mlaștina = doar ipoteză, declarată ca atare).
+- Dumbrăvii: spre Pădurea Dumbrava; tramvaiul a ajuns la marginea Pădurii Dumbrava la 15 mai 1910 (vezi „Tramvaiul”).
+- Piața Cluj: tramvaiul a ajuns la Piața Cluj la 25 septembrie 1927 (extinderea Piața Cibin – gara Turnișor – Piața Cluj).
+- Lupeni, Tilișca, Tineretului, Veteranilor de Război, Viile Sibiului, Reșița: sursele consultate nu documentează istoria cartierelor; se pot folosi doar ca nume (Tilișca e și numele unei comune din Munții Cindrel, la circa 26 km vest de Sibiu – en.wikipedia), cu întrebări de cercetare pentru elevi, fără fapte inventate.
+
+### Hipodrom (zilesinopti.ro, Răzvan Pop, 2024; turnulsfatului.ro, 2016)
+- La începutul secolului al XIX-lea, autoritățile habsburgice dezvoltă la Sibiu o bază militară: Cazarma 90, cazărmile de pe bulevarde și un hipodrom pentru cavalerie. Hipodromul era în zona blocurilor de la Cedonia, între străzile Nicolae Iorga, Vasile Milea și Hipodromului; strada și cartierul și-au luat numele de la el.
+- A aparținut armatei austro-ungare, apoi armatei române. În iunie 1924, regele Ferdinand I și regina Maria au participat la concursurile hipice ale Școlii de cavalerie de la Sibiu, pe hipodrom. Locotenentul Henri Rang (echipa de cavalerie staționată la Sibiu) a câștigat argintul la Jocurile Olimpice de la Berlin, 1936 – prima medalie olimpică individuală a României (conform sursei).
+- În anii războiului hipodromul a decăzut; după al Doilea Război Mondial a devenit neutilizabil; autoritățile comuniste l-au demolat pentru blocuri (anul nu e dat).
+- „În 1972 s-a definitivat Hipodrom I, acesta fiind cartierul care s-a dezvoltat cel mai mult până în ’89” (turnulsfatului.ro, 2016). Hipodrom I – proiectat cu arhitecți din Brașov; Hipodrom II și III – arhitecți din Sibiu. Singurul cartier împărțit în patru (Hipodrom I–IV, en.wikipedia).
+
+### Cartierele de blocuri (turnulsfatului.ro, 14 februarie 2016)
+- Au apărut ca urmare a crizei locuințelor de după al Doilea Război Mondial.
+- Primele blocuri militare: circa 1948–1949, lângă aeroport. Primele blocuri civile: pe actualul bulevard Vasile Milea (parter + 2 etaje).
+- 1957: încep lucrările la blocurile din Terezian, pe strada 11 Iunie (azi Strada Lungă) – prima folosire a panourilor mari; en.wikipedia (Terezian): primele blocuri pe Strada Lungă, Aleea Petuniei, Strada Gladiolelor, de la sfârșitul anilor 1950.
+- 1970: încep lucrările la cartierul Ștrand (întâi vile pe pantă, apoi blocuri tip).
+- 1972: Hipodrom I terminat.
+- Proiecte tip: apartamente cu 1, 2 sau 3 camere, blocuri cu 4 sau 8 etaje; cel mai des parter + 8 etaje.
+- Valea Aurie – ultimul cartier construit.
+
+### Ștrandul și cartierul Ștrand
+- Zona se numea „Fleischhauer Wiese” – Pajiștea / Livada Măcelarilor (old.tribuna.ro).
+- 1702 – împăratul Leopold I aprobă canalul care aducea materiale de la Gura Râului pentru Citadelă; 1703 – canalul e gata; folosit circa 50 de ani (old.tribuna.ro).
+- 1897 – calea ferată Sibiu – Vințu de Jos taie zona (old.tribuna.ro).
+- DIVERGENȚĂ privind ștrandul: „în anii 1920 aici s-a construit singurul ștrand al Sibiului” (turnulsfatului.ro, 2014; en.wikipedia: „1920 – primul complex de bazine în aer liber”) vs. „La 12 iulie 1936 este inaugurat [Strandbad-ul], pe locul unde se află și acum, pe strada Vasile Cârlova – Ștrandului” (old.tribuna.ro). Planurile: arhitectul Walther Schöpp; bazin de dimensiuni olimpice și bazin pentru copii; câțiva ani mai târziu, trambulina „Turnul lui Phleps” (sărituri de la 3, 5 și 10 m), finanțată de dr. Erich Phleps în memoria tatălui său, Robert Phleps. În piese se spune „anii 1920 sau 1936, după sursă”.
+- 1948 – naționalizat, devine „Ștrandul CSM”. 2002 – revendicat de Biserica Evanghelică, închis șase ani. 2008 – concesionat pe 49 de ani, redeschis la începutul lui august 2008 ca „Aqua Fun”, 5.000 de locuri, platforma de 10 m demontată. Închis în pandemie, redeschis la 23 iunie 2021 (old.tribuna.ro).
+- Cartierul Ștrand, în vestul orașului, e împărțit în Ștrand I și Ștrand II; 1970 – străzi noi și blocuri (en.wikipedia; turnulsfatului.ro 2016).
+
+### Parcuri și locuri de joacă
+- Parcul Sub Arini: înființat printr-o hotărâre a municipalității din noiembrie 1856; 68 de specii de plante (aproape jumătate exotice), 95 de specii de păsări; arbori de peste 150 de ani (arin, tei, castan, platan), plus arbori nord-americani și din Asia de Est (zilesinopti.ro).
+- Parcul Terezian: fostul Târg al Vitelor (Viehmarktplatz). Târgul Cailor (Rossplatz) – azi străzile Gladiolelor și Târgu Cailor (en.wikipedia).
+- Grădina zoologică (1929, prima din România) – în Pădurea Dumbrava.

@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "P12",
+    "categorie": "Identitate",
+    "titlu": "Pașaportul cartierului meu — document fictiv ilustrat AI",
+    "fisiere": [
+      "08_identitate/P12_pasaportul_cartierului.svg",
+      "08_identitate/P12_pasaportul_cartierului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Un „pașaport de cartier” deschis, în stil de jurnal de călătorie: pe pagina de identitate, Turnișor („turn mic”), alias Neppendorf, născut în 1336 (sau 1327, după sursă), cu „fotografia” turnului bisericii; pe pagina de vize, ștampilele desenate ale istoriei lui – 1734, începutul secolului XX, după al Doilea Război Mondial – și un loc liber pentru „viza ta”.",
+    "status": "realizat",
+    "nota": "Document fictiv – artefact-model, fără valoare oficială (mențiune vizibilă pe pagină). Nu imită un pașaport real: fără stemă, fără inscripții de stat, fără coduri sau număr de document, fără date personale. Faptele despre Turnișor provin din fapte_verificate.md (en.wikipedia; kirchenburgen.org; Răzvan Pop, „Sibiu Walks: Turnișor”, zilesinopti.ro, 2023): numele „turn mic”, Neppendorf din „villa Epponis” (după Răzvan Pop), atestarea 1336 sau 1327 (divergență arătată), sat săsesc până în 1734, landlerii din 1734, bazilica romanică de la sfârșitul secolului al XII-lea (altar 1759, amvon 1782), ceasul de lemn 1781 înlocuit cu unul de fier în 1862, biserica ortodoxă Sf. Nicolae (începutul secolului XX), înglobarea după al Doilea Război Mondial (anul exact nu e dat de surse). Ilustrația turnului și ștampilele sunt stilizate, generate cu AI, și nu redau exact clădirile; câmpurile „Domiciliu” și „Semnătura titularului” sunt joacă."
+  },
+  {
+    "cod": "P13",
+    "categorie": "Identitate",
+    "titlu": "Steagul cartierului meu — vexilologie AI, cu simbolurile explicate",
+    "fisiere": [
+      "08_identitate/P13_steagul_cartierului.svg",
+      "08_identitate/P13_steagul_cartierului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Un steag imaginar pentru Trei Stejari – o cruce de var pentru răscruce și trei frunze de stejar pe un disc de ocru –, cu fiecare simbol și fiecare culoare explicate, plus două variante mici, pentru Țiglari (țiglă și lac) și Ștrand (valuri și turnul trambulinei), și cele 5 reguli de bază ale vexilologiei.",
+    "status": "realizat",
+    "nota": "Steaguri imaginare – nu sunt simboluri oficiale ale cartierelor sau ale municipiului (mențiune vizibilă pe piesă); nu folosesc stema Sibiului. Simbolurile pornesc de la originea reală a numelor din fapte_verificate.md: Trei Stejari – trei stejari la o răscruce, pe un drum care ieșea din cetate (en.wikipedia); Țiglari – fabrica de țiglă a lui Gustav Binder, secolul al XIX-lea (turnulsfatului.ro, 2014), și Lacul lui Binder, „singurul lac din municipiu” (agerpres.ro, 2020); Ștrand – ștrandul construit în anii 1920 sau inaugurat la 12 iulie 1936, după sursă (divergență arătată), și trambulina „Turnul lui Phleps” (3, 5 și 10 m, old.tribuna.ro). Sensul discului de ocru și al culorilor este propus, imaginat pentru acest steag. Cele 5 reguli sunt principii generale ale designului de steaguri (simplitate, simboluri cu sens, 2–3 culori de bază, fără litere sau sigle, distinct dar înrudit), larg folosite în vexilologie."
+  }
+]

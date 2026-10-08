@@ -1,0 +1,293 @@
+# -*- coding: utf-8 -*-
+"""S15 – Locurile de joacă de altădată și de azi (hartă comparativă). Rulat din /home/claude/expo/_tools/svg."""
+import math, random
+from lib import *
+import sibiu_map as SM
+from s13 import (NB, mk_proj, rich, rich_width, Boxes, G, halo, oak, fir, ic_pool, INK, INK2, OCRU_D,
+                 GREEN1, GREEN2, WATER, STONE)
+
+OUT = "/home/claude/expo/c3/05_spatial/S15_locuri_de_joaca.svg"
+SEPIA = "#EADBBE"
+
+
+# ---------------- pictograme (±26) ----------------
+def ic_park():
+    s = f'<path d="M-26,20 H26" stroke="#C9B48E" stroke-width="3"/>'
+    s += oak(-12, 2, 10) + oak(12, -2, 11)
+    s += f'<rect x="-6" y="12" width="20" height="4" rx="1" fill="#8B5E3C"/><path d="M-4,16 v5 M12,16 v5" stroke="#6B4A2E" stroke-width="2"/>'
+    return s
+
+
+def ic_pool_new():
+    s = f'<rect x="-28" y="-4" width="44" height="24" rx="5" fill="{WATER}" stroke="{INK}" stroke-width="2"/>'
+    for yy in (4, 12):
+        s += f'<line x1="-24" y1="{yy}" x2="12" y2="{yy}" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="4 3"/>'
+    s += f'<line x1="22" y1="-14" x2="22" y2="20" stroke="{INK}" stroke-width="3"/>'
+    s += f'<line x1="22" y1="-24" x2="22" y2="-14" stroke="{INK}" stroke-width="1.6" stroke-dasharray="2 2"/>'
+    s += f'<line x1="10" y1="-24" x2="22" y2="-24" stroke="{TIGLA}" stroke-width="2" stroke-dasharray="3 2"/>'
+    for yy, ln in ((-14, 10), (-4, 8)):
+        s += f'<line x1="{22-ln}" y1="{yy}" x2="22" y2="{yy}" stroke="{TIGLA}" stroke-width="3" stroke-linecap="round"/>'
+    return s
+
+
+def ic_market():
+    s = f'<path d="M-28,4 H28 M-28,14 H28" stroke="#8B5E3C" stroke-width="3"/>'
+    for px in (-24, -8, 8, 24):
+        s += f'<line x1="{px}" y1="-2" x2="{px}" y2="22" stroke="#6B4A2E" stroke-width="3"/>'
+    # vacă stilizată
+    s += f'<ellipse cx="-2" cy="-10" rx="15" ry="8" fill="#F1E6D2" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<ellipse cx="-6" cy="-12" rx="4" ry="3" fill="{INK2}"/>'
+    s += f'<ellipse cx="16" cy="-14" rx="6" ry="5" fill="#F1E6D2" stroke="{INK}" stroke-width="1.5"/>'
+    s += f'<path d="M14,-19 l-2,-4 M19,-19 l2,-4" stroke="{INK}" stroke-width="1.5"/>'
+    s += f'<path d="M-12,-3 v7 M-4,-2 v7 M4,-2 v7 M9,-3 v7" stroke="{INK}" stroke-width="2"/>'
+    return s
+
+
+def ic_track():
+    s = f'<ellipse cx="0" cy="2" rx="27" ry="16" fill="#8DBB6A" stroke="#A9825A" stroke-width="6"/>'
+    s += f'<ellipse cx="0" cy="2" rx="27" ry="16" fill="none" stroke="#F3EFE6" stroke-width="1" stroke-dasharray="4 4"/>'
+    s += f'<line x1="18" y1="-22" x2="18" y2="-10" stroke="{INK}" stroke-width="1.8"/><polygon points="18,-22 27,-19 18,-16" fill="{TIGLA}"/>'
+    return s
+
+
+def mini_block(x, y, w, h, fl, cols=3):
+    s = f'<rect x="{x-w/2:.1f}" y="{y-h:.1f}" width="{w}" height="{h}" fill="#D9D3C7" stroke="{INK2}" stroke-width="1.2"/>'
+    for i in range(fl):
+        for j in range(cols):
+            wx = x - w / 2 + 3 + j * (w - 6) / cols
+            wy = y - h + 3 + i * (h - 6) / fl
+            s += f'<rect x="{wx:.1f}" y="{wy:.1f}" width="{(w-6)/cols-1.6:.1f}" height="{(h-6)/fl-1.6:.1f}" fill="#6F8FA0"/>'
+    return s
+
+
+def ic_blocks():
+    return mini_block(-12, 22, 20, 42, 7) + mini_block(12, 22, 20, 32, 5) + f'<path d="M-28,22 H28" stroke="#C9B48E" stroke-width="3"/>'
+
+
+def ic_forest_zoo():
+    s = fir(-16, 18, 30, GREEN2) + fir(-2, 22, 36, "#2F6B59")
+    s += f'<path d="M6,22 v-20 a10,10 0 0 1 20,0 v20" fill="none" stroke="#8B5E3C" stroke-width="4"/>'
+    s += f'<text x="16" y="-12" font-family="{SANS}" font-size="9" font-weight="700" fill="{INK}" text-anchor="middle">ZOO</text>'
+    return s
+
+
+def ic_forest_tram():
+    s = fir(-12, 20, 34, GREEN2) + fir(8, 22, 38, "#2F6B59") + fir(22, 18, 28, GREEN1)
+    return s
+
+
+def ic_factory():
+    s = f'<rect x="-22" y="-2" width="34" height="20" fill="#E3CDB0" stroke="{INK2}" stroke-width="1.5"/>'
+    s += f'<polygon points="-25,-2 -5,-16 15,-2" fill="{TIGLA}" stroke="{INK2}" stroke-width="1.5"/>'
+    s += f'<rect x="14" y="-24" width="8" height="42" fill="#963F27" stroke="{INK2}" stroke-width="1.3"/>'
+    s += f'<circle cx="22" cy="-28" r="4" fill="#C9C2B4"/><circle cx="26" cy="-33" r="3" fill="#C9C2B4" opacity="0.7"/>'
+    for i in range(3):
+        s += f'<rect x="{-17+i*9}" y="4" width="5" height="7" fill="{INK2}"/>'
+    return s
+
+
+def ic_lake():
+    s = f'<ellipse cx="-4" cy="6" rx="26" ry="14" fill="{WATER}" stroke="#5E9AA0" stroke-width="1.6"/>'
+    s += f'<path d="M-30,10 q4,12 22,12" fill="none" stroke="#E9D59A" stroke-width="5" stroke-linecap="round"/>'
+    s += f'<circle cx="2" cy="4" r="6" fill="none" stroke="{TIGLA}" stroke-width="1.6" stroke-dasharray="3 2"/>'
+    s += f'<path d="M14,-20 v18 M28,-20 v18" stroke="{INK}" stroke-width="2"/>'
+    s += f'<path d="M14,-18 H28 M14,-14 H28 M14,-10 H28 M17,-18 v8 M21,-18 v8 M25,-18 v8" stroke="{INK2}" stroke-width="0.9"/>'
+    return s
+
+
+def ic_playground():
+    s = f'<rect x="-30" y="-26" width="14" height="44" fill="#D9D3C7" stroke="{INK2}" stroke-width="1.2" opacity="0.8"/>'
+    s += f'<rect x="18" y="-22" width="14" height="40" fill="#D9D3C7" stroke="{INK2}" stroke-width="1.2" opacity="0.8"/>'
+    s += f'<path d="M-12,18 L-6,-8 L0,18 M-9,-8 H9 M6,-8 L12,18 M-6,-8 L-12,18" stroke="{TIGLA}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>'
+    s += f'<path d="M-1,-8 v14 M5,-8 v14" stroke="{INK}" stroke-width="1"/><rect x="-2" y="5" width="8" height="3" fill="{PETROL}"/>'
+    s += f'<path d="M-34,18 H36" stroke="#C9B48E" stroke-width="3"/>'
+    return s
+
+
+def site(x, y, n, icon, col, orient=False, r=27):
+    dash = ' stroke-dasharray="6 4"' if orient else ""
+    stroke = OCRU_D if orient else col
+    s = f'<g filter="url(#shs)"><circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#FBF7EE" stroke="{stroke}" stroke-width="3.2"{dash}/></g>\n'
+    s += G(x, y + 1, (r - 4) / 30, icon, filt=False)
+    bx, by = x - r * 0.78, y - r * 0.78
+    s += f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="11" fill="{col}" stroke="{VAR}" stroke-width="2"/>'
+    s += text(bx, by + 5.5, str(n), 15, VAR, "sans", 700, anchor="middle")
+    return s
+
+
+def base(px, py, pw, ph, P, tint, clip):
+    s = f'<clipPath id="{clip}"><rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="20"/></clipPath>\n'
+    s += f'<g clip-path="url(#{clip})">\n<rect x="{px}" y="{py}" width="{pw}" height="{ph}" fill="{PARCH}" filter="url(#paper)"/>\n'
+    s += f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" fill="{tint}" opacity="0.45"/>\n'
+    cx, cy = P(0, 0)
+    s += f'<ellipse cx="{cx:.1f}" cy="{cy+20:.1f}" rx="{pw*0.42:.1f}" ry="{ph*0.42:.1f}" fill="#E9DFC8" opacity="0.5" filter="url(#blur8)"/>\n'
+    riv = [P(-0.42, -0.15), P(-0.25, -0.18), P(0.0, -0.2), P(0.3, -0.25), P(0.58, -0.3)]
+    rd = smooth_path(riv, closed=False)
+    a0, a1 = riv[0], riv[-1]
+    gid = clip + "_rg"
+    s += (f'<linearGradient id="{gid}" gradientUnits="userSpaceOnUse" x1="{a0[0]:.1f}" y1="{a0[1]:.1f}" x2="{a1[0]:.1f}" y2="{a1[1]:.1f}">'
+          f'<stop offset="0" stop-color="#8FBFD1" stop-opacity="0"/><stop offset="0.18" stop-color="#8FBFD1" stop-opacity="0.9"/>'
+          f'<stop offset="0.82" stop-color="#8FBFD1" stop-opacity="0.9"/><stop offset="1" stop-color="#8FBFD1" stop-opacity="0"/></linearGradient>\n')
+    s += f'<path d="{rd}" fill="none" stroke="url(#{gid})" stroke-width="11" stroke-linecap="round"/>\n'
+    # pădurea Dumbrava (zonă orientativă, spre sud)
+    rnd = random.Random(9)
+    trees = []
+    for i in range(70):
+        u = rnd.uniform(-0.62, -0.05); v = rnd.uniform(0.9, 1.12)
+        if ((u + 0.34) / 0.3) ** 2 + ((v - 1.02) / 0.13) ** 2 < 1:
+            trees.append((v, u))
+    for v, u in sorted(trees):
+        tx, ty = P(u, v)
+        s += fir(tx, ty, rnd.uniform(18, 24), rnd.choice([GREEN2, "#2F6B59", GREEN1])) + "\n"
+    # centrul istoric
+    s += f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="30" ry="22" fill="#EFE3CC" stroke="{STONE}" stroke-width="4"/>\n'
+    s += f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="30" ry="22" fill="none" stroke="#C9A27E" stroke-width="1.5" stroke-dasharray="4 4"/>\n'
+    s += f'<rect x="{cx-4:.1f}" y="{cy-16:.1f}" width="8" height="20" fill="{ZID}" stroke="{INK}" stroke-width="1.2"/><polygon points="{cx-6:.1f},{cy-16:.1f} {cx:.1f},{cy-26:.1f} {cx+6:.1f},{cy-16:.1f}" fill="{TIGLA}"/>\n'
+    return s
+
+
+def panel(px, py, pw, ph, mode):
+    """mode: 'old' / 'new'. returns svg, boxes"""
+    B = Boxes()
+    P = mk_proj(px + 452, py + 300, 430, 285)
+    tint = SEPIA if mode == "old" else "#E3ECE6"
+    s = base(px, py, pw, ph, P, tint, "clip_" + mode)
+    col = TIGLA if mode == "old" else PETROL
+
+    # repere de cartier (nume de azi), foarte discrete
+    ref = []
+    for nm in ["Turnișor", "Lazaret", "Broscărie", "Vasile Aaron", "Gușterița", "Valea Aurie", "Dumbrăvii", "Trei Stejari", "Piața Cluj"]:
+        nx, ny, st = NB[nm]
+        ref.append((nm, P(nx, ny)))
+
+    cx0, cy0 = P(0, 0)
+    # eticheta panoului (înainte de repere, ca să fie evitată)
+    lab = "ALTĂDATĂ" if mode == "old" else "AZI"
+    sub = "repere din sec. al XIX-lea – 1936" if mode == "old" else "ultimele date din surse: 2020–2021"
+    lw = measure(lab, 22, "sans", 700, letter_spacing=3) + 40
+    tag = f'<rect x="{px+20}" y="{py+18}" width="{lw:.0f}" height="40" rx="20" fill="{col}"/>\n'
+    tag += text(px + 20 + lw / 2, py + 45, lab, 22, VAR, "sans", 700, anchor="middle", extra='letter-spacing="3"')
+    tag += text(px + 24, py + 82, sub, 15, INK2, "sans", 400, True)
+    B.add("tag", px + 20, py + 18, px + 20 + lw, py + 58)
+    B.text("tagsub", px + 24, py + 82, measure(sub, 15, "sans", 400, True), 15)
+    B.add("compass", px + pw - 92, py + 20, px + pw - 14, py + 112)
+    if mode == "old":
+        # tramvaiul 1905 / 1910 (schematic)
+        tr = [P(0.57, -0.21), P(0.3, -0.07), P(0.04, 0.06), P(-0.1, 0.22), P(-0.2, 0.4)]
+        tr2 = [P(-0.2, 0.4), P(-0.27, 0.62), P(-0.33, 0.86)]
+        s += f'<path d="{smooth_path(tr, False)}" fill="none" stroke="#6E56CF" stroke-width="4" stroke-dasharray="9 7" stroke-linecap="round"/>\n'
+        s += f'<path d="{smooth_path(tr2, False)}" fill="none" stroke="#6E56CF" stroke-width="3" stroke-dasharray="3 7" stroke-linecap="round"/>\n'
+        gx, gy = P(0.57, -0.21)
+        B.add("garadiam", gx - 11, gy - 11, gx + 11, gy + 11)
+        s += f'<rect x="{gx-7:.1f}" y="{gy-7:.1f}" width="14" height="14" rx="3" fill="{PARCH}" stroke="#4A3A99" stroke-width="3" transform="rotate(45 {gx:.1f} {gy:.1f})"/>\n'
+        s += halo(gx + 16, gy + 6, "gara", 14, "#4A3A99", 700, True, "start", hw=4)
+        B.text("gara", gx + 16, gy + 6, measure("gara", 14, "sans", 700, True), 14)
+        tx_, ty_ = cx0 + 46, cy0 + 30
+        for i, lbl in enumerate(["tramvaiul: 1905 – până la parc,", "1910 – până la marginea pădurii"]):
+            s += halo(tx_, ty_ + i * 17, lbl, 14, "#4A3A99", 600, True, "start", hw=4)
+            B.text("tramlbl", tx_, ty_ + i * 17, measure(lbl, 14, "sans", 600, True), 14)
+
+    # site-uri: (n, poziție normalizată, orientativ, icon vechi, icon nou, titlu vechi, rânduri vechi, titlu nou, rânduri nou, dx, dy, ancoră)
+    SITES = [
+        (1, (-0.2, 0.4), True, ic_park, ic_park, "Parcul Sub Arini", ["înființat în noiembrie 1856"],
+         "Parcul Sub Arini", ["68 de specii de plante, 95 de specii de păsări", "arbori de peste 150 de ani"], 38, -8, "start"),
+        (2, NB["Ștrand"][:2], False, ic_pool, ic_pool_new, "Ștrandul",
+         ["anii 1920 sau 12 iulie 1936, după sursă", "bazine: olimpic și pentru copii", "Turnul lui Phleps: sărituri de la 3, 5 și 10 m"],
+         "Ștrandul", ["din 2008: 5.000 de locuri", "platforma de 10 m, demontată", "redeschis la 23 iunie 2021"], -165, 50, "start"),
+        (3, NB["Terezian"][:2], False, ic_market, ic_park, "Târgul Vitelor", ["Viehmarktplatz, în Terezian"],
+         "Parcul Terezian", ["pe locul fostului Târg al Vitelor"], 38, -8, "start"),
+        (4, NB["Hipodrom"][:2], True, ic_track, ic_blocks, "Hipodromul cavaleriei",
+         ["început de sec. al XIX-lea", "iunie 1924: concursuri hipice, cu", "regele Ferdinand I și regina Maria"],
+         "Cartierul Hipodrom", ["hipodromul, demolat pentru blocuri", "Hipodrom I, terminat în 1972"], 38, -8, "start"),
+        (5, (-0.05, 0.92), True, ic_forest_tram, ic_forest_zoo, "Pădurea Dumbrava",
+         ["1910: tramvaiul, la marginea pădurii", "1929: prima grădină zoologică din România"],
+         "Pădurea Dumbrava", ["grădina zoologică, din 1929"], 38, -8, "start"),
+        (6, NB["Țiglari"][:2], False, ic_factory, ic_lake, "Fabrica de țiglă (Țiglari)",
+         ["a lui Gustav Binder, sec. al XIX-lea", "reper, nu loc de joacă"],
+         "Lacul lui Binder (Țiglari)", ["planificate în 2018: plajă, terenuri", "de volei, loc de joacă plutitor", "aug. 2020: circa 80% din lucrări gata"], 38, -8, "start"),
+    ]
+    for (n, (nx, ny), orient, io, inew, t_old, l_old, t_new, l_new, dx, dy, anc) in SITES:
+        X, Y = P(nx, ny)
+        icon = io() if mode == "old" else inew()
+        s += site(X, Y, n, icon, col, orient)
+        B.add(f"s{n}:med", X - 38, Y - 38, X + 27, Y + 27)
+        title = t_old if mode == "old" else t_new
+        lines = l_old if mode == "old" else l_new
+        tx, ty = X + dx, Y + dy
+        s += halo(tx, ty, title, 18, INK, 700, False, anc, hw=5)
+        B.text(f"s{n}:t", tx, ty, measure(title, 18, "sans", 700), 18, anc)
+        yy = ty + 19
+        for ln in lines:
+            s += halo(tx, yy, ln, 14, INK2, 400, True, anc, hw=4)
+            B.text(f"s{n}:l{yy}", tx, yy, measure(ln, 14, "sans", 400, True), 14, anc)
+            yy += 17
+
+    # repere discrete – doar unde nu se suprapun
+    for nm, (X, Y) in ref:
+        w = measure(nm, 13, "sans", 600, True)
+        bx0, by0, bx1, by1 = X - w / 2 - 4, Y - 14, X + w / 2 + 4, Y + 8
+        clash = any(bx0 < it[3] and it[1] < bx1 and by0 < it[4] and it[2] < by1 for it in B.items)
+        inside = px + 10 < bx0 and bx1 < px + pw - 10 and py + 70 < by0 and by1 < py + ph - 40
+        if not clash and inside:
+            s += f'<circle cx="{X:.1f}" cy="{Y-16:.1f}" r="3" fill="#B5A385"/>'
+            s += halo(X, Y, nm, 13, "#9C8B6E", 600, True, "middle", hw=4, hcol="#EFE6D3")
+            B.add(nm + ":ref", bx0, by0, bx1, by1)
+    cx, cy = P(0, 0)
+    s += halo(cx, cy + 38, "centru", 14, "#7A5636", 700, True, "middle", hw=4)
+    B.text("centru", cx, cy + 38, measure("centru", 14, "sans", 700, True), 14, "middle")
+
+    s += tag
+    # busolă mică
+    s += SM.compass(px + pw - 52, py + 64, r=22)
+    s += text(px + pw - 20, py + ph - 16, "schematic, poziții aproximative", 14, INK2, "sans", 400, True, "end")
+    B.text("note", px + pw - 20, py + ph - 16, measure("schematic, poziții aproximative", 14, "sans", 400, True), 14, "end")
+    s += "</g>\n"
+    s += f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="20" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+    return s, B
+
+
+def main():
+    s = frame_head("SPAȚIAL · S15", PETROL, "Locurile de joacă de altădată și de azi",
+                   "aceeași bază de hartă, două epoci · hartă comparativă schematică AI", title_size=56)
+    PY, PH = 226, 640
+    s1, B1 = panel(80, PY, 872, PH, "old")
+    s2, B2 = panel(968, PY, 872, PH, "new")
+    s += s1 + s2
+    # săgeată între panouri
+    s += f'<circle cx="960" cy="{PY+PH/2}" r="20" fill="{BG}" stroke="{OCRU}" stroke-width="2"/>'
+    s += f'<path d="M951,{PY+PH/2} h14 m-6,-7 l7,7 l-7,7" fill="none" stroke="{OCRU}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>\n'
+
+    # bandă de jos: legendă + simbol generic
+    BY, BH = 884, 120
+    s += card(80, BY, 1180, BH - 4, rx=18)
+    y = BY + 34
+    s += text(104, y, "Cum citești hărțile", 20, VAR, "serif", 700)
+    s += f'<circle cx="{318}" cy="{y-7}" r="11" fill="{TIGLA}" stroke="{VAR}" stroke-width="2"/>' + text(318, y - 1.5, "1", 15, VAR, "sans", 700, anchor="middle")
+    s += f'<circle cx="{344}" cy="{y-7}" r="11" fill="{PETROL}" stroke="{VAR}" stroke-width="2"/>' + text(344, y - 1.5, "1", 15, VAR, "sans", 700, anchor="middle")
+    s += text(364, y - 1, "același număr = același loc, altădată și azi", 15, CEATA)
+    s += f'<circle cx="{760}" cy="{y-7}" r="12" fill="#FBF7EE" stroke="{OCRU}" stroke-width="3" stroke-dasharray="6 4"/>'
+    s += text(782, y - 1, "contur punctat = poziție orientativă", 15, CEATA)
+    p, _ = para(104, y + 30, "Doar locuri documentate în fișa de fapte; numele cartierelor de azi apar ca repere. "
+                "Surse: zilesinopti.ro, old.tribuna.ro, turnulsfatului.ro, agerpres.ro, en.wikipedia, patrimoniu.sibiu.ro.",
+                14, 1130, CEATA, lh=19, italic=True)
+    s += p
+    # simbol generic între blocuri
+    GX = 1280
+    s += card(GX, BY, 560, BH - 4, fill="#1E2B38", stroke=OCRU, rx=18)
+    s += f'<circle cx="{GX+62}" cy="{BY+58}" r="38" fill="#FBF7EE" stroke="{CEATA}" stroke-width="2.5" stroke-dasharray="3 4"/>'
+    s += G(GX + 62, BY + 62, 1.0, ic_playground(), filt=False)
+    s += text(GX + 118, BY + 40, "Între blocuri", 20, VAR, "serif", 700)
+    p, _ = para(GX + 118, BY + 64, "spațiu de joacă tipic între blocuri – exemplu generic, fără loc anume (nu e pus pe hartă)",
+                15, 420, CEATA, lh=19, italic=True)
+    s += p
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    for nm, B, px in (("old", B1, 80), ("new", B2, 968)):
+        print(nm)
+        bad = B.report(bounds=(px + 4, PY + 4, px + 872 - 4, PY + PH - 4))
+        print("overlaps:", len(bad))
+
+
+if __name__ == "__main__":
+    main()

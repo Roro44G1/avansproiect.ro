@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cărți poștale din cartier</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+@supports (overflow:clip){html,body{overflow-x:clip}}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.2em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s;touch-action:manipulation;user-select:none}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru);background:transparent}.btn.accent:hover{background:#efb944}.pick:hover{border-color:var(--petrol2);background:var(--surf2)}}
+.btn:active,.pick:active{transform:scale(.97)}
+.btn:focus-visible,.pick:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn.big{font-size:1.02em;min-height:62px;border-radius:16px;padding:.4em .7em;white-space:nowrap}
+
+main{flex:1;display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"ctl cv" "ctl txt";column-gap:clamp(16px,2.2vw,44px);row-gap:clamp(10px,1vw,18px);min-height:0;padding-bottom:clamp(8px,1vw,18px)}
+.ctl{grid-area:ctl;background:var(--surf);border-radius:22px;padding:clamp(14px,1.2vw,24px) clamp(16px,1.4vw,26px);display:flex;flex-direction:column;gap:clamp(8px,.75vw,14px);min-height:0}
+.grp h2{font-family:var(--serif);font-size:1em;margin:0 0 .35em;display:flex;align-items:center;gap:.55em;color:var(--var)}
+.grp h2 .n{font-family:var(--sans);font-size:.78em;background:var(--petrol);color:var(--var);border-radius:99px;width:1.7em;height:1.7em;display:inline-grid;place-items:center;font-weight:700;flex:none}
+.opts{display:grid;gap:7px}
+.opts.cart{grid-template-columns:repeat(4,minmax(0,1fr))}
+.opts.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pick{font:inherit;font-weight:600;font-size:.95em;min-height:56px;padding:.2em .4em;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--var);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.15;transition:border-color .2s,background .2s,transform .15s;touch-action:manipulation}
+.pick small{color:var(--ceata);font-weight:500;font-size:.72em;margin-top:.15em}
+.pick[aria-pressed="true"]{border-color:var(--ocru);background:rgba(226,166,43,.16)}
+.pick[aria-pressed="true"] small{color:var(--ocru)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2px}
+.note{margin:0;color:var(--ceata);font-size:.82em;line-height:1.4;display:flex;gap:.6em;align-items:flex-start;margin-top:auto}
+.note b{color:var(--var)}
+
+.cv{grid-area:cv;align-self:start;display:flex;justify-content:center}
+.cv canvas{display:block;width:100%;height:auto;max-width:calc((100vh - 390px)*1.5);max-width:calc((100dvh - 390px)*1.5);border-radius:10px;box-shadow:0 22px 50px rgba(0,0,0,.5);background:#1B2733}
+.txt{grid-area:txt;align-self:start;background:var(--surf);border-radius:18px;padding:clamp(10px,.8vw,16px) clamp(14px,1.3vw,26px);border-left:6px solid var(--ocru);width:100%;max-width:calc((100vh - 390px)*1.5);max-width:calc((100dvh - 390px)*1.5);justify-self:center}
+.txt .k{margin:0 0 .3em;color:var(--ocru);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.75em}
+.txt .msg{margin:0 0 .3em;font-family:var(--serif);font-style:italic;font-size:.98em;line-height:1.38}
+.txt .src{margin:0;color:var(--ceata);font-size:.82em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:1100px){
+  main{grid-template-columns:1fr;grid-template-rows:auto;grid-template-areas:"cv" "txt" "ctl"}
+  .cv{position:sticky;top:0;z-index:4;background:var(--bg);padding:8px 0 10px;margin:0 calc(-1*var(--pad));padding-left:var(--pad);padding-right:var(--pad)}
+  .cv canvas,.txt{max-width:100%}
+  .opts.cart{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:700px){.top{display:grid;grid-template-columns:1fr;gap:10px}#rand{justify-self:start}}
+@media (max-width:460px){.opts.four{grid-template-columns:repeat(2,minmax(0,1fr))}.acts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I13</span><h1>Generator AI de cărți poștale din cartierul tău</h1></div>
+    <button class="btn ghost" id="rand" type="button">✦ La întâmplare</button>
+  </header>
+
+  <main>
+    <section class="ctl" aria-label="Alege cartea poștală">
+      <div class="grp"><h2><span class="n">1</span>Cartierul</h2><div class="opts cart" id="gCart" role="group" aria-label="Cartierul"></div></div>
+      <div class="grp"><h2><span class="n">2</span>Anotimpul</h2><div class="opts four" id="gSez" role="group" aria-label="Anotimpul"></div></div>
+      <div class="grp"><h2><span class="n">3</span>Momentul zilei</h2><div class="opts four" id="gMom" role="group" aria-label="Momentul zilei"></div></div>
+      <div class="grp"><h2><span class="n">4</span>Stilul</h2><div class="opts three" id="gStil" role="group" aria-label="Stilul"></div></div>
+      <div class="acts">
+        <button class="btn big" id="variant" type="button">↻ Altă variantă</button>
+        <button class="btn big accent" id="dl" type="button">⤓ Descarcă imaginea</button>
+      </div>
+      <p class="note"><span aria-hidden="true">✦</span><span><b>Cum e făcută:</b> textele vin din șabloane scrise cu AI (Claude, Anthropic); fiecare carte are un singur fapt despre cartier, din fișa de fapte verificate a proiectului, cu sursa lui. Ilustrația e desenată în cod: nu e o fotografie și nu redă exact clădirile reale.</span></p>
+    </section>
+
+    <div class="cv"><canvas id="cv" width="1200" height="800" role="img" aria-label="Carte poștală generată"></canvas></div>
+
+    <section class="txt" aria-live="polite" aria-label="Textul cărții poștale">
+      <p class="k">Textul cărții poștale</p>
+      <p class="msg" id="msg"></p>
+      <p class="src" id="src"></p>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* =====================================================================
+   1. DATE – cartierele și faptele (doar din fapte_verificate.md)
+   ===================================================================== */
+var CART=[
+ {id:'broscarie',n:'Broscărie',f:[
+   ['cartierul a fost ridicat pe o mlaștină desecată, în programul de industrializare din 1970','en.wikipedia'],
+   ['blocurile de aici au fost construite pentru muncitorii zonei industriale din estul orașului','en.wikipedia']]},
+ {id:'dumbravii',n:'Dumbrăvii',f:[
+   ['tramvaiul a ajuns la marginea Pădurii Dumbrava la 15 mai 1910','patrimoniu.sibiu.ro (tramvaiul)'],
+   ['în Pădurea Dumbrava, spre care se întinde cartierul, se află prima grădină zoologică din România (1929)','patrimoniu.sibiu.ro (premiere)']]},
+ {id:'gusterita',n:'Gușterița',f:[
+   ['Gușterița a fost un sat săsesc, Hammersdorf, inclus în Sibiu abia în 1940','en.wikipedia'],
+   ['biserica fortificată de aici a fost începută la începutul secolului al XIII-lea','en.wikipedia'],
+   ['se crede că aici a fost castrul roman Cedonia','en.wikipedia']]},
+ {id:'hipodrom',n:'Hipodrom',f:[
+   ['aici a fost hipodromul cavaleriei, iar în iunie 1924 regele Ferdinand I și regina Maria au venit la concursurile hipice','zilesinopti.ro (Răzvan Pop, 2024)'],
+   ['Hipodrom este singurul cartier al Sibiului împărțit în patru: Hipodrom I–IV','en.wikipedia'],
+   ['Hipodrom I a fost terminat în 1972','turnulsfatului.ro (2016)']]},
+ {id:'lazaret',n:'Lazaret',f:[
+   ['numele cartierului vine de la un lazaret – loc de izolare a bolnavilor – amenajat în clădirile unei mici mănăstiri dominicane','en.wikipedia; turnulsfatului.ro (2014)'],
+   ['vechiul lazaret se afla pe locul actualei gări sau al autogării, după sursă – cele două sunt vecine','en.wikipedia; turnulsfatului.ro (2014)']]},
+ {id:'cluj',n:'Piața Cluj',f:[
+   ['cartierul poartă numele orașului Cluj','en.wikipedia'],
+   ['tramvaiul a ajuns aici la 25 septembrie 1927, venind de la Piața Cibin prin gara Turnișor','patrimoniu.sibiu.ro (tramvaiul)']]},
+ {id:'strand',n:'Ștrand',f:[
+   ['zona se numea odinioară „Fleischhauer Wiese” – Pajiștea Măcelarilor','old.tribuna.ro'],
+   ['aici s-a construit singurul ștrand al Sibiului – în anii 1920 sau în 1936, după sursă','turnulsfatului.ro (2014); old.tribuna.ro'],
+   ['în 1970 au început aici vilele pe pantă și apoi blocurile','turnulsfatului.ro (2016)'],
+   ['trambulina „Turnul lui Phleps” avea sărituri de la 3, 5 și 10 metri','old.tribuna.ro']]},
+ {id:'terezian',n:'Terezian',f:[
+   ['cartierul poartă numele împărătesei Maria Tereza, care a finanțat aici un orfelinat și o biserică','turnulsfatului.ro (2014)'],
+   ['Terezian este socotit al doilea cel mai vechi cartier al Sibiului, după centru','en.wikipedia'],
+   ['Parcul Terezian a fost odinioară Târgul Vitelor','en.wikipedia'],
+   ['orfelinatul și biserica Sf. Elisabeta au fost construite între 1767 și 1771','turnulsfatului.ro (2014)']]},
+ {id:'stejari',n:'Trei Stejari',f:[
+   ['numele cartierului vine de la trei stejari care stăteau la o răscruce, pe un drum care ieșea din cetate','en.wikipedia'],
+   ['fabrica de bere Trei Stejari a fost construită aici în 1912–1913 și s-a închis în 2000','sibiucityapp.ro']]},
+ {id:'turnisor',n:'Turnișor',f:[
+   ['numele românesc înseamnă „turn mic”, iar cel german este Neppendorf','en.wikipedia'],
+   ['din 1734 aici s-au așezat landlerii, protestanți strămutați din Austria de azi','en.wikipedia; zilesinopti.ro (Răzvan Pop, 2023)'],
+   ['ceasul de lemn al bisericii, montat în 1781, a fost înlocuit cu unul de fier în 1862','kirchenburgen.org; en.wikipedia']]},
+ {id:'tiglari',n:'Țiglari',f:[
+   ['numele cartierului vine de la fabrica de țiglă a lui Gustav Binder, din secolul al XIX-lea','turnulsfatului.ro (2014)'],
+   ['aici se află Lacul lui Binder, „singurul lac din municipiu”','agerpres.ro (2020)']]},
+ {id:'valea',n:'Valea Aurie',f:[
+   ['numele cartierului vine de la un han local cu același nume','en.wikipedia'],
+   ['Valea Aurie este ultimul cartier de blocuri construit în Sibiu, aproape de Dumbravă','turnulsfatului.ro (2016)']]},
+ {id:'aaron',n:'Vasile Aaron',f:[
+   ['numele cartierului vine de la strada care marca odinioară limita dintre oraș și comuna Șelimbăr','en.wikipedia'],
+   ['cartierul a fost construit în anii 1970','turnulsfatului.ro (2014)']]}
+];
+var BYID={};CART.forEach(function(c){BYID[c.id]=c;});
+var SEZ=[['primavara','Primăvară'],['vara','Vară'],['toamna','Toamnă'],['iarna','Iarnă']];
+var MOM=[['dimineata','Dimineață'],['amiaza','Amiază'],['apus','Apus'],['noapte','Noapte']];
+var STIL=[['vintage','Vintage','sepia, litere mari'],['modern','Modern','culori plate'],['afis','Afiș','afiș de călătorie']];
+
+/* ---------- Șabloane de text (scrise cu AI) ---------- */
+var TS={primavara:{n:'primăvară',d:'copacii au înflorit'},vara:{n:'vară',d:'aerul e cald și miroase a iarbă cosită'},toamna:{n:'toamnă',d:'frunzele foșnesc pe trotuare'},iarna:{n:'iarnă',d:'zăpada a acoperit acoperișurile'}};
+var TM={dimineata:{i:'într-o dimineață',c:'Dimineața',d:'lumina abia atinge ferestrele'},amiaza:{i:'într-o amiază',c:'La amiază',d:'soarele e sus pe cer'},apus:{i:'într-un apus',c:'La apus',d:'cerul s-a colorat în portocaliu'},noapte:{i:'într-o noapte',c:'Noaptea',d:'ferestrele s-au aprins una câte una'}};
+var OPEN=[
+ function(n,s,m){return 'Îți scriu din '+n+' '+m.i+' de '+s.n+': '+s.d+', iar '+m.d+'.';},
+ function(n,s,m){return 'E '+s.n+' în '+n+', iar '+m.d+'.';},
+ function(n,s,m){return m.c+', cartierul '+n+' arată altfel: '+s.d+'.';},
+ function(n,s,m){return 'Am ieșit la plimbare prin '+n+' '+m.i+' de '+s.n+'.';}
+];
+var FACT=[
+ function(f){return 'Știai că '+f+'?';},
+ function(f){return 'Am aflat că '+f+'.';},
+ function(f){return 'Fapt verificat: '+f+'.';}
+];
+var CLOSE=['Te aștept să descoperim cartierul împreună!','Vino în vizită: îți arăt totul pe jos.','Cu drag, de pe străzile Sibiului.','Data viitoare îți trimit și o fotografie adevărată.','Caută cartierul pe hartă și vino să-l vezi!','Întreabă-i și pe bunici ce își amintesc de aici!'];
+
+function compose(st){
+  var c=BYID[st.cart],v=st.v,h=hash(st.cart)%7;
+  var fi=v%c.f.length,f=c.f[fi];
+  var s=TS[st.sez],m=TM[st.mom];
+  var o=OPEN[(v+h)%OPEN.length](c.n,s,m);
+  var fx=FACT[(v+1)%FACT.length](f[0]);
+  var cl=CLOSE[(v*5+h)%CLOSE.length];
+  var form=v%3;
+  var txt=form===0?[o,fx,cl]:form===1?[o,fx]:[fx,cl];
+  return {text:txt.join(' '),src:f[1]};
+}
+
+/* =====================================================================
+   2. UTILITARE
+   ===================================================================== */
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hash(str){var h=2166136261;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function h2r(h){h=h.replace('#','');if(h.length===3)h=h.replace(/./g,function(c){return c+c;});var n=parseInt(h,16);return [n>>16&255,n>>8&255,n&255];}
+function r2h(a){return '#'+a.map(function(v){v=Math.round(Math.max(0,Math.min(255,v)));return (v<16?'0':'')+v.toString(16);}).join('');}
+function M(a,b,t){var A=h2r(a),B=h2r(b);return r2h(A.map(function(v,i){return v+(B[i]-v)*t;}));}
+
+/* =====================================================================
+   3. ILUSTRAȚIA PROCEDURALĂ (coordonate de bază 1128×500, orizont la 335)
+   ===================================================================== */
+var BW=1128,BH=500,HZ=335;
+var g,P,R;
+function C(h,d){var x=M(h,P.tint,P.tintA);if(d)x=M(x,P.haze,d);return x;}
+function fr(x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h);}
+function poly(pts,c){g.fillStyle=c;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(var i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.closePath();g.fill();}
+function circ(x,y,r,c){g.fillStyle=c;g.beginPath();g.arc(x,y,Math.max(.1,r),0,Math.PI*2);g.fill();}
+function ell(x,y,rx,ry,c,rot){g.fillStyle=c;g.beginPath();g.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),rot||0,0,Math.PI*2);g.fill();}
+function ln(x1,y1,x2,y2,c,w){g.strokeStyle=c;g.lineWidth=w||2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+function rr(x,y,w,h,r,c){g.fillStyle=c;g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();g.fill();}
+
+var SP={
+ primavara:{grass:'#8BC46E',grass2:'#74B05C',tree:['#7DBA5C','#94C96A','#68A84E'],bloom:'#F7B9CC',snow:.55,hill:'#6E9C62'},
+ vara:{grass:'#62A64D',grass2:'#4E9242',tree:['#3F8A3E','#4E9A47','#337C3A'],snow:.12,hill:'#4F8550'},
+ toamna:{grass:'#AFA052',grass2:'#978640',tree:['#D9822B','#C2502E','#E8B23A','#B8662A'],snow:.3,hill:'#8E7B44'},
+ iarna:{grass:'#EEF2F6',grass2:'#DCE4EC',tree:null,snow:1,hill:'#D3DCE5'}
+};
+function makePal(sez,mom){
+  var p={sez:sez,mom:mom,S:SP[sez]};
+  if(mom==='dimineata'){p.sky=[[0,'#7FB2DE'],[.62,'#CFE2EE'],[1,'#F7D9B0']];p.tint='#FFE2C0';p.tintA=.1;p.haze='#E6DCCF';p.sun={x:180,y:228,r:34,c:'#FFF0C8',g:'rgba(255,226,170,.6)'};p.cloud='#FFF3E8';}
+  else if(mom==='amiaza'){p.sky=[[0,'#3B8BCB'],[1,'#BFE0F3']];p.tint='#FFFFFF';p.tintA=0;p.haze='#CFE3F0';p.sun={x:900,y:78,r:32,c:'#FFF8DC',g:'rgba(255,250,220,.55)'};p.cloud='#FFFFFF';}
+  else if(mom==='apus'){p.sky=[[0,'#2E3470'],[.42,'#B5577A'],[.74,'#EE8A4E'],[1,'#F8C46A']];p.tint='#F08A4B';p.tintA=.2;p.haze='#E39C78';p.sun={x:880,y:252,r:54,c:'#FFC071',g:'rgba(255,150,90,.65)'};p.cloud='#F6AE8E';}
+  else{p.sky=[[0,'#060C1E'],[.7,'#14244A'],[1,'#26365E']];p.tint='#0E1A3A';p.tintA=.6;p.haze='#1E2D52';p.moon={x:900,y:96,r:28};p.night=true;}
+  if(sez==='iarna'&&!p.night)p.sky=p.sky.map(function(s){return [s[0],M(s[1],'#DCE4EC',.3)];});
+  return p;
+}
+
+function win(x,y,w,h,p){
+  var lit=false;
+  if(P.night)lit=R()<(p==null?.55:p);else if(P.mom==='apus')lit=R()<.12;
+  if(lit){
+    if(P.night){g.shadowColor='rgba(255,196,100,.85)';g.shadowBlur=6;}
+    fr(x,y,w,h,P.night?'#FFD27A':'#FFC56B');g.shadowBlur=0;g.shadowColor='rgba(0,0,0,0)';
+  }else fr(x,y,w,h,C(P.mom==='amiaza'?'#7E9FB8':P.mom==='dimineata'?'#8FA7BA':'#4E6273'));
+}
+function archWin(x,y,w,h,p){
+  var lit=P.night?R()<(p==null?.5:p):false;
+  if(lit){g.shadowColor='rgba(255,196,100,.85)';g.shadowBlur=6;}
+  g.fillStyle=lit?'#FFD27A':C('#4B5B6B');
+  g.beginPath();g.moveTo(x,y+h);g.lineTo(x,y+w/2);g.arc(x+w/2,y+w/2,w/2,Math.PI,0);g.lineTo(x+w,y+h);g.closePath();g.fill();
+  g.shadowBlur=0;g.shadowColor='rgba(0,0,0,0)';
+}
+
+/* casă cu acoperiș de țiglă (o.side = acoperiș lung spre stradă; o.eye = „ochi” de mansardă; o.scal = solzi de țiglă) */
+function house(x,by,w,h,o){
+  o=o||{};
+  var rc=o.roof||'#B9583A',rh=o.rh||w*.5;
+  fr(x,by-h,w,h,C(o.wall||'#F1E6D3'));
+  fr(x+w-5,by-h,5,h,C(M(o.wall||'#F1E6D3','#000000',.12)));
+  var pts=o.side?[[x-7,by-h+2],[x+12,by-h-rh],[x+w-12,by-h-rh],[x+w+7,by-h+2]]:[[x-8,by-h+2],[x+w/2,by-h-rh],[x+w+8,by-h+2]];
+  poly(pts,C(rc));
+  g.save();g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(var i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.closePath();g.clip();
+  g.strokeStyle=C(M(rc,'#2A1208',.32));g.lineWidth=1.4;
+  if(o.scal){
+    for(var yy=by-h-rh+6,row=0;yy<by-h+4;yy+=8,row++){for(var xx=x-10+(row%2)*6;xx<x+w+10;xx+=12){g.beginPath();g.arc(xx,yy,6,0,Math.PI);g.stroke();}}
+  }else{
+    for(var k=1;k<=5;k++){var yy2=by-h-rh+rh*k/6;g.beginPath();g.moveTo(x-10,yy2);g.lineTo(x+w+10,yy2);g.stroke();}
+  }
+  g.restore();
+  if(o.eye){var ex=x+w/2,ey=by-h-rh*.42;g.fillStyle=C('#2B1D16');g.beginPath();g.moveTo(ex-11,ey+4);g.quadraticCurveTo(ex,ey-9,ex+11,ey+4);g.closePath();g.fill();}
+  if(P.S.snow>.9){g.strokeStyle=C('#FFFFFF');g.lineWidth=5;g.lineJoin='round';g.beginPath();g.moveTo(pts[0][0],pts[0][1]-1);for(var j=1;j<pts.length;j++)g.lineTo(pts[j][0],pts[j][1]-1);g.stroke();}
+  var fl=o.fl||1,nw=o.nw||Math.max(1,Math.round(w/36)),ww=o.ww||11,wh=o.wh||15;
+  for(var f=0;f<fl;f++)for(var q=0;q<nw;q++){
+    if(o.door&&f===fl-1&&q===Math.floor(nw/2)&&nw%2===1)continue;
+    win(x+(q+.5)*w/nw-ww/2,by-h+h*(f+.28)/fl,ww,wh,.6);
+  }
+  if(o.door)fr(x+w/2-8,by-24,16,24,C('#5A3B2A'));
+}
+/* bloc de locuințe */
+function block(x,by,w,fl,o){
+  o=o||{};var fh=o.fh||16,h=fl*fh+18,base=o.col||'#DCD6C8';
+  fr(x,by-h,w,h,C(base));
+  fr(x+w-7,by-h,7,h,C(M(base,'#1A1A1A',.22)));
+  if(o.roof)poly([[x-5,by-h+1],[x+w/2,by-h-o.roof],[x+w+5,by-h+1]],C(o.roofc||'#9A4A33'));
+  else fr(x-2,by-h-4,w+4,5,C(M(base,'#3A3A3A',.4)));
+  var ws=o.ws||19,cols=Math.max(1,Math.floor((w-14)/ws)),off=x+(w-7-cols*ws)/2+4;
+  for(var f=0;f<fl;f++){
+    for(var c=0;c<cols;c++)win(off+c*ws,by-h+7+f*fh,ws-8,fh-7,o.lit);
+    if(o.bal){g.globalAlpha=.8;fr(x+3,by-h+7+f*fh+fh-6,w-13,3,C(o.bal));g.globalAlpha=1;}
+  }
+  if(P.S.snow>.9&&!o.roof)fr(x-2,by-h-8,w+4,4,C('#FFFFFF'));
+  if(P.S.snow>.9&&o.roof){g.strokeStyle=C('#FFFFFF');g.lineWidth=4;g.beginPath();g.moveTo(x-5,by-h);g.lineTo(x+w/2,by-h-o.roof-1);g.lineTo(x+w+5,by-h);g.stroke();}
+  fr(x+w/2-9,by-14,18,14,C('#3B4652'));
+}
+/* copac (o.wide = coroană lată, ca de stejar) */
+function tree(x,by,s,o){
+  o=o||{};var tr=C('#5A4535'),wide=o.wide||1,th=s*1.2;
+  poly([[x-s*.14,by],[x-s*.08,by-th],[x+s*.08,by-th],[x+s*.14,by]],tr);
+  var cy=by-th-s*.42;
+  if(!P.S.tree){
+    g.strokeStyle=tr;g.lineCap='round';
+    var br=[[-.95,-.35],[-.55,-.95],[0,-1.15],[.55,-.95],[.95,-.4],[-.7,.05],[.72,0]];
+    br.forEach(function(b){g.lineWidth=Math.max(1.5,s*.07);g.beginPath();g.moveTo(x,by-th*.7);g.quadraticCurveTo(x+b[0]*s*.3*wide,by-th-s*.1,x+b[0]*s*wide,by-th+b[1]*s*.85);g.stroke();
+      g.lineWidth=Math.max(1,s*.035);g.beginPath();g.moveTo(x+b[0]*s*wide*.7,by-th+b[1]*s*.6);g.lineTo(x+b[0]*s*wide*.95+(b[0]>0?8:-8),by-th+b[1]*s*.6-s*.25);g.stroke();});
+    br.forEach(function(b){circ(x+b[0]*s*wide,by-th+b[1]*s*.85-1,Math.max(1.6,s*.06),C('#FFFFFF'));});
+    g.lineCap='butt';return;
+  }
+  var cs=P.S.tree,B=[[0,.05,1],[-.62,.28,.72],[.62,.24,.74],[-.32,-.42,.72],[.34,-.38,.7],[0,.36,.78]];
+  B.forEach(function(b){circ(x+b[0]*s*wide,cy+b[1]*s,b[2]*s*(wide>1?1.06:1),C(cs[Math.floor(R()*cs.length)]));});
+  circ(x-s*.26*wide,cy-s*.3,s*.34,C(M(cs[0],'#FFFFFF',.18)));
+  if(P.S.bloom){for(var i=0;i<Math.round(s*.7);i++){var a=R()*6.283,r=R()*s*.95;circ(x+Math.cos(a)*r*wide,cy+Math.sin(a)*r*.8,1.8+R()*1.8,C(P.S.bloom));}}
+}
+function church(x,by,o){
+  var wall=o.wall||'#F3ECDD',nw=o.nw,nh=o.nh;
+  fr(x,by-nh,nw,nh,C(wall));
+  poly([[x-6,by-nh+2],[x+14,by-nh-o.nr],[x+nw-14,by-nh-o.nr],[x+nw+6,by-nh+2]],C(o.roof||'#9C4630'));
+  if(P.S.snow>.9){g.strokeStyle=C('#FFFFFF');g.lineWidth=4;g.beginPath();g.moveTo(x-6,by-nh+1);g.lineTo(x+14,by-nh-o.nr);g.lineTo(x+nw-14,by-nh-o.nr);g.lineTo(x+nw+6,by-nh+1);g.stroke();}
+  for(var i=0;i<o.nwin;i++)archWin(x+24+i*((nw-48)/Math.max(1,o.nwin-1))-6,by-nh+nh*.28,12,nh*.38,.5);
+  var tx=o.tx,tw=o.tw,th=o.th,top=by-th;
+  fr(tx,top,tw,th,C(M(wall,'#000000',.03)));
+  fr(tx+tw-6,top,6,th,C(M(wall,'#000000',.16)));
+  fr(tx-3,top,tw+6,6,C(M(wall,'#6B5B45',.3)));
+  var capH=o.capH||60,cx=tx+tw/2;
+  if(o.cap==='baroc'){bulb(cx,top,tw*1.05,capH,C(o.capc||'#4F6B5E'));}
+  else poly([[tx-4,top],[cx,top-capH],[tx+tw+4,top]],C(o.capc||(o.cap==='pyr'?'#7E3B2A':'#55665C')));
+  if(P.S.snow>.9){g.strokeStyle=C('#FFFFFF');g.lineWidth=3;g.beginPath();g.moveTo(tx-4,top);g.lineTo(cx,top-capH+(o.cap==='baroc'?capH*.5:0));g.lineTo(tx+tw+4,top);g.stroke();}
+  ln(cx,top-capH,cx,top-capH-15,C('#C9A54B'),2.5);ln(cx-5,top-capH-10,cx+5,top-capH-10,C('#C9A54B'),2.5);
+  if(o.clock){var cy=top+tw*.42,cr=tw*.24;circ(cx,cy,cr+2,C('#2E2A26'));circ(cx,cy,cr,C('#F8F3E6'));ln(cx,cy,cx,cy-cr*.7,C('#2E2A26'),2);ln(cx,cy,cx+cr*.55,cy+cr*.2,C('#2E2A26'),2);}
+  archWin(cx-6,top+(o.clock?tw*.78:20),12,26,.3);
+  archWin(cx-6,top+th*.62,12,24,.3);
+}
+function bulb(cx,by,w,h,col){
+  g.fillStyle=col;g.beginPath();g.moveTo(cx-w/2,by);
+  g.quadraticCurveTo(cx-w*.64,by-h*.34,cx-w*.2,by-h*.5);
+  g.quadraticCurveTo(cx-w*.08,by-h*.56,cx-w*.09,by-h*.62);
+  g.lineTo(cx-w*.16,by-h*.66);g.quadraticCurveTo(cx-w*.22,by-h*.82,cx,by-h);
+  g.quadraticCurveTo(cx+w*.22,by-h*.82,cx+w*.16,by-h*.66);g.lineTo(cx+w*.09,by-h*.62);
+  g.quadraticCurveTo(cx+w*.08,by-h*.56,cx+w*.2,by-h*.5);
+  g.quadraticCurveTo(cx+w*.64,by-h*.34,cx+w/2,by);g.closePath();g.fill();
+}
+function factory(x,by,w,h,o){
+  o=o||{};var c=o.col||'#A85A3C';
+  fr(x,by-h,w,h,C(c));
+  var n=o.teeth==null?5:o.teeth;
+  if(n){var tw=w/n;for(var i=0;i<n;i++)poly([[x+i*tw,by-h+1],[x+i*tw,by-h-20],[x+(i+1)*tw,by-h+1]],C(M(c,'#000000',.25)));}
+  else poly([[x-6,by-h+1],[x+16,by-h-26],[x+w-16,by-h-26],[x+w+6,by-h+1]],C(M(c,'#000000',.3)));
+  var k=Math.floor((w-20)/30);for(var j=0;j<k;j++)win(x+14+j*30,by-h+16,16,Math.min(26,h-30),.45);
+}
+function chimney(x,by,h,w,smoke){
+  poly([[x,by],[x+w*.18,by-h],[x+w*.82,by-h],[x+w,by]],C('#9C4E33'));
+  fr(x+w*.1,by-h,w*.8,8,C('#7A3A26'));
+  if(smoke)for(var i=0;i<6;i++)ell(x+w/2+i*15+R()*6,by-h-14-i*15,10+i*4,7+i*3,P.night?'rgba(150,160,185,.2)':'rgba(236,236,236,'+(.6-i*.08)+')');
+}
+function lake(cx,cy,rx,ry){
+  var wc=P.sez==='iarna'?'#C9DCE8':'#3C82A6';
+  ell(cx,cy,rx+10,ry+7,C(P.S.grass2));
+  var gr=g.createLinearGradient(0,cy-ry,0,cy+ry);gr.addColorStop(0,C(M(wc,'#FFFFFF',.18)));gr.addColorStop(1,C(M(wc,'#000000',.18)));
+  g.fillStyle=gr;g.beginPath();g.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);g.fill();
+  g.strokeStyle=P.night?'rgba(255,220,150,.35)':'rgba(255,255,255,.5)';g.lineWidth=2;
+  for(var i=0;i<8;i++){var yy=cy-ry*.55+i*ry*.15,xx=cx-rx*.55+R()*rx*.7;g.beginPath();g.moveTo(xx,yy);g.lineTo(xx+30+R()*70,yy);g.stroke();}
+}
+function reeds(x,by,n,spread){
+  var c=P.sez==='iarna'?'#B9A98A':P.sez==='toamna'?'#A88A4A':'#5E8C45';
+  for(var i=0;i<n;i++){var xx=x+(R()-.5)*spread,h=30+R()*42,b=(R()-.5)*16;g.strokeStyle=C(c);g.lineWidth=2.2;g.beginPath();g.moveTo(xx,by);g.quadraticCurveTo(xx+b*.3,by-h*.6,xx+b,by-h);g.stroke();if(R()<.4)ell(xx+b,by-h+7,2.8,8,C('#6B4A2E'));}
+}
+function lamp(x,by,h){
+  ln(x,by,x,by-h,C('#3A4450'),3);ln(x,by-h,x+12,by-h,C('#3A4450'),3);
+  if(P.night){var gr=g.createRadialGradient(x+12,by-h+4,1,x+12,by-h+4,44);gr.addColorStop(0,'rgba(255,214,140,.85)');gr.addColorStop(1,'rgba(255,214,140,0)');g.fillStyle=gr;g.fillRect(x-34,by-h-40,92,88);}
+  circ(x+12,by-h+3,4,P.night?'#FFE3A6':C('#E8E2D0'));
+}
+function rails(y,ballast){
+  if(ballast)fr(0,y-14,BW,30,C(M(P.S.grass2,'#7A6A5A',.6)));
+  for(var x=0;x<BW;x+=18)fr(x,y-11,8,24,C('#5B4636'));
+  fr(0,y-7,BW,3,C('#8A8F96'));fr(0,y+7,BW,3,C('#8A8F96'));
+}
+function tram(x,y,s,col){
+  var w=150*s,h=52*s,top=y-h-8*s;
+  rr(x,top,w,h,8*s,C(col||'#D9A13A'));
+  fr(x,top+h*.66,w,5*s,C('#7E3524'));
+  for(var i=0;i<5;i++)win(x+10*s+i*27*s,top+9*s,20*s,17*s,.9);
+  rr(x+8*s,top-7*s,w-16*s,8*s,3*s,C('#6B6B6B'));
+  ln(x+w*.5,top-6*s,x+w*.5+38*s,top-44*s,C('#3A3A3A'),2.5*s);
+  circ(x+28*s,y-5*s,7*s,C('#2A2A2A'));circ(x+w-28*s,y-5*s,7*s,C('#2A2A2A'));
+  return top-44*s;
+}
+function gate(x,by,w,h,col){fr(x,by-h,w,h,C(col||'#E8DCC4'));g.fillStyle=C('#6A4630');g.beginPath();g.moveTo(x+6,by);g.lineTo(x+6,by-h*.55);g.arc(x+w/2,by-h*.55,w/2-6,Math.PI,0);g.lineTo(x+w-6,by);g.closePath();g.fill();poly([[x-3,by-h],[x+w/2,by-h-12],[x+w+3,by-h]],C('#9C4630'));}
+
+/* --- cer, munți, vreme --- */
+function sky(){var gr=g.createLinearGradient(0,0,0,HZ);P.sky.forEach(function(s){gr.addColorStop(s[0],s[1]);});g.fillStyle=gr;g.fillRect(0,0,BW,HZ+2);}
+function rays(){var o=P.sun||P.moon;g.fillStyle='rgba(255,255,255,.11)';for(var i=0;i<28;i+=2){var a1=i/28*6.283,a2=(i+1)/28*6.283;g.beginPath();g.moveTo(o.x,o.y);g.lineTo(o.x+Math.cos(a1)*1700,o.y+Math.sin(a1)*1700);g.lineTo(o.x+Math.cos(a2)*1700,o.y+Math.sin(a2)*1700);g.closePath();g.fill();}}
+function sunMoon(){
+  var o=P.sun||P.moon,glow=P.sun?P.sun.g:'rgba(210,225,255,.35)',r=o.r;
+  var gr=g.createRadialGradient(o.x,o.y,r*.4,o.x,o.y,r*4.5);gr.addColorStop(0,glow);gr.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=gr;g.fillRect(o.x-r*5,o.y-r*5,r*10,r*10);
+  circ(o.x,o.y,r,P.sun?P.sun.c:'#F2EEDC');
+  if(P.moon){circ(o.x-8,o.y-6,5,'rgba(0,0,0,.08)');circ(o.x+9,o.y+8,4,'rgba(0,0,0,.07)');circ(o.x+4,o.y-12,3,'rgba(0,0,0,.06)');}
+}
+function stars(){if(!P.night)return;for(var i=0;i<150;i++)circ(R()*BW,R()*250,.6+R()*1.3,'rgba(255,255,255,'+(.3+R()*.7).toFixed(2)+')');}
+function clouds(){
+  if(P.night)return;var n=3+Math.floor(R()*3);g.globalAlpha=P.mom==='apus'?.65:.85;
+  for(var i=0;i<n;i++){var x=R()*BW,y=34+R()*130,s=24+R()*34;[[0,0,1.7,.7],[-.95,.22,1,.52],[.95,.2,1.1,.56],[.2,-.32,1.05,.62]].forEach(function(e){ell(x+e[0]*s,y+e[1]*s,e[2]*s,e[3]*s,P.cloud);});}
+  g.globalAlpha=1;
+}
+var PEAKS=[[0,262],[70,236],[130,252],[200,208],[255,228],[310,196],[365,220],[430,186],[490,210],[555,198],[615,226],[675,200],[735,172],[795,204],[850,188],[910,216],[970,194],[1035,224],[1085,206],[1128,230]];
+function mountains(){
+  poly(PEAKS.concat([[1128,HZ],[0,HZ]]),C(M('#7D93B2',P.haze,.42)));
+  var a=P.S.snow;if(a>0){var col=C(M('#FFFFFF',P.haze,.18));
+    for(var i=1;i<PEAKS.length-1;i++){var p=PEAKS[i],l=PEAKS[i-1],r=PEAKS[i+1];if(p[1]<l[1]&&p[1]<r[1]){
+      var d=8+26*a,tl=Math.min(1,d/(l[1]-p[1])),tr=Math.min(1,d/(r[1]-p[1]));
+      var L=[p[0]+(l[0]-p[0])*tl,p[1]+(l[1]-p[1])*tl],Rr=[p[0]+(r[0]-p[0])*tr,p[1]+(r[1]-p[1])*tr];
+      poly([L,p,Rr,[(p[0]+Rr[0])/2,p[1]+d*.55],[p[0],p[1]+d*.85],[(p[0]+L[0])/2,p[1]+d*.6]],col);}}}
+  g.fillStyle=C(M(P.S.hill,P.haze,.22));g.beginPath();g.moveTo(0,HZ);g.lineTo(0,300);g.quadraticCurveTo(160,276,330,296);g.quadraticCurveTo(520,318,700,292);g.quadraticCurveTo(880,270,1128,298);g.lineTo(1128,HZ);g.closePath();g.fill();
+}
+function ground(){var gr=g.createLinearGradient(0,HZ,0,BH);gr.addColorStop(0,C(P.S.grass2));gr.addColorStop(1,C(P.S.grass));g.fillStyle=gr;g.fillRect(0,HZ,BW,BH-HZ);}
+function weather(){
+  var a=P.night?.55:1;
+  if(P.sez==='iarna'){for(var i=0;i<170;i++)circ(R()*BW,R()*BH,.8+R()*2.4,'rgba(255,255,255,'+((.45+R()*.55)*a).toFixed(2)+')');}
+  else if(P.sez==='toamna'){var lc=['#D9822B','#C2502E','#E8B23A'];for(var j=0;j<28;j++)ell(R()*BW,60+R()*(BH-60),4+R()*3,2+R()*1.6,C(lc[j%3]),R()*3);}
+  else if(P.sez==='primavara'){g.globalAlpha=.85*a;for(var k=0;k<34;k++)ell(R()*BW,40+R()*(BH-40),2.8,1.7,C(P.S.bloom),R()*3);g.globalAlpha=1;}
+  else if(!P.night){g.strokeStyle=C('#2E3B48');g.lineWidth=2;for(var b=0;b<5;b++){var bx=200+R()*700,by=50+R()*110,s=5+R()*5;g.beginPath();g.moveTo(bx-s,by-s*.5);g.quadraticCurveTo(bx-s*.4,by-s*.7,bx,by);g.quadraticCurveTo(bx+s*.4,by-s*.7,bx+s,by-s*.5);g.stroke();}}
+}
+
+/* --- scenele cartierelor (motive schematice, nu reproduceri exacte) --- */
+var SCN={
+ terezian:function(){
+  block(24,HZ+8,130,5,{col:'#D9D2C2'});block(166,HZ+12,150,4,{col:'#E2DACA'});
+  tree(345,HZ+30,24);
+  house(620,HZ+56,320,96,{side:1,rh:44,fl:2,nw:10,wall:'#EFE3C6',eye:1});
+  church(400,HZ+56,{nw:200,nh:110,nr:42,tx:540,tw:62,th:200,cap:'baroc',capH:90,nwin:4,wall:'#F2EADB'});
+  fr(0,BH-58,BW,22,C(M('#C9B999',P.S.grass,.25)));
+  tree(1000,BH-30,52);tree(1090,BH-60,40);tree(890,BH-36,44);tree(70,BH-34,46);
+  [[930,BH-40],[180,BH-44]].forEach(function(b){fr(b[0],b[1],46,5,C('#6B4A32'));fr(b[0]+4,b[1]+5,4,9,C('#3A3A3A'));fr(b[0]+38,b[1]+5,4,9,C('#3A3A3A'));});
+ },
+ tiglari:function(){
+  factory(90,HZ+18,280,66,{col:'#A85A3C',teeth:5});
+  chimney(330,HZ+18,190,28,false);
+  tree(470,HZ+16,22);tree(520,HZ+20,26);
+  lake(830,HZ+82,290,60);
+  reeds(560,HZ+120,16,60);reeds(1100,HZ+110,18,60);
+  house(0,BH-26,160,72,{rh:96,eye:1,door:1,wall:'#F1E3CC',scal:1,nw:3});
+  house(176,BH-16,180,80,{rh:104,eye:1,door:1,wall:'#EBD7B6',roof:'#A9502F',scal:1,nw:3});
+  house(372,BH-34,130,60,{rh:80,wall:'#F4ECDD',roof:'#C2643F',scal:1});
+ },
+ lazaret:function(){
+  block(16,HZ+6,140,6,{col:'#D7D1C3'});block(960,HZ+6,160,7,{col:'#DCD5C6'});
+  fr(150,HZ+24,240,52,C('#EFE6D3'));
+  poly([[144,HZ+26],[160,HZ+4],[384,HZ+4],[396,HZ+26]],C('#A44F33'));
+  for(var i=0;i<6;i++){var ax=166+i*37;g.fillStyle=C('#4A3A30');g.beginPath();g.moveTo(ax,HZ+76);g.lineTo(ax,HZ+52);g.arc(ax+11,HZ+52,11,Math.PI,0);g.lineTo(ax+22,HZ+76);g.closePath();g.fill();}
+  church(300,HZ+76,{nw:130,nh:84,nr:34,tx:398,tw:44,th:168,cap:'spire',capH:64,nwin:3});
+  var x=560,by=HZ+82,w=520,h=74,cx=x+w/2;
+  fr(x,by-h,w,h,C('#EADCC0'));
+  poly([[x-8,by-h+2],[x+22,by-h-30],[x+w-22,by-h-30],[x+w+8,by-h+2]],C('#7E3B2A'));
+  fr(cx-62,by-h-34,124,h+34,C('#F2E6CC'));
+  poly([[cx-70,by-h-32],[cx,by-h-74],[cx+70,by-h-32]],C('#6F3324'));
+  circ(cx,by-h-12,15,C('#2E2A26'));circ(cx,by-h-12,13,C('#FBF7EE'));ln(cx,by-h-12,cx,by-h-21,C('#2E2A26'),2);ln(cx,by-h-12,cx+7,by-h-9,C('#2E2A26'),2);
+  for(var j=0;j<12;j++){var wx=x+22+j*((w-44)/11)-7;if(Math.abs(wx+7-cx)<72)continue;archWin(wx,by-h+18,14,32,.6);}
+  for(var d=-1;d<=1;d++)archWin(cx+d*34-11,by-48,22,46,.7);
+  if(P.S.snow>.9){g.strokeStyle=C('#FFFFFF');g.lineWidth=4;g.beginPath();g.moveTo(x-8,by-h+1);g.lineTo(x+22,by-h-30);g.lineTo(x+w-22,by-h-30);g.lineTo(x+w+8,by-h+1);g.stroke();}
+  fr(x-30,by-4,w+60,10,C('#77706A'));
+  rails(BH-40,true);rails(BH-10,false);
+  tree(70,BH-50,40);tree(500,BH-52,30);
+ },
+ turnisor:function(){
+  tree(60,HZ+14,30);tree(1070,HZ+16,32);tree(330,HZ+10,24);
+  church(470,HZ+46,{nw:250,nh:98,nr:46,tx:410,tw:84,th:214,cap:'pyr',capH:72,clock:1,nwin:4,roof:'#8E4430',wall:'#EFE7D6'});
+  ell(728,HZ+6,30,40,C('#E8DFCC'));
+  var cols=['#E9C77B','#BFD3B0','#E7B9A6','#F1E6D3','#C9D6E3','#EED9A8'],road=BH-64;
+  fr(0,road,BW,BH-road,C(M('#A39686',P.S.grass,.1)));
+  for(var i=0;i<12;i++)fr(i*100+20,road+30,50,4,C('#C9BEB0'));
+  [[0,104],[150,94],[268,100]].forEach(function(h,k){house(h[0],road,h[1],86,{rh:74,wall:cols[k],eye:1,nw:2});if(k<2)gate(h[0]+h[1]+4,road,40,50,cols[k]);});
+  [[748,100],[892,96],[1030,98]].forEach(function(h,k){house(h[0],road,h[1],86,{rh:74,wall:cols[k+3],eye:1,nw:2});if(k<2)gate(h[0]+h[1]+4,road,40,50,cols[k+3]);});
+ },
+ gusterita:function(){
+  tree(60,HZ+8,26);tree(1080,HZ+10,28);
+  g.fillStyle=C(M(P.S.hill,P.S.grass,.4));g.beginPath();g.moveTo(120,HZ+40);g.quadraticCurveTo(564,HZ-190,1010,HZ+40);g.closePath();g.fill();
+  church(500,262,{nw:170,nh:70,nr:30,tx:618,tw:52,th:156,cap:'pyr',capH:52,nwin:3,wall:'#EFE6D2'});
+  var wy=270,wc=C('#E2D6BE');fr(410,wy-32,310,32,wc);for(var x=410;x<720;x+=18)fr(x,wy-40,10,8,wc);
+  [[396,62],[708,66]].forEach(function(t){fr(t[0],wy-t[1],34,t[1],C('#E8DCC4'));poly([[t[0]-4,wy-t[1]],[t[0]+17,wy-t[1]-30],[t[0]+38,wy-t[1]]],C('#9C4630'));archWin(t[0]+11,wy-t[1]+14,12,18,.3);});
+  if(P.S.snow>.9)fr(410,wy-42,310,3,C('#FFFFFF'));
+  for(var s=0;s<6;s++){g.fillStyle=C(M(s%2?P.S.grass:P.S.grass2,'#C9B36A',P.sez==='vara'?.35:.12));g.beginPath();g.moveTo(0,HZ+70+s*24);g.lineTo(BW,HZ+60+s*26);g.lineTo(BW,HZ+84+s*26);g.lineTo(0,HZ+94+s*24);g.closePath();g.fill();}
+  house(30,BH-30,120,64,{rh:60,wall:'#F0DDB5',eye:1,nw:2});house(170,BH-20,110,60,{rh:58,wall:'#DCE5D2',nw:2});
+  house(840,BH-24,120,64,{rh:60,wall:'#EBC8B4',eye:1,nw:2});house(978,BH-30,130,66,{rh:62,wall:'#F2E8D6',nw:3});
+  tree(330,BH-24,34);tree(760,BH-20,30);
+ },
+ strand:function(){
+  g.fillStyle=C(M(P.S.hill,P.S.grass,.3));g.beginPath();g.moveTo(0,HZ-80);g.quadraticCurveTo(260,HZ-40,440,HZ+12);g.lineTo(0,HZ+12);g.closePath();g.fill();
+  house(18,HZ-44,70,40,{rh:30,wall:'#F2E8D6',nw:2});house(120,HZ-22,78,42,{rh:32,wall:'#E9D3B5',nw:2});house(236,HZ-2,74,40,{rh:30,wall:'#DCE5D2',nw:2});
+  block(560,HZ+10,140,8,{col:'#E2DCCD',bal:'#B9583A'});block(716,HZ+10,150,8,{col:'#D8D2C2',bal:'#0E7C86'});block(884,HZ+10,200,4,{col:'#E6DFD0'});
+  tree(470,HZ+14,26);tree(1100,HZ+14,24);
+  var y0=HZ+64,y1=BH-16;
+  poly([[70,y0-16],[1058,y0-16],[1128,BH],[0,BH]],C('#E9E3D6'));
+  var wc=P.sez==='iarna'?'#BFD5E0':'#3FA9D6';
+  var gr=g.createLinearGradient(0,y0,0,y1);gr.addColorStop(0,C(M(wc,'#FFFFFF',.15)));gr.addColorStop(1,C(M(wc,'#003355',.2)));
+  g.fillStyle=gr;g.beginPath();g.moveTo(118,y0);g.lineTo(1010,y0);g.lineTo(1068,y1);g.lineTo(60,y1);g.closePath();g.fill();
+  for(var i=1;i<8;i++){var xt=118+i*892/8,xb=60+i*1008/8;g.setLineDash([10,8]);ln(xt,y0,xb,y1,i%2?C('#E5484D'):C('#F5F1EA'),2.5);g.setLineDash([]);}
+  g.strokeStyle=P.night?'rgba(255,220,150,.3)':'rgba(255,255,255,.5)';g.lineWidth=2;for(var k=0;k<14;k++){var yy=y0+10+R()*(y1-y0-20),xx=120+R()*860;g.beginPath();g.moveTo(xx,yy);g.lineTo(xx+20+R()*30,yy);g.stroke();}
+  var tc=C('#C9CED3');fr(150,y0-210,10,194,tc);fr(206,y0-210,10,194,tc);
+  [[y0-60,110],[y0-110,96],[y0-200,124]].forEach(function(pl){fr(140,pl[0],pl[1],8,C('#EDEFF1'));});
+  for(var r=0;r<12;r++)ln(152,y0-20-r*15,214,y0-20-r*15,C('#9AA3AC'),1.5);
+  if(P.sez==='vara'&&!P.night)[[420,'#E2A62B'],[620,'#E5484D'],[820,'#0E7C86']].forEach(function(u){ln(u[0],y0-16,u[0],y0-58,C('#555555'),3);g.fillStyle=C(u[1]);g.beginPath();g.moveTo(u[0]-34,y0-50);g.quadraticCurveTo(u[0],y0-84,u[0]+34,y0-50);g.closePath();g.fill();});
+ },
+ hipodrom:function(){
+  [[0,HZ+6,150,8],[160,HZ+6,120,4],[290,HZ+6,160,8],[466,HZ+6,120,4],[600,HZ+6,160,8],[776,HZ+6,130,4],[920,HZ+6,200,8]].forEach(function(b,i){block(b[0],b[1],b[2],b[3],{col:i%2?'#E3DDCF':'#D6D0C1',bal:i%3===0?'#B9583A':null});});
+  [[150,HZ+40],[455,HZ+40],[770,HZ+40],[1110,HZ+36]].forEach(function(t){tree(t[0],t[1],22);});
+  var cx=564,cy=BH-30;
+  ell(cx,cy,620,96,C(M('#C8A574',P.S.grass,P.sez==='iarna'?.6:.05)));
+  ell(cx,cy+6,560,64,C(P.S.grass));
+  g.strokeStyle=C('#F5F1EA');g.lineWidth=3;g.beginPath();g.ellipse(cx,cy,612,90,0,Math.PI*1.02,Math.PI*1.98);g.stroke();
+  g.beginPath();g.ellipse(cx,cy,612,82,0,Math.PI*1.02,Math.PI*1.98);g.stroke();
+  for(var a=1.04;a<1.98;a+=.045){var px=cx+Math.cos(a*Math.PI)*612,py=cy+Math.sin(a*Math.PI)*90;ln(px,py,px,py+10,C('#F5F1EA'),2);}
+  function hurdle(x,y,s){ln(x,y,x,y-30*s,C('#F5F1EA'),4*s);ln(x+70*s,y,x+70*s,y-30*s,C('#F5F1EA'),4*s);for(var k=0;k<3;k++){g.setLineDash([12*s,10*s]);ln(x,y-8*s-k*9*s,x+70*s,y-8*s-k*9*s,k%2?C('#F5F1EA'):C('#E5484D'),4*s);g.setLineDash([]);}}
+  hurdle(220,BH-40,1);hurdle(840,BH-44,1);hurdle(520,BH-6,1.3);
+  /* silueta unui cal cu călăreț, în salt (schematic) */
+  g.save();g.translate(566,BH-88);g.scale(1.45,1.45);var hc=C(P.night?'#1A1410':'#3A2A22');g.fillStyle=hc;g.strokeStyle=hc;g.lineCap='round';
+  g.beginPath();g.ellipse(0,0,34,13,-.22,0,Math.PI*2);g.fill();
+  g.beginPath();g.moveTo(18,-10);g.lineTo(34,-34);g.lineTo(44,-33);g.lineTo(30,2);g.closePath();g.fill();
+  g.beginPath();g.ellipse(46,-27,12,6,.8,0,Math.PI*2);g.fill();
+  g.beginPath();g.moveTo(36,-35);g.lineTo(38,-45);g.lineTo(42,-35);g.closePath();g.fill();
+  g.lineWidth=5;[[22,6,34,14,30,24],[14,9,26,20,20,28],[-24,6,-42,16,-54,18],[-18,8,-34,22,-44,28]].forEach(function(L){g.beginPath();g.moveTo(L[0],L[1]);g.lineTo(L[2],L[3]);g.lineTo(L[4],L[5]);g.stroke();});
+  g.lineWidth=4;g.beginPath();g.moveTo(-32,-6);g.quadraticCurveTo(-46,-12,-56,2);g.stroke();
+  g.lineWidth=5;g.beginPath();g.moveTo(2,-12);g.lineTo(9,-32);g.stroke();g.beginPath();g.arc(11,-39,5.5,0,Math.PI*2);g.fill();
+  g.lineWidth=3.5;g.beginPath();g.moveTo(8,-28);g.lineTo(26,-22);g.stroke();g.lineWidth=4.5;g.beginPath();g.moveTo(3,-13);g.lineTo(14,-4);g.lineTo(10,4);g.stroke();
+  g.restore();g.lineCap='butt';
+ },
+ stejari:function(){
+  house(10,HZ+34,120,64,{rh:48,wall:'#EDE0C8',nw:2});house(146,HZ+30,104,58,{rh:44,wall:'#E3CFAE',nw:2,eye:1});
+  factory(700,HZ+30,270,92,{col:'#A65A3E',teeth:0});
+  fr(800,HZ+30-150,46,58,C('#9A5038'));poly([[796,HZ-120],[823,HZ-150],[850,HZ-120]],C('#6E3324'));
+  chimney(990,HZ+30,170,24,false);
+  var cx=564,yh=HZ+96;
+  g.fillStyle=C(M('#B8A98F',P.S.grass,P.sez==='iarna'?.5:.1));
+  g.beginPath();g.moveTo(0,yh-8);g.lineTo(BW,yh-14);g.lineTo(BW,yh+14);g.lineTo(0,yh+22);g.closePath();g.fill();
+  g.beginPath();g.moveTo(cx-120,BH);g.lineTo(cx+120,BH);g.lineTo(cx+14,HZ+12);g.lineTo(cx-14,HZ+12);g.closePath();g.fill();
+  tree(400,yh-6,58,{wide:1.4});tree(752,yh-8,60,{wide:1.4});tree(300,BH-2,66,{wide:1.45});
+ },
+ aaron:function(){
+  g.fillStyle=C('#8E8A84');g.beginPath();g.moveTo(330,BH);g.lineTo(800,BH);g.lineTo(590,HZ+8);g.lineTo(552,HZ+8);g.closePath();g.fill();
+  g.fillStyle=C('#B9B3A8');g.beginPath();g.moveTo(250,BH);g.lineTo(330,BH);g.lineTo(552,HZ+8);g.lineTo(544,HZ+8);g.closePath();g.fill();
+  g.beginPath();g.moveTo(800,BH);g.lineTo(880,BH);g.lineTo(598,HZ+8);g.lineTo(590,HZ+8);g.closePath();g.fill();
+  for(var t=0;t<7;t++){var a=t/7,b=(t+.45)/7;var ya=HZ+8+(BH-HZ-8)*a*a,yb=HZ+8+(BH-HZ-8)*b*b;ln(571+(565-571)*a,ya,571+(565-571)*b,yb,C('#F3EFE6'),1+a*4);}
+  block(440,HZ+14,72,6,{fh:12,col:'#E6DCC4'});block(330,HZ+28,104,7,{fh:14,col:'#D9E0E3'});block(176,HZ+52,146,8,{col:'#EADFC2',bal:'#B9583A'});block(-10,HZ+86,176,9,{fh:18,col:'#DDD6C6'});
+  block(630,HZ+14,72,6,{fh:12,col:'#E1E6E0'});block(710,HZ+28,104,7,{fh:14,col:'#EADFC2'});block(830,HZ+52,146,8,{col:'#D8D2C2',bal:'#0E7C86'});block(985,HZ+86,160,9,{fh:18,col:'#E6DCC4'});
+  tree(520,HZ+30,12);tree(615,HZ+30,12);tree(470,HZ+66,20);tree(675,HZ+66,20);
+  lamp(500,HZ+46,40);lamp(640,HZ+46,40);lamp(420,HZ+96,64);lamp(720,HZ+96,64);
+  ln(940,BH-4,940,BH-120,C('#4A525C'),5);rr(862,BH-162,170,44,6,C('#1F4E8C'));g.strokeStyle=C('#F3EFE6');g.lineWidth=2;g.strokeRect(868,BH-156,158,32);
+  g.fillStyle=C('#F3EFE6');g.font='700 19px Inter, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('Str. Vasile Aaron',947,BH-139);g.textAlign='left';g.textBaseline='alphabetic';
+ },
+ broscarie:function(){
+  factory(690,HZ+8,240,56,{col:'#8C8F94',teeth:6});factory(910,HZ+8,210,44,{col:'#9A9488',teeth:4});
+  chimney(850,HZ+8,170,22,true);chimney(1050,HZ+8,140,18,true);
+  block(24,HZ+46,170,8,{col:'#E0D9C8',bal:'#0E7C86'});block(206,HZ+30,140,4,{col:'#E6DFD0'});block(360,HZ+52,190,8,{col:'#D8D0BF',bal:'#B9583A'});block(566,HZ+40,118,4,{col:'#E2DCCD'});
+  tree(200,HZ+76,26);tree(560,HZ+80,24);tree(690,HZ+84,30);
+  fr(0,BH-62,BW,20,C(M('#B8AE9E',P.S.grass,.2)));
+  reeds(70,BH-4,30,140);reeds(1050,BH-2,26,140);reeds(560,BH,10,60);
+ },
+ valea:function(){
+  for(var x=560;x<1140;x+=30)tree(x+R()*10,HZ+8,20+R()*10);
+  var gc=P.sez==='iarna'?'#E9E1C8':M(P.S.hill,'#E2A62B',.6);
+  g.fillStyle=C(gc);g.beginPath();g.moveTo(0,HZ+50);g.quadraticCurveTo(300,HZ-10,600,HZ+40);g.quadraticCurveTo(860,HZ+80,1128,HZ+30);g.lineTo(1128,BH);g.lineTo(0,BH);g.closePath();g.fill();
+  g.fillStyle=C(M(gc,'#B9583A',.18));g.beginPath();g.moveTo(0,HZ+110);g.quadraticCurveTo(420,HZ+60,760,HZ+120);g.quadraticCurveTo(940,HZ+150,1128,HZ+100);g.lineTo(1128,BH);g.lineTo(0,BH);g.closePath();g.fill();
+  block(50,HZ+60,150,5,{col:'#EBC98A',roof:30,roofc:'#B9583A'});block(220,HZ+48,130,5,{col:'#F1E6D3',roof:26});block(372,HZ+66,160,5,{col:'#E0A88A',roof:30,roofc:'#8E4430'});
+  tree(540,HZ+94,30);
+  house(780,BH-34,240,74,{side:1,rh:62,wall:'#F3E7CF',nw:5,door:1,eye:1,roof:'#8E4430'});
+  ln(1060,BH-34,1060,BH-110,C('#5A3B2A'),4);ln(1060,BH-104,1030,BH-104,C('#5A3B2A'),3);rr(1012,BH-102,40,28,4,C('#C9A54B'));
+  tree(700,BH-30,40);tree(90,BH-20,44);
+ },
+ cluj:function(){
+  var cols=['#E8C27A','#D9E2D3','#E9B7A0','#F1E6D3','#C7D3E1','#EED9A8','#DCC7E0','#E8D5B0'];
+  for(var i=0;i<8;i++)house(i*143-6,HZ+64,138,96,{side:1,rh:42,fl:2,nw:4,wall:cols[i],eye:i%2,roof:i%3?'#B9583A':'#9C4630'});
+  fr(0,HZ+64,BW,BH-HZ-64,C(M('#A79C8C',P.S.grass,P.sez==='iarna'?.6:0)));
+  g.strokeStyle=C('#8F8476');g.lineWidth=1;for(var y=HZ+74;y<BH;y+=12){g.beginPath();g.moveTo(0,y);g.lineTo(BW,y);g.stroke();}
+  var ry=BH-46;fr(0,ry-5,BW,3,C('#7C8189'));fr(0,ry+9,BW,3,C('#7C8189'));
+  var wire=tram(440,ry+6,1.3,'#D9A13A');ln(0,wire,BW,wire,C('#2E2E2E'),1.5);
+  lamp(150,BH-30,96);lamp(960,BH-30,96);
+ },
+ dumbravii:function(){
+  block(16,HZ+34,150,8,{col:'#DCD6C8',bal:'#B9583A'});block(180,HZ+40,130,4,{col:'#E6DFD0'});house(330,HZ+70,120,62,{rh:48,wall:'#EFE2C8',eye:1,nw:2});
+  for(var row=0;row<3;row++)for(var x=520+row*26;x<1150;x+=38)tree(x+R()*14,HZ+14+row*40,26+row*9+R()*8);
+  var ry=BH-40;rails(ry,true);
+  tram(180,ry+2,1.15,'#C8553A');
+  tree(70,BH-6,40);
+ }
+};
+
+function drawScene(ctx2,w,h,st){
+  g=ctx2;P=makePal(st.sez,st.mom);R=rng(hash(st.cart)+st.v*977+1);
+  g.save();g.scale(w/BW,h/BH);
+  sky();if(st.stil==='afis'&&!P.night)rays();sunMoon();stars();clouds();mountains();ground();
+  SCN[st.cart]();
+  weather();
+  g.restore();
+}
+
+/* --- efecte de stil --- */
+function fxVintage(ctx2,w,h,seed){
+  var im=ctx2.getImageData(0,0,w,h),d=im.data,r=rng(seed);
+  for(var i=0;i<d.length;i+=4){var R0=d[i],G0=d[i+1],B0=d[i+2],y=.3*R0+.59*G0+.11*B0,n=(r()-.5)*16;
+    d[i]=R0*.42+(y*1.08+22)*.58+n;d[i+1]=G0*.42+(y*.96+8)*.58+n;d[i+2]=B0*.42+(y*.76-6)*.58+n;}
+  ctx2.putImageData(im,0,0);
+  var gr=ctx2.createRadialGradient(w/2,h/2,h*.35,w/2,h/2,w*.62);gr.addColorStop(0,'rgba(70,40,10,0)');gr.addColorStop(1,'rgba(70,40,10,.4)');ctx2.fillStyle=gr;ctx2.fillRect(0,0,w,h);
+}
+function fxPoster(ctx2,w,h){
+  /* afiș: lumina și saturația pe trepte (nuanța rămâne), ca la un afiș tipărit în puține culori */
+  var im=ctx2.getImageData(0,0,w,h),d=im.data,LL=7,SL=5;
+  function hue(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+  for(var i=0;i<d.length;i+=4){
+    var r=d[i]/255,gg=d[i+1]/255,b=d[i+2]/255,mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),l=(mx+mn)/2,hh=0,ss=0,dd=mx-mn;
+    if(dd>1e-6){ss=l>.5?dd/(2-mx-mn):dd/(mx+mn);hh=mx===r?(gg-b)/dd+(gg<b?6:0):mx===gg?(b-r)/dd+2:(r-gg)/dd+4;hh/=6;}
+    l=Math.round(l*(LL-1))/(LL-1);ss=Math.min(1,Math.round(Math.min(1,ss*1.25)*(SL-1))/(SL-1));
+    if(ss===0){r=gg=b=l;}else{var q=l<.5?l*(1+ss):l+ss-l*ss,pp=2*l-q;r=hue(pp,q,hh+1/3);gg=hue(pp,q,hh);b=hue(pp,q,hh-1/3);}
+    d[i]=r*255;d[i+1]=gg*255;d[i+2]=b*255;
+  }
+  ctx2.putImageData(im,0,0);
+}
+
+/* =====================================================================
+   4. CARTEA POȘTALĂ (canvas 1200×800)
+   ===================================================================== */
+var W=1200,H=800,cv=$('cv'),ctx=cv.getContext('2d');
+var off=document.createElement('canvas'),octx=off.getContext('2d',{willReadFrequently:true});
+var STY={
+ vintage:{pic:{x:40,y:40,w:1120,h:500},bg:'#EFE4CA',ink:'#3B2A1C',sub:'#7A6650',line:'#B59E7E',paper:'#FBF7EE',pm:'rgba(70,45,30,.62)',
+   font:function(s){return 'italic 400 '+s+'px "Noto Serif", Georgia, serif';}},
+ modern:{pic:{x:0,y:0,w:1200,h:540},bg:'#F5F1EA',ink:'#1B2733',sub:'#5B6875',line:'#D2CBBE',paper:'#FFFFFF',pm:'rgba(14,124,134,.6)',
+   font:function(s){return '400 '+s+'px Inter, system-ui, sans-serif';}},
+ afis:{pic:{x:24,y:24,w:1152,h:516},bg:'#0F1720',ink:'#F3EFE6',sub:'#A9B4C0',line:'#2E4153',paper:'#F3EFE6',pm:'rgba(226,166,43,.7)',
+   font:function(s){return '500 '+s+'px Inter, system-ui, sans-serif';}}
+};
+function wrap(text,maxW){var words=text.split(' '),lines=[],cur='';words.forEach(function(w){var t=cur?cur+' '+w:w;if(ctx.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;}else cur=t;});if(cur)lines.push(cur);return lines;}
+function fitSize(text,font,maxW,maxH,smax,smin){
+  for(var s=smax;s>=smin;s--){ctx.font=font(s);var L=wrap(text,maxW);if(L.length*s*1.38<=maxH)return {s:s,lines:L};}
+  ctx.font=font(smin);return {s:smin,lines:wrap(text,maxW)};
+}
+function fitFont(text,font,maxW,smax){var s=smax;ctx.font=font(s);while(ctx.measureText(text).width>maxW&&s>20){s-=2;ctx.font=font(s);}return s;}
+function arcText(text,cx,cy,r,top,col,font){
+  ctx.save();ctx.font=font;ctx.fillStyle=col;ctx.textAlign='center';ctx.textBaseline='middle';
+  var ws=text.split('').map(function(ch){return ctx.measureText(ch).width+1.5;}),tot=ws.reduce(function(a,b){return a+b;},0)/r;
+  var a=top?-Math.PI/2-tot/2:Math.PI/2+tot/2;
+  text.split('').forEach(function(ch,i){var da=ws[i]/r;a+=top?da/2:-da/2;ctx.save();ctx.translate(cx+Math.cos(a)*r,cy+Math.sin(a)*r);ctx.rotate(top?a+Math.PI/2:a-Math.PI/2);ctx.fillText(ch,0,0);ctx.restore();a+=top?da/2:-da/2;});
+  ctx.restore();
+}
+function stamp(x,y,w,h,s,st){
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.25)';ctx.shadowBlur=6;ctx.shadowOffsetY=2;
+  ctx.fillStyle=s.paper;ctx.fillRect(x,y,w,h);ctx.shadowColor='rgba(0,0,0,0)';
+  ctx.fillStyle=s.bg;
+  for(var i=x+6;i<x+w;i+=12){ctx.beginPath();ctx.arc(i,y,4,0,7);ctx.fill();ctx.beginPath();ctx.arc(i,y+h,4,0,7);ctx.fill();}
+  for(var j=y+6;j<y+h;j+=12){ctx.beginPath();ctx.arc(x,j,4,0,7);ctx.fill();ctx.beginPath();ctx.arc(x+w,j,4,0,7);ctx.fill();}
+  var iw=w-20,ih=h-46,sw=off.width*.42,sh=sw*ih/iw;
+  ctx.drawImage(off,off.width*.5-sw/2,off.height-sh-off.height*.04,sw,sh,x+10,y+10,iw,ih);
+  ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;ctx.strokeRect(x+10,y+10,iw,ih);
+  ctx.fillStyle='#3B2A1C';ctx.font='800 15px Inter, sans-serif';ctx.textAlign='center';ctx.fillText('ACTIV AI',x+w/2,y+h-26);
+  ctx.font='600 12px Inter, sans-serif';ctx.fillStyle='#7A6650';ctx.fillText('SIBIUL MEU',x+w/2,y+h-11);
+  ctx.restore();
+}
+function postmark(cx,cy,r,col){
+  ctx.save();ctx.strokeStyle=col;ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,r-15,0,7);ctx.stroke();
+  arcText('SIBIUL MEU',cx,cy,r-8,true,col,'700 12px Inter, sans-serif');
+  arcText('ACTIV AI',cx,cy,r-8,false,col,'700 12px Inter, sans-serif');
+  ctx.fillStyle=col;ctx.font='700 10.5px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('#SibiulMeu',cx,cy);
+  ctx.lineWidth=2.5;for(var k=0;k<4;k++){ctx.beginPath();for(var t=0;t<=150;t+=4){var xx=cx+r+6+t,yy=cy-24+k*15+Math.sin(t/12)*4;if(t===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}ctx.stroke();}
+  ctx.restore();
+}
+
+var state={cart:'tiglari',sez:'toamna',mom:'apus',stil:'vintage',v:0};
+function render(){
+  var st=state,s=STY[st.stil],pr=s.pic,c=BYID[st.cart];
+  off.width=pr.w;off.height=pr.h;
+  drawScene(octx,pr.w,pr.h,st);
+  if(st.stil==='vintage')fxVintage(octx,pr.w,pr.h,hash(st.cart)+st.v);
+  if(st.stil==='afis')fxPoster(octx,pr.w,pr.h);
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=s.bg;ctx.fillRect(0,0,W,H);
+  var name=c.n;
+  if(st.stil==='vintage'){
+    var nr=rng(7);ctx.fillStyle='rgba(120,90,50,.07)';for(var i=0;i<1600;i++)ctx.fillRect(nr()*W,nr()*H,1.5,1.5);
+    ctx.strokeStyle='#8A6A45';ctx.lineWidth=2;ctx.strokeRect(14,14,W-28,H-28);
+    ctx.fillStyle=s.paper;ctx.fillRect(pr.x-8,pr.y-8,pr.w+16,pr.h+16);
+    ctx.drawImage(off,pr.x,pr.y);
+    ctx.strokeStyle='rgba(60,40,20,.35)';ctx.lineWidth=1;ctx.strokeRect(pr.x,pr.y,pr.w,pr.h);
+    ctx.save();ctx.textBaseline='alphabetic';
+    ctx.font='italic 400 44px "Noto Serif", Georgia, serif';ctx.fillStyle='#FBF7EE';ctx.shadowColor='rgba(40,20,5,.8)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;ctx.fillText('Salutări din',86,112);
+    ctx.shadowColor='rgba(0,0,0,0)';
+    var fs=fitFont(name,function(z){return '700 '+z+'px "Noto Serif", Georgia, serif';},1000,156);
+    ctx.font='700 '+fs+'px "Noto Serif", Georgia, serif';
+    var bx=80,byl=112+fs*.98;
+    for(var e=11;e>=1;e--){ctx.fillStyle=e===11?'rgba(20,10,0,.35)':'#3A2414';ctx.fillText(name,bx+e*.9,byl+e*.9);}
+    var lg=ctx.createLinearGradient(0,byl-fs*.78,0,byl);lg.addColorStop(0,'#F6CF6A');lg.addColorStop(.55,'#E2A62B');lg.addColorStop(1,'#B9583A');
+    ctx.fillStyle=lg;ctx.fillText(name,bx,byl);
+    ctx.lineWidth=2.5;ctx.strokeStyle='#FBF7EE';ctx.strokeText(name,bx,byl);
+    ctx.restore();
+  }else if(st.stil==='modern'){
+    ctx.drawImage(off,pr.x,pr.y);
+    ctx.save();
+    var nfs=fitFont(name,function(z){return '800 '+z+'px Inter, sans-serif';},760,76);
+    ctx.font='800 '+nfs+'px Inter, sans-serif';var nw=ctx.measureText(name).width;ctx.font='600 28px Inter, sans-serif';var sw=ctx.measureText('Salutări din').width;
+    var bw=Math.max(nw,sw)+64,bh=nfs+76,by0=36;
+    ctx.globalAlpha=.94;ctx.fillStyle='#0E7C86';ctx.beginPath();ctx.moveTo(40+18,by0);ctx.arcTo(40+bw,by0,40+bw,by0+bh,18);ctx.arcTo(40+bw,by0+bh,40,by0+bh,18);ctx.arcTo(40,by0+bh,40,by0,18);ctx.arcTo(40,by0,40+bw,by0,18);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+    ctx.fillStyle='#F3EFE6';ctx.font='600 28px Inter, sans-serif';ctx.fillText('Salutări din',72,by0+44);
+    ctx.fillStyle='#FFFFFF';ctx.font='800 '+nfs+'px Inter, sans-serif';ctx.fillText(name,70,by0+44+nfs*.98);
+    ctx.fillStyle='#E2A62B';ctx.beginPath();ctx.arc(1110,86,54,0,7);ctx.fill();
+    ctx.fillStyle='#0F1720';ctx.font='800 24px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('SIBIU',1110,80);ctx.font='600 13px Inter, sans-serif';ctx.fillText('ACTIV AI',1110,104);
+    ctx.restore();
+    ctx.fillStyle='#E2A62B';ctx.fillRect(0,pr.h,W,6);
+  }else{
+    ctx.drawImage(off,pr.x,pr.y);
+    ctx.strokeStyle='#E2A62B';ctx.lineWidth=4;ctx.strokeRect(pr.x-2,pr.y-2,pr.w+4,pr.h+4);
+    ctx.save();ctx.textAlign='center';
+    ctx.font='700 26px Inter, sans-serif';var lbl='SALUTĂRI  DIN',lx=W/2;
+    var tw=0,chs=lbl.split('');chs.forEach(function(ch){tw+=ctx.measureText(ch).width+7;});var px=lx-tw/2;
+    ctx.fillStyle='rgba(15,23,32,.55)';ctx.fillRect(lx-tw/2-22,58,tw+44,40);
+    ctx.fillStyle='#F3EFE6';ctx.textAlign='left';chs.forEach(function(ch){ctx.fillText(ch,px,88);px+=ctx.measureText(ch).width+7;});
+    ctx.textAlign='center';
+    var up=name.toUpperCase(),afs=fitFont(up,function(z){return '700 '+z+'px "Noto Serif", Georgia, serif';},1040,112);
+    ctx.font='700 '+afs+'px "Noto Serif", Georgia, serif';
+    ctx.fillStyle='#B9583A';ctx.fillText(up,W/2+5,110+afs*.92+5);
+    ctx.fillStyle='#0F1720';ctx.fillText(up,W/2+2,110+afs*.92+2);
+    ctx.fillStyle='#F5F1EA';ctx.fillText(up,W/2,110+afs*.92);
+    ctx.restore();
+  }
+  /* zona de text */
+  var cmp=compose(st),top=pr.y+pr.h+(st.stil==='modern'?30:34),mx=st.stil==='vintage'?60:52,mw=740;
+  var fit=fitSize(cmp.text,s.font,mw,750-top,28,17);
+  ctx.save();ctx.fillStyle=s.ink;ctx.font=s.font(fit.s);ctx.textBaseline='top';
+  fit.lines.forEach(function(L,i){ctx.fillText(L,mx,top+i*fit.s*1.38);});
+  ctx.font='500 15px Inter, sans-serif';ctx.fillStyle=s.sub;ctx.textBaseline='alphabetic';ctx.fillText('Fapt verificat · sursa: '+cmp.src,mx,772);
+  ctx.strokeStyle=s.line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(838,top);ctx.lineTo(838,776);ctx.stroke();
+  ctx.restore();
+  stamp(1030,top-6,124,150,s,st);
+  postmark(958,top+66,52,s.pm);
+  ctx.save();ctx.fillStyle=s.sub;ctx.font='600 15px Inter, sans-serif';ctx.textAlign='right';
+  ctx.fillText('Carte poștală generată –',1156,top+174);ctx.fillText('artefact-model ACTIV AI',1156,top+194);
+  ctx.restore();
+  /* HTML */
+  $('msg').textContent='„'+cmp.text+'”';
+  $('src').textContent='Faptul despre cartier vine din fișa de fapte verificate a proiectului · sursa: '+cmp.src+'.';
+  cv.setAttribute('aria-label','Carte poștală: Salutări din '+name+'! '+cmp.text);
+  window.__pc={state:Object.assign({},state),text:cmp.text,src:cmp.src,lines:fit.lines.length,size:fit.s};
+}
+
+/* =====================================================================
+   5. CONTROALE
+   ===================================================================== */
+function buildGroup(id,items,key,onPick){
+  var box=$(id);box.innerHTML='';
+  items.forEach(function(it){
+    var b=document.createElement('button');b.type='button';b.className='pick';b.dataset.v=it[0];
+    var t=document.createElement('span');t.textContent=it[1];b.appendChild(t);
+    if(it[2]){var sm=document.createElement('small');sm.textContent=it[2];b.appendChild(sm);}
+    b.addEventListener('click',function(){onPick(it[0]);});
+    box.appendChild(b);
+  });
+}
+function sync(){
+  [['gCart','cart'],['gSez','sez'],['gMom','mom'],['gStil','stil']].forEach(function(p){
+    Array.prototype.forEach.call($(p[0]).children,function(b){b.setAttribute('aria-pressed',String(b.dataset.v===state[p[1]]));});
+  });
+}
+function set(k,v){if(k==='cart'&&state.cart!==v)state.v=0;state[k]=v;sync();render();}
+buildGroup('gCart',CART.map(function(c){return [c.id,c.n];}),'cart',function(v){set('cart',v);});
+buildGroup('gSez',SEZ,'sez',function(v){set('sez',v);});
+buildGroup('gMom',MOM,'mom',function(v){set('mom',v);});
+buildGroup('gStil',STIL,'stil',function(v){set('stil',v);});
+$('variant').addEventListener('click',function(){state.v++;render();});
+$('rand').addEventListener('click',function(){
+  function pk(a){return a[Math.floor(Math.random()*a.length)][0];}
+  var nc;do{nc=pk(CART.map(function(c){return [c.id];}));}while(nc===state.cart);
+  state.cart=nc;state.sez=pk(SEZ);state.mom=pk(MOM);state.stil=pk(STIL);state.v=Math.floor(Math.random()*6);sync();render();
+});
+$('dl').addEventListener('click',function(){
+  var a=document.createElement('a');
+  a.download='carte_postala_'+state.cart+'_'+state.sez+'_'+state.mom+'_'+state.stil+'.png';
+  a.href=cv.toDataURL('image/png');document.body.appendChild(a);a.click();a.remove();
+});
+window.__gen={set:set,next:function(){state.v++;render();},state:function(){return Object.assign({},state);}};
+
+sync();render();
+if(document.fonts&&document.fonts.load){
+  Promise.all(['700 80px "Noto Serif"','italic 400 30px "Noto Serif"','800 40px Inter','600 20px Inter','400 20px Inter','500 20px Inter'].map(function(f){return document.fonts.load(f).catch(function(){});})).then(function(){render();window.READY=true;});
+}else window.READY=true;
+})();
+</script>
+</body>
+</html>

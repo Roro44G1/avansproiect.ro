@@ -1,0 +1,335 @@
+# -*- coding: utf-8 -*-
+"""S14 – Cartierele ca un arhipelag (hartă fantastică). Rulat din /home/claude/expo/_tools/svg."""
+import math, random
+from lib import *
+import sibiu_map as SM
+from s13 import (NB, mk_proj, rich, rich_width, Boxes, G, oak, fir, ic_crown, ic_tiles, ic_lazaret,
+                 ic_tower, ic_pool, ic_inn, ic_street, ic_signpost, ic_fortchurch, ic_center, INK, INK2,
+                 GREEN1, GREEN2, WATER, STONE)
+
+OUT = "/home/claude/expo/c3/05_spatial/S14_arhipelagul_cartierelor.svg"
+SEA_HALO = "#0B3A40"
+SAND = "#EAD9B0"; SAND_D = "#D2BC8A"
+
+
+def island(x, y, rx, ry, seed, land="#BFD49B", orient=False):
+    rnd = random.Random(seed)
+    pts = []
+    n = 14
+    for i in range(n):
+        a = 2 * math.pi * i / n + rnd.uniform(-0.12, 0.12)
+        k = rnd.uniform(0.86, 1.12)
+        pts.append((x + rx * k * math.cos(a), y + ry * k * math.sin(a)))
+    d = smooth_path(pts, closed=True, tension=0.8)
+    inner = [(x + (px - x) * 0.84, y + (py - y) * 0.80 - 2) for px, py in pts]
+    di = smooth_path(inner, closed=True, tension=0.8)
+    s = f'<path d="{d}" fill="#2A8C8F" opacity="0.35" stroke="#2A8C8F" stroke-width="22" stroke-linejoin="round" filter="url(#blur3)"/>\n'
+    s += f'<path d="{d}" fill="none" stroke="#CFEDEB" stroke-width="2" stroke-dasharray="3 7" opacity="0.6" transform="translate(0,0)"/>\n'
+    s += f'<path d="{d}" fill="{SAND}" stroke="{SAND_D}" stroke-width="2" filter="url(#sh)"/>\n'
+    s += f'<path d="{di}" fill="{land}"/>\n'
+    if orient:
+        big = [(x + (px - x) * 1.13, y + (py - y) * 1.16) for px, py in pts]
+        s += f'<path d="{smooth_path(big, True, 0.8)}" fill="none" stroke="{OCRU}" stroke-width="2.6" stroke-dasharray="9 7"/>\n'
+    return s
+
+
+def house(x, y, w=16, h=11, roof=TIGLA):
+    return (f'<rect x="{x-w/2:.1f}" y="{y-h:.1f}" width="{w}" height="{h}" fill="#F1E6D2" stroke="{INK2}" stroke-width="1"/>'
+            f'<polygon points="{x-w/2-2:.1f},{y-h:.1f} {x:.1f},{y-h-8:.1f} {x+w/2+2:.1f},{y-h:.1f}" fill="{roof}" stroke="{INK2}" stroke-width="1"/>\n')
+
+
+def block(x, y, w=26, h=36, floors=6, cols=3):
+    s = f'<rect x="{x-w/2:.1f}" y="{y-h:.1f}" width="{w}" height="{h}" fill="#D9D3C7" stroke="{INK2}" stroke-width="1.3"/>'
+    for i in range(floors):
+        for j in range(cols):
+            wx = x - w / 2 + 4 + j * (w - 8) / cols
+            wy = y - h + 4 + i * (h - 8) / floors
+            s += f'<rect x="{wx:.1f}" y="{wy:.1f}" width="{(w-8)/cols-2:.1f}" height="{(h-8)/floors-2:.1f}" fill="#6F8FA0"/>'
+    return s + "\n"
+
+
+# ---------------- decoruri ----------------
+def d_centre(x, y):
+    s = f'<ellipse cx="{x}" cy="{y+4}" rx="52" ry="30" fill="#EFE3CC" stroke="{STONE}" stroke-width="5"/>\n'
+    s += f'<ellipse cx="{x}" cy="{y+4}" rx="52" ry="30" fill="none" stroke="#C9A27E" stroke-width="2" stroke-dasharray="5 5"/>\n'
+    for a in range(0, 360, 45):
+        px = x + 52 * math.cos(math.radians(a)); py = y + 4 + 30 * math.sin(math.radians(a))
+        s += f'<rect x="{px-5:.1f}" y="{py-8:.1f}" width="10" height="10" fill="{STONE}"/><polygon points="{px-6:.1f},{py-8:.1f} {px:.1f},{py-15:.1f} {px+6:.1f},{py-8:.1f}" fill="#963F27"/>'
+    for (hx, hy) in [(-32, 10), (-18, 22), (22, 22), (34, 10), (-24, -4), (26, -4)]:
+        s += house(x + hx, y + hy, 14, 9)
+    s += f'<rect x="{x-6}" y="{y-30}" width="12" height="40" fill="{ZID}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<polygon points="{x-8},{y-30} {x},{y-48} {x+8},{y-30}" fill="{TIGLA}" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<rect x="{x-2.5}" y="{y-22}" width="5" height="6" fill="{INK2}"/>\n'
+    return s
+
+
+def d_tiglari(x, y):
+    s = f'<ellipse cx="{x-30}" cy="{y+8}" rx="26" ry="13" fill="{WATER}" stroke="#5E9AA0" stroke-width="1.5"/>\n'
+    s += f'<path d="M{x-44},{y+8} q6,-3 12,0 t12,0" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.8"/>\n'
+    # fabrica: hală cu acoperiș de țiglă + coș
+    s += f'<rect x="{x+6}" y="{y-12}" width="44" height="22" fill="#E3CDB0" stroke="{INK2}" stroke-width="1.3"/>'
+    s += f'<polygon points="{x+3},{y-12} {x+28},{y-28} {x+53},{y-12}" fill="{TIGLA}" stroke="{INK2}" stroke-width="1.3"/>'
+    for i in range(3):
+        yy = y - 16 + i * 0
+    for yy, hw in ((-16, 12), (-20, 6)):
+        n = max(1, int(2 * hw // 6)); w = 2 * hw / n
+        d = f"M{x+28-hw:.1f},{y+yy}"
+        for i in range(n):
+            d += f" a{w/2:.2f},{w/2.4:.2f} 0 0 0 {w:.2f},0"
+        s += f'<path d="{d}" fill="none" stroke="#7E3520" stroke-width="1.2"/>'
+    s += f'<rect x="{x+40}" y="{y-40}" width="7" height="26" fill="#963F27" stroke="{INK2}" stroke-width="1.2"/>'
+    s += f'<circle cx="{x+47}" cy="{y-46}" r="4" fill="#C9C2B4" opacity="0.8"/><circle cx="{x+53}" cy="{y-52}" r="5" fill="#C9C2B4" opacity="0.6"/>'
+    for i in range(4):
+        s += f'<rect x="{x+10+i*10}" y="{y-4}" width="5" height="7" fill="{INK2}"/>'
+    s += house(x - 6, y + 30, 14, 9) + house(x + 14, y + 30, 14, 9)
+    return s + "\n"
+
+
+def d_strand(x, y):
+    return G(x - 4, y + 2, 1.55, ic_pool(), filt=False)
+
+
+def d_hipodrom(x, y):
+    s = f'<ellipse cx="{x}" cy="{y+4}" rx="48" ry="25" fill="#8DBB6A" stroke="#A9825A" stroke-width="9"/>\n'
+    s += f'<ellipse cx="{x}" cy="{y+4}" rx="48" ry="25" fill="none" stroke="#F3EFE6" stroke-width="1.4" stroke-dasharray="6 5"/>\n'
+    s += f'<ellipse cx="{x}" cy="{y+4}" rx="30" ry="12" fill="#A6CC84"/>\n'
+    s += f'<line x1="{x+30}" y1="{y-26}" x2="{x+30}" y2="{y-14}" stroke="{INK}" stroke-width="2"/><polygon points="{x+30},{y-26} {x+42},{y-22} {x+30},{y-18}" fill="{TIGLA}"/>\n'
+    return s
+
+
+def d_turnisor(x, y):
+    s = house(x - 30, y + 18, 16, 10) + house(x + 30, y + 18, 16, 10) + house(x + 36, y - 2, 14, 9)
+    s += f'<rect x="{x-20}" y="{y-2}" width="30" height="20" fill="{ZID}" stroke="{INK}" stroke-width="1.5"/>'
+    s += f'<polygon points="{x-22},{y-2} {x-5},{y-14} {x+12},{y-2}" fill="{TIGLA}" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<rect x="{x+6}" y="{y-34}" width="14" height="52" fill="{ZID}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<polygon points="{x+3},{y-34} {x+13},{y-58} {x+23},{y-34}" fill="{TIGLA}" stroke="{INK}" stroke-width="1.3"/>'
+    s += f'<circle cx="{x+13}" cy="{y-24}" r="4" fill="{VAR}" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<path d="M{x+13},{y-24} v-3 M{x+13},{y-24} h2.5" stroke="{INK}" stroke-width="1"/>'
+    return s + "\n"
+
+
+def d_terezian(x, y):
+    s = ""
+    for (tx, ty, r) in [(-44, 14, 8), (-30, 22, 9), (-48, -4, 7), (-34, 2, 8)]:
+        s += oak(x + tx, y + ty, r)
+    s += f'<rect x="{x-14}" y="{y-14}" width="58" height="24" fill="#F1E6D2" stroke="{INK}" stroke-width="1.5"/>'
+    s += f'<polygon points="{x-17},{y-14} {x-8},{y-24} {x+38},{y-24} {x+47},{y-14}" fill="{TIGLA}" stroke="{INK}" stroke-width="1.3"/>'
+    for i in range(6):
+        s += f'<rect x="{x-10+i*9}" y="{y-9}" width="5" height="7" fill="{INK2}"/>'
+    s += f'<rect x="{x+12}" y="{y+1}" width="7" height="9" fill="{INK2}"/>'
+    s += f'<rect x="{x+44}" y="{y-34}" width="9" height="44" fill="{ZID}" stroke="{INK}" stroke-width="1.3"/>'
+    s += f'<polygon points="{x+42},{y-34} {x+48.5},{y-46} {x+55},{y-34}" fill="{TIGLA}"/>'
+    s += G(x + 14, y - 34, 0.42, ic_crown(), filt=False)
+    return s + "\n"
+
+
+def d_lazaret(x, y):
+    s = f'<line x1="{x-60}" y1="{y+18}" x2="{x+50}" y2="{y+18}" stroke="#6E6A60" stroke-width="5"/>'
+    s += f'<line x1="{x-60}" y1="{y+18}" x2="{x+50}" y2="{y+18}" stroke="{SAND}" stroke-width="2" stroke-dasharray="4 5"/>'
+    s += f'<rect x="{x-30}" y="{y-12}" width="56" height="24" fill="#F1E6D2" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<polygon points="{x-35},{y-12} {x-2},{y-30} {x+31},{y-12}" fill="{TIGLA}" stroke="{INK}" stroke-width="1.5"/>'
+    s += f'<circle cx="{x-2}" cy="{y-19}" r="4" fill="{SAND}" stroke="{INK}" stroke-width="1.2"/>'
+    for dx in (-20, -8, 4, 16):
+        s += f'<rect x="{x+dx-3}" y="{y-6}" width="6" height="10" fill="{INK}"/>'
+    s += f'<line x1="{x+40}" y1="{y+14}" x2="{x+40}" y2="{y-26}" stroke="{INK}" stroke-width="2.5"/>'
+    s += G(x + 40, y - 30, 0.55, f'<polygon points="-11,-4 0,-11 11,-4" fill="{INK2}"/><rect x="-9" y="-4" width="18" height="17" rx="2" fill="#F6D77A" stroke="{INK}" stroke-width="2"/><ellipse cx="0" cy="5" rx="3" ry="5" fill="{OCRU}"/>', filt=False)
+    s += f'<circle cx="{x+40}" cy="{y-28}" r="14" fill="{OCRU}" opacity="0.25"/>'
+    return s + "\n"
+
+
+def d_trei(x, y):
+    s = f'<path d="M{x-46},{y+16} L{x+46},{y+16} M{x+6},{y-2} L{x-6},{y+30}" stroke="#C9B48E" stroke-width="6" stroke-linecap="round" fill="none"/>'
+    s += oak(x - 24, y + 4, 12) + oak(x + 24, y + 4, 12) + oak(x, y - 10, 14)
+    return s + "\n"
+
+
+def d_gusterita(x, y):
+    s = f'<rect x="{x+22}" y="{y-6}" width="34" height="26" rx="4" fill="none" stroke="#8C7B5E" stroke-width="2.5" stroke-dasharray="5 4"/>'
+    s += f'<line x1="{x+39}" y1="{y-6}" x2="{x+39}" y2="{y+20}" stroke="#8C7B5E" stroke-width="1.2" stroke-dasharray="3 3"/>'
+    s += f'<line x1="{x+22}" y1="{y+7}" x2="{x+56}" y2="{y+7}" stroke="#8C7B5E" stroke-width="1.2" stroke-dasharray="3 3"/>'
+    s += G(x - 16, y + 2, 1.25, ic_fortchurch(), filt=False)
+    return s + "\n"
+
+
+def d_valea(x, y):
+    s = G(x - 4, y + 2, 1.45, ic_inn(), filt=False)
+    s += f'<circle cx="{x+24}" cy="{y+4}" r="9" fill="{OCRU}" opacity="0.25"/>'
+    return s
+
+
+def d_dumbravii(x, y):
+    s = ""
+    rnd = random.Random(5)
+    pts = []
+    for i in range(16):
+        tx = rnd.uniform(-52, 52); ty = rnd.uniform(-20, 26)
+        if (tx / 58) ** 2 + (ty / 32) ** 2 < 1:
+            pts.append((ty, tx))
+    for ty, tx in sorted(pts):
+        s += fir(x + tx, y + ty + 8, rnd.uniform(26, 34), rnd.choice([GREEN2, "#2F6B59", GREEN1]))
+    return s + "\n"
+
+
+def d_vasile(x, y):
+    s = block(x - 22, y + 16, 24, 40, 6, 3) + block(x + 6, y + 16, 24, 32, 5, 3)
+    s += G(x + 40, y - 4, 0.8, ic_street(), filt=False)
+    return s
+
+
+def d_broscarie(x, y):
+    s = f'<ellipse cx="{x-26}" cy="{y+14}" rx="26" ry="9" fill="{WATER}" stroke="#5E9AA0" stroke-width="1.2" opacity="0.85"/>'
+    for (px, h) in [(-44, 22), (-36, 28), (-28, 20), (-18, 25), (-10, 18)]:
+        s += f'<line x1="{x+px}" y1="{y+14}" x2="{x+px+2}" y2="{y+14-h}" stroke="{GREEN2}" stroke-width="2"/>'
+        s += f'<ellipse cx="{x+px+2}" cy="{y+19-h}" rx="2" ry="4.5" fill="#7A5A3A"/>'
+    s += block(x + 14, y + 20, 22, 40, 7, 3) + block(x + 38, y + 20, 22, 32, 5, 3)
+    return s + "\n"
+
+
+def d_cluj(x, y):
+    s = f'<line x1="{x-56}" y1="{y+18}" x2="{x+40}" y2="{y+18}" stroke="#6E6A60" stroke-width="3"/>'
+    s += f'<line x1="{x-56}" y1="{y-26}" x2="{x+40}" y2="{y-26}" stroke="{INK}" stroke-width="1.2"/>'
+    # tramvai mic stilizat
+    s += f'<rect x="{x-48}" y="{y-12}" width="56" height="26" rx="4" fill="#E8C877" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<rect x="{x-48}" y="{y+4}" width="56" height="5" fill="{PETROL}"/>'
+    for i in range(4):
+        s += f'<rect x="{x-44+i*13}" y="{y-8}" width="9" height="9" rx="1.5" fill="#CFE3E6" stroke="{INK}" stroke-width="0.8"/>'
+    s += f'<line x1="{x-20}" y1="{y-12}" x2="{x-8}" y2="{y-26}" stroke="{INK}" stroke-width="1.6"/>'
+    for wx in (-38, -2):
+        s += f'<circle cx="{x+wx}" cy="{y+16}" r="3.5" fill="#3A3A3A"/>'
+    s += G(x + 34, y - 2, 0.75, ic_signpost(), filt=False)
+    return s + "\n"
+
+
+# nume real: (subtitlu poetic declarat, linia de specific, decor, rx, ry, culoare uscat, eticheta dx, dy, ancoră)
+ISL = {
+    "Centrul istoric": ("„Insula Cetății”", "prima atestare a orașului: 1191", d_centre, 92, 58, "#D9CBA8", -100, -22, "end"),
+    "Țiglari": ("„Insula Țiglelor”", "fabrica de țiglă a lui G. Binder · Lacul lui Binder", d_tiglari, 82, 50, "#D7B48C", 92, -22, "start"),
+    "Terezian": ("„Insula Împărătesei”", "Maria Tereza · orfelinatul, 1767–1771 · parcul", d_terezian, 82, 48, "#BFD49B", 102, -14, "start"),
+    "Trei Stejari": ("„Insula celor Trei Stejari”", "trei stejari bătrâni la o răscruce", d_trei, 64, 38, "#BFD49B", 74, -16, "start"),
+    "Lazaret": ("„Insula Felinarului”", "fost lazaret, lângă gară", d_lazaret, 80, 48, "#CFCBA4", 90, -52, "start"),
+    "Broscărie": ("„Insula Mlaștinii Uscate”", "pe o mlaștină desecată · 1970", d_broscarie, 78, 46, "#C6CF9E", 160, 74, "end"),
+    "Vasile Aaron": ("„Insula Străzii de Hotar”", "strada-limită cu Șelimbăr · anii 1970", d_vasile, 70, 46, "#CFC9B0", 80, 4, "start"),
+    "Ștrand": ("„Insula Bazinului”", "ștrandul: anii 1920 sau 1936, după sursă", d_strand, 76, 48, "#BFD49B", 0, 78, "middle"),
+    "Turnișor": ("„Insula Turnului Mic”", "fost sat, germ. Neppendorf", d_turnisor, 72, 50, "#BFD49B", -94, 80, "start"),
+    "Valea Aurie": ("„Insula Hanului de Aur”", "numele vine de la un han local", d_valea, 72, 46, "#DCCB8E", -86, -12, "end"),
+    "Gușterița": ("„Insula Bisericii Fortificate”", "biserică fortificată · castrul Cedonia (se crede)", d_gusterita, 82, 48, "#BFD49B", -94, -30, "end"),
+    "Hipodrom": ("„Insula Galopului”", "fostul hipodrom al cavaleriei · azi blocuri", d_hipodrom, 74, 46, "#BFD49B", 98, 6, "start"),
+    "Dumbrăvii": ("„Insula Pădurii”", "spre Pădurea Dumbrava", d_dumbravii, 76, 46, "#A9C98E", 0, -104, "middle"),
+    "Piața Cluj": ("„Insula Drumului spre Cluj”", "după orașul Cluj · tramvaiul ajunge aici în 1927", d_cluj, 72, 46, "#CFCBA4", 0, 74, "middle"),
+}
+
+
+def ship(x, y, sc=1.0):
+    g = f'<path d="M-30,6 L30,6 L22,18 L-22,18 Z" fill="#8B5E3C" stroke="{VAR}" stroke-width="1.5"/>'
+    g += f'<line x1="0" y1="6" x2="0" y2="-36" stroke="{VAR}" stroke-width="2"/>'
+    g += f'<path d="M2,-34 Q24,-16 2,2 Z" fill="{VAR}" opacity="0.9"/><path d="M-2,-28 Q-20,-12 -2,2 Z" fill="{OCRU}" opacity="0.85"/>'
+    g += f'<path d="M0,-36 L12,-32 L0,-29 Z" fill="{TIGLA}"/>'
+    g += f'<path d="M-40,22 q8,-4 16,0 t16,0 t16,0 t16,0 t16,0" fill="none" stroke="#CFEDEB" stroke-width="1.5" opacity="0.6"/>'
+    return f'<g transform="translate({x},{y}) scale({sc})" opacity="0.9">{g}</g>\n'
+
+
+def rose(x, y, r=46):
+    s = f'<circle cx="{x}" cy="{y}" r="{r}" fill="none" stroke="#CFEDEB" stroke-width="1.5" opacity="0.6"/>\n'
+    s += f'<circle cx="{x}" cy="{y}" r="{r*0.72:.1f}" fill="none" stroke="#CFEDEB" stroke-width="1" stroke-dasharray="2 4" opacity="0.6"/>\n'
+    for a in range(0, 360, 45):
+        L = r * (0.95 if a % 90 == 0 else 0.55)
+        ca, sa = math.cos(math.radians(a - 90)), math.sin(math.radians(a - 90))
+        cl, sl = math.cos(math.radians(a - 90 + 90)), math.sin(math.radians(a - 90 + 90))
+        tip = (x + L * ca, y + L * sa); b1 = (x + 7 * cl, y + 7 * sl); b2 = (x - 7 * cl, y - 7 * sl)
+        col = TIGLA if a == 0 else (VAR if a % 90 == 0 else "#7FB8B8")
+        s += f'<polygon points="{tip[0]:.1f},{tip[1]:.1f} {b1[0]:.1f},{b1[1]:.1f} {x},{y} {b2[0]:.1f},{b2[1]:.1f}" fill="{col}" stroke="{SEA_HALO}" stroke-width="1"/>\n'
+    s += f'<circle cx="{x}" cy="{y}" r="4" fill="{OCRU}"/>\n'
+    for lab, dx, dy in (("N", 0, -r - 10), ("S", 0, r + 24), ("V", -r - 18, 6), ("E", r + 18, 6)):
+        s += text(x + dx, y + dy, lab, 20 if lab == "N" else 17, VAR, "sans", 700, anchor="middle")
+    return s
+
+
+def main():
+    B = Boxes()
+    s = frame_head("SPAȚIAL · S14", PETROL, "Cartierele ca un arhipelag",
+                   "fiecare cartier, o insulă cu specificul ei · hartă fantastică AI")
+    MX, MY, MW, MH = 80, 230, 1760, 770
+    P = mk_proj(960, 612, 860, 370)
+    s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+    s += (f'<radialGradient id="seag" cx="0.5" cy="0.5" r="0.7"><stop offset="0" stop-color="#0F5258"/>'
+          f'<stop offset="0.6" stop-color="#0B3D43"/><stop offset="1" stop-color="#072A2F"/></radialGradient>\n')
+    s += f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="url(#seag)"/>\n'
+
+    # pre-calc island + label boxes (for wave placement and checks)
+    lab_svg = ""
+    isl_svg = ""
+    for nm, (nx, ny, st) in NB.items():
+        poetic, spec, deco, rx, ry, land, dx, dy, anc = ISL[nm]
+        X, Y = P(nx, ny)
+        isl_svg += island(X, Y, rx, ry, seed=sum(map(ord, nm)) + 7, land=land, orient=(st == "o"))
+        isl_svg += deco(X, Y)
+        B.add(nm + ":isl", X - rx * 1.12, Y - ry * 1.12, X + rx * 1.12, Y + ry * 1.12)
+        tx, ty = X + dx, Y + dy
+        name_parts = [(nm, VAR, 700, False, 24, "serif")]
+        if st == "o":
+            name_parts.append(("  · poziție orientativă", OCRU, 600, True, 14, "sans"))
+        lab_svg += rich(tx, ty, [(poetic, OCRU, 500, True)], 16, anc, SEA_HALO, 5)
+        lab_svg += rich(tx, ty + 27, name_parts, 24, anc, SEA_HALO, 6)
+        lab_svg += rich(tx, ty + 48, [(spec, "#CFE0E0", 400, False)], 15, anc, SEA_HALO, 5)
+        B.text(nm + ":poet", tx, ty, rich_width([(poetic, OCRU, 500, True)], 16), 16, anc)
+        B.text(nm + ":name", tx, ty + 27, rich_width(name_parts, 24), 24, anc)
+        B.text(nm + ":spec", tx, ty + 48, rich_width([(spec, VAR, 400, False)], 15), 15, anc)
+
+    # legendă (sus-stânga) – caseta pergament pe mare
+    LGX, LGY, LGW = 102, 250, 356
+    lg_body = ""
+    lg_body += text(LGX + 18, LGY + 30, "Legendă", 20, OCRU, "serif", 700)
+    p, yy = para(LGX + 18, LGY + 56, "Hartă fantastică: insulele sunt imaginare, numele și specificul vin din fișa de fapte.",
+                 15, LGW - 36, VAR, lh=19)
+    lg_body += p
+    p, yy = para(LGX + 18, yy + 4, "„Insula …” = nume poetic inventat; dedesubt, numele real.", 15, LGW - 36, VAR, lh=19, italic=True)
+    lg_body += p
+    ky = yy + 6
+    lg_body += f'<path d="M{LGX+18},{ky-5} q10,-9 20,0 t20,0" fill="none" stroke="{OCRU}" stroke-width="2.6" stroke-dasharray="8 6"/>'
+    lg_body += text(LGX + 70, ky, "contur punctat = poziție orientativă", 15, VAR, "sans", 400, True)
+    LGH = ky + 14 - LGY
+    lg = f'<rect x="{LGX}" y="{LGY}" width="{LGW}" height="{LGH}" rx="14" fill="{BG}" fill-opacity="0.82" stroke="{OCRU}" stroke-width="1.5"/>\n' + lg_body
+    B.add("legend", LGX, LGY, LGX + LGW, LGY + LGH)
+    print("legend bottom", LGY + LGH)
+    note = "Hartă schematică, poziții aproximative – direcțiile urmează harta reală"
+    key = text(1010, 986, note, 15, "#CFE0E0", "sans", 400, True, anchor="middle")
+    B.text("note", 1010, 986, measure(note, 15, "sans", 400, True), 15, "middle")
+
+    # roza vânturilor (jos-dreapta) + corabie
+    RX, RY = 1752, 926
+    B.add("rose", RX - 62, RY - 62, RX + 62, RY + 66)
+    SHX, SHY = 1215, 300
+    B.add("ship", SHX - 42, SHY - 40, SHX + 42, SHY + 26)
+
+    # valuri decorative (evită insulele și etichetele)
+    rnd = random.Random(21)
+    waves = ""
+    placed = 0
+    tries = 0
+    while placed < 70 and tries < 4000:
+        tries += 1
+        wx = rnd.uniform(MX + 20, MX + MW - 40); wy = rnd.uniform(MY + 20, MY + MH - 20)
+        ok = True
+        for it in B.items:
+            if it[1] - 12 < wx + 26 and wx - 4 < it[3] + 12 and it[2] - 10 < wy + 4 and wy - 6 < it[4] + 10:
+                ok = False; break
+        if ok:
+            waves += f'<path d="M{wx:.1f},{wy:.1f} q6,-5 12,0 t12,0" fill="none" stroke="#CFEDEB" stroke-width="1.4" opacity="0.35"/>\n'
+            placed += 1
+    s += waves
+    s += isl_svg
+    s += ship(SHX, SHY, 1.0)
+    s += rose(RX, RY, 36)
+    s += lab_svg
+    s += lg + key
+    s += "</g>\n"
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    bad = B.report(bounds=(MX + 4, MY + 4, MX + MW - 4, MY + MH - 4))
+    print("overlaps:", len(bad))
+
+
+if __name__ == "__main__":
+    main()

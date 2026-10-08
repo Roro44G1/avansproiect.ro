@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "S13",
+    "categorie": "Spațial",
+    "titlu": "Harta originilor numelor de cartiere — ilustrată AI",
+    "fisiere": [
+      "05_spatial/S13_harta_numelor.svg",
+      "05_spatial/S13_harta_numelor.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă schematică a Sibiului, cu nordul sus și centrul istoric în mijloc: fiecare cartier are o pictogramă desenată în cod (coroană, țiglă, felinar cu cruce, trei stejari, turn mic, bazin, potcoavă, han etc.) și un rând despre originea numelui. Șase cartiere fără istorie în surse apar într-o casetă cu întrebări de cercetat de clasă.",
+    "status": "realizat",
+    "nota": "Fapte doar din fapte_verificate.md (turnulsfatului.ro 2014/2016, en.wikipedia, kirchenburgen.org, zilesinopti.ro, old.tribuna.ro). Divergențe afișate ca atare: Turnișor 1336 / 1327, Gușterița 1309 / sec. XIII, ștrandul anii 1920 / 1936. Gușterița, Hipodrom, Dumbrăvii și Piața Cluj au contur punctat (poziție orientativă). Insigna „?” marchează cartierele a căror origine a numelui nu e explicată în surse (Gușterița, Broscărie – legătura cu „broaște” e doar ipoteză, nescrisă ca fapt –, Dumbrăvii). Lupeni, Reșița, Tilișca, Tineretului, Veteranilor de Război și Viile Sibiului nu sunt puse pe hartă; apar doar cu întrebări, fără fapte inventate. Râul Cibin este figurat schematic, doar la nord de centru. Hartă schematică, poziții aproximative."
+  },
+  {
+    "cod": "S14",
+    "categorie": "Spațial",
+    "titlu": "Cartierele ca un arhipelag — fiecare cartier o insulă cu specificul ei, hartă fantastică AI",
+    "fisiere": [
+      "05_spatial/S14_arhipelagul_cartierelor.svg",
+      "05_spatial/S14_arhipelagul_cartierelor.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă fantastică: Sibiul ca o mare de culoarea petrolului, cu 14 insule (centrul istoric și 13 cartiere) așezate în aceleași direcții ca pe harta reală, fiecare cu decorul specificului ei: țigle și lac la Țiglari, bazin cu trambulină la Ștrand, pistă ovală la Hipodrom, turn de biserică la Turnișor, parc și orfelinat la Terezian, gară și felinar la Lazaret.",
+    "status": "realizat",
+    "nota": "Insulele, corabia și roza vânturilor sunt imaginare; numele poetice („Insula Țiglelor” etc.) sunt inventate și declarate ca subtitluri, cu numele real dedesubt. Specificul fiecărei insule vine din fapte_verificate.md; la Gușterița castrul Cedonia apare cu „se crede”, iar ștrandul cu „anii 1920 sau 1936, după sursă”. Gușterița, Hipodrom, Dumbrăvii și Piața Cluj au coastă punctată (poziție orientativă). Cartierele nelocalizate în surse nu apar. Hartă schematică, poziții aproximative."
+  },
+  {
+    "cod": "S15",
+    "categorie": "Spațial",
+    "titlu": "Locurile de joacă de altădată și de azi — hartă comparativă schematică AI",
+    "fisiere": [
+      "05_spatial/S15_locuri_de_joaca.svg",
+      "05_spatial/S15_locuri_de_joaca.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Două hărți alăturate, pe aceeași bază, „Altădată” și „Azi”, cu șase locuri documentate de joacă și timp liber numerotate la fel: Parcul Sub Arini, ștrandul cu Turnul lui Phleps, Târgul Vitelor devenit Parcul Terezian, hipodromul devenit cartier de blocuri, Pădurea Dumbrava cu tramvaiul și grădina zoologică, Țiglari cu Lacul lui Binder.",
+    "status": "realizat",
+    "nota": "Doar fapte din fapte_verificate.md: Sub Arini – noiembrie 1856, 68 de specii de plante, 95 de specii de păsări; ștrandul – anii 1920 sau 12 iulie 1936, după sursă, bazin pentru copii, sărituri de la 3, 5 și 10 m, din 2008 5.000 de locuri și platforma de 10 m demontată, redeschis la 23 iunie 2021; hipodromul – concursuri hipice în iunie 1924, Hipodrom I terminat în 1972; tramvaiul – 1905 până la parc, 1910 la marginea pădurii; grădina zoologică – 1929; Lacul lui Binder – amenajări planificate prin contractul din 2018, circa 80% gata în august 2020 (stadiul ulterior nu e în surse). Locul de joacă dintre blocuri este un simbol generic declarat, fără loc anume și nepus pe hartă; nu sunt inventate nume de locuri de joacă. Sub Arini, Hipodrom și Pădurea Dumbrava au poziție orientativă; hărți schematice, poziții aproximative."
+  }
+]

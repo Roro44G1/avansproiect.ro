@@ -1,0 +1,226 @@
+"""Verificare tehnică pentru piesele audio ale calupului 3 (A14 – MP3, A15 – scenariu TTS).
+
+A14: ffprobe (format, durată, debit), ffmpeg ebur128 (loudness integrat, LRA, true peak,
+vârf de eșantion), clipping, liniște la capete, loudness pe secțiuni, spectrogramă și
+formă de undă cu loudness pe termen scurt, verificarea melodiei-ghid (pentru fiecare notă
+a solistului: înălțimea dominantă în registrul vocii, comparată cu nota scrisă).
+A15: număr de cuvinte rostite, durată estimată, cifre rămase în textul TTS, format replici.
+Ambele: ortografie (hunspell ro_RO) și ș/ț cu sedilă.
+
+Rulare: python3 verificare.py  -> ../_verificare/raport_verificare.json + PNG-uri
+"""
+import json
+import os
+import re
+import subprocess
+import sys
+
+import numpy as np
+
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+import matplotlib  # noqa: E402
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+from scipy import signal  # noqa: E402
+
+from audiolib import SR, _KW, lufs, midi, mhz  # noqa: E402
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
+VER = os.path.join(ROOT, "_verificare")
+os.makedirs(VER, exist_ok=True)
+MP3 = os.path.join(ROOT, "A14_imnul_cartierului.mp3")
+MARKS = os.path.join(HERE, "A14_marcaje.json")
+
+
+def ffprobe(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_format", "-show_streams", "-of", "json", path],
+                       capture_output=True, text=True, check=True)
+    j = json.loads(r.stdout)
+    st = j["streams"][0]
+    fm = j["format"]
+    return {"codec": st["codec_name"], "sample_rate_hz": int(st["sample_rate"]), "canale": st["channels"],
+            "bitrate_kbps": round(int(st.get("bit_rate", fm["bit_rate"])) / 1000),
+            "durata_s": round(float(fm["duration"]), 2),
+            "titlu_id3": fm.get("tags", {}).get("title", "")}
+
+
+def ebur128(path):
+    err = subprocess.run(["ffmpeg", "-nostats", "-i", path, "-filter_complex", "ebur128=peak=true+sample",
+                          "-f", "null", "-"], capture_output=True, text=True).stderr
+    summ = err[err.rfind("Summary:"):]
+    i = float(re.search(r"I:\s+(-?[\d.]+) LUFS", summ).group(1))
+    lra = float(re.search(r"LRA:\s+(-?[\d.]+) LU", summ).group(1))
+    tp = float(re.search(r"True peak:\s+Peak:\s+(-?[\d.]+) dBFS", summ).group(1))
+    sp = float(re.search(r"Sample peak:\s+Peak:\s+(-?[\d.]+) dBFS", summ).group(1))
+    return {"loudness_integrat_lufs": i, "lra_lu": lra, "true_peak_dbtp": tp, "sample_peak_dbfs": sp}
+
+
+def decode(path):
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-f", "f32le", "-ac", "2", "-ar", str(SR), "-"],
+                         capture_output=True, check=True).stdout
+    return np.frombuffer(raw, dtype=np.float32).reshape(-1, 2).T.astype(np.float64)
+
+
+def short_term(x, win=3.0, hop=0.1):
+    y = x
+    for b, a in _KW:
+        y = signal.lfilter(b, a, y, axis=-1)
+    p = (y ** 2).sum(axis=0)
+    w, h = int(win * SR), int(hop * SR)
+    cs = np.concatenate([[0], np.cumsum(p)])
+    st = np.arange(0, len(p) - w, h)
+    z = (cs[st + w] - cs[st]) / w
+    return (st + w / 2) / SR, -0.691 + 10 * np.log10(z + 1e-20)
+
+
+def melody_check(x, notes):
+    """Pentru fiecare notă a solistului: nota (D4–E5) cu cea mai mare sumă armonică (f, 2f, 3f)."""
+    mono = x.mean(axis=0)
+    cands = list(range(midi("C4"), midi("F5") + 1))
+    ok, bad = 0, []
+    for nt in notes:
+        a = int((nt["t"] + 0.05) * SR)
+        b = int((nt["t"] + min(nt["d"] - 0.03, 0.45)) * SR)
+        seg = mono[a:b] * np.hanning(b - a)
+        N = 1 << 16
+        sp = np.abs(np.fft.rfft(seg, N))
+        fr = np.fft.rfftfreq(N, 1 / SR)
+
+        def band(f):
+            m = (fr > f * 2 ** (-0.3 / 12)) & (fr < f * 2 ** (0.3 / 12))
+            return sp[m].max() if np.any(m) else 0.0
+
+        score = {m: band(mhz(m)) + 0.8 * band(2 * mhz(m)) + 0.6 * band(3 * mhz(m)) for m in cands}
+        best = max(score, key=score.get)
+        if best == midi(nt["nota"]):
+            ok += 1
+        else:
+            bad.append({"t": nt["t"], "scris": nt["nota"], "detectat_midi": best})
+    return {"note_verificate": len(notes), "note_corecte": ok,
+            "procent": round(100 * ok / len(notes), 1), "nepotriviri": bad}
+
+
+def plots(x, marks, i_lufs):
+    mono = x.mean(axis=0)
+    t_end = len(mono) / SR
+    sec = list(marks.items())
+    # --- spectrogramă (axă logaritmică a frecvenței)
+    f, t, Z = signal.spectrogram(mono, SR, window="hann", nperseg=4096, noverlap=4096 - 1024, mode="magnitude")
+    Zdb = 20 * np.log10(Z + 1e-9)
+    Zdb -= Zdb.max()
+    fig, ax = plt.subplots(figsize=(16, 7), dpi=110)
+    keep = (f >= 30) & (f <= 18000)
+    pc = ax.pcolormesh(t, f[keep], Zdb[keep], shading="auto", cmap="magma", vmin=-90, vmax=0)
+    ax.set_yscale("log")
+    ax.set_ylim(30, 18000)
+    ax.set_yticks([50, 100, 200, 400, 800, 1600, 3200, 6400, 12800])
+    ax.set_yticklabels(["50", "100", "200", "400", "800", "1,6k", "3,2k", "6,4k", "12,8k"])
+    for k, (nm, t0) in enumerate(sec):
+        ax.axvline(t0, color="#E2A62B", lw=1.2, alpha=0.9)
+        ax.text(t0 + 0.4, 14000 if k % 2 == 0 else 9500, nm, color="#F3EFE6", fontsize=10,
+                bbox=dict(facecolor="#0F1720", alpha=0.7, edgecolor="none", pad=2))
+    ax.axhspan(293, 660, color="#12A594", alpha=0.12)
+    ax.text(0.4, 700, "registrul melodiei-ghid (D4–E5)", color="#F3EFE6", fontsize=9,
+            bbox=dict(facecolor="#12A594", alpha=0.8, edgecolor="none", pad=2))
+    ax.set_xlim(0, t_end)
+    ax.set_xlabel("timp (s)")
+    ax.set_ylabel("frecvență (Hz, scară logaritmică)")
+    ax.set_title(f"A14 „Unu, doi – Ștrand!” – spectrograma MP3 ({t_end:.1f} s, {i_lufs:.1f} LUFS)")
+    fig.colorbar(pc, ax=ax, label="dB (relativ la maxim)")
+    fig.tight_layout()
+    p1 = os.path.join(VER, "A14_imnul_cartierului_spectrograma.png")
+    fig.savefig(p1)
+    plt.close(fig)
+    # --- formă de undă + loudness pe termen scurt
+    fig, (a1, a2) = plt.subplots(2, 1, figsize=(16, 7), dpi=110, sharex=True)
+    tt = np.arange(len(mono)) / SR
+    step = 200
+    a1.plot(tt[::step], x[0, ::step], lw=0.4, color="#0E7C86", label="stânga")
+    a1.plot(tt[::step], -x[1, ::step], lw=0.4, color="#6E56CF", alpha=0.7, label="dreapta (inversat)")
+    a1.axhline(10 ** (-1 / 20), color="#B9583A", ls="--", lw=0.8)
+    a1.axhline(-10 ** (-1 / 20), color="#B9583A", ls="--", lw=0.8)
+    a1.set_ylim(-1.05, 1.05)
+    a1.set_ylabel("amplitudine")
+    a1.legend(loc="lower right", fontsize=8)
+    ts, st = short_term(x)
+    a2.plot(ts, st, color="#E2A62B", lw=1.4, label="loudness pe termen scurt (3 s)")
+    a2.axhline(-14, color="#12A594", ls="--", lw=1, label="țintă −14 LUFS (integrat)")
+    a2.set_ylim(-40, -6)
+    a2.set_ylabel("LUFS")
+    a2.set_xlabel("timp (s)")
+    a2.legend(loc="lower right", fontsize=8)
+    for ax in (a1, a2):
+        for nm, t0 in sec:
+            ax.axvline(t0, color="#A9B4C0", lw=0.8, alpha=0.8)
+    for nm, t0 in sec:
+        a1.text(t0 + 0.3, 0.92, nm, fontsize=9, color="#1B2733")
+    a1.set_title("A14 – formă de undă (liniile roșii: −1 dBFS) și loudness pe termen scurt")
+    fig.tight_layout()
+    p2 = os.path.join(VER, "A14_imnul_cartierului_forma_unda.png")
+    fig.savefig(p2)
+    plt.close(fig)
+    return p1, p2
+
+
+def hunspell(path):
+    txt = open(path, encoding="utf-8").read()
+    txt = re.sub(r"`[^`]*`", "", txt)
+    r = subprocess.run(["hunspell", "-d", "ro_RO", "-i", "utf-8", "-l"], input=txt, capture_output=True, text=True)
+    words = sorted(set(r.stdout.split()))
+    sed = len(re.findall("[şţŞŢ]", txt))
+    return words, sed
+
+
+def tts_stats(path, wpm=(145, 150)):
+    lines = [ln for ln in open(path, encoding="utf-8").read().splitlines() if ln.strip()]
+    words = sum(len(ln.split()) for ln in lines)
+    prefixed = all(re.match(r"^[A-ZĂÂÎȘȚ][\wăâîșț]+: ", ln) for ln in lines)
+    digits = re.findall(r"\d", "\n".join(lines))
+    speakers = sorted(set(ln.split(":")[0] for ln in lines))
+    return {"replici": len(lines), "vorbitori": speakers, "toate_replicile_prefixate": prefixed,
+            "cuvinte_rostite": words, "cifre_ramase": len(digits),
+            "durata_estimata_s": [round(words / wpm[1] * 60), round(words / wpm[0] * 60)]}
+
+
+if __name__ == "__main__":
+    rep = {}
+    m = json.load(open(MARKS, encoding="utf-8"))
+    probe = ffprobe(MP3)
+    loud = ebur128(MP3)
+    x = decode(MP3)
+    mono = np.abs(x).max(axis=0)
+    thr = 10 ** (-60 / 20)
+    nz = np.nonzero(mono > thr)[0]
+    sec_names = list(m["marcaje_s"].keys())
+    sec_t = list(m["marcaje_s"].values()) + [x.shape[1] / SR]
+    per_sec = {nm: round(lufs(x[:, int(sec_t[k] * SR):int(sec_t[k + 1] * SR)]), 1)
+               for k, nm in enumerate(sec_names)}
+    p1, p2 = plots(x, m["marcaje_s"], loud["loudness_integrat_lufs"])
+    mel = melody_check(x, m["note"])
+    rep["A14"] = {
+        "fisier": "04_audio/A14_imnul_cartierului.mp3",
+        "ffprobe": probe,
+        "ebur128": loud,
+        "esantioane_la_limita_0dBFS": int(np.sum(np.abs(x) >= 0.999)),
+        "inceput_sunet_s": round(nz[0] / SR, 3), "sfarsit_sunet_s": round(nz[-1] / SR, 3),
+        "loudness_pe_sectiuni_lufs": per_sec,
+        "melodia_ghid": mel,
+        "conditii": {
+            "durata_60_90_s": 60 <= probe["durata_s"] <= 90,
+            "loudness_-14_plus_minus_0_5": abs(loud["loudness_integrat_lufs"] + 14) <= 0.5,
+            "true_peak_sub_-1_dBTP": loud["true_peak_dbtp"] <= -1.0,
+            "mp3_192_kbps": probe["codec"] == "mp3" and probe["bitrate_kbps"] == 192,
+        },
+        "grafice": ["04_audio/_verificare/" + os.path.basename(p1), "04_audio/_verificare/" + os.path.basename(p2)],
+    }
+    rep["A15"] = {"fisier_tts": "04_audio/A15_interviu_stejar.txt",
+                  **tts_stats(os.path.join(ROOT, "A15_interviu_stejar.txt"))}
+    rep["ortografie_hunspell_ro_RO"] = {}
+    for fn in ("A14_imnul_cartierului.md", "A15_interviu_stejar.md", "A15_interviu_stejar.txt"):
+        w, sed = hunspell(os.path.join(ROOT, fn))
+        rep["ortografie_hunspell_ro_RO"][fn] = {"cuvinte_nerecunoscute": w, "s_t_cu_sedila": sed}
+    out = os.path.join(VER, "raport_verificare.json")
+    json.dump(rep, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    print(json.dumps(rep, ensure_ascii=False, indent=2))

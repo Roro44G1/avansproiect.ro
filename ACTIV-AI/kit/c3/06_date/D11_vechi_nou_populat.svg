@@ -1,0 +1,327 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="166" height="44" fill="#3E63DD"/>
+<text x="83.0" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">DATE · D11</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="54" fill="#F3EFE6">Cartierele Sibiului: cel mai vechi, cel mai nou, cel mai populat</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">trei podiumuri · treaptă punctată = sursele nu dau un răspuns · fără cifre inventate</text>
+<rect x="80" y="222" width="560" height="744" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="80" y="222" width="560" height="7" rx="3" fill="#E2A62B"/>
+<rect x="108" y="246" width="201.9" height="38" rx="19" fill="#E2A62B"/>
+<text x="208.9" y="272.0" font-family="Inter, sans-serif" font-size="19" font-weight="700" fill="#0F1720" text-anchor="middle" letter-spacing="2">CEL MAI VECHI</text>
+<text x="108.0" y="312.0" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#F3EFE6" text-anchor="start" font-style="italic">criteriu: vechimea ca parte a orașului</text>
+<text x="108.0" y="336.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">locurile 1 și 2 – en.wikipedia; locul 3 nu e numit</text>
+<polygon points="126.0,554.0 136.0,538.0 292.0,538.0 282.0,554.0" fill="#C6A86C"/>
+<polygon points="282.0,554.0 292.0,538.0 292.0,618.0 282.0,634.0" fill="#A87A1E" opacity="0.55"/>
+<rect x="126.0" y="554" width="156" height="80" fill="#A87A1E"/>
+<text x="204.0" y="618.0" font-family="'Noto Serif', serif" font-size="42" font-weight="700" fill="#F3EFE6" text-anchor="middle">2</text>
+<polygon points="282.0,518.0 292.0,502.0 448.0,502.0 438.0,518.0" fill="#ECC575"/>
+<polygon points="438.0,518.0 448.0,502.0 448.0,618.0 438.0,634.0" fill="#E2A62B" opacity="0.55"/>
+<rect x="282.0" y="518" width="156" height="116" fill="#E2A62B"/>
+<text x="360.0" y="582.0" font-family="'Noto Serif', serif" font-size="50" font-weight="700" fill="#0F1720" text-anchor="middle">1</text>
+<rect x="438.0" y="582" width="156" height="52" fill="none" stroke="#56657A" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="516.0" y="620.0" font-family="'Noto Serif', serif" font-size="34" font-weight="700" fill="#56657A" text-anchor="middle">?</text>
+<text x="516.0" y="570.0" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#7E8A96" text-anchor="middle" font-style="italic">locul 3</text>
+<g transform="translate(364.0,506.0) scale(0.85)">
+<rect x="-62" y="-34" width="124" height="34" fill="#C9BFAE"/>
+<rect x="-62" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="-44" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="-26" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="-8" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="10" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="28" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="46" y="-42" width="10" height="9" fill="#C9BFAE"/>
+<rect x="-6" y="-84" width="26" height="84" fill="#F3EFE6"/>
+<polygon points="-9.0,-84.0 7.0,-118.0 23.0,-84.0" fill="#B9583A"/>
+<rect x="3" y="-72" width="8" height="12" rx="4" fill="#0F1720"/>
+<rect x="-50" y="-64" width="26" height="64" fill="#F5F1EA"/>
+<polygon points="-54.0,-64.0 -37.0,-86.0 -20.0,-64.0" fill="#B9583A"/>
+<path d="M-44,0 v-14 a7,7 0 0 1 14,0 v14 Z" fill="#0F1720"/>
+<rect x="30" y="-50" width="26" height="50" fill="#E3D9C6"/>
+<polygon points="27.0,-50.0 43.0,-66.0 59.0,-50.0" fill="#B9583A"/>
+</g>
+<text x="360.0" y="374.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#F3EFE6" text-anchor="middle">Centrul istoric</text>
+<text x="360.0" y="396.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#E2A62B" text-anchor="middle">1191 – prima atestare</text>
+<g transform="translate(208.0,542.0) scale(0.85)">
+<rect x="-62" y="-26" width="30" height="26" fill="#E3D9C6"/>
+<polygon points="-65.0,-26.0 -47.0,-42.0 -29.0,-26.0" fill="#B9583A"/>
+<rect x="-52" y="-18" width="9" height="9" fill="#0F1720" opacity="0.7"/>
+<rect x="-28" y="-30" width="30" height="30" fill="#E3D9C6"/>
+<polygon points="-31.0,-30.0 -13.0,-46.0 5.0,-30.0" fill="#B9583A"/>
+<rect x="-18" y="-22" width="9" height="9" fill="#0F1720" opacity="0.7"/>
+<rect x="32" y="-24" width="30" height="24" fill="#E3D9C6"/>
+<polygon points="29.0,-24.0 47.0,-40.0 65.0,-24.0" fill="#B9583A"/>
+<rect x="42" y="-16" width="9" height="9" fill="#0F1720" opacity="0.7"/>
+<rect x="6" y="-58" width="20" height="58" fill="#F3EFE6"/>
+<polygon points="4.0,-58.0 16.0,-82.0 28.0,-58.0" fill="#B9583A"/>
+<rect x="12" y="-46" width="8" height="11" rx="4" fill="#0F1720"/>
+</g>
+<text x="204.0" y="444.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#F3EFE6" text-anchor="middle">Terezian</text>
+<text x="204.0" y="466.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#E2A62B" text-anchor="middle">secolele XVII–XVIII</text>
+<text x="108.0" y="668.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">Terezian este „al doilea cel mai vechi cartier, după centru”</text>
+<text x="108.0" y="692.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">(en.wikipedia): a început ca suburbie a cetății.</text>
+<rect x="100" y="712" width="520" height="234" rx="14" fill="#0F1720" opacity="0.55"/>
+<rect x="100" y="712" width="5" height="234" rx="2" fill="#E2A62B"/>
+<text x="122.0" y="742.0" font-family="'Noto Serif', serif" font-size="18" font-weight="700" fill="#F3EFE6" text-anchor="start">Nuanță: două sate înglobate</text>
+<text x="122.0" y="764.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start" font-style="italic">au atestări mai vechi decât multe cartiere</text>
+<g transform="translate(152,828) scale(0.95)"><rect x="-34" y="-16" width="68" height="16" fill="#8C8270"/><rect x="-20" y="-30" width="34" height="18" fill="#E3D9C6"/><polygon points="-23,-30 -3,-42 17,-30" fill="#B9583A"/><rect x="10" y="-52" width="14" height="40" fill="#F3EFE6"/><polygon points="8,-52 17,-66 26,-52" fill="#B9583A"/></g>
+<text x="204.0" y="798.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">Gușterița</text>
+<text x="293.4" y="798.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">(Hammersdorf)</text>
+<text x="204.0" y="820.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">1309 sau „secolul al XIII-lea”, după sursă · inclusă în</text>
+<text x="204.0" y="840.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">oraș în 1940</text>
+<g transform="translate(152,902) scale(0.95)"><rect x="-34" y="-16" width="68" height="16" fill="#8C8270"/><rect x="-20" y="-30" width="34" height="18" fill="#E3D9C6"/><polygon points="-23,-30 -3,-42 17,-30" fill="#B9583A"/><rect x="10" y="-52" width="14" height="40" fill="#F3EFE6"/><polygon points="8,-52 17,-66 26,-52" fill="#B9583A"/></g>
+<text x="204.0" y="872.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">Turnișor</text>
+<text x="285.9" y="872.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">(Neppendorf)</text>
+<text x="204.0" y="894.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">1336 sau 1327, după sursă · înglobat după al Doilea</text>
+<text x="204.0" y="914.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Război Mondial</text>
+<rect x="680" y="222" width="560" height="744" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="680" y="222" width="560" height="7" rx="3" fill="#0E7C86"/>
+<rect x="708" y="246" width="181.6" height="38" rx="19" fill="#0E7C86"/>
+<text x="798.8" y="272.0" font-family="Inter, sans-serif" font-size="19" font-weight="700" fill="#F3EFE6" text-anchor="middle" letter-spacing="2">CEL MAI NOU</text>
+<text x="708.0" y="312.0" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#F3EFE6" text-anchor="start" font-style="italic">criteriu: ultimul cartier de blocuri construit</text>
+<text x="708.0" y="336.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">doar locul 1 e numit de sursă (turnulsfatului.ro, 2016)</text>
+<rect x="726.0" y="554" width="156" height="80" fill="none" stroke="#56657A" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="804.0" y="614.0" font-family="'Noto Serif', serif" font-size="40" font-weight="700" fill="#56657A" text-anchor="middle">?</text>
+<text x="804.0" y="542.0" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#7E8A96" text-anchor="middle" font-style="italic">locul 2</text>
+<polygon points="882.0,518.0 892.0,502.0 1048.0,502.0 1038.0,518.0" fill="#62A9B0"/>
+<polygon points="1038.0,518.0 1048.0,502.0 1048.0,618.0 1038.0,634.0" fill="#0E7C86" opacity="0.55"/>
+<rect x="882.0" y="518" width="156" height="116" fill="#0E7C86"/>
+<text x="960.0" y="582.0" font-family="'Noto Serif', serif" font-size="50" font-weight="700" fill="#F3EFE6" text-anchor="middle">1</text>
+<rect x="1038.0" y="582" width="156" height="52" fill="none" stroke="#56657A" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="1116.0" y="620.0" font-family="'Noto Serif', serif" font-size="34" font-weight="700" fill="#56657A" text-anchor="middle">?</text>
+<text x="1116.0" y="570.0" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#7E8A96" text-anchor="middle" font-style="italic">locul 3</text>
+<g transform="translate(962.0,506.0) scale(1.0)">
+<rect x="-64" y="-62" width="26" height="62" fill="#C9D3DC"/>
+<rect x="-61.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-61.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-54.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-47.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-32" y="-76" width="26" height="76" fill="#DCE3E9"/>
+<rect x="-29.0" y="-72" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-72" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-72" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-65" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-65" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-65" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-29.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-22.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="-15.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="0" y="-62" width="26" height="62" fill="#C9D3DC"/>
+<rect x="3.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-58" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-51" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-44" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-37" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-30" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-23" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-16" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="3.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="10.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="17.0" y="-9" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="38" y="-14" width="4" height="14" fill="#6B4E2E"/><circle cx="40" cy="-25" r="14" fill="#2F7A4B"/>
+<rect x="56" y="-14" width="4" height="14" fill="#6B4E2E"/><circle cx="58" cy="-23" r="12" fill="#3E8E5A"/>
+<rect x="48" y="-16" width="4" height="14" fill="#6B4E2E"/><circle cx="50" cy="-22" r="9" fill="#4FA36A"/>
+</g>
+<text x="960.0" y="374.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#F3EFE6" text-anchor="middle">Valea Aurie</text>
+<text x="960.0" y="396.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#56A3AA" text-anchor="middle">anul nu e dat de sursă</text>
+<text x="708.0" y="668.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">„Ultimul cartier de blocuri construit”, aproape de Dumbrava.</text>
+<text x="708.0" y="692.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">Cum s-a ajuns aici:</text>
+<text x="708.0" y="724.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#56A3AA" text-anchor="start">circa 1948–1949</text>
+<rect x="854" y="710" width="20" height="20" fill="#C9D3DC"/>
+<rect x="857.0" y="714" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="714" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="714" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="721" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="721" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="721" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<text x="888.0" y="724.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">primele blocuri militare, lângă aeroport</text>
+<text x="708.0" y="766.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#56A3AA" text-anchor="start">1957</text>
+<rect x="854" y="752" width="20" height="20" fill="#C9D3DC"/>
+<rect x="857.0" y="756" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="756" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="756" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="763" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="763" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="763" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<text x="888.0" y="766.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">Terezian – blocurile de pe Strada Lungă</text>
+<text x="708.0" y="808.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#56A3AA" text-anchor="start">1970</text>
+<rect x="854" y="787" width="20" height="27" fill="#C9D3DC"/>
+<rect x="857.0" y="791" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="791" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="791" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="798" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="798" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="798" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="805" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="805" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="805" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<text x="888.0" y="808.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">Ștrand și Broscărie</text>
+<text x="708.0" y="850.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#56A3AA" text-anchor="start">1972</text>
+<rect x="854" y="829" width="20" height="27" fill="#C9D3DC"/>
+<rect x="857.0" y="833" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="833" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="833" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="840" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="840" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="840" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="847" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="847" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="847" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<text x="888.0" y="850.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">Hipodrom I, terminat</text>
+<text x="708.0" y="892.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#56A3AA" text-anchor="start">anii 1970</text>
+<rect x="854" y="864" width="20" height="34" fill="#C9D3DC"/>
+<rect x="857.0" y="868" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="868" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="868" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="875" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="875" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="875" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="882" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="882" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="882" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="889" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="889" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="889" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<text x="888.0" y="892.0" font-family="Inter, sans-serif" font-size="17" font-weight="400" fill="#A9B4C0" text-anchor="start">Vasile Aaron</text>
+<rect x="700" y="904" width="520" height="42" rx="10" fill="#0E7C86" opacity="0.35"/>
+<text x="708.0" y="934.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="start">apoi</text>
+<rect x="854" y="906" width="20" height="34" fill="#F3EFE6"/>
+<rect x="857.0" y="910" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="910" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="910" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="917" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="917" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="917" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="924" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="924" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="924" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="857.0" y="931" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="864.0" y="931" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<rect x="871.0" y="931" width="4" height="4" fill="#0F1720" opacity="0.65"/>
+<text x="888.0" y="934.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="start">Valea Aurie – ultimul construit</text>
+<rect x="1280" y="222" width="560" height="744" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="1280" y="222" width="560" height="7" rx="3" fill="#6E56CF"/>
+<rect x="1308" y="246" width="235.7" height="38" rx="19" fill="#6E56CF"/>
+<text x="1425.8" y="272.0" font-family="Inter, sans-serif" font-size="19" font-weight="700" fill="#F3EFE6" text-anchor="middle" letter-spacing="2">CEL MAI POPULAT</text>
+<text x="1308.0" y="312.0" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#F3EFE6" text-anchor="start" font-style="italic">criteriu: numărul de locuitori</text>
+<text x="1308.0" y="336.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">nicio sursă verificată nu dă cifre pe cartiere</text>
+<rect x="1326.0" y="554" width="156" height="80" fill="none" stroke="#56657A" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="1404.0" y="614.0" font-family="'Noto Serif', serif" font-size="40" font-weight="700" fill="#56657A" text-anchor="middle">?</text>
+<text x="1404.0" y="542.0" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#7E8A96" text-anchor="middle" font-style="italic">locul 2</text>
+<rect x="1482.0" y="518" width="156" height="116" fill="none" stroke="#56657A" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="1560.0" y="578.0" font-family="'Noto Serif', serif" font-size="40" font-weight="700" fill="#56657A" text-anchor="middle">?</text>
+<text x="1560.0" y="506.0" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#7E8A96" text-anchor="middle" font-style="italic">locul 1</text>
+<rect x="1638.0" y="582" width="156" height="52" fill="none" stroke="#56657A" stroke-width="2.5" stroke-dasharray="9 7"/>
+<text x="1716.0" y="620.0" font-family="'Noto Serif', serif" font-size="34" font-weight="700" fill="#56657A" text-anchor="middle">?</text>
+<text x="1716.0" y="570.0" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#7E8A96" text-anchor="middle" font-style="italic">locul 3</text>
+<text x="1560.0" y="388.0" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#F3EFE6" text-anchor="middle">Nu există date oficiale</text>
+<text x="1560.0" y="424.0" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#F3EFE6" text-anchor="middle">verificate de populație</text>
+<text x="1560.0" y="460.0" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#F3EFE6" text-anchor="middle">pe cartiere.</text>
+<text x="1308.0" y="668.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="start">Ce știm sigur</text>
+<rect x="1308" y="690" width="36" height="36" rx="6" fill="#6E56CF" opacity="0.95"/>
+<text x="1326.0" y="714.0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#F3EFE6" text-anchor="middle">I</text>
+<rect x="1348" y="690" width="36" height="36" rx="6" fill="#6E56CF" opacity="0.6"/>
+<text x="1366.0" y="714.0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#F3EFE6" text-anchor="middle">II</text>
+<rect x="1308" y="730" width="36" height="36" rx="6" fill="#6E56CF" opacity="0.6"/>
+<text x="1326.0" y="754.0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#F3EFE6" text-anchor="middle">III</text>
+<rect x="1348" y="730" width="36" height="36" rx="6" fill="#6E56CF" opacity="0.6"/>
+<text x="1366.0" y="754.0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#F3EFE6" text-anchor="middle">IV</text>
+<text x="1404.0" y="708.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">Hipodrom – „cartierul care s-a dezvoltat cel mai mult</text>
+<text x="1404.0" y="730.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">până în ’89” (turnulsfatului.ro, 2016); singurul împărțit</text>
+<text x="1404.0" y="752.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">în patru: Hipodrom I–IV (en.wikipedia).</text>
+<line x1="1308" y1="768" x2="1812" y2="768" stroke="#2A3845" stroke-width="1.5"/>
+<text x="1308.0" y="816.0" font-family="'Noto Serif', serif" font-size="44" font-weight="700" fill="#E2A62B" text-anchor="start">134.309</text>
+<text x="1486.5" y="794.0" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#F3EFE6" text-anchor="start">locuitori în tot orașul</text>
+<text x="1486.5" y="816.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">recensământul din 2021</text>
+<text x="1308.0" y="854.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start" font-style="italic">„S-a dezvoltat cel mai mult” nu înseamnă automat „are cei mai</text>
+<text x="1308.0" y="876.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start" font-style="italic">mulți locuitori”. Fără date pe cartiere, orice grafic ar fi inventat –</text>
+<text x="1308.0" y="898.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start" font-style="italic">de aceea nu desenăm unul.</text>
+<text x="1308.0" y="934.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#E2A62B" text-anchor="start">Pentru clasă: unde ați căuta date oficiale pe cartiere?</text>
+<text x="80.0" y="994.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">Surse: en.wikipedia (Sibiu, Terezian, Gușterița, Turnișor, Valea Aurie); kirchenburgen.org (Turnișor, 1327); turnulsfatului.ro (2014; 2016 – „Cum au apărut în Sibiu cartierele de blocuri”); recensământul 2021, via en.wikipedia.</text>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

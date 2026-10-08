@@ -1,0 +1,345 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M16</title></head><body>
+<script src="lib.js"></script>
+<script>
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const TEND = 54; // cartela finală 54–60 s
+// hartă schematică – coordonatele comune ale calupului (x spre est, y spre sud, centrul istoric = 0,0)
+const CX = 520, CY = 585, SC = 395;
+const mp = p => [CX + p[0] * SC, CY + p[1] * SC];
+const PW = 840, PH = 560; // panoul ilustrației
+const off = document.createElement('canvas'); off.width = PW; off.height = PH; const g = off.getContext('2d');
+
+const STOPS = [
+  { name: 'Terezian', p: [0, -.45], col: '#6E56CF', curve: 0, lab: 'right',
+    f1: 'Numele vine de la împărăteasa Maria Tereza, care a finanțat un orfelinat și biserica Sf. Elisabeta (1767–1771).',
+    f2: 'Al doilea cel mai vechi cartier, după centru. Parcul Terezian a fost odinioară Târgul Vitelor.',
+    src: 'turnulsfatului.ro (2014); en.wikipedia.org (Terezian)' },
+  { name: 'Țiglari', p: [-.3, -.78], col: '#B9583A', curve: .12, lab: 'right',
+    f1: 'Numele vine de la fabrica de țiglă a lui Gustav Binder (secolul al XIX-lea); muncitorii s-au așezat aici.',
+    f2: 'Tot aici se află Lacul lui Binder, „singurul lac din municipiu”.',
+    src: 'turnulsfatului.ro (2014); en.wikipedia.org (Țiglari); agerpres.ro (2020)' },
+  { name: 'Ștrand', p: [-.62, .1], col: '#0E7C86', curve: -.16, lab: 'left',
+    f1: 'Ștrandul a fost construit în anii 1920 sau inaugurat la 12 iulie 1936 – sursele diferă.',
+    f2: 'Trambulina „Turnul lui Phleps” avea sărituri de la 3, 5 și 10 m. Blocurile cartierului apar din 1970.',
+    src: 'turnulsfatului.ro (2014, 2016); en.wikipedia.org; old.tribuna.ro' },
+  { name: 'Hipodrom', p: [.25, .65], col: '#E2A62B', curve: .08, lab: 'right', orient: true,
+    f1: 'La începutul secolului al XIX-lea s-a amenajat aici un hipodrom pentru cavalerie; cartierul îi poartă numele.',
+    f2: 'După război a devenit neutilizabil și a fost demolat pentru blocuri; Hipodrom I s-a terminat în 1972.',
+    src: 'zilesinopti.ro (Răzvan Pop, 2024); turnulsfatului.ro (2016)' },
+  { name: 'Lazaret', p: [.45, -.15], col: '#3E63DD', curve: .15, lab: 'right',
+    f1: 'În zona gării și a autogării era o mică mănăstire dominicană; clădirile au devenit lazaret – loc de izolare a bolnavilor.',
+    f2: 'Orașul a crescut, lazaretul a fost împins spre margine, apoi închis, iar zona a devenit cartier.',
+    src: 'en.wikipedia.org (Lazaret); turnulsfatului.ro (2014)' },
+];
+const ROUTE = [[0, -.12]].concat(STOPS.map(s => s.p));
+// alte cartiere, doar ca reper: [nume, poziție, orientativ, etichetă]
+const CONTEXT = [['Trei Stejari', [.05, .28], 0, 'below'], ['Broscărie', [.82, .05], 0, 'above'], ['Vasile Aaron', [.62, .45], 0, 'right'], ['Turnișor', [-.88, -.3], 0, 'below'], ['Valea Aurie', [-.55, .78], 0, 'left'], ['Gușterița', [.75, -.62], 1, 'below'], ['Dumbrăvii', [-.15, .72], 1, 'right'], ['Piața Cluj', [-.48, -.45], 1, 'left']];
+const T0 = 4, SD = 10;
+function segCtrl(k) { const A = mp(ROUTE[k]), B = mp(ROUTE[k + 1]); const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], L = Math.hypot(dx, dy); const c = STOPS[k].curve; return [A, [mx - dy * c, my + dx * c], B]; }
+function bez(S, e) { const [A, C, B] = S, u = 1 - e; return [u * u * A[0] + 2 * u * e * C[0] + e * e * B[0], u * u * A[1] + 2 * u * e * C[1] + e * e * B[1]]; }
+
+function labelAt(c, s, x, y, pos, o) {
+  const d = o.r || 14; let tx = x, ty = y + 7, al = 'left';
+  if (pos === 'right') { tx = x + d + 8; } else if (pos === 'left') { tx = x - d - 8; al = 'right'; } else if (pos === 'above') { ty = y - d - 10; al = 'center'; } else { ty = y + d + 26; al = 'center'; }
+  text(c, s, tx, ty, Object.assign({ align: al }, o));
+}
+function walker(x, y, t, moving, glow) {
+  ctx.save();
+  const gr = ctx.createRadialGradient(x, y, 2, x, y, 30 + glow * 22); gr.addColorStop(0, rgba(PAL.ocru, .55)); gr.addColorStop(1, rgba(PAL.ocru, 0)); ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, 30 + glow * 22, 0, 7); ctx.fill();
+  ctx.translate(x, y - 6 - (moving ? Math.abs(Math.sin(t * 9)) * 4 : Math.abs(Math.sin(t * 2.4)) * 2)); ctx.scale(1.25, 1.25);
+  const sw = moving ? Math.sin(t * 9) * 7 : 0;
+  ctx.strokeStyle = PAL.var; ctx.lineWidth = 5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(-sw, 0); ctx.moveTo(0, -16); ctx.lineTo(sw, 0); ctx.stroke();
+  ctx.fillStyle = PAL.var; roundRect(ctx, -7, -36, 14, 22, 6); ctx.fill();
+  ctx.beginPath(); ctx.arc(0, -44, 7, 0, 7); ctx.fill();
+  ctx.fillStyle = PAL.ocru; ctx.fillRect(-7, -36, 14, 5); ctx.fillRect(3, -36, 4, 12);
+  ctx.restore();
+}
+function drawMap(t, env) {
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 80, 130, 880, 870, 32); ctx.fill();
+  ctx.save(); roundRect(ctx, 80, 130, 880, 870, 32); ctx.clip();
+  ctx.strokeStyle = 'rgba(169,180,192,.07)'; ctx.lineWidth = 1; for (let x = 80; x < 960; x += 55) { ctx.beginPath(); ctx.moveTo(x, 130); ctx.lineTo(x, 1000); ctx.stroke(); } for (let y = 130; y < 1000; y += 55) { ctx.beginPath(); ctx.moveTo(80, y); ctx.lineTo(960, y); ctx.stroke(); }
+  ctx.restore();
+  const ma = smooth(.3, 1.4, t);
+  text(ctx, 'Hartă schematică · poziții aproximative', 116, 182, { size: 22, weight: 600, color: PAL.ceata, alpha: ma });
+  // busolă
+  ctx.save(); ctx.globalAlpha = ma; ctx.strokeStyle = PAL.ceata; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(900, 196, 26, 0, 7); ctx.stroke(); ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.moveTo(900, 174); ctx.lineTo(909, 200); ctx.lineTo(891, 200); ctx.closePath(); ctx.fill(); ctx.fillStyle = PAL.ceata; ctx.beginPath(); ctx.moveTo(900, 218); ctx.lineTo(909, 200); ctx.lineTo(891, 200); ctx.closePath(); ctx.fill(); ctx.restore();
+  text(ctx, 'N', 900, 160, { size: 20, weight: 700, align: 'center', color: PAL.var, alpha: ma });
+  // centrul istoric
+  const [cx, cy] = mp([0, 0]);
+  ctx.save(); ctx.globalAlpha = ma; ctx.fillStyle = rgba(PAL.petrol, .35); ctx.strokeStyle = PAL.petrol; ctx.lineWidth = 3; ctx.beginPath(); for (let i = 0; i <= 40; i++) { const a = i / 40 * Math.PI * 2, r = 1 + .07 * Math.sin(a * 3) + .05 * Math.cos(a * 5); const x = cx + Math.cos(a) * 82 * r, y = cy + Math.sin(a) * 46 * r; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  text(ctx, 'Centrul istoric', cx, cy + 7, { size: 20, weight: 700, align: 'center', color: PAL.var, alpha: ma });
+  // repere
+  CONTEXT.forEach(([n, p, orient, pos], i) => {
+    const a = smooth(.6 + i * .08, 1.4 + i * .08, t) * .75; if (a <= 0) return; const [x, y] = mp(p);
+    ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = PAL.ceata; ctx.fillStyle = PAL.ceata; ctx.lineWidth = 2;
+    if (orient) { ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.arc(x, y, 8, 0, 7); ctx.stroke(); ctx.setLineDash([]); } else { ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.fill(); }
+    ctx.restore(); labelAt(ctx, n, x, y, pos, { size: 20, color: PAL.ceata, alpha: a, r: 8 });
+  });
+  // traseul complet, palid
+  for (let k = 0; k < 5; k++) { const S = segCtrl(k); ctx.save(); ctx.globalAlpha = ma * .35; ctx.strokeStyle = PAL.ceata; ctx.lineWidth = 3; ctx.setLineDash([3, 9]); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(S[0][0], S[0][1]); ctx.quadraticCurveTo(S[1][0], S[1][1], S[2][0], S[2][1]); ctx.stroke(); ctx.restore(); }
+  // traseul parcurs
+  let pos = mp([0, -.12]), moving = false;
+  for (let k = 0; k < 5; k++) {
+    const T = T0 + k * SD, e = easeInOut(inv(T, T + 2, t)); if (e <= 0) break;
+    const S = segCtrl(k); ctx.save(); ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.setLineDash([2, 12]); ctx.beginPath();
+    for (let i = 0; i <= 40; i++) { const q = bez(S, e * i / 40); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); } ctx.stroke(); ctx.restore();
+    pos = bez(S, e); if (e < 1) moving = true;
+  }
+  // opriri
+  STOPS.forEach((s, k) => {
+    const [x, y] = mp(s.p), T = T0 + k * SD, reached = smooth(T + 1.8, T + 2.3, t), cur = t >= T + 1.8 && t < T + SD && t < TEND, a = smooth(.8 + k * .1, 1.6 + k * .1, t);
+    ctx.save(); ctx.globalAlpha = a;
+    if (cur) { ctx.strokeStyle = rgba(s.col, .6); ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(x, y, 30 + 5 * Math.sin(t * 4), 0, 7); ctx.stroke(); }
+    if (s.orient) { ctx.strokeStyle = PAL.ceata; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(x, y, 24, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
+    ctx.fillStyle = reached > 0 ? mix(PAL.slate, s.col, reached) : PAL.slate; ctx.strokeStyle = s.col; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(x, y, 18, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    text(ctx, String(k + 1), x, y + 8, { size: 22, weight: 800, align: 'center', color: reached > .5 ? PAL.night : PAL.var, alpha: a });
+    labelAt(ctx, s.name, x, y, s.lab, { size: 26, weight: 700, color: PAL.var, alpha: a, r: 20 });
+    if (s.orient) text(ctx, 'poziție orientativă', x + 28, y + 36, { size: 20, color: PAL.ceata, alpha: a });
+  });
+  walker(pos[0], pos[1], t, moving, env);
+  if (t < 4.1) text(ctx, 'personaj fictiv', pos[0], pos[1] - 82, { size: 20, align: 'center', color: PAL.ocru, alpha: smooth(1, 1.6, t) * (1 - smooth(3.5, 4.05, t)), weight: 600 });
+  // legendă
+  ctx.save(); ctx.globalAlpha = ma; ctx.fillStyle = PAL.ceata; ctx.beginPath(); ctx.arc(118, 968, 6, 0, 7); ctx.fill(); ctx.strokeStyle = PAL.ceata; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.arc(388, 968, 8, 0, 7); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  text(ctx, 'direcție după surse', 134, 975, { size: 20, color: PAL.ceata, alpha: ma });
+  text(ctx, 'poziție orientativă', 406, 975, { size: 20, color: PAL.ceata, alpha: ma });
+  text(ctx, 'nu la scară', 924, 975, { size: 20, color: PAL.ceata, alpha: ma, align: 'right' });
+}
+
+// ---------- ajutoare pentru ilustrații (contextul g) ----------
+function tagG(c, x, y, s, a, col) {
+  if (a <= 0) return; c.save(); c.globalAlpha = a; c.font = '600 22px Inter'; const w = c.measureText(s).width + 30;
+  c.fillStyle = 'rgba(15,23,32,.85)'; roundRect(c, x - w / 2, y - 21, w, 40, 20); c.fill(); c.strokeStyle = col || PAL.ocru; c.lineWidth = 2; c.stroke(); c.restore();
+  text(c, s, x, y + 7, { size: 22, weight: 600, align: 'center', alpha: a });
+}
+function tree(c, x, y, s, t, col) {
+  c.save(); c.translate(x, y); c.scale(s, s); const sw = Math.sin(t * 1.3 + x * .05) * 3;
+  c.fillStyle = '#5A3E2B'; c.fillRect(-5, -40, 10, 40);
+  c.fillStyle = col || '#4E7A3A'; c.beginPath(); c.arc(sw, -62, 30, 0, 7); c.arc(-18 + sw, -48, 20, 0, 7); c.arc(18 + sw, -48, 22, 0, 7); c.fill();
+  c.restore();
+}
+function cow(c, x, y, s, dir, t) {
+  c.save(); c.translate(x, y); c.scale(s * dir, s);
+  c.strokeStyle = '#4A3A30'; c.lineWidth = 6; for (const lx of [-26, -16, 18, 28]) { c.beginPath(); c.moveTo(lx, -24); c.lineTo(lx, 0); c.stroke(); }
+  c.fillStyle = '#EDE6DA'; roundRect(c, -38, -50, 76, 30, 12); c.fill();
+  c.fillStyle = '#5A4436'; c.beginPath(); c.ellipse(-12, -40, 10, 7, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(16, -32, 8, 6, 0, 0, 7); c.fill();
+  c.fillStyle = '#EDE6DA'; c.beginPath(); c.ellipse(44, -46 + Math.sin(t * 2) * 2, 13, 10, .3, 0, 7); c.fill();
+  c.fillStyle = '#5A4436'; c.fillRect(38, -58, 4, 6); c.fillRect(48, -58, 4, 6);
+  c.restore();
+}
+function horse(c, x, y, s, dir, ph, col) {
+  c.save(); c.translate(x, y); c.scale(s * dir, s);
+  c.strokeStyle = col; c.lineWidth = 7; c.lineCap = 'round';
+  for (const [lx, o] of [[-32, 0], [-22, 1.3], [24, 2.6], [34, 3.9]]) { const a = Math.sin(ph + o) * .6; c.beginPath(); c.moveTo(lx, -42); c.lineTo(lx + Math.sin(a) * 30, -42 + Math.cos(a) * 40); c.stroke(); }
+  c.fillStyle = col; c.beginPath(); c.ellipse(0, -54, 46, 19, 0, 0, 7); c.fill();
+  c.beginPath(); c.moveTo(28, -66); c.lineTo(52, -100); c.lineTo(68, -94); c.lineTo(50, -52); c.closePath(); c.fill();
+  c.beginPath(); c.ellipse(68, -96, 17, 8, .45, 0, 7); c.fill();
+  c.lineWidth = 5; c.beginPath(); c.moveTo(-44, -60); c.quadraticCurveTo(-64, -50 + Math.sin(ph) * 5, -60, -30); c.stroke();
+  c.fillStyle = '#2A3442'; roundRect(c, -8, -100, 18, 34, 6); c.fill(); c.fillStyle = '#3B4A3F'; c.beginPath(); c.arc(3, -108, 9, 0, 7); c.fill();
+  c.restore();
+}
+function blk(c, x, base, w, h, col, night, seed) {
+  if (h <= 1) return; const top = base - h;
+  c.fillStyle = col; c.fillRect(x, top, w, h); c.fillStyle = 'rgba(0,0,0,.16)'; c.fillRect(x + w * .8, top, w * .2, h); c.fillStyle = '#8A857A'; c.fillRect(x - 3, top - 5, w + 6, 6);
+  const cols = Math.max(2, Math.floor(w / 26));
+  for (let j = 0; j < 12; j++) { const wy = base - 22 - j * 28; if (wy - 14 < top + 6) break; for (let i = 0; i < cols; i++) { const hs = ((i * 7 + j * 13 + seed * 5) % 17) / 17; c.fillStyle = hs < night ? '#FFD27A' : '#3A4552'; c.fillRect(x + 6 + i * (w - 12) / cols + 3, wy - 14, Math.min(12, (w - 12) / cols - 6), 14); } }
+}
+function figure(c, x, y, s, col, ang) { c.save(); c.translate(x, y); c.rotate(ang || 0); c.scale(s, s); c.fillStyle = col; c.beginPath(); c.arc(0, -30, 6, 0, 7); c.fill(); roundRect(c, -5, -24, 10, 16, 4); c.fill(); c.strokeStyle = col; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(-2, -8); c.lineTo(-3, 4); c.moveTo(2, -8); c.lineTo(3, 4); c.moveTo(-4, -22); c.lineTo(-9, -34); c.moveTo(4, -22); c.lineTo(9, -34); c.stroke(); c.restore(); }
+
+// 1. Terezian: orfelinatul și parcul (fostul Târg al Vitelor)
+function illTerezian(lt, t) {
+  const c = g; sky(c, PW, PH, .42, 1); mountains(c, PW, 300, '#8094A8', 7, 50);
+  c.fillStyle = '#7C9455'; c.fillRect(0, 360, PW, PH);
+  const wall = '#E9DCC3', roof = '#8A4A35', dark = '#2E3640';
+  // biserica (stânga) – schemă
+  c.fillStyle = roof; c.beginPath(); c.moveTo(48, 252); c.lineTo(70, 214); c.lineTo(168, 214); c.lineTo(178, 252); c.closePath(); c.fill();
+  c.fillStyle = wall; c.fillRect(56, 250, 118, 120);
+  for (let i = 0; i < 3; i++) { c.fillStyle = dark; c.beginPath(); c.moveTo(78 + i * 34, 330); c.lineTo(78 + i * 34, 282); c.arc(86 + i * 34, 282, 8, Math.PI, 0); c.lineTo(94 + i * 34, 330); c.fill(); }
+  c.fillStyle = wall; c.fillRect(174, 150, 66, 220); c.fillStyle = 'rgba(0,0,0,.1)'; c.fillRect(222, 150, 18, 220);
+  c.fillStyle = '#5E6E72'; c.beginPath(); c.moveTo(168, 150); c.quadraticCurveTo(162, 118, 207, 100); c.quadraticCurveTo(252, 118, 246, 150); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(199, 104); c.lineTo(207, 62); c.lineTo(215, 104); c.closePath(); c.fill();
+  c.strokeStyle = PAL.ocru; c.lineWidth = 3; c.beginPath(); c.moveTo(207, 64); c.lineTo(207, 40); c.moveTo(199, 50); c.lineTo(215, 50); c.stroke();
+  c.fillStyle = PAL.var; c.beginPath(); c.arc(207, 180, 14, 0, 7); c.fill();
+  // orfelinatul – clădire lungă
+  c.fillStyle = roof; c.beginPath(); c.moveTo(242, 214); c.lineTo(282, 158); c.lineTo(770, 158); c.lineTo(810, 214); c.closePath(); c.fill();
+  for (let i = 0; i < 4; i++) eye(c, 340 + i * 120, 190, 36, '#6B3A2C', { open: 1 });
+  c.fillStyle = wall; c.fillRect(250, 212, 552, 158);
+  for (let r = 0; r < 2; r++) for (let i = 0; i < 10; i++) { if (r === 1 && (i === 4 || i === 5)) continue; c.fillStyle = '#B8A07A'; c.fillRect(272 + i * 53, 230 + r * 70, 30, 44); c.fillStyle = dark; c.fillRect(276 + i * 53, 234 + r * 70, 22, 36); }
+  c.fillStyle = dark; c.beginPath(); c.moveTo(500, 370); c.lineTo(500, 318); c.arc(526, 318, 26, Math.PI, 0); c.lineTo(552, 370); c.fill();
+  // parcul
+  c.fillStyle = '#C9B88E'; c.beginPath(); c.moveTo(500, 370); c.quadraticCurveTo(420, 460, 300, 560); c.lineTo(420, 560); c.quadraticCurveTo(500, 470, 552, 370); c.closePath(); c.fill();
+  const cowA = 1 - smooth(2.4, 3.6, lt), treeG = smooth(3.4, 5.4, lt);
+  if (cowA > 0) { c.save(); c.globalAlpha = cowA; cow(c, 140, 470, 1, 1, t); cow(c, 640, 450, .9, -1, t + 1); cow(c, 720, 520, 1.1, -1, t + 2); cow(c, 230, 530, 1.05, 1, t + 3); c.restore(); }
+  if (treeG > 0) { for (const [x, y, s] of [[110, 470, 1.1], [220, 540, 1.3], [650, 460, 1], [760, 540, 1.35], [40, 545, 1.2]]) { c.save(); c.translate(x, y); c.scale(1, treeG); c.translate(-x, -y); tree(c, x, y, s, t); c.restore(); } }
+  c.save(); c.globalAlpha = treeG; c.fillStyle = '#6B4A35'; c.fillRect(600, 500, 60, 8); c.fillRect(604, 508, 6, 14); c.fillRect(650, 508, 6, 14); c.restore();
+  tagG(c, 526, 120, 'orfelinatul și biserica · schemă imaginată', 1);
+  tagG(c, 420, 420, 'ieri: Târgul Vitelor', cowA * smooth(.2, .8, lt));
+  tagG(c, 420, 420, 'azi: Parcul Terezian', smooth(4.4, 5, lt));
+}
+// 2. Țiglari: fabrica de țiglă și lacul
+function illTiglari(lt, t) {
+  const c = g; sky(c, PW, PH, .6, 1); mountains(c, PW, 290, '#8A98AA', 9, 55);
+  c.fillStyle = '#7C9455'; c.fillRect(0, 330, PW, PH);
+  // fabrica
+  c.fillStyle = '#5A2E22'; c.beginPath(); c.moveTo(30, 232); c.lineTo(60, 196); c.lineTo(320, 196); c.lineTo(346, 232); c.closePath(); c.fill();
+  c.fillStyle = '#9A4A32'; c.fillRect(40, 230, 300, 120);
+  for (let i = 0; i < 6; i++) { c.fillStyle = '#2E3640'; c.beginPath(); c.moveTo(62 + i * 46, 320); c.lineTo(62 + i * 46, 262); c.arc(74 + i * 46, 262, 12, Math.PI, 0); c.lineTo(86 + i * 46, 320); c.fill(); }
+  c.fillStyle = 'rgba(0,0,0,.15)'; for (let y = 240; y < 350; y += 12) c.fillRect(40, y, 300, 2);
+  c.fillStyle = '#8A3E2A'; c.beginPath(); c.moveTo(272, 350); c.lineTo(280, 70); c.lineTo(306, 70); c.lineTo(314, 350); c.closePath(); c.fill();
+  c.fillStyle = '#5A2E22'; c.fillRect(276, 64, 34, 12);
+  for (let k = 0; k < 7; k++) { const q = ((lt * .28 + k / 7) % 1); c.fillStyle = `rgba(220,220,225,${.5 * (1 - q)})`; c.beginPath(); c.arc(293 + q * 160 + Math.sin(q * 6 + k) * 10, 58 - q * 70, 14 + q * 34, 0, 7); c.fill(); }
+  // lacul
+  const lg = c.createLinearGradient(0, 330, 0, 480); lg.addColorStop(0, '#5EA8D8'); lg.addColorStop(1, '#2A6F9E'); c.fillStyle = lg; c.beginPath(); c.ellipse(610, 405, 215, 72, 0, 0, 7); c.fill();
+  c.save(); c.beginPath(); c.ellipse(610, 405, 215, 72, 0, 0, 7); c.clip();
+  for (let k = 0; k < 3; k++) { const q = (lt * .35 + k / 3) % 1; c.strokeStyle = `rgba(255,255,255,${.5 * (1 - q)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(620, 410, 20 + q * 150, 6 + q * 46, 0, 0, 7); c.stroke(); }
+  c.fillStyle = 'rgba(255,240,200,.35)'; for (let i = 0; i < 6; i++) c.fillRect(560 + Math.sin(t * 2 + i) * 14, 360 + i * 12, 70 - i * 8, 3);
+  c.restore();
+  c.strokeStyle = '#4E6A34'; c.lineWidth = 3; for (let i = 0; i < 12; i++) { const x = 400 + i * 9, s = Math.sin(t * 1.5 + i) * 3; c.beginPath(); c.moveTo(x, 440); c.quadraticCurveTo(x + s, 410, x + s * 2, 392 - (i % 3) * 8); c.stroke(); }
+  // țiglele – rânduri care apar unul câte unul (țiglă solzi)
+  c.fillStyle = '#6B4A35'; c.fillRect(30, 530, 360, 14);
+  const rows = 4, per = 12;
+  for (let r = rows - 1; r >= 0; r--) { const ra = smooth(1 + r * .7, 1.6 + r * .7, lt); if (ra <= 0) continue; for (let i = 0; i < per; i++) { const x = 40 + i * 28 + (r % 2) * 14, y = 420 + r * 26 - (1 - ra) * 30; c.save(); c.globalAlpha = ra; c.fillStyle = mix('#B9583A', ['#8A3E2A', '#C96A48', '#A04A30'][(i + r) % 3], .45); c.beginPath(); c.moveTo(x, y); c.lineTo(x + 26, y); c.lineTo(x + 26, y + 30); c.arc(x + 13, y + 30, 13, 0, Math.PI); c.closePath(); c.fill(); c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 1.5; c.stroke(); c.restore(); } }
+  tagG(c, 190, 170, 'fabrica de țiglă · imaginată', 1);
+  tagG(c, 610, 300, 'Lacul lui Binder', smooth(1.2, 1.8, lt));
+}
+// 3. Ștrand: bazinul și trambulina
+function illStrand(lt, t) {
+  const c = g; sky(c, PW, PH, .5, 1);
+  c.fillStyle = '#FFE6A8'; c.beginPath(); c.arc(770, 90, 36, 0, 7); c.fill();
+  for (let i = 0; i < 9; i++) tree(c, 20 + i * 100, 300, 1.2 + (i % 3) * .2, t, ['#4E7A3A', '#5E8A44', '#3E6A30'][i % 3]);
+  c.fillStyle = '#D8D2C4'; c.fillRect(0, 300, PW, PH);
+  // bazin în perspectivă
+  const wg = c.createLinearGradient(0, 330, 0, 545); wg.addColorStop(0, '#6CC4E4'); wg.addColorStop(1, '#2A86B8');
+  c.fillStyle = '#F3EFE6'; c.beginPath(); c.moveTo(150, 322); c.lineTo(630, 322); c.lineTo(728, 552); c.lineTo(22, 552); c.closePath(); c.fill();
+  c.fillStyle = wg; c.beginPath(); c.moveTo(162, 330); c.lineTo(620, 330); c.lineTo(712, 545); c.lineTo(38, 545); c.closePath(); c.fill();
+  c.save(); c.beginPath(); c.moveTo(162, 330); c.lineTo(620, 330); c.lineTo(712, 545); c.lineTo(38, 545); c.closePath(); c.clip();
+  c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 3; c.setLineDash([10, 8]); for (let i = 1; i < 6; i++) { c.beginPath(); c.moveTo(162 + i * (458 / 6), 330); c.lineTo(38 + i * (674 / 6), 545); c.stroke(); } c.setLineDash([]);
+  c.strokeStyle = 'rgba(255,255,255,.3)'; c.lineWidth = 2; for (let j = 0; j < 9; j++) { const y = 342 + j * 23; c.beginPath(); for (let x = 20; x < 740; x += 10) { const yy = y + Math.sin(x * .05 + t * 2.4 + j) * 2.5; x === 20 ? c.moveTo(x, yy) : c.lineTo(x, yy); } c.stroke(); }
+  c.restore();
+  // trambulina: 25 px pe metru, sol la y = 380
+  const G0 = 380, m = v => G0 - v * 25, X = -120;
+  c.fillStyle = '#C9C4B8'; c.fillRect(690 + X, m(10) - 4, 18, G0 - m(10) + 4); c.fillRect(740 + X, m(10) - 4, 18, G0 - m(10) + 4);
+  c.fillStyle = 'rgba(0,0,0,.12)'; c.fillRect(750 + X, m(10), 8, G0 - m(10));
+  c.strokeStyle = '#8A857A'; c.lineWidth = 3; for (let y = m(10) + 10; y < G0; y += 16) { c.beginPath(); c.moveTo(758 + X, y); c.lineTo(778 + X, y); c.stroke(); } c.beginPath(); c.moveTo(778 + X, m(10)); c.lineTo(778 + X, G0); c.stroke();
+  for (const [v, x0] of [[3, 600], [5, 580], [10, 560]]) { c.fillStyle = '#E6E2D8'; c.fillRect(x0 + X, m(v) - 8, 760 - x0, 9); c.fillStyle = '#8A857A'; c.fillRect(x0 + X, m(v) + 1, 760 - x0, 3); c.save(); c.fillStyle = 'rgba(15,23,32,.8)'; roundRect(c, 792 + X, m(v) - 20, 64, 34, 17); c.fill(); c.restore(); text(c, v + ' m', 824 + X, m(v) + 5, { size: 22, weight: 700, align: 'center', color: PAL.var }); }
+  // săritorul (personaj fictiv), ciclu de 3,4 s
+  const p = (lt % 3.4) / 3.4, sx = 572 + X, wx = 470 + X;
+  if (p < .28) figure(c, sx, m(10) - 8, 1, '#2A3442', 0);
+  else if (p < .62) { const q = (p - .28) / .34; const x = lerp(sx, wx, q), y = m(10) - 8 - Math.sin(q * Math.PI) * 40 * (1 - q) + q * q * (430 - m(10) + 8); figure(c, x, y, 1, '#2A3442', Math.PI * q * 1.1); }
+  else { const q = (p - .62) / .38; c.strokeStyle = `rgba(255,255,255,${.85 * (1 - q)})`; c.lineWidth = 3; for (let k = 0; k < 2; k++) { c.beginPath(); c.ellipse(wx, 438, 12 + q * (60 + k * 30), 4 + q * (16 + k * 8), 0, 0, 7); c.stroke(); } if (q < .4) { c.fillStyle = `rgba(255,255,255,${.9 * (1 - q / .4)})`; for (let k = 0; k < 7; k++) { c.beginPath(); c.arc(wx + (k - 3) * 9, 430 - Math.sin(q / .4 * Math.PI) * (20 + (k % 3) * 10), 4, 0, 7); c.fill(); } } }
+  tagG(c, 330, 56, 'trambulina „Turnul lui Phleps” · schemă', 1);
+}
+// 4. Hipodrom: pista cu cai devine cartier de blocuri
+function illHipodrom(lt, t) {
+  const c = g; const b = smooth(4.2, 6.6, lt);
+  sky(c, PW, PH, .5, 1); mountains(c, PW, 250, '#8094A8', 13, 50);
+  c.fillStyle = mix('#7C9455', '#8C8F86', b * .6); c.fillRect(0, 230, PW, PH);
+  const ox = 420, oy = 390, rx = 330, ry = 118;
+  c.strokeStyle = mix('#B08A5A', '#9A9890', b); c.lineWidth = 46; c.beginPath(); c.ellipse(ox, oy, rx, ry, 0, 0, 7); c.stroke();
+  c.save(); c.globalAlpha = 1 - b; c.strokeStyle = '#F3EFE6'; c.lineWidth = 3; c.setLineDash([3, 9]); c.beginPath(); c.ellipse(ox, oy, rx + 24, ry + 24, 0, 0, 7); c.stroke(); c.beginPath(); c.ellipse(ox, oy, rx - 24, ry - 24, 0, 0, 7); c.stroke(); c.setLineDash([]); c.restore();
+  const items = [];
+  for (let i = 0; i < 3; i++) { const th = lt * .85 + i * .55; items.push({ y: oy + ry * Math.sin(th), f: () => { const x = ox + rx * Math.cos(th), y = oy + ry * Math.sin(th), s = .5 + .28 * (Math.sin(th) + 1) / 2, dir = -Math.sin(th) > 0 ? 1 : -1; c.save(); c.globalAlpha = 1 - b; horse(c, x, y + 10, s, dir, lt * 11 + i, ['#5A3E2B', '#3A2618', '#7A5A3E'][i]); c.restore(); } }); }
+  const BL = [[180, 360, 120, 210], [330, 330, 100, 170], [470, 350, 130, 230], [610, 372, 110, 190], [260, 470, 140, 200], [520, 480, 120, 180]];
+  BL.forEach(([x, base, w, h], i) => items.push({ y: base, f: () => { const gg = smooth(4.4 + i * .3, 6 + i * .3, lt); if (gg > 0) blk(c, x - w / 2, base, w, h * easeOut(gg), ['#CFC8BA', '#BDB6A8', '#D8D2C4', '#C4C9C8'][i % 4], 0, i * 3 + 1); } }));
+  items.sort((a, b2) => a.y - b2.y).forEach(it => it.f());
+  if (b > .5) { c.save(); c.globalAlpha = smooth(.5, 1, b); for (const [x, y] of [[90, 520], [760, 500], [400, 545]]) tree(c, x, y, 1, t); c.restore(); }
+  tagG(c, 420, 205, 'hipodromul cavaleriei · imaginat', 1 - smooth(4, 4.6, lt));
+  tagG(c, 420, 205, 'blocuri · Hipodrom I, 1972', smooth(5.6, 6.2, lt));
+}
+// 5. Lazaret: gara și felinarul
+function illLazaret(lt, t) {
+  const c = g; sky(c, PW, PH, .74, 3); stars(c, PW, PH, .35, 8);
+  mountains(c, PW, 270, '#3A4560', 17, 45);
+  c.fillStyle = '#4A4E58'; c.fillRect(0, 380, PW, PH);
+  const wall = '#C9BFAE', roof = '#4A3A34';
+  c.fillStyle = roof; c.beginPath(); c.moveTo(100, 240); c.lineTo(130, 214); c.lineTo(722, 214); c.lineTo(752, 240); c.closePath(); c.fill();
+  c.fillStyle = wall; c.fillRect(110, 238, 632, 142);
+  c.fillStyle = roof; c.beginPath(); c.moveTo(316, 170); c.lineTo(426, 120); c.lineTo(536, 170); c.closePath(); c.fill();
+  c.fillStyle = mix(wall, '#FFFFFF', .1); c.fillRect(326, 168, 200, 212);
+  c.fillStyle = '#F3EFE6'; c.beginPath(); c.arc(426, 205, 22, 0, 7); c.fill(); c.strokeStyle = '#2E3640'; c.lineWidth = 3; c.beginPath(); c.moveTo(426, 205); c.lineTo(426, 190); c.moveTo(426, 205); c.lineTo(436, 210); c.stroke();
+  for (let i = 0; i < 11; i++) { if (i === 5) continue; const x = 128 + i * 56; c.fillStyle = (i * 7) % 5 < 3 ? '#FFD27A' : '#2E3640'; c.fillRect(x, 262, 30, 46); c.fillRect(x, 318, 30, 40); }
+  c.fillStyle = '#FFD27A'; c.beginPath(); c.moveTo(398, 380); c.lineTo(398, 300); c.arc(426, 300, 28, Math.PI, 0); c.lineTo(454, 380); c.fill();
+  c.fillStyle = '#8A8478'; c.fillRect(0, 380, PW, 16);
+  // șine și tren
+  c.fillStyle = '#3A3530'; for (let x = 0; x < PW; x += 26) c.fillRect(x, 452, 14, 18);
+  c.strokeStyle = '#A9A49A'; c.lineWidth = 4; c.beginPath(); c.moveTo(0, 455); c.lineTo(PW, 455); c.moveTo(0, 466); c.lineTo(PW, 466); c.stroke();
+  const tx = lerp(900, -1200, inv(1, 7.5, lt));
+  if (tx > -1150 && tx < 880) {
+    c.fillStyle = '#2E3A4A'; roundRect(c, tx, 386, 150, 62, 10); c.fill(); c.fillStyle = '#1E2630'; c.fillRect(tx + 100, 360, 46, 30); c.fillStyle = '#FFE6A8'; c.beginPath(); c.arc(tx + 8, 420, 7, 0, 7); c.fill();
+    for (let k = 0; k < 3; k++) { const x = tx + 160 + k * 196; c.fillStyle = ['#3E63DD', '#2E4A8A', '#3E63DD'][k]; roundRect(c, x, 384, 186, 64, 10); c.fill(); c.fillStyle = '#FFD27A'; for (let i = 0; i < 5; i++) c.fillRect(x + 14 + i * 34, 396, 22, 22); }
+    c.fillStyle = '#111'; for (let k = 0; k < 8; k++) { c.beginPath(); c.arc(tx + 30 + k * 82, 452, 10, 0, 7); c.fill(); }
+  }
+  // felinarul
+  const fl = .85 + .15 * Math.sin(t * 13) * Math.sin(t * 7.3);
+  const gr = c.createRadialGradient(720, 250, 4, 720, 250, 180); gr.addColorStop(0, rgba('#FFD27A', .55 * fl)); gr.addColorStop(1, rgba('#FFD27A', 0)); c.fillStyle = gr; c.fillRect(520, 60, 400, 400);
+  c.fillStyle = '#1E2228'; c.fillRect(714, 270, 12, 290); c.fillRect(700, 540, 40, 20);
+  c.beginPath(); c.moveTo(696, 228); c.lineTo(720, 206); c.lineTo(744, 228); c.closePath(); c.fill(); c.fillRect(700, 266, 40, 8);
+  c.fillStyle = mix('#FFD27A', '#FFFFFF', .2 * fl); c.beginPath(); c.moveTo(702, 228); c.lineTo(738, 228); c.lineTo(734, 266); c.lineTo(706, 266); c.closePath(); c.fill();
+  c.strokeStyle = '#1E2228'; c.lineWidth = 3; c.beginPath(); c.moveTo(720, 228); c.lineTo(720, 266); c.stroke();
+  tagG(c, 426, 80, 'gara · lângă locul fostului lazaret · schemă', 1);
+}
+const ILL = [illTerezian, illTiglari, illStrand, illHipodrom, illLazaret];
+
+window.render = function (t) {
+  ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H);
+  const gr = ctx.createRadialGradient(1420, 500, 60, 1420, 500, 1000); gr.addColorStop(0, '#1C2836'); gr.addColorStop(1, PAL.night); ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  const env = window.ENV ? window.ENV[Math.min(window.ENV.length - 1, Math.max(0, Math.round(t * 25)))] : 0;
+  drawMap(t, env);
+  // panouri din dreapta
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 1000, 130, 840, 560, 32); ctx.fill();
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 1000, 710, 840, 290, 28); ctx.fill();
+  const k = Math.min(4, Math.max(-1, Math.floor((t - T0) / SD)));
+  if (k < 0) { // intro
+    const a = smooth(.2, 1, t) * (1 - smooth(3.6, 4.2, t));
+    serif(ctx, 'Plimbare prin', 1060, 330, { size: 72, alpha: a });
+    serif(ctx, '5 cartiere', 1060, 420, { size: 96, color: PAL.ocru, alpha: a });
+    text(ctx, 'în 60 de secunde', 1064, 480, { size: 40, color: PAL.var, alpha: a });
+    text(ctx, 'Un personaj fictiv pornește din centrul istoric.', 1064, 560, { size: 28, color: PAL.ceata, alpha: a });
+    text(ctx, 'Traseul', 1040, 775, { size: 24, weight: 700, color: PAL.ceata, alpha: a });
+    let x = 1040; STOPS.forEach((s, i) => { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = s.col; ctx.beginPath(); ctx.arc(x + 10, 832, 10, 0, 7); ctx.fill(); ctx.restore(); ctx.font = '600 28px Inter'; const w = ctx.measureText(s.name).width; text(ctx, s.name, x + 28, 842, { size: 28, weight: 600, alpha: a }); x += w + 54; });
+    text(ctx, 'Hartă schematică, poziții aproximative.', 1040, 920, { size: 24, color: PAL.ceata, alpha: a });
+  } else if (t < TEND) {
+    const s = STOPS[k], T = T0 + k * SD, lt = t - T;
+    // drumul spre oprire
+    const ta = smooth(T - .1, T + .3, t) * (1 - smooth(T + 1.2, T + 1.7, t));
+    if (ta > 0) { text(ctx, 'spre', 1420, 380, { size: 32, align: 'center', color: PAL.ceata, alpha: ta }); serif(ctx, s.name, 1420, 470, { size: 80, align: 'center', color: s.col === '#3E63DD' ? '#7D98F0' : s.col, alpha: ta }); }
+    const ia = smooth(T + 1.3, T + 2.1, t) * (1 - smooth(T + SD - .5, T + SD, t));
+    if (ia > 0) {
+      g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, PW, PH);
+      ILL[k](lt - 1.3, t);
+      ctx.save(); roundRect(ctx, 1000, 130, 840, 560, 32); ctx.clip(); ctx.globalAlpha = ia; ctx.drawImage(off, 1000, 130); ctx.restore();
+      ctx.save(); ctx.globalAlpha = ia; ctx.strokeStyle = rgba(s.col, .7); ctx.lineWidth = 3; roundRect(ctx, 1000, 130, 840, 560, 32); ctx.stroke(); ctx.restore();
+    }
+    // fișa cu fapte
+    const fa = smooth(T + 1.6, T + 2.3, t) * (1 - smooth(T + SD - .5, T + SD, t));
+    if (fa > 0) {
+      ctx.save(); ctx.globalAlpha = fa; ctx.fillStyle = s.col; ctx.fillRect(1000, 740, 8, 230); ctx.restore();
+      text(ctx, `oprirea ${k + 1} din 5`, 1040, 752, { size: 22, weight: 600, color: PAL.ceata, alpha: fa });
+      serif(ctx, s.name, 1040, 800, { size: 46, alpha: fa });
+      if (s.orient) { ctx.font = '700 46px "Noto Serif"'; const w = ctx.measureText(s.name).width; text(ctx, '(poziție orientativă pe hartă)', 1040 + w + 18, 798, { size: 22, color: PAL.ceata, alpha: fa }); }
+      const n1 = text(ctx, s.f1, 1040, 842, { size: 24, maxW: 770, lh: 31, color: PAL.var, alpha: fa * smooth(T + 2, T + 2.6, t) });
+      text(ctx, s.f2, 1040, 842 + n1 * 31 + 8, { size: 24, maxW: 770, lh: 31, color: PAL.var, alpha: fa * smooth(T + 3.2, T + 3.8, t) });
+      text(ctx, 'Surse: ' + s.src, 1040, 985, { size: 20, color: PAL.ceata, alpha: fa });
+    }
+  }
+  // cartela finală
+  const ea = smooth(TEND, TEND + 1, t);
+  if (ea > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.99 * ea})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Plimbare prin 5 cartiere în 60 de secunde', W / 2, 320, { size: 68, align: 'center', alpha: ea });
+    ctx.font = '600 30px Inter'; let tot = 0; STOPS.forEach(s => tot += ctx.measureText(s.name).width + 60); let x = W / 2 - tot / 2;
+    STOPS.forEach((s, i) => { ctx.save(); ctx.globalAlpha = ea; ctx.fillStyle = s.col; ctx.beginPath(); ctx.arc(x + 12, 389, 12, 0, 7); ctx.fill(); ctx.restore(); ctx.font = '600 30px Inter'; const w = ctx.measureText(s.name).width; text(ctx, s.name, x + 32, 400, { size: 30, weight: 600, alpha: ea }); x += w + 60; });
+    serif(ctx, 'Hartă schematică, poziții aproximative', W / 2, 510, { size: 44, align: 'center', color: PAL.ocru, alpha: ea });
+    text(ctx, 'Hipodrom: poziție orientativă. Personajul este fictiv; ilustrațiile sunt imaginate și nu reproduc clădirile reale.', W / 2, 568, { size: 26, align: 'center', color: PAL.var, alpha: ea, maxW: 1600, lh: 36 });
+    text(ctx, 'Surse: turnulsfatului.ro (2014, 2016); en.wikipedia.org; agerpres.ro (2020); old.tribuna.ro; zilesinopti.ro (Răzvan Pop, 2024).', W / 2, 640, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1600, lh: 36 });
+    text(ctx, 'Animație generată cu AI · muzică: A04 „Ochi de țiglă”, instrumental original al expoziției · artefact-model ACTIV AI', W / 2, 740, { size: 24, align: 'center', color: PAL.ceata, alpha: ea });
+  }
+  ctx.fillStyle = 'rgba(10,16,28,.55)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M16', 60, 36, PAL.red);
+  text(ctx, 'Plimbare animată prin 5 cartiere în 60 de secunde', 270, 64, { size: 30, weight: 600 });
+  ctx.fillStyle = 'rgba(10,16,28,.6)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M16');
+};
+window.READY = true;
+</script></body></html>

@@ -1,0 +1,34 @@
+import json, os, subprocess, re
+R='/home/claude/expo'; C=f'{R}/c3'
+def load(p, base_dir):
+    d=json.load(open(p)); base=os.path.dirname(os.path.relpath(p, base_dir))
+    for it in d:
+        it['fisiere']=[('c3/'+f) if not f.startswith('c3/') else f for f in [(f if '/' in f else f'{base}/{f}') for f in it['fisiere']]]
+        for k in ('audio','tts_text'):
+            if it.get(k): it[k]='c3/'+(it[k] if '/' in it[k] else f'{base}/{it[k]}') if not it[k].startswith('c3/') else it[k]
+        it['calup']=3
+    return d
+items=[]
+for p in ['01_vizual/_manifest.json','03_literar/_manifest.json','04_audio/_manifest.json','05_spatial/_manifest.json','06_date/_manifest.json','07_interactiv/_manifest.json','08_identitate/_manifest.json']:
+    items+=load(f'{C}/{p}', C)
+def dur(f):
+    try: return round(float(subprocess.run(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',f],capture_output=True,text=True).stdout),1)
+    except: return None
+titles={m.group(1):m.group(2).strip() for m in re.finditer(r'^([VMLASDIP]\d\d) (.+)$',open(f'{C}/BRIEF_C3.md').read(),re.M)}
+VID={}
+import json as _j
+for it in _j.load(open(f'{C}/02_video/_manifest.json')):
+    it['fisiere']=['c3/'+f if not f.startswith('c3/') else f for f in it['fisiere']]; it['calup']=3; items.append(it)
+
+for c,(f,desc,st,nota) in VID.items():
+    it={'cod':c,'categorie':'Video','titlu':titles[c],'fisiere':[f'c3/02_video/{f}'],'tip':'video','instrument':'Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: peisajul sonor A09','descriere':desc,'status':st,'durata_s':dur(f'{C}/02_video/{f}'),'calup':1}
+    if nota: it['nota']=nota
+    items.append(it)
+order='VMLASDIP'; items.sort(key=lambda x:(order.index(x['cod'][0]),x['cod']))
+for it in items:
+    if it['titlu']!=titles[it['cod']]: print('titlu corectat',it['cod']); it['titlu']=titles[it['cod']]
+    md=[f for f in it['fisiere'] if f.endswith('.md')]
+    if md: it['html']=subprocess.run(['pandoc','-f','markdown','-t','html5','--wrap=none',f'{R}/{md[0]}'],capture_output=True,text=True).stdout
+    if it.get('tts_text'): it['tts']=open(f'{R}/{it["tts_text"]}').read()
+json.dump(items,open(f'{C}/catalog_c3.json','w'),ensure_ascii=False,indent=1)
+print(len(items),[i['cod'] for i in items])
