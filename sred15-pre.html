@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SRED-15 — evaluarea inițială | RADAR AI</title>
+<meta name="description" content="Chestionarul SRED-15 din programul RADAR AI — evaluarea inițială.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1F3864">
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{
+  --albastru:#1F3864; --albastru-2:#2E5FA3; --cerneala:#23272F; --estompat:#566170;
+  --fundal:#F3F6FA; --suprafata:#FFFFFF; --linie:#D6DEE9; --tenta:#EBF3FB;
+  --atentie:#C24E12; --atentie-fundal:#FFF0E6; --ok:#2F6B4F; --ok-fundal:#E8F3EC;
+  --accent:#2A7F8A; --accent-tenta:#E3F1F2;
+  --titluri:"Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --text:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --raza:12px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:5.5rem;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fundal);color:var(--cerneala);font:400 1rem/1.6 var(--text)}
+h1,h2,h3{font-family:var(--titluri);color:var(--albastru);line-height:1.2;margin:0}
+p{margin:0 0 .75rem}
+a{color:var(--albastru-2)}
+button,input,select{font:inherit;color:inherit}
+.ascuns-vizual{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+[hidden]{display:none!important}
+
+/* Antet */
+.antet{background:var(--albastru);color:#fff;
+  background-image:repeating-radial-gradient(circle at 100% 0,rgba(255,255,255,.075) 0 1px,transparent 1px 30px)}
+.antet__in{max-width:42rem;margin:0 auto;padding:2rem 1.25rem 1.75rem}
+.antet__marca{font:600 .9rem/1 var(--titluri);letter-spacing:.06em;opacity:.85;margin:0 0 1rem}
+.antet h1{color:#fff;font-size:clamp(1.75rem,5.5vw,2.25rem);font-weight:700;letter-spacing:-.01em}
+.antet__etapa{display:inline-block;margin:.75rem 0 1rem;padding:.3rem .8rem;border-radius:999px;background:var(--accent);
+  color:#fff;font:600 .95rem/1.3 var(--titluri)}
+.antet__desc{max-width:34rem;margin:0;color:#DCE4F2}
+
+/* Bara de progres */
+.progres{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);border-bottom:1px solid var(--linie);
+  -webkit-backdrop-filter:saturate(1.4) blur(6px);backdrop-filter:saturate(1.4) blur(6px)}
+.progres__in{max-width:42rem;margin:0 auto;padding:.6rem 1.25rem .7rem}
+.progres__text{display:flex;justify-content:space-between;gap:1rem;font-size:.9rem;color:var(--estompat);margin-bottom:.4rem}
+.progres__text strong{color:var(--cerneala);font-variant-numeric:tabular-nums}
+.progres__pista{height:5px;border-radius:5px;background:var(--tenta);overflow:hidden}
+.progres__umplere{height:100%;width:0;background:var(--accent);transition:width .25s ease}
+
+/* Structura */
+main{max-width:42rem;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+.sectiune{margin:0 0 2.25rem}
+.sectiune>h2{font-size:1.3rem;font-weight:700;margin:0 0 .35rem}
+.sectiune__eticheta{display:block;font:600 .85rem/1.3 var(--titluri);color:var(--accent);margin-bottom:.3rem}
+.sectiune__nota{color:var(--estompat);margin:0 0 1rem}
+.panou{background:var(--suprafata);border:1px solid var(--linie);border-radius:var(--raza);padding:1.25rem}
+.panou--tenta{background:var(--tenta);border-color:#D3E2F2}
+.admin{background:var(--atentie-fundal);border:1px solid #F0C9AE;color:#7A2F08;border-radius:var(--raza);padding:1rem 1.25rem;margin:0 0 1.5rem}
+
+/* Înainte să începi */
+details{margin:1rem 0 1.1rem;border-top:1px solid var(--linie);padding-top:.9rem}
+summary{cursor:pointer;font-weight:600;color:var(--albastru)}
+details ul{margin:.75rem 0 0;padding-left:1.15rem}
+details li{margin:0 0 .5rem}
+.acord{display:flex;gap:.75rem;align-items:flex-start;padding:.85rem 1rem;border:1.5px solid var(--linie);border-radius:10px;background:var(--suprafata);cursor:pointer}
+.acord input{width:1.3rem;height:1.3rem;margin:.15rem 0 0;accent-color:var(--accent);flex:none}
+.acord.eroare{border-color:var(--atentie);background:var(--atentie-fundal)}
+
+/* Câmpuri */
+.camp{margin:0 0 1.5rem}
+.camp:last-child{margin-bottom:0}
+.camp__eticheta,legend.camp__eticheta{display:block;font:600 1rem/1.3 var(--titluri);color:var(--albastru);margin:0 0 .35rem;padding:0}
+.camp__ajutor{font-size:.92rem;color:var(--estompat);margin:0 0 .65rem}
+.camp__eroare{color:var(--atentie);font-size:.92rem;font-weight:600;margin:.45rem 0 0}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+input[type="text"].text{width:100%;max-width:16rem;height:3rem;padding:0 .9rem;border:1.5px solid var(--linie);border-radius:10px;background:#fff;
+  font:600 1.1rem/1 var(--titluri);letter-spacing:.06em;text-transform:uppercase}
+input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tenta)}
+.grupa-fixa{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem}
+.grupa-fixa strong{font:700 1.15rem/1.3 var(--titluri);color:var(--albastru)}
+.legatura{background:none;border:0;padding:0;color:var(--albastru-2);text-decoration:underline;cursor:pointer;font-size:.92rem}
+.stare{font-size:.92rem;margin:.5rem 0 0;padding-left:1.2rem;position:relative}
+.stare::before{content:"";position:absolute;left:0;top:.45em;width:.6rem;height:.6rem;border-radius:50%;background:var(--estompat)}
+.stare--ok{color:var(--ok)}.stare--ok::before{background:var(--ok)}
+.stare--eroare{color:var(--atentie);font-weight:600}.stare--eroare::before{background:var(--atentie)}
+
+/* Codul personal — elementul central al paginii */
+.cod{display:grid;grid-template-columns:1fr 1.2fr 1fr 1.2fr;gap:.55rem;max-width:26rem}
+.cod__casuta{display:flex;flex-direction:column;gap:.3rem}
+.cod__casuta label{font:600 .8rem/1.2 var(--titluri);color:var(--estompat);text-align:center}
+.cod__casuta input,.cod__casuta select{width:100%;height:4rem;border:2px solid var(--linie);border-radius:12px;background:#fff;
+  font:700 1.75rem/1 var(--titluri);text-align:center;text-align-last:center;color:var(--albastru);
+  -webkit-appearance:none;appearance:none;padding:0;text-transform:uppercase}
+.cod__casuta select{cursor:pointer}
+.cod__casuta input:focus,.cod__casuta select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tenta)}
+.cod__casuta .plin{border-color:var(--accent);background:var(--accent-tenta)}
+.cod.eroare .cod__casuta input:not(.plin),.cod.eroare .cod__casuta select:not(.plin){border-color:var(--atentie)}
+.cod__rezultat{margin:.9rem 0 .4rem;font-size:.95rem;color:var(--estompat)}
+.cod__rezultat output{display:inline-block;margin-left:.35rem;font:700 1.35rem/1 var(--titluri);letter-spacing:.14em;color:var(--albastru);
+  font-variant-numeric:tabular-nums}
+.cod__explicatii{font-size:.92rem;color:var(--estompat);margin:0}
+.cod__explicatii p{margin:0 0 .35rem}
+
+/* Butoane segmentate (clasa, sex, scale) */
+.segmente{display:flex;gap:.5rem;flex-wrap:wrap}
+.segment{position:relative;flex:1 1 0;min-width:3.25rem;max-width:6rem}
+.segment input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.segment input+span{display:flex;align-items:center;justify-content:center;height:3rem;border:1.5px solid var(--linie);border-radius:10px;background:#fff;
+  font:600 1.05rem/1 var(--titluri);color:var(--cerneala);transition:background-color .12s,border-color .12s,color .12s;user-select:none}
+.segment input:hover+span{border-color:var(--accent)}
+.segment input:focus-visible+span{outline:3px solid var(--accent-tenta);outline-offset:2px;border-color:var(--accent)}
+.segment input:checked+span{background:var(--accent);border-color:var(--accent);color:#fff}
+.camp.eroare .segment input+span{border-color:var(--atentie)}
+
+/* Afirmațiile */
+.parte{background:var(--suprafata);border:1px solid var(--linie);border-radius:var(--raza);overflow:hidden}
+.item{position:relative;display:block;padding:1.15rem 1.25rem 1.2rem 3.4rem;border-top:1px solid var(--linie);
+  border-left:4px solid transparent;scroll-margin-top:6rem}
+.item:first-child{border-top:0}
+.item__text{float:left;width:100%;padding:0;margin:0 0 .8rem;font-size:1.02rem;line-height:1.55;color:var(--cerneala)}
+.item__nr{position:absolute;left:1rem;top:1.1rem;font:700 1.25rem/1.4 var(--titluri);color:var(--accent);font-variant-numeric:tabular-nums}
+.item .segmente{clear:both;flex-wrap:nowrap}
+.item .segment{max-width:none}
+.item .segment input+span{height:3.1rem;font-size:1.15rem}
+.item__ancore{display:flex;justify-content:space-between;gap:1rem;font-size:.82rem;color:var(--estompat);margin-top:.4rem}
+.item__ancore span:last-child{text-align:right}
+.item.lipsa{border-left-color:var(--atentie);background:#FFFBF8}
+.item.lipsa .item__nr{color:var(--atentie)}
+.item__eroare{color:var(--atentie);font-size:.88rem;font-weight:600;margin:.45rem 0 0}
+.sursa{font-size:.85rem;color:var(--estompat);margin:.75rem .25rem 0}
+
+/* Trimiterea */
+.verificare{list-style:none;margin:0 0 1.15rem;padding:0}
+.verificare li{display:flex;gap:.6rem;align-items:baseline;padding:.4rem 0;border-bottom:1px dashed var(--linie)}
+.verificare li:last-child{border-bottom:0}
+.verificare__semn{flex:none;width:1.25rem;font-weight:700;text-align:center}
+.verificare li[data-ok="da"] .verificare__semn{color:var(--ok)}
+.verificare li[data-ok="nu"] .verificare__semn{color:var(--atentie)}
+.buton{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:3.4rem;padding:.75rem 1.25rem;border:0;border-radius:12px;
+  background:var(--accent);color:#fff;font:700 1.05rem/1.2 var(--titluri);cursor:pointer}
+.buton:hover{filter:brightness(1.08)}
+.buton:focus-visible{outline:3px solid var(--albastru);outline-offset:3px}
+.buton[disabled]{opacity:.55;cursor:not-allowed;filter:none}
+.buton--secundar{background:#fff;color:var(--albastru);border:1.5px solid var(--linie)}
+.mesaj{margin:1rem 0 0;padding:.9rem 1rem;border-radius:10px;background:var(--atentie-fundal);border:1px solid #F0C9AE;color:#6E2A07}
+.mesaj:empty{display:none}
+.confirmare{margin:1rem 0 0;padding:1rem;border-radius:10px;border:1.5px solid var(--atentie);background:var(--atentie-fundal)}
+.confirmare p{color:#6E2A07}
+.confirmare__butoane{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.75rem}
+.confirmare__butoane .buton{min-height:3rem;font-size:.98rem}
+
+/* Ecranul final */
+.final{background:var(--suprafata);border:1px solid var(--linie);border-top:6px solid var(--accent);border-radius:var(--raza);padding:1.75rem 1.25rem}
+.final h2{font-size:1.5rem;margin:0 0 .75rem}
+.final__chitanta{font:700 1.2rem/1 var(--titluri);letter-spacing:.08em;color:var(--albastru)}
+.sprijin{margin:1.25rem 0;padding:1rem 1.1rem;border-radius:10px;background:var(--tenta);font-size:.95rem}
+.sprijin p:last-child{margin:0}
+
+/* Subsol */
+.subsol{max-width:42rem;margin:0 auto;padding:1.5rem 1.25rem 2.5rem;border-top:1px solid var(--linie);font-size:.85rem;color:var(--estompat)}
+.subsol p{margin:0 0 .4rem}
+
+@media (max-width:400px){
+  .antet__in{padding:1.6rem 1rem 1.5rem}
+  main,.progres__in,.subsol{padding-left:1rem;padding-right:1rem}
+  .item{padding:1rem .85rem 1.05rem 2.6rem}
+  .item__nr{left:.7rem;top:.95rem;font-size:1.1rem}
+  .item .segmente{gap:.35rem}
+  .cod{gap:.4rem}
+  .cod__casuta input,.cod__casuta select{height:3.6rem;font-size:1.5rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media print{.progres,.subsol,#zona-trimitere{display:none}}
+</style>
+</head>
+<body class="etapa-pre">
+
+<header class="antet">
+  <div class="antet__in">
+    <p class="antet__marca">RADAR AI</p>
+    <h1>Chestionarul SRED-15</h1>
+    <p class="antet__etapa">Evaluarea inițială (PRE)</p>
+    <p class="antet__desc">Scala de Reziliență Emoțională Digitală: 15 afirmații despre cum faci față dificultăților și despre viața ta digitală. Durează aproximativ 10 minute.</p>
+  </div>
+</header>
+
+<div class="progres" id="progres" aria-hidden="true">
+  <div class="progres__in">
+    <div class="progres__text"><span>Afirmații completate</span><strong id="progres-numar">0 din 15</strong></div>
+    <div class="progres__pista"><div class="progres__umplere" id="progres-bara"></div></div>
+  </div>
+</div>
+
+<main id="principal">
+  <noscript><div class="admin">Chestionarul are nevoie de JavaScript. Activează JavaScript în browser sau folosește alt dispozitiv.</div></noscript>
+  <div class="admin" id="admin-neconfigurat" hidden>Formularul nu este încă legat de registrul de date, așa că răspunsurile nu pot fi trimise. Pentru administrator: completați adresa aplicației web în constanta <code>ENDPOINT</code> din acest fișier.</div>
+
+  <form id="formular" novalidate>
+    <section class="sectiune" aria-labelledby="t-inceput">
+      <h2 id="t-inceput">Înainte să începi</h2>
+      <div class="panou">
+        <p>Completezi acest chestionar la începutul programului RADAR AI, înaintea oricărei activități.</p>
+        <p>Citește cu atenție fiecare afirmație și alege numărul care descrie cel mai bine cum ești <strong>tu</strong> în mod obișnuit. Nu există răspunsuri corecte sau greșite. Răspunde sincer: niciun profesor nu va vedea răspunsurile tale individuale. Răspunde la toate cele 15 afirmații.</p>
+        <p>Chestionarul nu este un test și nu se notează.</p>
+        <details>
+          <summary>Ce se întâmplă cu răspunsurile tale</summary>
+          <ul>
+            <li>Nu îți scrii numele. Răspunsurile sunt legate doar de codul tău personal, format din inițiale și din ziua și luna nașterii.</li>
+            <li>Registrul păstrează: codul grupei, codul personal, clasa, sexul, cele 15 răspunsuri, data și durata completării. Nu păstrează numele, adresa de e-mail sau adresa IP.</li>
+            <li>Răspunsurile se analizează la nivel de grup, ca să aflăm dacă programul RADAR AI a fost de folos. Scorurile individuale nu se discută în clasă și nu reprezintă un diagnostic.</li>
+            <li>Răspunsurile individuale pot fi văzute doar de psihologul și de coordonatorul proiectului. Ele sunt păstrate într-un registru electronic al Asociației AVANS PROIECT Sibiu, cu acces restricționat, pe durata proiectului și a perioadei de arhivare prevăzute pentru documentele lui.</li>
+            <li>Participarea este voluntară: te poți opri oricând înainte să trimiți. Pentru întrebări sau pentru ștergerea răspunsurilor tale, scrie la <a href="mailto:asociatia.avapro@gmail.com">asociatia.avapro@gmail.com</a> și menționează codul personal și codul grupei.</li>
+          </ul>
+        </details>
+        <label class="acord" id="acord-cutie">
+          <input type="checkbox" id="acord" name="acord">
+          <span>Am citit cum sunt folosite răspunsurile și vreau să completez chestionarul.</span>
+        </label>
+        <p class="camp__eroare" id="eroare-acord" hidden>Bifează acordul ca să poți trimite chestionarul.</p>
+      </div>
+    </section>
+
+    <section class="sectiune" aria-labelledby="t-date">
+      <h2 id="t-date">Datele tale</h2>
+      <p class="sectiune__nota">Fără nume: doar coduri, ca răspunsurile să rămână confidențiale.</p>
+      <div class="panou panou--tenta">
+
+        <div class="camp" id="camp-grupa">
+          <div id="grupa-fixa" class="grupa-fixa" hidden>
+            <span>Grupa ta: <strong id="grupa-eticheta"></strong></span>
+            <button type="button" class="legatura" id="grupa-schimba">Nu este grupa ta? Schimbă codul</button>
+          </div>
+          <div id="grupa-libera">
+            <label class="camp__eticheta" for="grupa">Codul grupei</label>
+            <p class="camp__ajutor" id="grupa-ajutor">Îl primești de la psiholog, la începutul întâlnirii.</p>
+            <input class="text" type="text" id="grupa" name="grupa" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="grupa-ajutor grupa-stare">
+          </div>
+          <p class="stare" id="grupa-stare" role="status" hidden></p>
+        </div>
+
+        <fieldset class="camp" id="camp-cod" aria-describedby="cod-ajutor">
+          <legend class="camp__eticheta">Codul tău personal</legend>
+          <p class="camp__ajutor" id="cod-ajutor">Codul leagă răspunsurile de acum de cele de la finalul programului, fără să îți scrii numele. Nu trebuie să îl memorezi: îl refaci la fel oricând.</p>
+          <div class="cod" id="cod">
+            <div class="cod__casuta">
+              <label for="cod-mama">Mama</label>
+              <input type="text" id="cod-mama" maxlength="1" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Prima literă din prenumele mamei">
+            </div>
+            <div class="cod__casuta">
+              <label for="cod-ziua">Ziua</label>
+              <select id="cod-ziua" aria-label="Ziua ta de naștere"><option value="">–</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+            </div>
+            <div class="cod__casuta">
+              <label for="cod-tata">Tata</label>
+              <input type="text" id="cod-tata" maxlength="1" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Prima literă din prenumele tatălui">
+            </div>
+            <div class="cod__casuta">
+              <label for="cod-luna">Luna</label>
+              <select id="cod-luna" aria-label="Luna ta de naștere"><option value="">–</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>
+            </div>
+          </div>
+          <p class="cod__rezultat">Codul tău: <output id="cod-afisat" for="cod-mama cod-ziua cod-tata cod-luna">?··?··</output></p>
+          <div class="cod__explicatii">
+            <p>Mama și tata: prima literă din prenumele lor. Ziua și luna: data ta de naștere. Exemplu: mama Maria, ziua 15, tata Ion, luna 03 dau codul M15I03.</p>
+            <p>Dacă nu poți completa una dintre litere, scrie X și folosește tot X la evaluarea următoare.</p>
+          </div>
+          <p class="camp__eroare" id="eroare-cod" hidden>Completează toate cele patru căsuțe ale codului.</p>
+        </fieldset>
+
+        <fieldset class="camp" id="camp-clasa">
+          <legend class="camp__eticheta">Clasa</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="clasa" value="IX"><span>IX</span></label>
+            <label class="segment"><input type="radio" name="clasa" value="X"><span>X</span></label>
+            <label class="segment"><input type="radio" name="clasa" value="XI"><span>XI</span></label>
+            <label class="segment"><input type="radio" name="clasa" value="XII"><span>XII</span></label>
+          </div>
+          <p class="camp__eroare" id="eroare-clasa" hidden>Alege clasa.</p>
+        </fieldset>
+
+        <fieldset class="camp" id="camp-sex">
+          <legend class="camp__eticheta">Sex</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="sex" value="F"><span>F</span></label>
+            <label class="segment"><input type="radio" name="sex" value="M"><span>M</span></label>
+          </div>
+          <p class="camp__eroare" id="eroare-sex" hidden>Alege una dintre opțiuni.</p>
+        </fieldset>
+
+        <div class="ascuns-vizual" aria-hidden="true">
+          <label for="website">Nu completați acest câmp</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+      </div>
+    </section>
+
+    <section class="sectiune" aria-labelledby="t-p1">
+      <span class="sectiune__eticheta">Partea 1, afirmațiile 1–10</span>
+      <h2 id="t-p1">Cum mă raportez la dificultăți în viața mea</h2>
+      <p class="sectiune__nota">Alege de la 0 (deloc adevărat) la 4 (aproape întotdeauna adevărat).</p>
+      <div class="parte">
+        <fieldset class="item" id="item-1">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">1</span><span class="ascuns-vizual">Afirmația 1: </span>Mă pot adapta bine atunci când apar schimbări neașteptate în viața mea.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i1" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i1" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i1" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i1" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i1" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-2">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">2</span><span class="ascuns-vizual">Afirmația 2: </span>Pot face față oricărei situații dificile care apare.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i2" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i2" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i2" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i2" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i2" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-3">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">3</span><span class="ascuns-vizual">Afirmația 3: </span>Când am o problemă, încerc să văd și latura pozitivă sau amuzantă a situației.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i3" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i3" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i3" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i3" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i3" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-4">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">4</span><span class="ascuns-vizual">Afirmația 4: </span>A trece prin situații stresante sau dificile mă face mai puternic/ă.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i4" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i4" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i4" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i4" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i4" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-5">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">5</span><span class="ascuns-vizual">Afirmația 5: </span>Revin destul de repede după o boală, un accident sau altă experiență dificilă.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i5" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i5" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i5" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i5" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i5" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-6">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">6</span><span class="ascuns-vizual">Afirmația 6: </span>Cred că îmi pot atinge obiectivele chiar dacă există obstacole sau piedici.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i6" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i6" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i6" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i6" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i6" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-7">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">7</span><span class="ascuns-vizual">Afirmația 7: </span>Sub presiune, rămân concentrat/ă și gândesc limpede.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i7" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i7" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i7" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i7" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i7" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-8">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">8</span><span class="ascuns-vizual">Afirmația 8: </span>Nu mă descurajez ușor atunci când eșuez sau fac greșeli.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i8" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i8" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i8" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i8" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i8" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-9">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">9</span><span class="ascuns-vizual">Afirmația 9: </span>Mă consider o persoană puternică atunci când mă confrunt cu provocări sau dificultăți.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i9" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i9" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i9" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i9" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i9" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-10">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">10</span><span class="ascuns-vizual">Afirmația 10: </span>Pot gestiona sentimentele neplăcute sau dureroase (tristețe, frică, furie, anxietate).</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i10" value="0"><span>0<span class="ascuns-vizual">, deloc adevărat</span></span></label>
+            <label class="segment"><input type="radio" name="i10" value="1"><span>1</span></label>
+            <label class="segment"><input type="radio" name="i10" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i10" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i10" value="4"><span>4<span class="ascuns-vizual">, aproape întotdeauna adevărat</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc adevărat</span><span>aproape întotdeauna adevărat</span></div>
+        </fieldset>
+      </div>
+      <p class="sursa">Partea 1 este adaptată din Connor-Davidson Resilience Scale (CD-RISC-10; Campbell-Sills &amp; Stein, 2007).</p>
+    </section>
+
+    <section class="sectiune" aria-labelledby="t-p2">
+      <span class="sectiune__eticheta">Partea 2, afirmațiile 11–15</span>
+      <h2 id="t-p2">Eu și viața mea digitală</h2>
+      <p class="sectiune__nota">Alege de la 1 (deloc de acord) la 5 (complet de acord).</p>
+      <div class="parte">
+        <fieldset class="item" id="item-11">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">11</span><span class="ascuns-vizual">Afirmația 11: </span>Când văd online conținut care mă supără sau mă deranjează, știu cum să gestionez emoția (mă opresc, respir, ies din aplicație).</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i11" value="1"><span>1<span class="ascuns-vizual">, deloc de acord</span></span></label>
+            <label class="segment"><input type="radio" name="i11" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i11" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i11" value="4"><span>4</span></label>
+            <label class="segment"><input type="radio" name="i11" value="5"><span>5<span class="ascuns-vizual">, complet de acord</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc de acord</span><span>complet de acord</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-12">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">12</span><span class="ascuns-vizual">Afirmația 12: </span>Pot recunoaște când rețelele sociale sau telefonul îmi afectează negativ starea de spirit în cursul zilei.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i12" value="1"><span>1<span class="ascuns-vizual">, deloc de acord</span></span></label>
+            <label class="segment"><input type="radio" name="i12" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i12" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i12" value="4"><span>4</span></label>
+            <label class="segment"><input type="radio" name="i12" value="5"><span>5<span class="ascuns-vizual">, complet de acord</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc de acord</span><span>complet de acord</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-13">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">13</span><span class="ascuns-vizual">Afirmația 13: </span>Cred că valoarea mea ca persoană nu depinde de numărul de like-uri, comentarii sau urmăritori online.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i13" value="1"><span>1<span class="ascuns-vizual">, deloc de acord</span></span></label>
+            <label class="segment"><input type="radio" name="i13" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i13" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i13" value="4"><span>4</span></label>
+            <label class="segment"><input type="radio" name="i13" value="5"><span>5<span class="ascuns-vizual">, complet de acord</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc de acord</span><span>complet de acord</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-14">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">14</span><span class="ascuns-vizual">Afirmația 14: </span>Știu să verific dacă o informație sau o știre online este adevărată înainte de a o crede sau de a o distribui.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i14" value="1"><span>1<span class="ascuns-vizual">, deloc de acord</span></span></label>
+            <label class="segment"><input type="radio" name="i14" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i14" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i14" value="4"><span>4</span></label>
+            <label class="segment"><input type="radio" name="i14" value="5"><span>5<span class="ascuns-vizual">, complet de acord</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc de acord</span><span>complet de acord</span></div>
+        </fieldset>
+        <fieldset class="item" id="item-15">
+          <legend class="item__text"><span class="item__nr" aria-hidden="true">15</span><span class="ascuns-vizual">Afirmația 15: </span>Am cel puțin o persoană de încredere (prieten, coleg, părinte, profesor) la care pot apela când trec printr-o situație dificilă.</legend>
+          <div class="segmente">
+            <label class="segment"><input type="radio" name="i15" value="1"><span>1<span class="ascuns-vizual">, deloc de acord</span></span></label>
+            <label class="segment"><input type="radio" name="i15" value="2"><span>2</span></label>
+            <label class="segment"><input type="radio" name="i15" value="3"><span>3</span></label>
+            <label class="segment"><input type="radio" name="i15" value="4"><span>4</span></label>
+            <label class="segment"><input type="radio" name="i15" value="5"><span>5<span class="ascuns-vizual">, complet de acord</span></span></label>
+          </div>
+          <div class="item__ancore" aria-hidden="true"><span>deloc de acord</span><span>complet de acord</span></div>
+        </fieldset>
+      </div>
+    </section>
+
+    <section class="sectiune" id="zona-trimitere" aria-labelledby="t-trimite">
+      <h2 id="t-trimite">Verifică și trimite</h2>
+      <div class="panou">
+        <ul class="verificare" id="verificare">
+          <li data-ok="nu" id="v-acord"><span class="verificare__semn" aria-hidden="true">✕</span><span>Acordul de la început</span></li>
+          <li data-ok="nu" id="v-date"><span class="verificare__semn" aria-hidden="true">✕</span><span>Grupa, codul personal, clasa și sexul</span></li>
+          <li data-ok="nu" id="v-itemi"><span class="verificare__semn" aria-hidden="true">✕</span><span id="v-itemi-text">Răspunsuri: 0 din 15</span></li>
+        </ul>
+        <button type="submit" class="buton" id="trimite">Trimite răspunsurile</button>
+        <div class="confirmare" id="confirmare" hidden>
+          <p><strong>Nu am găsit codul <span id="confirmare-cod"></span> la evaluarea inițială a grupei tale.</strong></p>
+          <p>Verifică literele și cifrele: prima literă din prenumele mamei, ziua nașterii, prima literă din prenumele tatălui, luna nașterii. Dacă ești sigur(ă) că este corect, trimite oricum.</p>
+          <div class="confirmare__butoane">
+            <button type="button" class="buton" id="confirmare-verific">Verific codul</button>
+            <button type="button" class="buton buton--secundar" id="confirmare-trimite">Trimite oricum</button>
+          </div>
+        </div>
+        <div class="mesaj" id="mesaj" role="alert" aria-live="assertive"></div>
+      </div>
+    </section>
+  </form>
+
+  <section class="final" id="final" hidden tabindex="-1" aria-labelledby="t-final">
+    <h2 id="t-final">Răspunsurile au fost trimise</h2>
+    <p>Mulțumim! Confirmarea trimiterii: <span class="final__chitanta" id="final-chitanta"></span></p>
+    <p>La finalul programului vei completa din nou chestionarul, cu același cod personal: <strong id="final-cod"></strong>.</p>
+    <div class="sprijin">
+      <p>Dacă unele afirmații ți-au trezit gânduri sau emoții grele, vorbește cu psihologul echipei sau cu psihologul școlii. Telefonul Copilului: <strong>116 111</strong> (gratuit, 24/7). În caz de urgență: <strong>112</strong>.</p>
+    </div>
+    <button type="button" class="buton buton--secundar" id="din-nou">Completează alt chestionar pe acest dispozitiv</button>
+  </section>
+</main>
+
+<footer class="subsol">
+  <p>Programul RADAR AI, Asociația AVANS PROIECT Sibiu, 2026.</p>
+  <p>SRED-15 este un instrument de screening educațional, nu un instrument clinic.</p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===== CONFIGURARE =====================================================
+  // Adresa aplicației web Google Apps Script (Implementare > Aplicație web > URL, se termină în /exec).
+  var ENDPOINT = 'https://script.google.com/macros/s/ADRESA_APLICATIEI_WEB/exec';
+  // =======================================================================
+
+  var ETAPA = 'PRE';
+  var CHEIE_CIORNA = 'sred15_' + ETAPA + '_ciorna';
+  var VALABILITATE_CIORNA = 4 * 3600 * 1000;
+  var CONFIGURAT = ENDPOINT.indexOf('ADRESA_APLICATIEI_WEB') < 0;
+
+  var form = document.getElementById('formular');
+  var el = function (id) { return document.getElementById(id); };
+  var grupaInput = el('grupa'), codMama = el('cod-mama'), codZiua = el('cod-ziua'), codTata = el('cod-tata'), codLuna = el('cod-luna');
+  var butonTrimite = el('trimite');
+
+  var stare = { start: null, trimis: false, ocupat: false, grupaDinLink: false, mesajValidare: false, clientId: idNou() };
+
+  function idNou() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+    });
+  }
+
+  function normLitera(v) {
+    v = String(v || '').toUpperCase().replace(/[ĂÂ]/g, 'A').replace(/Î/g, 'I').replace(/[ȘŞ]/g, 'S').replace(/[ȚŢ]/g, 'T');
+    var m = v.match(/[A-Z]/g);
+    return m ? m[m.length - 1] : '';
+  }
+  function normGrupa(v) { return String(v || '').toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9-]/g, '').slice(0, 20); }
+  function valoareRadio(nume) { var c = form.querySelector('input[name="' + nume + '"]:checked'); return c ? c.value : ''; }
+  function grupaCurenta() { return normGrupa(grupaInput.value); }
+  function codCurent() { return (codMama.value || '') + (codZiua.value || '') + (codTata.value || '') + (codLuna.value || ''); }
+  function codComplet() { return /^[A-Z](0[1-9]|[12][0-9]|3[01])[A-Z](0[1-9]|1[0-2])$/.test(codCurent()); }
+  function raspunsuri() {
+    var r = [];
+    for (var i = 1; i <= 15; i++) { var v = valoareRadio('i' + i); r.push(v === '' ? null : Number(v)); }
+    return r;
+  }
+  function nrRaspunsuri() { return raspunsuri().filter(function (x) { return x !== null; }).length; }
+
+  // ----- Afișare -----------------------------------------------------------
+  function actualizeazaCod() {
+    var a = codMama.value || '?', b = codZiua.value || '··', c = codTata.value || '?', d = codLuna.value || '··';
+    el('cod-afisat').textContent = a + b + c + d;
+    [codMama, codZiua, codTata, codLuna].forEach(function (x) { x.classList.toggle('plin', !!x.value); });
+  }
+
+  function actualizeazaProgres() {
+    var n = nrRaspunsuri();
+    el('progres-numar').textContent = n + ' din 15';
+    el('progres-bara').style.width = (n / 15 * 100) + '%';
+    marcheaza('v-acord', el('acord').checked);
+    var dateOk = !!grupaCurenta() && codComplet() && !!valoareRadio('clasa') && !!valoareRadio('sex');
+    marcheaza('v-date', dateOk);
+    marcheaza('v-itemi', n === 15);
+    el('v-itemi-text').textContent = 'Răspunsuri: ' + n + ' din 15';
+  }
+  function marcheaza(id, ok) {
+    var li = el(id);
+    li.setAttribute('data-ok', ok ? 'da' : 'nu');
+    li.querySelector('.verificare__semn').textContent = ok ? '✓' : '✕';
+  }
+
+  function arataStareGrupa(tip, text) {
+    var p = el('grupa-stare');
+    p.hidden = !text;
+    p.className = 'stare' + (tip ? ' stare--' + tip : '');
+    p.textContent = text || '';
+  }
+
+  // ----- Verificarea grupei ------------------------------------------------
+  var ultimaGrupaVerificata = '';
+  function verificaGrupa() {
+    var g = grupaCurenta();
+    if (!g) { arataStareGrupa('', ''); return; }
+    if (!CONFIGURAT || g === ultimaGrupaVerificata) return;
+    ultimaGrupaVerificata = g;
+    arataStareGrupa('', 'Se verifică codul grupei…');
+    fetch(ENDPOINT + '?action=grupa&etapa=' + ETAPA + '&g=' + encodeURIComponent(g), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (g !== grupaCurenta()) return;
+        if (j && j.ok && j.deschis) {
+          el('grupa-eticheta').textContent = j.eticheta;
+          if (stare.grupaDinLink) { el('grupa-fixa').hidden = false; el('grupa-libera').hidden = true; arataStareGrupa('', ''); }
+          else arataStareGrupa('ok', j.eticheta + ': chestionarul este deschis.');
+        } else if (j && j.ok && !j.deschis) {
+          arataStareGrupa('eroare', ETAPA === 'PRE'
+            ? 'Evaluarea inițială nu este deschisă acum pentru această grupă. Întreabă psihologul.'
+            : 'Evaluarea finală nu este deschisă acum pentru această grupă. Întreabă psihologul.');
+          arataCampulGrupei();
+        } else {
+          arataStareGrupa('eroare', 'Codul grupei nu este recunoscut. Verifică-l cu psihologul.');
+          arataCampulGrupei();
+        }
+      })
+      .catch(function () {
+        ultimaGrupaVerificata = '';
+        arataStareGrupa('', 'Codul grupei nu a putut fi verificat acum. Poți completa chestionarul; verificarea se face la trimitere.');
+      });
+  }
+  function arataCampulGrupei() { el('grupa-fixa').hidden = true; el('grupa-libera').hidden = false; }
+
+  // ----- Ciorna locală (păstrează răspunsurile dacă pagina se reîncarcă) -----
+  function salveazaCiorna() {
+    if (stare.trimis) return;
+    try {
+      localStorage.setItem(CHEIE_CIORNA, JSON.stringify({
+        salvat: Date.now(), grupa: grupaInput.value, m: codMama.value, z: codZiua.value, t: codTata.value, l: codLuna.value,
+        clasa: valoareRadio('clasa'), sex: valoareRadio('sex'), r: raspunsuri(), acord: el('acord').checked,
+        start: stare.start, clientId: stare.clientId
+      }));
+    } catch (e) { /* stocarea locală poate fi indisponibilă */ }
+  }
+  function stergeCiorna() { try { localStorage.removeItem(CHEIE_CIORNA); } catch (e) { /* nimic */ } }
+  function bifeaza(nume, valoare) {
+    if (valoare === null || valoare === undefined || valoare === '') return;
+    var c = form.querySelector('input[name="' + nume + '"][value="' + valoare + '"]');
+    if (c) c.checked = true;
+  }
+  function restaureazaCiorna(grupaDinLink) {
+    var d;
+    try { d = JSON.parse(localStorage.getItem(CHEIE_CIORNA) || 'null'); } catch (e) { d = null; }
+    if (!d || !d.salvat || Date.now() - d.salvat > VALABILITATE_CIORNA) { stergeCiorna(); return; }
+    if (!grupaDinLink && d.grupa) grupaInput.value = d.grupa;
+    codMama.value = d.m || ''; codZiua.value = d.z || ''; codTata.value = d.t || ''; codLuna.value = d.l || '';
+    bifeaza('clasa', d.clasa); bifeaza('sex', d.sex);
+    (d.r || []).forEach(function (v, i) { bifeaza('i' + (i + 1), v); });
+    el('acord').checked = !!d.acord;
+    if (d.start) stare.start = d.start;
+    if (d.clientId) stare.clientId = d.clientId;
+  }
+
+  // ----- Erorile dispar pe loc când sunt rezolvate --------------------------
+  function totulComplet() {
+    return el('acord').checked && !!grupaCurenta() && codComplet() && !!valoareRadio('clasa') && !!valoareRadio('sex') && nrRaspunsuri() === 15;
+  }
+  function curataEroriRezolvate() {
+    if (el('acord').checked) { el('acord-cutie').classList.remove('eroare'); el('eroare-acord').hidden = true; }
+    if (codComplet()) { el('cod').classList.remove('eroare'); el('eroare-cod').hidden = true; }
+    if (valoareRadio('clasa')) { el('camp-clasa').classList.remove('eroare'); el('eroare-clasa').hidden = true; }
+    if (valoareRadio('sex')) { el('camp-sex').classList.remove('eroare'); el('eroare-sex').hidden = true; }
+    if (stare.mesajValidare && totulComplet()) { el('mesaj').textContent = ''; stare.mesajValidare = false; }
+  }
+
+  // ----- Validarea înainte de trimitere -----------------------------------
+  function curataErori() {
+    ['eroare-acord', 'eroare-cod', 'eroare-clasa', 'eroare-sex'].forEach(function (id) { el(id).hidden = true; });
+    el('acord-cutie').classList.remove('eroare');
+    el('cod').classList.remove('eroare');
+    ['camp-clasa', 'camp-sex'].forEach(function (id) { el(id).classList.remove('eroare'); });
+    Array.prototype.forEach.call(document.querySelectorAll('.item.lipsa'), function (it) {
+      it.classList.remove('lipsa'); var m = it.querySelector('.item__eroare'); if (m) m.remove();
+    });
+  }
+  function valideaza() {
+    curataErori();
+    var primul = null, lipsa = [];
+    function marcheazaPrimul(x) { if (!primul) primul = x; }
+    if (!el('acord').checked) { el('acord-cutie').classList.add('eroare'); el('eroare-acord').hidden = false; marcheazaPrimul(el('acord-cutie')); }
+    if (!grupaCurenta()) { arataCampulGrupei(); arataStareGrupa('eroare', 'Completează codul grupei.'); marcheazaPrimul(el('camp-grupa')); }
+    if (!codComplet()) { el('cod').classList.add('eroare'); el('eroare-cod').hidden = false; marcheazaPrimul(el('camp-cod')); }
+    if (!valoareRadio('clasa')) { el('camp-clasa').classList.add('eroare'); el('eroare-clasa').hidden = false; marcheazaPrimul(el('camp-clasa')); }
+    if (!valoareRadio('sex')) { el('camp-sex').classList.add('eroare'); el('eroare-sex').hidden = false; marcheazaPrimul(el('camp-sex')); }
+    raspunsuri().forEach(function (v, i) {
+      if (v !== null) return;
+      var it = el('item-' + (i + 1));
+      it.classList.add('lipsa');
+      var m = document.createElement('p'); m.className = 'item__eroare'; m.textContent = 'Alege un răspuns.';
+      it.appendChild(m);
+      lipsa.push(i + 1);
+      marcheazaPrimul(it);
+    });
+    if (primul) {
+      var text = 'Mai sunt de completat câteva lucruri.';
+      if (lipsa.length) text += ' Afirmații fără răspuns: ' + lipsa.join(', ') + '.';
+      el('mesaj').textContent = text;
+      stare.mesajValidare = true;
+      primul.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      return false;
+    }
+    return true;
+  }
+
+  // ----- Trimiterea --------------------------------------------------------
+  function pauza(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+
+  function posteaza(date) {
+    var intarzieri = [0, 1500, 3500, 7000];
+    var i = 0;
+    function incercare() {
+      if (i >= intarzieri.length) return Promise.resolve(null);
+      var asteptare = intarzieri[i++];
+      return pauza(asteptare).then(function () {
+        var ctrl = ('AbortController' in window) ? new AbortController() : null;
+        var t = ctrl ? setTimeout(function () { ctrl.abort(); }, 30000) : null;
+        return fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(date),
+          cache: 'no-store',
+          signal: ctrl ? ctrl.signal : undefined
+        }).then(function (r) { if (t) clearTimeout(t); return r.json(); })
+          .then(function (j) { return (j && j.cod === 'OCUPAT') ? incercare() : j; })
+          .catch(function () { if (t) clearTimeout(t); return incercare(); });
+      });
+    }
+    return incercare();
+  }
+
+  function trimite(confirmFaraPereche) {
+    if (stare.ocupat || stare.trimis) return;
+    el('mesaj').textContent = '';
+    if (!CONFIGURAT) { el('mesaj').textContent = 'Formularul nu este legat de registrul de date. Anunță psihologul.'; return; }
+    if (!valideaza()) return;
+    el('confirmare').hidden = true;
+    stare.ocupat = true;
+    butonTrimite.disabled = true; el('confirmare-trimite').disabled = true;
+    butonTrimite.textContent = 'Se trimit răspunsurile…';
+    var date = {
+      etapa: ETAPA, grupa: grupaCurenta(), cod: codCurent(), clasa: valoareRadio('clasa'), sex: valoareRadio('sex'),
+      raspunsuri: raspunsuri(), durata: stare.start ? Math.round((Date.now() - stare.start) / 1000) : null,
+      clientId: stare.clientId, website: el('website').value, confirmFaraPereche: !!confirmFaraPereche
+    };
+    posteaza(date).then(function (rez) {
+      stare.ocupat = false;
+      butonTrimite.disabled = false; el('confirmare-trimite').disabled = false;
+      butonTrimite.textContent = 'Trimite răspunsurile';
+      if (rez && rez.ok) return reusit(rez);
+      if (rez && rez.cod === 'FARA_PERECHE') {
+        el('confirmare-cod').textContent = codCurent();
+        el('confirmare').hidden = false;
+        el('confirmare').scrollIntoView({ block: 'center' });
+        return;
+      }
+      el('mesaj').textContent = mesajEroare(rez);
+    });
+  }
+
+  function mesajEroare(rez) {
+    if (!rez) return 'Răspunsurile nu au putut fi trimise. Ele sunt păstrate pe acest dispozitiv. Verifică conexiunea la internet și apasă din nou „Trimite răspunsurile”.';
+    switch (rez.cod) {
+      case 'GRUPA_INEXISTENTA': arataCampulGrupei(); return 'Codul grupei nu este recunoscut. Verifică-l cu psihologul, corectează-l și trimite din nou.';
+      case 'ETAPA_INCHISA': return (ETAPA === 'PRE' ? 'Evaluarea inițială' : 'Evaluarea finală') + ' nu este deschisă acum pentru această grupă. Anunță psihologul; răspunsurile tale rămân păstrate pe acest dispozitiv.';
+      case 'LIMITA': return 'Registrul a primit foarte multe răspunsuri de la grupa ta în ultimele minute. Așteaptă un minut și apasă din nou „Trimite răspunsurile”.';
+      case 'VALIDARE': return 'Unele date nu au fost acceptate de registru. Verifică datele de la secțiunea „Datele tale” și trimite din nou.';
+      default: return 'Registrul nu a putut salva răspunsurile. Ele sunt păstrate pe acest dispozitiv; anunță psihologul și încearcă din nou peste un minut.';
+    }
+  }
+
+  function reusit(rez) {
+    stare.trimis = true;
+    stergeCiorna();
+    el('final-chitanta').textContent = rez.chitanta || '';
+    var codFinal = el('final-cod');
+    if (codFinal) codFinal.textContent = codCurent();
+    form.hidden = true;
+    el('progres').hidden = true;
+    el('final').hidden = false;
+    window.scrollTo(0, 0);
+    el('final').focus();
+  }
+
+  // ----- Evenimente --------------------------------------------------------
+  function laPrimaInteractiune() { if (!stare.start) stare.start = Date.now(); }
+
+  form.addEventListener('change', function () { laPrimaInteractiune(); actualizeazaProgres(); curataEroriRezolvate(); salveazaCiorna(); });
+  form.addEventListener('input', function () { laPrimaInteractiune(); curataEroriRezolvate(); salveazaCiorna(); });
+  form.addEventListener('change', function (e) {
+    var it = e.target.closest ? e.target.closest('.item') : null;
+    if (it && it.classList.contains('lipsa')) {
+      it.classList.remove('lipsa'); var m = it.querySelector('.item__eroare'); if (m) m.remove();
+    }
+  });
+  form.addEventListener('submit', function (e) { e.preventDefault(); trimite(false); });
+
+  [codMama, codTata].forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      var v = normLitera(inp.value);
+      inp.value = v;
+      actualizeazaCod(); actualizeazaProgres();
+      if (v) (inp === codMama ? codZiua : codLuna).focus();
+    });
+  });
+  [codZiua, codLuna].forEach(function (s) {
+    s.addEventListener('change', function () {
+      actualizeazaCod();
+      if (s === codZiua && s.value && !codTata.value) codTata.focus();
+    });
+  });
+
+  grupaInput.addEventListener('input', function () {
+    var p = grupaInput.selectionStart, v = normGrupa(grupaInput.value);
+    if (v !== grupaInput.value) { grupaInput.value = v; try { grupaInput.setSelectionRange(p, p); } catch (e) { /* nimic */ } }
+    ultimaGrupaVerificata = ultimaGrupaVerificata === v ? v : '';
+    arataStareGrupa('', '');
+    actualizeazaProgres();
+  });
+  grupaInput.addEventListener('change', verificaGrupa);
+  grupaInput.addEventListener('blur', verificaGrupa);
+  el('grupa-schimba').addEventListener('click', function () {
+    stare.grupaDinLink = false; arataCampulGrupei(); grupaInput.focus(); grupaInput.select();
+  });
+
+  el('confirmare-verific').addEventListener('click', function () {
+    el('confirmare').hidden = true; el('camp-cod').scrollIntoView({ block: 'start' }); codMama.focus();
+  });
+  el('confirmare-trimite').addEventListener('click', function () { trimite(true); });
+  el('din-nou').addEventListener('click', function () { window.location.reload(); });
+
+  window.addEventListener('beforeunload', function (e) {
+    if (stare.trimis || stare.ocupat) return;
+    if (nrRaspunsuri() > 0) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  // ----- Pornire -----------------------------------------------------------
+  if (!CONFIGURAT) { el('admin-neconfigurat').hidden = false; }
+  var grupaLink = '';
+  try { grupaLink = normGrupa(new URLSearchParams(window.location.search).get('g') || ''); } catch (e) { grupaLink = ''; }
+  restaureazaCiorna(!!grupaLink);
+  if (grupaLink) {
+    grupaInput.value = grupaLink;
+    stare.grupaDinLink = true;
+    el('grupa-eticheta').textContent = grupaLink;
+    el('grupa-fixa').hidden = false; el('grupa-libera').hidden = true;
+  }
+  actualizeazaCod();
+  actualizeazaProgres();
+  if (grupaCurenta()) verificaGrupa();
+})();
+</script>
+</body>
+</html>
