@@ -1,0 +1,19 @@
+import json, sys
+R='/home/claude/expo'; G=f'{R}/gallery'
+items=json.load(open(f'{G}/catalog_full.json'))
+import glob
+for extra in sorted(glob.glob(f'{R}/c*/catalog_c*.json')): items+=json.load(open(extra))
+keep=['calup','cod','categorie','titlu','titlu_creativ','tip','instrument','descriere','status','nota','html','tts','g_img','g_th','g_video','g_audio','g_html','g_vertical','canva','durata_s']
+import re
+for it in items:
+    if it.get('html'):
+        h=re.sub(r'<h1[^>]*>.*?</h1>','',it['html'],count=1,flags=re.S)
+        h=re.sub(r'<p><em>Tema:.*?</p>','',h,count=1,flags=re.S)
+        it['html']=h
+slim=[{k:it[k] for k in keep if it.get(k) not in (None,'',[])} for it in items]
+qr = open(f'{G}/qr.svg').read() if len(sys.argv)>1 else ''
+t=open(f'{R}/_tools/gen/gallery_template.html').read()
+t=t.replace('/*__CATALOG__*/[]', json.dumps(slim,ensure_ascii=False).replace('</','<\\/'))
+t=t.replace('/*__QR__*/""', json.dumps(qr))
+open(f'{G}/index.html','w').write(t)
+print('index.html', round(len(t.encode())/1024), 'KB', len(slim))

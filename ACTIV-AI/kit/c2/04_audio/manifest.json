@@ -1,0 +1,87 @@
+[
+  {
+    "cod": "A11",
+    "categorie": "Audio",
+    "titlu": "Podcast AI de 3 minute: „Sibiul a fost primul” — 5 premiere povestite",
+    "fisiere": [
+      "04_audio/A11_podcast_premiere.md",
+      "04_audio/A11_podcast_premiere.txt"
+    ],
+    "tip": "scenariu",
+    "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+    "descriere": "Un episod de podcast de trei minute în care o gazdă fictivă povestește cinci premiere ale Sibiului: primul spital (1292), prima farmacie (1494), racheta în trepte a lui Conrad Haas (1555), prima clădire de teatru (1788) și Muzeul Brukenthal (1817), cu formulările exacte ale sursei.",
+    "status": "realizat",
+    "nota": "Gazda „Ilinca” este un personaj fictiv, declarat ca atare în text. Toate afirmațiile provin din fapte_verificate.md (tabel de surse în md); formulările „primul/prima de pe actualul teritoriu al României” sunt păstrate, iar „din lume” apare doar pentru racheta lui Haas, „conform sursei”. Textul pentru TTS are cifrele în litere și „Activ A I” pentru pronunție. Durata reală depinde de voce și de viteza de citire.",
+    "audio": null,
+    "tts_text": "04_audio/A11_podcast_premiere.txt",
+    "tts_lang": "ro-RO",
+    "durata_s": null,
+    "durata_estimata_s": 180,
+    "cuvinte_rostite": 438
+  },
+  {
+    "cod": "A12",
+    "categorie": "Audio",
+    "titlu": "Coloana sonoră a primului tramvai — reconstituire sonoră AI",
+    "fisiere": [
+      "04_audio/A12_tramvai.md",
+      "04_audio/A12_tramvai.mp3"
+    ],
+    "tip": "audio",
+    "instrument": "Claude (Anthropic) – scenariu + sinteză audio procedurală (Python/numpy)",
+    "descriere": "O călătorie imaginată cu tramvaiul electric al Sibiului din 1905: clopoțelul vatmanului, motorul care accelerează, roțile pe rosturile șinelor, un scârțâit la curbă, scântei la captator, murmur de stradă și cai la distanță, frâna pneumatică și oprirea în stație – toate sintetizate din cod, fără înregistrări.",
+    "status": "realizat",
+    "nota": "Reconstituire sonoră imaginată, nu înregistrare istorică: fișa de fapte nu descrie sunetul tramvaiului. Faptele folosite în md: prima linie în 1905 (Piața Gării – Parcul Sub Arini), vagoane de la Budapesta, în 1925 – 14 vagoane-motor cu 30 de locuri. Sunete integral sintetizate, fără mostre și fără voce. Verificare tehnică în 04_audio/_verificare/.",
+    "audio": "04_audio/A12_tramvai.mp3",
+    "tts_text": null,
+    "durata_s": 52.04,
+    "loudness_lufs": -14.2,
+    "true_peak_dbtp": -1.2,
+    "sample_rate_hz": 44100,
+    "canale": 2,
+    "bitrate_kbps": 192,
+    "cod_sursa": [
+      "04_audio/_src/A12_tramvai.py",
+      "../04_audio/_src/audiolib.py"
+    ],
+    "marcaje_s": {
+      "strada_si_cai": 0.0,
+      "clopotel_plecare": 2.0,
+      "motor_accelerare": 3.2,
+      "roti_pe_rosturi": 5.0,
+      "scantei_pantograf": 9.0,
+      "scartait_curba": 18.5,
+      "viteza_de_croaziera": 22.0,
+      "incetinire": 34.0,
+      "frana_pneumatica": 40.5,
+      "oprire": 44.5,
+      "clopotel_final": 46.0,
+      "final": 48.0
+    },
+    "verificare": [
+      "04_audio/_verificare/A12_tramvai_spectrograma.png",
+      "04_audio/_verificare/A12_tramvai_forma_unda.png",
+      "04_audio/_verificare/raport_verificare.json"
+    ]
+  },
+  {
+    "cod": "A13",
+    "categorie": "Audio",
+    "titlu": "Radio-teatru AI: o zi în prima farmacie, în 1494 (dialog în 3 voci)",
+    "fisiere": [
+      "04_audio/A13_radio_teatru_farmacia.md",
+      "04_audio/A13_radio_teatru_farmacia.txt"
+    ],
+    "tip": "scenariu",
+    "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+    "descriere": "O dimineață imaginată în „farmacia orașului” din Piața Mare, în 1494, în vremea epidemiilor de ciumă: farmacistul Johannes, un ucenic și o clientă vorbesc despre mojarul de bronz, borcanele de lemn, balanță, ierburi și chitanța către oraș.",
+    "status": "realizat",
+    "nota": "Johannes este singurul nume atestat (primul farmacist consemnat, chitanță din 1494); caracterul și replicile lui sunt imaginate. Lukas (ucenic) și Agnes (clientă) sunt personaje fictive, declarate în vocea de încheiere. Nu se numesc leacuri sau rețete ca fapte istorice. Textul pentru TTS are replicile prefixate de numele personajului și un „Povestitor” pentru didascaliile esențiale; cifrele în litere. Tabel „ce e real și ce e imaginat” în md.",
+    "audio": null,
+    "tts_text": "04_audio/A13_radio_teatru_farmacia.txt",
+    "tts_lang": "ro-RO",
+    "durata_s": null,
+    "durata_estimata_s": 300,
+    "cuvinte_rostite": 712
+  }
+]

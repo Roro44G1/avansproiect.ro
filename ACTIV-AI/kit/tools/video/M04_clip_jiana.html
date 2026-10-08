@@ -1,0 +1,97 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M04 clip</title></head><body>
+<script src="lib.js"></script>
+<script>
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const BEAT = 60 / 120, DUR = 67.5;
+const SECT = [[0, 'Intro'], [4, 'Tema B'], [20, 'Tema A'], [28, 'Tema A (reluare)'], [36, 'Tema B\u2019'], [44, 'Pauză'], [48, 'Ritt 2'], [56, 'Final'], [64, '']];
+const SCHEMES = [
+  ['#0F1720', '#6E56CF', '#E2A62B', '#F3EFE6'],
+  ['#140F1F', '#B9583A', '#E2A62B', '#F3EFE6'],
+  ['#0B1A1C', '#0E7C86', '#E2A62B', '#F3EFE6'],
+  ['#0F1720', '#3B3355', '#A9B4C0', '#F3EFE6'],
+  ['#1A0F14', '#E5484D', '#E2A62B', '#F3EFE6'],
+  ['#0F1720', '#6E56CF', '#0E7C86', '#F3EFE6'],
+  ['#0B1A1C', '#0E7C86', '#E2A62B', '#F3EFE6'],
+  ['#140F1F', '#B9583A', '#E2A62B', '#F3EFE6'],
+  ['#0F1720', '#2A3442', '#E2A62B', '#F3EFE6']];
+function sectionAt(t) { let i = 0; for (let k = 0; k < SECT.length; k++) if (t >= SECT[k][0]) i = k; return i; }
+function env(t) { const E = window.ENV; if (!E) return .5; return E[Math.min(E.length - 1, Math.floor(t * 25))] || 0; }
+// romb cu cârlige (motiv generic)
+function rhomb(x, y, s, col, rot = 0, hooks = true) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  ctx.strokeStyle = col; ctx.lineWidth = s * .12; ctx.lineJoin = 'miter';
+  ctx.beginPath(); ctx.moveTo(0, -s); ctx.lineTo(s, 0); ctx.lineTo(0, s); ctx.lineTo(-s, 0); ctx.closePath(); ctx.stroke();
+  ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, -s * .38); ctx.lineTo(s * .38, 0); ctx.lineTo(0, s * .38); ctx.lineTo(-s * .38, 0); ctx.closePath(); ctx.fill();
+  if (hooks) for (let k = 0; k < 4; k++) { ctx.save(); ctx.rotate(k * Math.PI / 2); ctx.beginPath(); ctx.moveTo(s * .5, -s * .5); ctx.lineTo(s * .85, -s * .85); ctx.lineTo(s * .85, -s * .55); ctx.stroke(); ctx.restore(); }
+  ctx.restore();
+}
+function rosette(x, y, R, petals, col1, col2, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  for (let i = 0; i < petals; i++) {
+    ctx.save(); ctx.rotate(i * 2 * Math.PI / petals);
+    ctx.fillStyle = i % 2 ? col1 : col2;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(R * .35, -R * .45, 0, -R); ctx.quadraticCurveTo(-R * .35, -R * .45, 0, 0); ctx.fill();
+    ctx.restore();
+  }
+  ctx.fillStyle = col2; ctx.beginPath(); ctx.arc(0, 0, R * .16, 0, 7); ctx.fill();
+  ctx.restore();
+}
+window.render = function (t) {
+  const si = sectionAt(t), sc = SCHEMES[si];
+  const e = env(t), bp = (t % BEAT) / BEAT, kick = Math.pow(1 - bp, 3) * (si === 5 || si === 8 || t < 4.3 ? 0.15 : si === 1 ? 0.5 : 1);
+  ctx.fillStyle = sc[0]; ctx.fillRect(0, 0, W, H);
+  // halou
+  const g = ctx.createRadialGradient(W / 2, H / 2, 50, W / 2, H / 2, 700 + e * 200);
+  g.addColorStop(0, rgba(sc[1], .55 + .3 * kick)); g.addColorStop(1, rgba(sc[0], 0)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // benzi țesute sus/jos (derulează)
+  for (const [yy, dir] of [[110, 1], [H - 150, -1]]) {
+    ctx.fillStyle = rgba(sc[1], .35); ctx.fillRect(0, yy - 52, W, 104);
+    const off = (t * 60 * dir) % 120;
+    for (let x = -120; x < W + 120; x += 120) rhomb(x + off, yy, 34 + kick * 6, sc[2], 0, true);
+    ctx.fillStyle = sc[3]; for (let x = -60; x < W + 60; x += 30) { ctx.fillRect(x + off % 30, yy - 50, 12, 6); ctx.fillRect(x + off % 30, yy + 44, 12, 6); }
+  }
+  // inele de romburi
+  for (let ring = 0; ring < 3; ring++) {
+    const n = 12 + ring * 6, R = 260 + ring * 120 + kick * 18 * (ring + 1);
+    for (let i = 0; i < n; i++) {
+      const a = i / n * Math.PI * 2 + t * (ring % 2 ? -.12 : .1);
+      rhomb(W / 2 + Math.cos(a) * R, H / 2 + Math.sin(a) * R * .82, 16 + ring * 4 + e * 10, ring === 1 ? sc[2] : rgba(sc[3], .75), a, ring !== 1);
+    }
+  }
+  // rozeta centrală
+  rosette(W / 2, H / 2, 170 + kick * 30 + e * 40, 8, sc[2], sc[1], t * .35);
+  rosette(W / 2, H / 2, 90 + kick * 14, 8, sc[3], sc[2], -t * .6);
+  // scântei
+  const r = rng(77);
+  for (let i = 0; i < 90; i++) {
+    const a = r() * 7, sp = 80 + r() * 520, life = (t * (0.4 + r() * .6) + r()) % 1;
+    const d = life * sp * (1 + e);
+    ctx.fillStyle = rgba(sc[2], (1 - life) * .8);
+    ctx.beginPath(); ctx.arc(W / 2 + Math.cos(a) * (180 + d), H / 2 + Math.sin(a) * (150 + d * .8), 2 + r() * 3, 0, 7); ctx.fill();
+  }
+  // egalizator stilizat (romburi verticale)
+  for (let i = 0; i < 24; i++) {
+    const hh = 6 + (Math.sin(i * 1.7 + t * 6) * .5 + .5) * 60 * e + kick * 20;
+    ctx.fillStyle = rgba(i % 2 ? sc[2] : sc[3], .8);
+    ctx.fillRect(80 + i * 14, H - 230 - hh, 8, hh); ctx.fillRect(W - 80 - i * 14 - 8, H - 230 - hh, 8, hh);
+  }
+  // texte
+  const ti = 1 - smooth(5.5, 7.5, t);
+  if (ti > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.7 * ti})`; roundRect(ctx, W / 2 - 520, H / 2 - 130, 1040, 260, 30); ctx.fill();
+    serif(ctx, 'Hai, mândruță, la poiană', W / 2, H / 2 - 10, { size: 84, align: 'center', alpha: ti });
+    text(ctx, 'jiană din Mărginimea Sibiului · remix modern', W / 2, H / 2 + 60, { size: 34, align: 'center', alpha: ti, color: PAL.ocru });
+  }
+  chip(ctx, 'VIDEO · M04', 60, 190, PAL.red);
+  text(ctx, 'Clip muzical AI · ' + SECT[si][1], 60, 266, { size: 30, color: PAL.ceata });
+  const endA = smooth(63.5, 65.5, t);
+  if (endA > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.82 * endA})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Hai, mândruță, la poiană', W / 2, H / 2 - 40, { size: 76, align: 'center', alpha: endA });
+    text(ctx, 'Jiană din Mărginimea Sibiului, după partitura „Hai mândruță la poiană” (aranjament pentru saxofon: Natalia Bădilă & Paul Duca)', W / 2, H / 2 + 30, { size: 28, align: 'center', alpha: endA, color: PAL.ceata });
+    text(ctx, 'Interpretare sintetică generată cu AI (Claude – cod, sinteză procedurală), la înălțimea reală, în Do major · imagine: motive tradiționale generice', W / 2, H / 2 + 80, { size: 26, align: 'center', alpha: endA, color: PAL.ceata });
+  }
+  footer(ctx, W, H, 'M04');
+};
+window.READY = true;
+</script></body></html>

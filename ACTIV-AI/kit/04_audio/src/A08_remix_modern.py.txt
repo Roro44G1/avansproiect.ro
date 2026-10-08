@@ -1,0 +1,339 @@
+"""A08 – „Hai, mândruță, la poiană” (jiană din Mărginimea Sibiului) – remix modern (~68 s).
+
+Melodia este transcrisă din partitura „Hai mândruță la poiană – Jiana DoM – Saxofon”
+(aranjament de Natalia Bădilă & Paul Duca), fotografiată și pusă la dispoziție de
+coordonatorul proiectului. Partitura este scrisă pentru saxofon alto în Mi bemol,
+în La major (3 diezi); aici melodia sună la înălțimea reală, în Do major („DoM”),
+adică transpusă cu o sextă mare în jos față de notație.
+
+Notație (în cod): fiecare șir = o măsură de 2/4. Token = o optime; „X,Y” = două
+șaisprezecimi; „X/Y/Z” = triolet de optimi pe un timp; „X:d” = durată d în timpi
+(1 = pătrime, 0.75 = optime cu punct, 1.5 = pătrime cu punct). Înălțimile sunt
+cele SCRISE (La major); transpunerea la înălțimea reală se face la randare.
+
+Forma din partitură: B + 2A + B + Ritt 2. Aici: Intro (4 măsuri) – B (16) – A (8) –
+A (8) – B' (8) – pauză (4, tema B rărită) – Ritt 2 (8) – B' (8, final pe tonică).
+120 BPM (pătrimea), o măsură de 2/4 = 1 s.
+
+Sunete: sintetizator „vioară” (dinte de fierăstrău polyBLEP + vibrato + rezonanțe de corp
++ zgomot de arcuș, cu apogiaturi), „fluier” (sinus + respirație, la octavă), beat modern
+(kick, clap, hi-hat), bas sintetic cu ducking, acorduri scurte pe contratimp, pad.
+
+Rulare: python3 A08_remix_modern.py  -> ../A08_remix_modern.mp3
+"""
+import os
+
+import numpy as np
+
+from audiolib import (SR, add, bp, clap, env_adsr, env_ar, finalize, hat, hp, hz, kick, lp,
+                      make_ir, match_lufs, ns, peaking, report, reverb, rng_of, saw, stereo,
+                      t_axis, additive, delay)
+
+BPM = 120
+BEAT = 60.0 / BPM
+MEAS = 2 * BEAT  # măsură de 2/4
+OUT = os.path.join(os.path.dirname(__file__), "..", "A08_remix_modern.mp3")
+
+# transpunere la înălțimea reală: saxofon alto în Mi bemol → sunetul real este cu o sextă mare mai jos
+CONCERT = -9
+
+# ------------------------------------------------------------------ melodia transcrisă (înălțimi scrise)
+# Armura La major: F#, C#, G# – scrise explicit aici. Alterațiile accidentale din partitură
+# (D#, B# = Do natural) sunt notate ca atare.
+m1 = "A5 E5,D5 D5 E5"
+m2 = "F#5,E5 D5,C#5 B4 B4,A4"
+m3 = "G#4/A4/B4 B4 D5,C#5"
+m4 = "B4 A4,B4 C#5:1"
+m8 = "B4 B4,G#4 A4:1"
+m12 = "B4 A4,B4 C#5 C#5,A4"
+m13 = "D#5,E5 F#5 F#5,E5 E5"
+m15 = "G#4/A4/B4 B4,A4 C#5,B4"
+m16 = "A4:1 A4:1"
+TEMA_B = [m1, m2, m3, m4, m1, m2, m3, m8, m1, m2, m3, m12, m13, m2, m15, m16]          # m1–16
+TEMA_A = ["E4 A4 A4 A4", "B4,A4 B4,C#5 A4 A4", "B4:0.75 A4:0.25 A4 C5,C#5",             # m17–24
+          "E5,D#5 E5,C#5 D#5:1", m13, m2, "G#4,A4 D5,C#5 B4,A4 G#4,B4", "A4 A4:1.5"]
+r25 = "D#5,E5 F#5,G#5 A5 A5,G#5"
+r26 = "A5 A5,G#5 F#5 F#5,E5"
+r27 = "D#5/E5/F#5 F#5 A5,G#5"
+RITT2 = [r25, r26, r27, "F#5 F#5,E5 G#5 G#5,E5", r25, r26, r27, "F#5 F#5,D#5 E5:1"]  # m25–32
+TEMA_B2 = [m1, m2, m3, m12, m13, m2, m15, m16]                                            # m33–40
+
+# acorduri (la înălțimea reală, Do major) – câte unul pe măsură
+CH_B = ["C", "G", "G", "C", "C", "G", "G", "C", "C", "G", "G", "C", "D7", "G", "G", "C"]
+CH_A = ["C", "C", "C", "D7", "G", "G", "G", "C"]
+CH_R = ["C", "G", "C", "G", "C", "G", "C", "G"]
+CH_B2 = ["C", "G", "G", "C", "D7", "G", "G", "C"]
+CHORD_NOTES = {
+    "C": ["G3", "C4", "E4"], "G": ["G3", "B3", "D4"], "D7": ["F#3", "A3", "C4"], "Am": ["A3", "C4", "E4"],
+    "F": ["F3", "A3", "C4"],
+}
+ROOT = {"C": "C2", "G": "G1", "D7": "D2", "Am": "A1", "F": "F1"}
+
+SECTIONS = [("Intro", 4), ("Tema B", 16), ("Tema A", 8), ("Tema A (reluare)", 8), ("Tema B'", 8),
+            ("Pauză", 4), ("Ritt 2", 8), ("Final (Tema B')", 8)]
+
+
+def bar_notes(s):
+    out = []
+    for tok in s.split():
+        if "/" in tok:
+            for sub in tok.split("/"):
+                out.append((sub, 1 / 3))
+        elif "," in tok:
+            for sub in tok.split(","):
+                out.append((sub, 0.25))
+        elif ":" in tok:
+            nm, d = tok.split(":")
+            out.append((nm, float(d)))
+        else:
+            out.append((tok, 0.5))
+    tot = sum(d for _, d in out)
+    assert abs(tot - 2.0) < 1e-6, f"măsura „{s}” are {tot} timpi, nu 2"
+    return out
+
+
+def melody(lines, stretch=1.0):
+    seq = []
+    for ln in lines:
+        seq += [(n, d * stretch) for n, d in bar_notes(ln)]
+    return seq
+
+
+# ------------------------------------------------------------------ instrumente melodice
+def violin(seq, rng, transpose=CONCERT, grace_prob=0.35):
+    """Linie de „vioară” legato: frecvență continuă cu apogiaturi, glisări și vibrato."""
+    total = sum(d for _, d in seq) * BEAT + 0.4
+    n = ns(total)
+    f = np.zeros(n)
+    amp = np.zeros(n)
+    pos = 0.0
+    prev = None
+    for k, (nm, d) in enumerate(seq):
+        i0, i1 = ns(pos), ns(pos + d * BEAT)
+        pos += d * BEAT
+        if nm is None:
+            prev = None
+            continue
+        fn = hz(nm, transpose)
+        seg = np.full(i1 - i0, fn)
+        tt = t_axis(i1 - i0)
+        accent = (k % 8 == 0) or d >= 1.0
+        if accent and rng.uniform() < grace_prob + 0.4 and len(seg) > ns(0.06):
+            g = ns(0.045)  # apogiatură de sus (un ton)
+            seg[:g] = fn * 2 ** (2 / 12)
+        elif prev is not None:
+            g = min(len(seg), ns(0.022))
+            seg[:g] = np.geomspace(prev, fn, g)
+        depth = 0.22 * np.clip((tt - 0.12) / 0.2, 0, 1)
+        seg *= 2 ** (depth * np.sin(2 * np.pi * 6.0 * tt + rng.uniform(0, 6.28)) / 12)
+        f[i0:i1] = seg
+        a = np.ones(i1 - i0)
+        bow = min(len(a), ns(0.035))
+        a[:bow] = np.linspace(0.45 if prev else 0.0, 1.0, bow)  # schimbare de arcuș
+        a *= 0.92 + 0.08 * np.cos(np.pi * tt / max(tt[-1], 1e-3))
+        amp[i0:i1] = a * (1.0 if accent else 0.85)
+        prev = fn
+    last = ns(pos)
+    f[last:] = f[last - 1]
+    amp[last:last + ns(0.25)] = amp[last - 1] * np.linspace(1, 0, ns(0.25))[: n - last]
+    amp = np.convolve(amp, np.ones(ns(0.006)) / ns(0.006), mode="same")
+    x = saw(f)
+    x = peaking(x, 290, 6, 2.0)
+    x = peaking(x, 1100, 3, 1.5)
+    x = peaking(x, 2800, 5, 1.2)
+    x = lp(x, 6500, order=2)
+    x = hp(x, 200, order=2)
+    bownoise = bp(rng.standard_normal(n), 2000, 7000) * 0.06
+    return (x / 4.0 + bownoise) * amp
+
+
+def fluier(seq, rng, transpose=CONCERT + 12):
+    total = sum(d for _, d in seq) * BEAT + 0.4
+    n = ns(total)
+    f = np.zeros(n)
+    amp = np.zeros(n)
+    pos = 0.0
+    prev = None
+    for nm, d in seq:
+        i0, i1 = ns(pos), ns(pos + d * BEAT)
+        pos += d * BEAT
+        if nm is None:
+            prev = None
+            continue
+        fn = hz(nm, transpose)
+        seg = np.full(i1 - i0, fn)
+        tt = t_axis(i1 - i0)
+        seg *= 2 ** (0.15 * np.clip((tt - 0.15) / 0.2, 0, 1) * np.sin(2 * np.pi * 5.5 * tt) / 12)
+        f[i0:i1] = seg
+        a = np.ones(i1 - i0)
+        a[: ns(0.02)] = np.linspace(0.4 if prev else 0, 1, ns(0.02))
+        amp[i0:i1] = a
+        prev = fn
+    last = ns(pos)
+    f[last:] = f[last - 1]
+    amp[last:last + ns(0.2)] = np.linspace(1, 0, ns(0.2))[: n - last]
+    amp = np.convolve(amp, np.ones(ns(0.008)) / ns(0.008), mode="same")
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    tone = np.sin(ph) + 0.08 * np.sin(2 * ph)
+    breath = bp(rng.standard_normal(n), 2000, 8000) * 0.05
+    return lp((tone + breath) * amp, 8000)
+
+
+# ------------------------------------------------------------------ randare
+def timeline():
+    marks, t = [], 0.0
+    for nm, bars in SECTIONS:
+        marks.append((nm, t, bars))
+        t += bars * MEAS
+    return marks, t
+
+
+def render(seed=1191):
+    rng = rng_of(seed)
+    marks, end_t = timeline()
+    total = end_t + 3.5
+    S = {nm: t for nm, t, _ in marks}
+    vn, fl, kb, cb, hb, bs, st, pd, fx = (stereo(total) for _ in range(9))
+
+    # progresia de acorduri pe toată piesa (o intrare pe măsură de 2/4)
+    prog = (["C", "G", "G", "C"] + CH_B + CH_A + CH_A + CH_B2 + ["C", "C", "G", "G"] + CH_R + CH_B2)
+    assert len(prog) == sum(b for _, b in SECTIONS)
+
+    # --- melodie
+    tB, tA, tR, tB2 = melody(TEMA_B), melody(TEMA_A), melody(RITT2), melody(TEMA_B2)
+    add(fl, lp(fluier(melody([m13, m2, m15, m16]), rng), 2500), S["Intro"], gain=0.8, pan=0.1)  # filtrat, „de departe”
+    add(fl, fluier(tB, rng), S["Tema B"], gain=0.95, pan=0.15)   # fluierul conduce
+    add(vn, violin(tB, rng), S["Tema B"], gain=0.55, pan=-0.2)
+    add(fl, fluier(tA, rng), S["Tema A"], gain=0.95, pan=0.15)
+    add(vn, violin(tA, rng), S["Tema A"], gain=0.55, pan=-0.2)
+    add(vn, violin(tA, rng), S["Tema A (reluare)"], gain=0.9, pan=-0.15)   # a doua oară: vioara singură
+    add(fl, lp(fluier(tA, rng), 3000), S["Tema A (reluare)"], gain=0.5, pan=0.3)
+    add(fl, fluier(tB2, rng), S["Tema B'"], gain=0.95, pan=0.15)
+    add(vn, violin(tB2, rng), S["Tema B'"], gain=0.55, pan=-0.2)
+    # pauza: primele două măsuri ale temei B, de două ori mai rar, pe vioară
+    add(vn, violin(melody([m1, m2], stretch=2.0), rng, grace_prob=0.0), S["Pauză"], gain=0.8, pan=-0.1)
+    add(fl, fluier(tR, rng), S["Ritt 2"], gain=0.95, pan=0.15)
+    add(vn, violin(tR, rng), S["Ritt 2"], gain=0.7, pan=-0.2)
+    add(fl, fluier(tB2, rng), S["Final (Tema B')"], gain=0.95, pan=0.15)
+    add(vn, violin(tB2, rng), S["Final (Tema B')"], gain=0.7, pan=-0.2)
+
+    # --- beat
+    drums_on = [(S["Tema A"], S["Pauză"]), (S["Ritt 2"], end_t)]
+    n_meas = int(round(end_t / MEAS))
+    for meas in range(n_meas):
+        tb = meas * MEAS
+        on = any(a - 1e-6 <= tb < b - 1e-6 for a, b in drums_on)
+        in_B2 = S["Tema B'"] - 1e-6 <= tb < S["Pauză"] - 1e-6
+        intro_hats = S["Intro"] + 2 * MEAS - 1e-6 <= tb < S["Tema B"] - 1e-6
+        light = S["Tema B"] - 1e-6 <= tb < S["Tema A"] - 1e-6  # tema B: doar hi-hat și kick ușor
+        for beat in range(2):
+            t = tb + beat * BEAT
+            if on:
+                add(kb, kick(rng=rng), t, gain=1.0)
+                if beat == 1:
+                    add(cb, clap(rng=rng), t, gain=0.8 * rng.uniform(0.9, 1.0))
+            elif light and beat == 0:
+                add(kb, kick(rng=rng), t, gain=0.55)
+            if on or intro_hats or light:
+                add(hb, hat(rng=rng), t + BEAT / 2, gain=0.9, pan=0.3)  # pe contratimp
+                for s16 in (0.25, 0.75):
+                    add(hb, hat(dur=0.03, rng=rng), t + s16 * BEAT, gain=0.28 * rng.uniform(0.7, 1.0), pan=0.35)
+                if in_B2 and beat == 1:
+                    add(hb, hat(rng=rng, open_=True), t + BEAT / 2, gain=0.35, pan=0.3)
+        # pauza: rulou de clap în ultima măsură
+        if abs(tb - (S["Ritt 2"] - MEAS)) < 1e-6:
+            for k in range(8):
+                add(cb, clap(rng=rng), tb + k * BEAT / 4, gain=0.15 + 0.09 * k)
+    # lovitura finală
+    add(kb, kick(rng=rng), end_t, gain=1.0)
+    add(cb, clap(rng=rng), end_t, gain=0.7)
+
+    # --- bas, acorduri pe contratimp, pad
+    for meas, ch in enumerate(prog):
+        tb = meas * MEAS
+        on = any(a - 1e-6 <= tb < b - 1e-6 for a, b in drums_on)
+        f0 = hz(ROOT[ch])
+        if on:  # bas pe optimi de contratimp (stil „house”), cu octava sus pe ultima
+            for beat in range(2):
+                fnote = f0 * (2 if (meas % 2 == 1 and beat == 1) else 1)
+                L = BEAT / 2 * 0.9
+                m = ns(L)
+                x = 0.7 * lp(saw(fnote, m), 900) + 0.6 * np.sin(2 * np.pi * fnote * t_axis(m))
+                x *= env_adsr(m, 0.004, 0.08, 0.7, 0.04)
+                add(bs, x, tb + beat * BEAT + BEAT / 2, gain=0.9)
+        # acorduri scurte pe contratimp – amintesc de acompaniamentul ritmic din muzica de joc
+        if on and not (S["Tema A"] - 1e-6 <= tb < S["Tema A"] + 4 * MEAS - 1e-6):
+            for beat in range(2):
+                m = ns(0.12)
+                stab = np.zeros(m)
+                for nm in CHORD_NOTES[ch]:
+                    stab += saw(hz(nm), m) + saw(hz(nm) * 1.004, m)
+                stab = lp(stab, 2400) * env_ar(m, 0.002, 0.1)
+                add(st, stab, tb + beat * BEAT + BEAT / 2, gain=0.5, pan=0.35 if (meas + beat) % 2 else -0.35)
+        # pad cald, susținut (o dată la două măsuri sau la schimbarea acordului)
+        if meas % 2 == 0 or prog[meas - 1] != ch:
+            L = 2 * MEAS + 0.4
+            m = ns(L)
+            pad = np.zeros(m)
+            for nm in CHORD_NOTES[ch]:
+                for det in (-0.08, 0.08):
+                    pad += additive(hz(nm) * 2 ** (det / 12), [1, 0.4, 0.2, 0.1, 0.05], m, phase0=rng.uniform())
+            pad *= env_adsr(m, 0.25, 0.3, 0.8, 0.45)
+            add(pd, pad, tb, gain=0.25)
+    # acord final lung
+    m = ns(3.2)
+    pad = np.zeros(m)
+    for nm in ["C2", "G2", "C3", "E3", "G3"]:
+        pad += additive(hz(nm), [1, 0.4, 0.2, 0.1], m, phase0=rng.uniform())
+    add(pd, pad * env_ar(m, 0.01, 2.5), end_t, gain=0.3)
+    m = ns(3.0)
+    x = 0.6 * lp(saw(hz("C1"), m), 700) + 0.7 * np.sin(2 * np.pi * hz("C1") * t_axis(m))
+    add(bs, x * env_ar(m, 0.004, 1.8), end_t, gain=1.0)
+
+    # riser (zgomot cu filtru care se deschide) înainte de tema A și înainte de Ritt 2
+    for t_end in (S["Tema A"], S["Ritt 2"]):
+        L = 2 * MEAS
+        m = ns(L)
+        nz = rng.standard_normal(m)
+        y = np.zeros(m)
+        step = ns(0.1)
+        for s in range(0, m, step):
+            fc = 400 + 7000 * (s / m) ** 2
+            y[s:s + step] = bp(nz[s:s + step + 200], fc * 0.7, fc * 1.3, order=1)[:step][: m - s]
+        y *= np.linspace(0, 1, m) ** 2
+        add(fx, y, t_end - L, gain=0.5)
+
+    # ducking (sidechain) pe bas/pad/acorduri după kick
+    duck = np.ones(ns(total))
+    for meas in range(n_meas + 1):
+        tb = meas * MEAS
+        on = any(a - 1e-6 <= tb < b - 1e-6 for a, b in drums_on)
+        if not on:
+            continue
+        for beat in range(2):
+            i = ns(tb + beat * BEAT)
+            m = min(ns(0.22), len(duck) - i)
+            if m > 0:
+                duck[i:i + m] = np.minimum(duck[i:i + m], 1 - 0.55 * np.exp(-t_axis(m) / 0.07))
+    for b_ in (bs, pd, st):
+        b_ *= duck
+
+    ir = make_ir(t60=1.9, predelay=0.02, seed=9)
+    vn = delay(vn, 3 * BEAT / 4, feedback=0.25, mix=0.12, lp_hz=4000)
+    stems = [(vn, -18.5, 0.22), (fl, -23.5, 0.3), (kb, -20.5, 0.04), (cb, -25.0, 0.18),
+             (hb, -28.0, 0.08), (bs, -22.0, 0.0), (st, -27.0, 0.15), (pd, -26.0, 0.3), (fx, -30.0, 0.3)]
+    mix = None
+    for x, target, wet in stems:
+        y = reverb(match_lufs(x, target), ir, wet=wet)
+        mix = y if mix is None else mix + y
+    return mix, marks, end_t
+
+
+if __name__ == "__main__":
+    mix, marks, end_t = render()
+    out = finalize(mix, OUT, "A08 Hai, mândruță, la poiană (jiană) – remix modern",
+                   "Jiană din Mărginimea Sibiului, după partitura N. Bădilă & P. Duca (sax), redată la înălțimea reală în Do major; "
+                   "sinteză procedurală – ACTIV AI",
+                   target_lufs=-14.0, fin=0.05, fout=2.8)
+    report(out, "A08 final")
+    print("BPM", BPM, "· marcaje:", ", ".join(f"{nm} {t:.2f}s" for nm, t, _ in marks), f"· acord final {end_t:.2f}s")

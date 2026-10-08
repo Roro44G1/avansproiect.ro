@@ -1,0 +1,185 @@
+# -*- coding: utf-8 -*-
+import sys; sys.path.insert(0, "/tmp/claude-0/-home-claude/87269e5e-26b5-5b44-815b-307dc6187e24/scratchpad/gen")
+from lib import *
+
+OUT = "/home/claude/expo/c1/06_date/D07_cronologia_fortificatiilor.svg"
+BLUE = "#3E63DD"
+GREY = "#8A96A3"
+s = frame_head("DATE · D07", BLUE, "Cronologia fortificațiilor Sibiului",
+               "linie a timpului ilustrată · 1191 → 2020 · intervalele nu sunt la scară")
+
+# ---------- icons (centered at cx, cy; ~100x80 box)
+def ic_doc(cx, cy, col):
+    o = f'<rect x="{cx-30}" y="{cy-38}" width="60" height="72" rx="4" fill="#F3EFE6" stroke="{col}" stroke-width="2"/>\n'
+    for i in range(4):
+        o += f'<line x1="{cx-18}" y1="{cy-22+i*12}" x2="{cx+18}" y2="{cy-22+i*12}" stroke="#8C7B5E" stroke-width="2"/>\n'
+    o += f'<circle cx="{cx+18}" cy="{cy+22}" r="11" fill="{TIGLA}"/><circle cx="{cx+18}" cy="{cy+22}" r="5" fill="none" stroke="#F3EFE6" stroke-width="1.5"/>\n'
+    return o
+
+def ic_rings(cx, cy, n, col, hl=None):
+    o = ""
+    for i in range(n):
+        rx = 24 + i * 14; ry = 16 + i * 10
+        c = col if (hl is None or i == hl) else "#56657A"
+        w = 5 if (hl is None or i == hl) else 3
+        o += f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="none" stroke="{c}" stroke-width="{w}"/>\n'
+    o += f'<rect x="{cx-5}" y="{cy-9}" width="10" height="12" fill="#F3EFE6"/><polygon points="{cx-7},{cy-9} {cx},{cy-16} {cx+7},{cy-9}" fill="{TIGLA}"/>\n'
+    return o
+
+def ic_tower(cx, cy, col, h=64, w=26, roof=TIGLA, oct=False, extra=""):
+    o = f'<rect x="{cx-w/2}" y="{cy+34-h}" width="{w}" height="{h}" fill="{col}"/>\n'
+    if oct:
+        o += f'<rect x="{cx-w/6}" y="{cy+34-h}" width="{w/3}" height="{h}" fill="#000" opacity="0.15"/>\n'
+    o += f'<polygon points="{cx-w/2-5},{cy+34-h} {cx},{cy+34-h-26} {cx+w/2+5},{cy+34-h}" fill="{roof}"/>\n'
+    o += extra
+    return o
+
+def ic_gate(cx, cy, col, roof=TIGLA, tall=True):
+    o = f'<rect x="{cx-22}" y="{cy-16}" width="44" height="50" fill="{col}"/>\n'
+    o += f'<path d="M{cx-10},{cy+34} v-22 a10,10 0 0 1 20,0 v22 Z" fill="{BG}"/>\n'
+    if tall:
+        o += f'<polygon points="{cx-26},{cy-16} {cx},{cy-56} {cx+26},{cy-16}" fill="{roof}"/>\n'
+    else:
+        o += f'<polygon points="{cx-26},{cy-16} {cx},{cy-28} {cx+26},{cy-16}" fill="{roof}"/>\n'
+    return o
+
+def ic_bastion(cx, cy, col):
+    pts = [(cx, cy - 34), (cx + 40, cy - 8), (cx + 26, cy + 34), (cx - 26, cy + 34), (cx - 40, cy - 8)]
+    o = poly(pts, fill=col, stroke="#F3EFE6", stroke_width=1.5)
+    o += poly([(cx, cy - 18), (cx + 24, cy - 2), (cx + 15, cy + 22), (cx - 15, cy + 22), (cx - 24, cy - 2)], fill="#000", opacity=0.18)
+    return o
+
+def ic_demol(cx, cy, col):
+    o = ""
+    for r, (x0, n) in enumerate([(-44, 4), (-32, 3), (-44, 3)]):
+        for i in range(n):
+            if (r, i) in [(0, 3), (1, 2)]:
+                continue
+            o += f'<rect x="{cx+x0+i*24}" y="{cy+16-r*18}" width="22" height="16" fill="{col}" opacity="{0.9 if r<2 else 0.6}"/>\n'
+    o += f'<line x1="{cx+10}" y1="{cy+30}" x2="{cx+44}" y2="{cy-30}" stroke="#F3EFE6" stroke-width="5" stroke-linecap="round"/>\n'
+    o += f'<path d="M{cx+30},{cy-38} q18,6 24,20" fill="none" stroke="{TIGLA}" stroke-width="8" stroke-linecap="round"/>\n'
+    return o
+
+def ic_ghostwall(cx, cy, col):
+    o = ""
+    for i in range(4):
+        o += f'<rect x="{cx-46+i*24}" y="{cy}" width="22" height="16" fill="none" stroke="{col}" stroke-width="2" stroke-dasharray="4 4"/>\n'
+    for i in range(3):
+        o += f'<rect x="{cx-34+i*24}" y="{cy-18}" width="22" height="16" fill="none" stroke="{col}" stroke-width="2" stroke-dasharray="4 4"/>\n'
+    o += f'<rect x="{cx-46}" y="{cy+16}" width="94" height="14" fill="{col}" opacity="0.5"/>\n'
+    return o
+
+def ic_roof(cx, cy, col):
+    o = f'<rect x="{cx-22}" y="{cy-6}" width="44" height="40" fill="{col}"/>\n'
+    o += f'<path d="M{cx-10},{cy+34} v-18 a10,10 0 0 1 20,0 v18 Z" fill="{BG}"/>\n'
+    o += f'<polygon points="{cx-26},{cy-6} {cx},{cy-50} {cx+26},{cy-6}" fill="{TIGLA}" stroke="#F3EFE6" stroke-width="2"/>\n'
+    o += f'<polygon points="{cx-26},{cy-6} {cx},{cy-22} {cx+26},{cy-6}" fill="none" stroke="#F3EFE6" stroke-width="1.5" stroke-dasharray="4 3"/>\n'
+    return o
+
+def ic_scaffold(cx, cy, col):
+    o = ic_tower(cx, cy, col, h=64, w=26, oct=True)
+    for i in range(4):
+        y = cy + 30 - i * 20
+        o += f'<line x1="{cx-40}" y1="{y}" x2="{cx+40}" y2="{y}" stroke="{PETROL}" stroke-width="2"/>\n'
+    for x in (cx - 40, cx + 40):
+        o += f'<line x1="{x}" y1="{cy+34}" x2="{x}" y2="{cy-36}" stroke="{PETROL}" stroke-width="3"/>\n'
+    return o
+
+def ic_towers3(cx, cy, col):
+    o = ic_tower(cx - 34, cy, col, h=40, w=22, oct=True)
+    o += ic_tower(cx, cy, col, h=46, w=22)
+    o += ic_tower(cx + 34, cy, col, h=42, w=22, oct=True)
+    return o
+
+def ic_inscr(cx, cy, col):
+    o = ic_tower(cx, cy, col, h=66, w=30, oct=True)
+    o += f'<rect x="{cx-18}" y="{cy-8}" width="36" height="18" rx="2" fill="#F3EFE6"/>\n'
+    o += text(cx, cy + 6, "1668", 13, "#3B3326", "serif", 700, anchor="middle")
+    return o
+
+events_A = [
+    ("1191", "Prima atestare", "Cibinium apare în documente; începe prima incintă, în jurul Bisericii Sf. Maria (actuala Piața Huet).", OCRU, lambda x, y: ic_doc(x, y, OCRU)),
+    ("1224", "Prima incintă, încheiată", "Incinta I (1191–1224) înconjoară actuala Piața Huet. Începe a doua incintă.", OCRU, lambda x, y: ic_rings(x, y, 1, OCRU)),
+    ("1241", "A doua incintă", "Incinta II (1224–1241) cuprinde actuala Piața Mică.", OCRU, lambda x, y: ic_rings(x, y, 2, OCRU, hl=1)),
+    ("1337 · 1357–1366", "Orașul de Sus, în ziduri", "Incinta III (1357–1366) înconjoară Orașul de Sus. Turnul Dulgherilor (1337–1366) și Turnul Archebuzierilor (1357–1366).", OCRU, lambda x, y: ic_towers3(x, y, OCRU)),
+    ("1457", "Orașul de Jos, inclus", "Incinta IV: Orașul de Jos intră în centura de fortificații.", OCRU, lambda x, y: ic_rings(x, y, 3, OCRU, hl=2)),
+    ("1542", "Turnul Scărilor, refăcut", "Turnul din secolul al XIII-lea, singura poartă păstrată a primei incinte, este refăcut.", VIOLET, lambda x, y: ic_gate(x, y, VIOLET)),
+    ("1551", "Bastionul Haller", "Începe construcția Bastionului Haller, primul dintre cele două bastioane din epoca artileriei.", VIOLET, lambda x, y: ic_bastion(x, y, VIOLET)),
+]
+events_B = [
+    ("1622–1629", "Bastionul Soldisch", "Al doilea bastion din epoca artileriei este construit.", VIOLET, lambda x, y: ic_bastion(x, y, VIOLET)),
+    ("1668", "Restaurare, cu an inscripționat", "Anul 1668 este inscripționat pe Turnul Archebuzierilor, numit ulterior Turnul Pânzarilor.", VIOLET, lambda x, y: ic_inscr(x, y, VIOLET)),
+    ("1830–1898", "Demolări sistematice", "Dispar porți, bastioane și peste 20 de turnuri; demolările continuă până în 1903.", GREY, lambda x, y: ic_demol(x, y, GREY)),
+    ("1886", "Ultimele ziduri de jos", "Până în 1886 dispar ultimele ziduri din Orașul de Jos.", GREY, lambda x, y: ic_ghostwall(x, y, GREY)),
+    ("2007", "Acoperișul Turnului Scărilor", "Forma originală a acoperișului înalt (demolat în 1844 sau 1863) este refăcută.", PETROL, lambda x, y: ic_roof(x, y, PETROL)),
+    ("2019–2020", "Trei turnuri renovate", "Turnurile Archebuzierilor, Olarilor și Dulgherilor de pe Strada Cetății sunt renovate.", PETROL, lambda x, y: ic_scaffold(x, y, PETROL)),
+]
+
+YA, YB = 470, 800
+XA = [210 + i * (1690 - 210) / 6 for i in range(7)]
+XB = [1690 - i * 296 for i in range(6)]
+
+# gradient for line
+s += ('<defs><linearGradient id="gA" x1="0" x2="1"><stop offset="0" stop-color="#E2A62B"/><stop offset="0.72" stop-color="#E2A62B"/><stop offset="1" stop-color="#6E56CF"/></linearGradient>'
+      '<linearGradient id="gB" x1="1" x2="0"><stop offset="0" stop-color="#6E56CF"/><stop offset="0.3" stop-color="#6E56CF"/><stop offset="0.5" stop-color="#8A96A3"/><stop offset="0.75" stop-color="#0E7C86"/><stop offset="1" stop-color="#0E7C86"/></linearGradient>'
+      '<marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#0E7C86"/></marker></defs>\n')
+# row A line
+s += f'<line x1="{XA[0]-40}" y1="{YA}" x2="{XA[-1]+40}" y2="{YA}" stroke="url(#gA)" stroke-width="10" stroke-linecap="round"/>\n'
+# connector A -> B (right side)
+s += f'<path d="M{XA[-1]+40},{YA} C{XA[-1]+140},{YA} {XB[0]+140},{YB} {XB[0]+40},{YB}" fill="none" stroke="{VIOLET}" stroke-width="10" stroke-linecap="round"/>\n'
+# row B line
+s += f'<line x1="{XB[0]+40}" y1="{YB}" x2="{XB[-1]-40}" y2="{YB}" stroke="url(#gB)" stroke-width="10" stroke-linecap="round"/>\n'
+s += f'<line x1="{XB[-1]-40}" y1="{YB}" x2="{XB[-1]-78}" y2="{YB}" stroke="{PETROL}" stroke-width="10" stroke-linecap="round" marker-end="url(#arr)"/>\n'
+# direction ticks (small chevrons) on row A
+for x in [XA[i] + (XA[i+1]-XA[i]) / 2 for i in range(6)]:
+    s += f'<polyline points="{x-7},{YA-9} {x+2},{YA} {x-7},{YA+9}" fill="none" stroke="{BG}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>\n'
+for x in [XB[i] - 160 for i in range(5)]:
+    s += f'<polyline points="{x+7},{YB-9} {x-2},{YB} {x+7},{YB+9}" fill="none" stroke="{BG}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>\n'
+s += text(XB[-1] - 100, YB + 6, "azi", 18, PETROL, "sans", 700, True, anchor="end")
+
+def node(x, y, col):
+    return (f'<circle cx="{x}" cy="{y}" r="24" fill="{BG}" stroke="{col}" stroke-width="5" filter="url(#glow)"/>'
+            f'<circle cx="{x}" cy="{y}" r="9" fill="{col}"/>\n')
+
+W = 228
+for i, (yr, title, body, col, icon) in enumerate(events_A):
+    x = XA[i]
+    s += node(x, YA, col)
+    # text above
+    lines = wrap(body, W, 15)
+    ty = 300
+    ysz = 30 if len(yr) < 8 else 24
+    s += text(x, ty - 36, yr, ysz, col, "serif", 700, anchor="middle")
+    s += text(x, ty - 8, title, 16, VAR, "sans", 700, anchor="middle")
+    yy = ty + 16
+    for ln in lines:
+        s += text(x, yy, ln, 15, CEATA, anchor="middle"); yy += 20
+    # illustration below
+    s += f'<rect x="{x-62}" y="{YA+48}" width="124" height="96" rx="12" fill="{CARD}"/>\n'
+    s += icon(x, YA + 96)
+
+for i, (yr, title, body, col, icon) in enumerate(events_B):
+    x = XB[i]
+    s += node(x, YB, col)
+    s += f'<rect x="{x-62}" y="{YB-146}" width="124" height="96" rx="12" fill="{CARD}"/>\n'
+    s += icon(x, YB - 98)
+    ysz = 30 if len(yr) < 8 else 24
+    s += text(x, YB + 66, yr, ysz, col, "serif", 700, anchor="middle")
+    s += text(x, YB + 94, title, 16, VAR, "sans", 700, anchor="middle")
+    yy = YB + 118
+    for ln in wrap(body, 262, 15):
+        s += text(x, yy, ln, 15, CEATA, anchor="middle"); yy += 20
+
+# legend (bottom-left under row B, first columns are at the right side so left is free) -> place at left of row B line start? Row B ends at x=160 (left). Put legend top-left of row B area (x 90, y 600..680)
+lx = 80; ly = 998
+s += text(lx, ly, "Perioade:", 15, VAR, "sans", 700)
+lx += measure("Perioade:", 15, "sans", 700) + 18
+for col, lab in [(OCRU, "cele patru incinte · 1191–1457"), (VIOLET, "epoca artileriei și restaurări · 1542–1668"),
+                 (GREY, "demolări · 1830–1898/1903"), (PETROL, "restaurări recente · 2007–2020")]:
+    s += f'<circle cx="{lx+7}" cy="{ly-5}" r="7" fill="{col}"/>\n'
+    s += text(lx + 22, ly, lab, 15, CEATA)
+    lx += 22 + measure(lab, 15) + 26
+s += text(1840, ly, "surse: patrimoniu.sibiu.ro/fortificatii; ziarulnatiunea.ro (2025)", 14, "#7E8A96", "sans", 400, True, anchor="end")
+s += frame_foot()
+write(OUT, s)
+print(OUT)

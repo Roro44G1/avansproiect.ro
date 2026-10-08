@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "V21",
+  "categorie": "Vizual",
+  "titlu": "Prima farmacie (1494) — interior reconstituit AI, cu rafturi de borcane și ierburi",
+  "fisiere": [
+   "01_vizual/V21_card_canva.png",
+   "01_vizual/canva_miniaturi/V21_prima_farmacie_1494.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Farmacie orășenească din Transilvania, sfârșitul secolului al XV-lea, imaginată: încăpere boltită, rafturi de stejar cu borcane de lemn și sticluțe, ierburi uscate, mojar de bronz, balanță de alamă, rețete pe pergament, lumânare. Fără persoane, fără text. Prima farmacie (1494, Piața Mare) nu are imagini păstrate: reconstituire liberă.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXPWLhd10",
+    "url": "https://www.canva.com/M/MAHXPWLhd10",
+    "eticheta": "interior imaginat, stil ilustrație istorică"
+   }
+  ],
+  "nota": "Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs"
+ },
+ {
+  "cod": "V22",
+  "categorie": "Vizual",
+  "titlu": "Racheta în trepte din manuscrisul lui Conrad Haas — ilustrație tehnică AI în stil de gravură veche",
+  "fisiere": [
+   "01_vizual/V22_card_canva.png",
+   "01_vizual/canva_miniaturi/V22_racheta_haas.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Gravură din secolul al XVI-lea, pe hârtie îngălbenită: rachetă cu trei trepte suprapuse, ajutaje în formă de clopot, aripioare triunghiulare, secțiune cu camerele interioare, o rachetă în două trepte alături. Nu reproduce desenele reale din manuscris; preia doar elementele descrise în fișa de fapte.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXPT5hKmI",
+    "url": "https://www.canva.com/M/MAHXPT5hKmI",
+    "eticheta": "interpretare liberă, stil gravură"
+   }
+  ],
+  "nota": "Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs"
+ }
+]

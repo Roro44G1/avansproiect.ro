@@ -1,0 +1,109 @@
+# -*- coding: utf-8 -*-
+"""D09 – Premierele pe domenii (aceleași 30 de premiere ca în D08)."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c2/06_date/D09_premiere_pe_domenii.svg"
+BLUE = "#3E63DD"
+TEAL = "#12A594"
+
+# (titlu domeniu, culoare, [ (an, etichetă scurtă) ... ])  – împărțirea este a autorilor artefactului
+DOMS = [
+    ("Sănătate", TIGLA, [
+        ("1292", "primul spital*"),
+        ("1494", "prima farmacie*"),
+        ("1793", "carte de medicină românească"),
+        ("1863", "primul spital de boli nervoase"),
+        ("1904", "Baia Populară, primul spa"),
+    ]),
+    ("Educație & știință", BLUE, [
+        ("1380", "prima școală atestată*"),
+        ("1782", "descoperirea telurului – Müller"),
+        ("1786", "teologie „Andrei Șaguna”, prima"),
+        ("1898", "prima enciclopedie românească"),
+    ]),
+    ("Cultură", VIOLET, [
+        ("1525", "prima tipografie din Transilvania"),
+        ("1544", "prima carte în limba română*"),
+        ("1788", "prima clădire de teatru*"),
+        ("1817", "Muzeul Brukenthal, primul muzeu"),
+        ("1853", "ziarul „Telegraful Român”"),
+        ("1869", "bibliotecă publică românească"),
+        ("1895", "prima clădire ridicată ca muzeu"),
+        ("1944", "„Junii Sibiului”, primul ansamblu"),
+        ("1993", "muzeu de etnografie universală"),
+        ("2007", "Capitală Culturală Europeană"),
+    ]),
+    ("Tehnică & economie", OCRU, [
+        ("1555", "racheta în trepte – Conrad Haas"),
+        ("1717", "prima fabrică de bere*"),
+        ("1859", "Podul Minciunilor, pod din fontă"),
+        ("1872", "Banca Albina, capital românesc"),
+        ("1875", "Rieger, fabrică de mașini-unelte"),
+        ("1904", "omnibusul electric, fără șine"),
+        ("1938", "prima fabrică de frigidere (Hess)"),
+    ]),
+    ("Sport & turism", TEAL, [
+        ("1894", "Păltiniș, prima stațiune montană"),
+        ("1921", "prima echipă de handbal"),
+        ("1929", "prima grădină zoologică"),
+        ("2019", "Regiune Gastronomică Europeană"),
+    ]),
+]
+assert sum(len(d[2]) for d in DOMS) == 30
+
+s = frame_head("DATE · D09", BLUE, "Premierele Sibiului, pe domenii",
+               "aceleași 30 de premiere din D08 · împărțirea pe domenii este a autorilor artefactului")
+
+NCOL = len(DOMS)
+GAP = 26
+X0, X1 = 80, 1840
+CW = (X1 - X0 - GAP * (NCOL - 1)) / NCOL
+MAXN = max(len(d[2]) for d in DOMS)
+
+BAR_BASE = 404     # linia de bază a coloanelor (barelor)
+BAR_MAX = 120      # înălțimea barei pentru valoarea maximă
+CARD_Y0 = 462      # prima fișă
+CARD_H = 40
+CARD_GAP = 6
+
+# axă de bază
+s += f'<line x1="{X0}" y1="{BAR_BASE}" x2="{X1}" y2="{BAR_BASE}" stroke="#2A3845" stroke-width="2"/>\n'
+
+for i, (name, col, items) in enumerate(DOMS):
+    x = X0 + i * (CW + GAP)
+    cx = x + CW / 2
+    n = len(items)
+    # bara (coloană) proporțională cu numărul de premiere
+    bh = BAR_MAX * n / MAXN
+    bw = 120
+    s += f'<rect x="{cx-bw/2:.1f}" y="{BAR_BASE-bh:.1f}" width="{bw}" height="{bh:.1f}" rx="10" fill="{col}" opacity="0.92"/>\n'
+    s += text(cx, BAR_BASE - bh - 16, str(n), 44, col, "serif", 700, anchor="middle")
+    s += text(cx + measure(str(n), 44, "serif", 700) / 2 + 8, BAR_BASE - bh - 16, "premiere", 15, CEATA, anchor="start")
+    # denumirea domeniului + intervalul de ani
+    s += text(cx, BAR_BASE + 32, name, 22, VAR, "sans", 700, anchor="middle")
+    yrs = sorted(int(a) for a, _ in items)
+    s += text(cx, BAR_BASE + 54, f"{yrs[0]} → {yrs[-1]}", 15, CEATA, "sans", 400, True, anchor="middle")
+    # fișele
+    y = CARD_Y0 + 24
+    for yr, lab in items:
+        s += f'<rect x="{x:.1f}" y="{y}" width="{CW:.1f}" height="{CARD_H}" rx="10" fill="{CARD}"/>\n'
+        s += f'<rect x="{x:.1f}" y="{y+8}" width="5" height="{CARD_H-16}" rx="2.5" fill="{col}"/>\n'
+        s += text(x + 18, y + 28, yr, 20, col, "serif", 700)
+        lx = x + 18 + measure("1000", 20, "serif", 700) + 12
+        maxw = x + CW - 12 - lx
+        fs = 15
+        while measure(lab, fs) > maxw and fs > 12:
+            fs -= 1
+        assert fs >= 14, (lab, fs)
+        s += text(lx, y + 27, lab, fs, VAR)
+        y += CARD_H + CARD_GAP
+
+# note de subsol
+ny = 984
+s += text(X0, ny, "* = „de pe actualul teritoriu al României”, formularea sursei (patrimoniu.sibiu.ro). Racheta lui Haas: „prima din lume”, conform sursei.", 14, "#7E8A96", "sans", 400, True)
+s += text(X1, ny, "sursa listei: patrimoniu.sibiu.ro – Premiere (38 de premiere enumerate; aici 30)", 14, "#7E8A96", "sans", 400, True, anchor="end")
+s += frame_foot()
+write(OUT, s)
+print(OUT)

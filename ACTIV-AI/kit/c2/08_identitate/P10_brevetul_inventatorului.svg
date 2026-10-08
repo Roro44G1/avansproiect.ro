@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="246" height="44" fill="#F76B15"/>
+<text x="122.9" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">IDENTITATE · P10</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="60" fill="#F3EFE6">Brevetul inventatorului de 16 ani</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">document fictiv, fără valoare legală · inventator: personaj fictiv</text>
+<defs><linearGradient id="oldpaper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3EAD6"/><stop offset="0.5" stop-color="#EEE2C8"/><stop offset="1" stop-color="#E4D5B4"/></linearGradient><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20,0 H0 V20" fill="none" stroke="#B8A98A" stroke-width="0.6" opacity="0.5"/></pattern></defs>
+<g filter="url(#sh)"><rect x="80" y="230" width="1760" height="770" rx="6" fill="url(#oldpaper)"/></g>
+<rect x="80" y="230" width="1760" height="770" rx="6" fill="url(#oldpaper)" filter="url(#paper)"/>
+<circle cx="200" cy="930" r="90" fill="#9C7A4A" opacity="0.1" filter="url(#blur8)"/>
+<circle cx="1730" cy="320" r="70" fill="#9C7A4A" opacity="0.08" filter="url(#blur8)"/>
+<circle cx="980" cy="970" r="120" fill="#9C7A4A" opacity="0.06" filter="url(#blur8)"/>
+<rect x="96" y="246" width="1728" height="738" fill="none" stroke="#8A5A2B" stroke-width="3"/>
+<rect x="104" y="254" width="1712" height="722" fill="none" stroke="#8A5A2B" stroke-width="1"/>
+<rect x="110" y="260" width="1700" height="710" fill="none" stroke="#8A5A2B" stroke-width="1" stroke-dasharray="2 4"/>
+<circle cx="104" cy="254" r="9" fill="#8A5A2B"/><circle cx="104" cy="254" r="4" fill="#F3EAD6"/>
+<circle cx="1816" cy="254" r="9" fill="#8A5A2B"/><circle cx="1816" cy="254" r="4" fill="#F3EAD6"/>
+<circle cx="104" cy="976" r="9" fill="#8A5A2B"/><circle cx="104" cy="976" r="4" fill="#F3EAD6"/>
+<circle cx="1816" cy="976" r="9" fill="#8A5A2B"/><circle cx="1816" cy="976" r="4" fill="#F3EAD6"/>
+<g transform="rotate(-18 960 620)" opacity="0.10">
+<text x="960.0" y="650.0" font-family="'Noto Serif', serif" font-size="130" font-weight="700" fill="#8A5A2B" text-anchor="middle" letter-spacing="10">DOCUMENT FICTIV</text>
+</g>
+<text x="960.0" y="308.0" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#8A5A2B" text-anchor="middle" letter-spacing="4">OFICIUL IMAGINAR DE INVENȚII AL ELEVILOR SIBIENI</text>
+<text x="960.0" y="358.0" font-family="'Noto Serif', serif" font-size="46" font-weight="700" fill="#2B2622" text-anchor="middle" letter-spacing="3">BREVET DE INVENȚIE</text>
+<text x="960.0" y="386.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#6B5E52" text-anchor="middle" font-style="italic">imaginar · nr. 0016/2026 · document fictiv, realizat pentru expoziția ACTIV AI – fără valoare legală</text>
+<line x1="140" y1="406" x2="1780" y2="406" stroke="#8A5A2B" stroke-width="1.5"/>
+<line x1="140" y1="410" x2="1780" y2="410" stroke="#8A5A2B" stroke-width="0.7"/>
+<text x="140.0" y="435.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#8A5A2B" text-anchor="start">Inventator</text>
+<text x="240.0" y="435.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">Ana-Maria, 16 ani – personaj fictiv</text>
+<text x="140.0" y="464.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#8A5A2B" text-anchor="start">Clasa</text>
+<text x="240.0" y="464.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">a X-a (liceu nenumit)</text>
+<text x="140.0" y="493.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#8A5A2B" text-anchor="start">Titlul</text>
+<text x="240.0" y="493.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">Lucarna inteligentă – „ochiul” care deschide podul când e</text>
+<text x="240.0" y="514.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">umezeală</text>
+<text x="140.0" y="543.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#8A5A2B" text-anchor="start">Domeniu</text>
+<text x="240.0" y="543.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">acoperișuri istorice · ventilarea podurilor · fără electricitate</text>
+<line x1="140" y1="572" x2="660" y2="572" stroke="#8A5A2B" stroke-width="0.8"/>
+<text x="140.0" y="602.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#2B2622" text-anchor="start">Rezumat</text>
+<text x="140.0" y="628.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">Lucarnele în formă de pleoapă de pe acoperișurile Sibiului – „ochii Sibiului” – au un</text>
+<text x="140.0" y="648.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">rol real: ventilează podurile. Invenția le dă o pleoapă mobilă: o fâșie de material care</text>
+<text x="140.0" y="668.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">se lungește la umezeală trage de o pârghie, pleoapa se ridică, podul respiră; când</text>
+<text x="140.0" y="688.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">aerul se usucă, fâșia se scurtează și ochiul se închide la loc. Fără curent, fără baterii,</text>
+<text x="140.0" y="708.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">fără aplicație.</text>
+<text x="140.0" y="740.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#2B2622" text-anchor="start">Revendicări</text>
+<circle cx="151" cy="762" r="11" fill="#8A5A2B"/><text x="151.0" y="767.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#F3EAD6" text-anchor="middle">1</text>
+<text x="174.0" y="768.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">Lucarna se deschide singură când aerul din pod devine umed și se închide</text>
+<text x="174.0" y="787.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">când vine ploaia – adică exact invers față de umbrela mea.</text>
+<circle cx="151" cy="808" r="11" fill="#8A5A2B"/><text x="151.0" y="813.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#F3EAD6" text-anchor="middle">2</text>
+<text x="174.0" y="814.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">Pleoapa nu clipește la trecători; se mișcă doar din motive de ventilație. Orice</text>
+<text x="174.0" y="833.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">asemănare cu un acoperiș care face cu ochiul este intenționată.</text>
+<circle cx="151" cy="854" r="11" fill="#8A5A2B"/><text x="151.0" y="859.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#F3EAD6" text-anchor="middle">3</text>
+<text x="174.0" y="860.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">Dispozitivul funcționează cu o contragreutate și o fâșie care se lungește la</text>
+<text x="174.0" y="879.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#2B2622" text-anchor="start">umezeală – fizică veche de secole, redescoperită la ora de fizică.</text>
+<rect x="760" y="430" width="760" height="400" fill="#F8F2E4" stroke="#8A5A2B" stroke-width="1.2"/>
+<rect x="760" y="430" width="760" height="400" fill="url(#grid)"/>
+<text x="772.0" y="452.0" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#6B5E52" text-anchor="start" font-style="italic">FIG. 1 – secțiune prin acoperiș, lucarnă „ochi” cu pleoapă mobilă (schematic, cote imaginare)</text>
+<polygon points="820,760 1480,516 1480,556 820,800" fill="#D9C9A5" stroke="#4A3B2A" stroke-width="1.6"/>
+<path d="M820.0,760.0 Q832.7,746.3 845.4,750.6" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M845.4,750.6 Q858.1,736.9 870.8,741.2" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M870.8,741.2 Q883.5,727.5 896.2,731.8" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M896.2,731.8 Q908.8,718.2 921.5,722.5" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M921.5,722.5 Q934.2,708.8 946.9,713.1" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M946.9,713.1 Q959.6,699.4 972.3,703.7" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M972.3,703.7 Q985.0,690.0 997.7,694.3" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M997.7,694.3 Q1010.4,680.6 1023.1,684.9" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1023.1,684.9 Q1035.8,671.2 1048.5,675.5" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1048.5,675.5 Q1061.2,661.8 1073.8,666.2" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1073.8,666.2 Q1086.5,652.5 1099.2,656.8" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1099.2,656.8 Q1111.9,643.1 1124.6,647.4" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1124.6,647.4 Q1137.3,633.7 1150.0,638.0" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1150.0,638.0 Q1162.7,624.3 1175.4,628.6" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1175.4,628.6 Q1188.1,614.9 1200.8,619.2" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1200.8,619.2 Q1213.5,605.5 1226.2,609.8" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1226.2,609.8 Q1238.8,596.2 1251.5,600.5" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1251.5,600.5 Q1264.2,586.8 1276.9,591.1" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1276.9,591.1 Q1289.6,577.4 1302.3,581.7" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1302.3,581.7 Q1315.0,568.0 1327.7,572.3" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1327.7,572.3 Q1340.4,558.6 1353.1,562.9" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1353.1,562.9 Q1365.8,549.2 1378.5,553.5" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1378.5,553.5 Q1391.2,539.8 1403.8,544.2" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1403.8,544.2 Q1416.5,530.5 1429.2,534.8" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1429.2,534.8 Q1441.9,521.1 1454.6,525.4" fill="none" stroke="#B9583A" stroke-width="3"/>
+<path d="M1454.6,525.4 Q1467.3,511.7 1480.0,516.0" fill="none" stroke="#B9583A" stroke-width="3"/>
+<polygon points="820,800 1480,556 1480,800 820,800" fill="none" stroke="#4A3B2A" stroke-width="1" stroke-dasharray="4 4"/>
+<path d="M1070.0,663.2121212121212 Q1190.0,493.21212121212125 1310.0,563.2121212121212" fill="#E4D5B4" stroke="#4A3B2A" stroke-width="2.2"/>
+<path d="M1070.0,663.2121212121212 Q1180.0,563.2121212121212 1310.0,563.2121212121212" fill="#2B2622" stroke="#4A3B2A" stroke-width="1.5"/>
+<path d="M1150.0,633.2121212121212 q6,-14 0,-28" fill="none" stroke="#0E7C86" stroke-width="2.2" stroke-linecap="round"/><polygon points="1145.0,609.2121212121212 1150.0,601.2121212121212 1155.0,609.2121212121212" fill="#0E7C86"/>
+<path d="M1190.0,621.2121212121212 q6,-14 0,-28" fill="none" stroke="#0E7C86" stroke-width="2.2" stroke-linecap="round"/><polygon points="1185.0,597.2121212121212 1190.0,589.2121212121212 1195.0,597.2121212121212" fill="#0E7C86"/>
+<path d="M1230.0,609.2121212121212 q6,-14 0,-28" fill="none" stroke="#0E7C86" stroke-width="2.2" stroke-linecap="round"/><polygon points="1225.0,585.2121212121212 1230.0,577.2121212121212 1235.0,585.2121212121212" fill="#0E7C86"/>
+<circle cx="1070.0" cy="663.2121212121212" r="7" fill="#8A5A2B" stroke="#4A3B2A" stroke-width="1.5"/>
+<line x1="1070.0" y1="663.2121212121212" x2="1120.0" y2="728.2121212121212" stroke="#4A3B2A" stroke-width="3"/>
+<line x1="1120.0" y1="728.2121212121212" x2="1120.0" y2="780.2121212121212" stroke="#6E56CF" stroke-width="5" stroke-dasharray="8 4"/>
+<rect x="1112.0" y="780.2121212121212" width="16" height="10" fill="#4A3B2A"/>
+<line x1="1160.0" y1="718.2121212121212" x2="1160.0" y2="764.2121212121212" stroke="#4A3B2A" stroke-width="1.5"/>
+<rect x="1146.0" y="764.2121212121212" width="28" height="26" rx="3" fill="#8A5A2B" stroke="#4A3B2A" stroke-width="1.2"/>
+<line x1="1120.0" y1="728.2121212121212" x2="1160.0" y2="718.2121212121212" stroke="#4A3B2A" stroke-width="2"/>
+<circle cx="1120.0" cy="728.2121212121212" r="5" fill="#8A5A2B" stroke="#4A3B2A" stroke-width="1.2"/>
+<line x1="1230.0" y1="533.2121212121212" x2="1300.0" y2="483.21212121212125" stroke="#4A3B2A" stroke-width="1"/><circle cx="1300.0" cy="483.21212121212125" r="12" fill="#F8F2E4" stroke="#4A3B2A" stroke-width="1.4"/><text x="1300.0" y="487.7" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#2B2622" text-anchor="middle">1</text>
+
+<line x1="1120.0" y1="754.2121212121212" x2="1060.0" y2="768.2121212121212" stroke="#4A3B2A" stroke-width="1"/><circle cx="1060.0" cy="768.2121212121212" r="12" fill="#F8F2E4" stroke="#4A3B2A" stroke-width="1.4"/><text x="1060.0" y="772.7" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#2B2622" text-anchor="middle">2</text>
+
+<line x1="1070.0" y1="663.2121212121212" x2="1000.0" y2="633.2121212121212" stroke="#4A3B2A" stroke-width="1"/><circle cx="1000.0" cy="633.2121212121212" r="12" fill="#F8F2E4" stroke="#4A3B2A" stroke-width="1.4"/><text x="1000.0" y="637.7" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#2B2622" text-anchor="middle">3</text>
+
+<line x1="1174.0" y1="778.2121212121212" x2="1230.0" y2="798.2121212121212" stroke="#4A3B2A" stroke-width="1"/><circle cx="1230.0" cy="798.2121212121212" r="12" fill="#F8F2E4" stroke="#4A3B2A" stroke-width="1.4"/><text x="1230.0" y="802.7" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#2B2622" text-anchor="middle">4</text>
+
+<line x1="1020" y1="706.060606060606" x2="1040" y2="780" stroke="#4A3B2A" stroke-width="1"/><circle cx="1040" cy="780" r="12" fill="#F8F2E4" stroke="#4A3B2A" stroke-width="1.4"/><text x="1040.0" y="784.5" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#2B2622" text-anchor="middle">5</text>
+
+<line x1="1400.8" y1="537.28" x2="1440" y2="472" stroke="#4A3B2A" stroke-width="1"/><circle cx="1440" cy="472" r="12" fill="#F8F2E4" stroke="#4A3B2A" stroke-width="1.4"/><text x="1440.0" y="476.5" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#2B2622" text-anchor="middle">6</text>
+
+<line x1="1070.0" y1="698.2121212121212" x2="1310.0" y2="698.2121212121212" stroke="#B9583A" stroke-width="1.2"/><line x1="1070.0" y1="692.2121212121212" x2="1070.0" y2="704.2121212121212" stroke="#B9583A" stroke-width="1.2"/><line x1="1310.0" y1="692.2121212121212" x2="1310.0" y2="704.2121212121212" stroke="#B9583A" stroke-width="1.2"/><polygon points="1070.0,698.2121212121212 1079.0,694.2121212121212 1079.0,702.2121212121212" fill="#B9583A"/><polygon points="1310.0,698.2121212121212 1301.0,694.2121212121212 1301.0,702.2121212121212" fill="#B9583A"/><text x="1190.0" y="691.2" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#B9583A" text-anchor="middle">≈ 120 cm (deschiderea „ochiului”)</text>
+
+<path d="M1250.0,563.2121212121212 A 60 60 0 0 0 1242.0,533.2121212121212" fill="none" stroke="#B9583A" stroke-width="1.2"/>
+<text x="1265.0" y="531.2" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#B9583A" text-anchor="start">≈ 15°</text>
+<text x="774.0" y="486.0" font-family="Inter, sans-serif" font-size="12.5" font-weight="500" fill="#6B5E52" text-anchor="start">1 – pleoapa mobilă (lemn)</text>
+<text x="774.0" y="505.0" font-family="Inter, sans-serif" font-size="12.5" font-weight="500" fill="#6B5E52" text-anchor="start">2 – fâșie higroscopică (se lungește la umezeală)</text>
+<text x="774.0" y="524.0" font-family="Inter, sans-serif" font-size="12.5" font-weight="500" fill="#6B5E52" text-anchor="start">3 – balama</text>
+<text x="964.0" y="543.0" font-family="Inter, sans-serif" font-size="12.5" font-weight="500" fill="#6B5E52" text-anchor="start">4 – contragreutate</text>
+<text x="964.0" y="562.0" font-family="Inter, sans-serif" font-size="12.5" font-weight="500" fill="#6B5E52" text-anchor="start">5 – podul (aerul care trebuie să iasă)</text>
+<text x="964.0" y="581.0" font-family="Inter, sans-serif" font-size="12.5" font-weight="500" fill="#6B5E52" text-anchor="start">6 – țigle</text>
+<text x="1508.0" y="820.0" font-family="Inter, sans-serif" font-size="11.5" font-weight="400" fill="#6B5E52" text-anchor="end" font-style="italic">desen schematic, generat cu AI – nu este un proiect tehnic</text>
+<rect x="760" y="848" width="760" height="118" rx="4" fill="none" stroke="#8A5A2B" stroke-width="1"/>
+<text x="776.0" y="876.0" font-family="'Noto Serif', serif" font-size="16" font-weight="700" fill="#8A5A2B" text-anchor="start">Inspirație (fapt verificat): tradiția lui Conrad Haas</text>
+<text x="776.0" y="900.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#2B2622" text-anchor="start">Conrad Haas (1509–1576), șeful arsenalului cetății Sibiului din 1551, a lăsat un manuscris în limba germană de circa</text>
+<text x="776.0" y="918.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#2B2622" text-anchor="start">450 de pagini, redactat între 1529 și 1569, cu rachete în două și trei trepte și desene de asamblare. Brevetul de față</text>
+<text x="776.0" y="936.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#2B2622" text-anchor="start">este o joacă în aceeași tradiție: întâi desenezi, apoi explici, apoi… încerci. Numărul brevetului, oficiul și inventatoarea</text>
+<text x="776.0" y="954.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#2B2622" text-anchor="start">sunt imaginare.</text>
+<g transform="rotate(-10 712 904)" opacity="0.85">
+<circle cx="712" cy="904" r="48" fill="none" stroke="#B3302A" stroke-width="3.5"/><circle cx="712" cy="904" r="40" fill="none" stroke="#B3302A" stroke-width="1.2"/>
+<text x="712.0" y="894.0" font-family="Inter, sans-serif" font-size="9.5" font-weight="700" fill="#B3302A" text-anchor="middle" letter-spacing="1">OFICIUL IMAGINAR</text>
+<text x="712.0" y="912.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#B3302A" text-anchor="middle" letter-spacing="3">FICTIV</text>
+<text x="712.0" y="930.0" font-family="Inter, sans-serif" font-size="8.5" font-weight="600" fill="#B3302A" text-anchor="middle">fără valoare legală</text>
+</g>
+<line x1="140" y1="948" x2="360" y2="948" stroke="#2B2622" stroke-width="1"/>
+<text x="140.0" y="963.0" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#6B5E52" text-anchor="start" font-style="italic">inventatoare (personaj fictiv)</text>
+<path d="M160,942 q14,-22 30,-4 t30,-8 t26,2 t22,-6" fill="none" stroke="#2B2622" stroke-width="1.5"/>
+<line x1="400" y1="948" x2="580" y2="948" stroke="#2B2622" stroke-width="1"/>
+<text x="400.0" y="963.0" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#6B5E52" text-anchor="start" font-style="italic">examinator imaginar</text>
+<path d="M420,942 q10,-18 24,-6 t26,-10 t30,4" fill="none" stroke="#2B2622" stroke-width="1.5"/>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

@@ -1,0 +1,159 @@
+# -*- coding: utf-8 -*-
+"""Helpers for the ACTIV AI 1920x1080 SVG frames."""
+from PIL import ImageFont
+import html, math
+
+BG = "#0F1720"; CARD = "#1B2733"; PETROL = "#0E7C86"; VIOLET = "#6E56CF"
+OCRU = "#E2A62B"; TIGLA = "#B9583A"; VAR = "#F3EFE6"; CEATA = "#A9B4C0"; ZID = "#F5F1EA"
+PARCH = "#F4EEE2"
+SERIF = "'Noto Serif', serif"
+SANS = "Inter, sans-serif"
+
+FONT_FILES = {
+    ("sans", 400, False): "/usr/share/fonts/opentype/inter/Inter-Regular.otf",
+    ("sans", 400, True): "/usr/share/fonts/opentype/inter/Inter-Italic.otf",
+    ("sans", 500, False): "/usr/share/fonts/opentype/inter/Inter-Medium.otf",
+    ("sans", 600, False): "/usr/share/fonts/opentype/inter/Inter-SemiBold.otf",
+    ("sans", 600, True): "/usr/share/fonts/opentype/inter/Inter-SemiBoldItalic.otf",
+    ("sans", 700, False): "/usr/share/fonts/opentype/inter/Inter-Bold.otf",
+    ("sans", 700, True): "/usr/share/fonts/opentype/inter/Inter-BoldItalic.otf",
+    ("serif", 400, False): "/usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf",
+    ("serif", 400, True): "/usr/share/fonts/truetype/noto/NotoSerif-Italic.ttf",
+    ("serif", 700, False): "/usr/share/fonts/truetype/noto/NotoSerif-Bold.ttf",
+    ("serif", 700, True): "/usr/share/fonts/truetype/noto/NotoSerif-BoldItalic.ttf",
+}
+_cache = {}
+
+def _font(fam, size, weight, italic):
+    key = (fam, weight, italic, size)
+    if key not in _cache:
+        path = FONT_FILES.get((fam, weight, italic)) or FONT_FILES[(fam, 400, False)]
+        _cache[key] = ImageFont.truetype(path, size)
+    return _cache[key]
+
+def measure(text, size, fam="sans", weight=400, italic=False, letter_spacing=0):
+    f = _font(fam, size, weight, italic)
+    w = f.getlength(text)
+    return w + letter_spacing * max(len(text) - 1, 0)
+
+def esc(s):
+    return html.escape(s, quote=False)
+
+def wrap(text, maxw, size, fam="sans", weight=400, italic=False):
+    words = text.split()
+    lines, cur = [], ""
+    for w in words:
+        t = (cur + " " + w).strip()
+        if measure(t, size, fam, weight, italic) <= maxw or not cur:
+            cur = t
+        else:
+            lines.append(cur); cur = w
+    if cur:
+        lines.append(cur)
+    return lines
+
+def text(x, y, s, size, fill=VAR, fam="sans", weight=400, italic=False, anchor="start", extra=""):
+    ff = SANS if fam == "sans" else SERIF
+    st = ' font-style="italic"' if italic else ""
+    return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="{ff}" font-size="{size}" font-weight="{weight}"'
+            f' fill="{fill}" text-anchor="{anchor}"{st}{(" " + extra) if extra else ""}>{esc(s)}</text>\n')
+
+def para(x, y, s, size, maxw, fill=VAR, fam="sans", weight=400, italic=False, lh=None, anchor="start"):
+    """Wrapped paragraph; returns (svg, next_y)."""
+    lh = lh or round(size * 1.38)
+    out = ""
+    for ln in wrap(s, maxw, size, fam, weight, italic):
+        out += text(x, y, ln, size, fill, fam, weight, italic, anchor)
+        y += lh
+    return out, y
+
+def frame_head(chip_label, chip_color, title, subtitle=None, title_size=60):
+    cw = measure(chip_label, 20, "sans", 700, letter_spacing=2) + 48
+    s = f'<rect width="1920" height="1080" fill="{BG}"/>\n'
+    s += '<g transform="translate(80,70)">\n'
+    s += f'<rect x="0" y="0" rx="22" ry="22" width="{cw:.0f}" height="44" fill="{chip_color}"/>\n'
+    s += (f'<text x="{cw/2:.1f}" y="30" text-anchor="middle" font-family="{SANS}" font-weight="700" '
+          f'font-size="20" letter-spacing="2" fill="{BG}">{esc(chip_label)}</text>\n')
+    s += (f'<text x="0" y="120" font-family="{SERIF}" font-weight="700" font-size="{title_size}" '
+          f'fill="{VAR}">{esc(title)}</text>\n</g>\n')
+    if subtitle:
+        s += text(1840, 100, subtitle, 24, CEATA, "sans", 400, True, "end")
+    return s
+
+def frame_foot():
+    s = f'<line x1="80" y1="1026" x2="1840" y2="1026" stroke="{CARD}" stroke-width="2"/>\n'
+    s += text(80, 1056, "ACTIV AI · Sibiul meu · Artefact-model generat cu AI", 22, CEATA)
+    s += text(1840, 1056, "#SibiulMeu", 22, OCRU, "sans", 600, anchor="end")
+    return s
+
+DEFS = """<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+"""
+
+def svg_open():
+    return ('<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">\n' + DEFS)
+
+def svg_close():
+    return "</svg>\n"
+
+def card(x, y, w, h, fill=CARD, stroke="#2A3845", rx=22, extra=""):
+    return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{fill}" stroke="{stroke}" stroke-width="1.5" {extra}/>\n'
+
+def pin(x, y, n, color=TIGLA, r=19, textcol=VAR):
+    s = f'<g filter="url(#shs)"><circle cx="{x}" cy="{y}" r="{r}" fill="{color}" stroke="{VAR}" stroke-width="2.5"/>'
+    s += text(x, y + 7, str(n), 20, textcol, "sans", 700, anchor="middle")
+    return s + "</g>\n"
+
+def poly(points, **kw):
+    attrs = " ".join(f'{k.replace("_","-")}="{v}"' for k, v in kw.items())
+    return f'<polygon points="{" ".join(f"{px:.1f},{py:.1f}" for px, py in points)}" {attrs}/>\n'
+
+def smooth_path(points, closed=True, tension=0.5):
+    """Catmull-Rom to cubic Bezier."""
+    n = len(points)
+    if closed:
+        pts = points
+    else:
+        pts = points
+    d = f"M{pts[0][0]:.1f},{pts[0][1]:.1f}"
+    rng = range(n) if closed else range(n - 1)
+    for i in rng:
+        p0 = pts[(i - 1) % n]; p1 = pts[i]; p2 = pts[(i + 1) % n]; p3 = pts[(i + 2) % n]
+        if not closed:
+            p0 = pts[max(i - 1, 0)]; p3 = pts[min(i + 2, n - 1)]
+        c1 = (p1[0] + (p2[0] - p0[0]) * tension / 3, p1[1] + (p2[1] - p0[1]) * tension / 3)
+        c2 = (p2[0] - (p3[0] - p1[0]) * tension / 3, p2[1] - (p3[1] - p1[1]) * tension / 3)
+        d += f" C{c1[0]:.1f},{c1[1]:.1f} {c2[0]:.1f},{c2[1]:.1f} {p2[0]:.1f},{p2[1]:.1f}"
+    if closed:
+        d += " Z"
+    return d
+
+def write(path, body):
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(svg_open() + body + svg_close())

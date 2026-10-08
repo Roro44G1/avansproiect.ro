@@ -1,0 +1,430 @@
+[
+ {
+  "cod": "V18",
+  "categorie": "Vizual",
+  "titlu": "Turnurile breslelor de pe Strada Cetății — serie de portrete arhitecturale AI, fiecare turn „îmbrăcat” în uneltele breslei care îl apăra",
+  "fisiere": [
+   "c1/01_vizual/V18_card_canva.png",
+   "c1/01_vizual/canva_miniaturi/V18a_turnul_archebuzierilor_panzari.jpg",
+   "c1/01_vizual/canva_miniaturi/V18b_turnul_olarilor.jpg",
+   "c1/01_vizual/canva_miniaturi/V18c_turnul_dulgherilor.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Cele trei turnuri păstrate de pe Strada Cetății, fiecare descris generatorului după fișa patrimoniu.sibiu.ro (octogonal pe console; dreptunghiular cu retragere; bază circulară → octogon) și „îmbrăcat” în uneltele breslei: pânză și suveici, oale și roata olarului, grinzi și unelte de dulgher.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXOMj9JmA",
+    "url": "https://www.canva.com/M/MAHXOMj9JmA",
+    "eticheta": "Archebuzierilor / Pânzarilor"
+   },
+   {
+    "media_id": "MAHXOIMS5w4",
+    "url": "https://www.canva.com/M/MAHXOIMS5w4",
+    "eticheta": "Olarilor"
+   },
+   {
+    "media_id": "MAHXOCqHN60",
+    "url": "https://www.canva.com/M/MAHXOCqHN60",
+    "eticheta": "Dulgherilor"
+   }
+  ],
+  "nota": "Rezoluția completă în folderul Canva „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs",
+  "calup": 1,
+  "g_img": "assets/img/V18.jpg",
+  "g_th": "assets/th/V18.jpg"
+ },
+ {
+  "cod": "V19",
+  "categorie": "Vizual",
+  "titlu": "Poarta cetății la miezul nopții — scenă de gardă medievală reconstituită AI",
+  "fisiere": [
+   "c1/01_vizual/V19_card_canva.png",
+   "c1/01_vizual/canva_miniaturi/V19_poarta_miezul_noptii.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Un turn-poartă masiv de cărămidă cu pasaj boltit, doi străjeri cu halebarde și un felinar, lumină de torță pe caldarâm ud, ziduri cu creneluri sub lună. Reconstituire imaginată, nu o poartă anume.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXOF3rPT8",
+    "url": "https://www.canva.com/M/MAHXOF3rPT8",
+    "eticheta": "scenă imaginată, cca 1500"
+   }
+  ],
+  "nota": "Rezoluția completă în folderul Canva „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs O variantă alternativă a fost generată și cu Gamma AI (neverificată vizual aici): https://cdn.gamma.app/0u046zwxzzns7rj/design-anything/mdplr9tNMU4E34tR6Oyoq/d5xbJaXSLm2W4Zoq1nQW8.jpg",
+  "calup": 1,
+  "g_img": "assets/img/V19.jpg",
+  "g_th": "assets/th/V19.jpg"
+ },
+ {
+  "cod": "V20",
+  "categorie": "Vizual",
+  "titlu": "Pasajul Scărilor văzut de jos în sus — perspectivă imposibilă, amplificată AI",
+  "fisiere": [
+   "c1/01_vizual/V20_card_canva.png",
+   "c1/01_vizual/canva_miniaturi/V20_pasajul_scarilor.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Privire în sus printr-un pasaj îngust cu scări: arcade de cărămidă între două ziduri, trepte tocite, un turn-poartă masiv deasupra, linii convergente exagerate, texturi de cărămidă și tencuială.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXOHxiilE",
+    "url": "https://www.canva.com/M/MAHXOHxiilE",
+    "eticheta": "perspectivă amplificată"
+   }
+  ],
+  "nota": "Rezoluția completă în folderul Canva „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs",
+  "calup": 1,
+  "g_img": "assets/img/V20.jpg",
+  "g_th": "assets/th/V20.jpg"
+ },
+ {
+  "cod": "M10",
+  "categorie": "Video",
+  "titlu": "Cetatea care crește — animație AI a celor trei inele de ziduri apărând strat cu strat",
+  "fisiere": [
+   "c1/02_video/M10_cetatea_care_creste.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: peisajul sonor A09",
+  "descriere": "Cele patru incinte de fortificații apar strat cu strat pe o hartă schematică, de la 1191 la 1457, apoi demolările din secolul al XIX-lea.",
+  "status": "realizat",
+  "durata_s": 30.0,
+  "calup": 1,
+  "g_video": "assets/vid/M10.mp4",
+  "g_img": "assets/img/M10.jpg",
+  "g_vertical": false,
+  "g_th": "assets/th/M10.jpg"
+ },
+ {
+  "cod": "M11",
+  "categorie": "Video",
+  "titlu": "O zi din viața unui străjer din turn — scurt metraj animat AI (60 sec)",
+  "fisiere": [
+   "c1/02_video/M11_o_zi_din_viata_unui_strajer.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: peisajul sonor A09",
+  "descriere": "Opt momente dintr-o zi imaginată a unui străjer fictiv din Turnul Pânzarilor, în 1668: de la gurile de tragere „gaură de cheie” la strigarea orei la miezul nopții.",
+  "status": "realizat",
+  "durata_s": null,
+  "calup": 1,
+  "nota": "Personaj fictiv; faptele despre turnuri provin din fișele patrimoniu.sibiu.ro.",
+  "g_video": "assets/vid/M11.mp4",
+  "g_img": "assets/img/M11.jpg",
+  "g_vertical": false,
+  "g_th": "assets/th/M11.jpg"
+ },
+ {
+  "cod": "L16",
+  "categorie": "Literar",
+  "titlu": "Jurnalul unui străjer de pe zidurile cetății — 5 însemnări imaginare",
+  "fisiere": [
+   "c1/03_literar/L16_jurnal_strajer.md"
+  ],
+  "tip": "text",
+  "instrument": "Claude (Anthropic) – text",
+  "descriere": "„Cinci nopți în turnul pânzarilor” – însemnările imaginate ale unui străjer fictiv, calfă de pânzar, în Turnul Archebuzierilor (Pânzarilor) din anul 1670, la doi ani după restaurarea din 1668.",
+  "status": "realizat",
+  "nota": "Personaj fictiv, declarat în text. Faptele despre turnuri (forme, înălțimi, ani, bresle, Bastionul Haller) provin din fapte_verificate.md și sunt separate de ficțiune în nota „Ce e real”. Străjerul nu rostește cifre pe care nu le putea ști (ex. înălțimea în metri). Corpul jurnalului: aproximativ 410 cuvinte.",
+  "extras": "Nu știu cifra exactă și nu o voi scrie, ca să nu mint.\nLas în grindă un fir roșu de bumbac, înnodat de trei ori.\nDacă cine vine după mine îl găsește, să știe că și eu am stat aici și am ascultat vântul.",
+  "calup": 1,
+  "html": "<h1 id=\"cinci-nopți-în-turnul-pânzarilor\">Cinci nopți în turnul pânzarilor</h1>\n<p><em>Tema: Jurnalul unui străjer de pe zidurile cetății — 5 însemnări imaginare · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p><strong>Personaj fictiv.</strong> Străjerul Matthes, calfă de pânzar, nu a existat. Însemnările sunt imaginate pentru anul 1670, la doi ani după restaurarea Turnului Archebuzierilor, numit mai târziu Turnul Pânzarilor. Faptele despre turnuri sunt verificate și adunate la sfârșitul textului.</p>\n</blockquote>\n<hr />\n<h3 id=\"însemnarea-întâi-o-seară-de-toamnă\">Însemnarea întâi – o seară de toamnă</h3>\n<p>Rândul breslei noastre la strajă a căzut pe mine. Meșterul a spus că un pânzar care știe să numere firele știe să numere și orele. Am urcat în turn pe la asfințit. Zidurile au opt fețe, ca un fus de lemn tăiat cu barda, iar partea de sus iese în afară peste console, așa că privești în jos ca de pe un prag atârnat în aer. Pe grindă, lângă intrare, cineva a cioplit anul 1668, de când a fost dres turnul. Ne despart de el doi ani și o iarnă grea.</p>\n<h3 id=\"însemnarea-a-doua-vânt\">Însemnarea a doua – vânt</h3>\n<p>Vântul a bătut toată noaptea. Pe fețele turnului, gurile de tragere au formă de gaură de cheie: sus rotunde, jos lungi, cât să încapă țeava unei archebuze. Când vântul trece prin ele, turnul fluieră într-un fel al lui. Primele ore mi-a fost frică. Apoi am înțeles că fluieratul e același mereu și am început să-l aștept, cum aștepți un câine să latre la ora lui.</p>\n<h3 id=\"însemnarea-a-treia-vecinii\">Însemnarea a treia – vecinii</h3>\n<p>Spre miazănoapte, pe lângă zid, mai sunt două turnuri. Cel al olarilor e pătrat, îngust și bine zidit în piatră. Cel al dulgherilor, mai departe, e rotund jos și cu opt fețe sus, cu un acoperiș ascuțit ca un creion. Noaptea nu-i văd, dar le aud străjerii. Avem un semn: o lovitură cu patul archebuzei în grinda de stejar înseamnă „totul e bine”. Trei lovituri ar însemna altceva. În trei luni n-am auzit niciodată trei.</p>\n<h3 id=\"însemnarea-a-patra-orașul-de-dedesubt\">Însemnarea a patra – orașul de dedesubt</h3>\n<p>Am stat la gura de tragere dinspre oraș și am numărat acoperișurile. M-am oprit pe la o sută. Mai departe, pe zid, e bastionul cel mare, cu ziduri groase, pe care bătrânii zic că l-au început pe vremea bunicilor lor, pentru tunuri. Noi, cei din turn, n-avem tunuri. Avem archebuzele, un corn și clopotul. Mă întreb, uneori, pe cine mai apărăm. Negustorii dorm, olarii dorm, pânzarii dorm. Poate că asta și apărăm: somnul lor.</p>\n<h3 id=\"însemnarea-a-cincea-ultima-noapte\">Însemnarea a cincea – ultima noapte</h3>\n<p>Mâine predau straja altuia. Am măsurat turnul cu sfoara de pânzar, din curiozitate: de la pământ până sub streașină sunt mai multe staturi de om decât am degete la ambele mâini. Nu știu cifra exactă și nu o voi scrie, ca să nu mint. Las în grindă un fir roșu de bumbac, înnodat de trei ori. Dacă cine vine după mine îl găsește, să știe că și eu am stat aici și am ascultat vântul.</p>\n<hr />\n<p><em>Ce e real în jurnal: Turnul Archebuzierilor de pe Strada Cetății (cel mai sudic dintre cele trei) a fost ridicat între 1357 și 1366, are formă de prismă octogonală cu partea superioară ieșită în afară pe console, guri de tragere „în formă de gaură de cheie” și 20,75 m înălțime; poartă anul 1668 (restaurare) și a fost numit ulterior Turnul Pânzarilor, după breasla care îl avea în îngrijire. Vecinii săi sunt Turnul Olarilor (plan dreptunghiular, piatră, 19,60 m) și Turnul Dulgherilor (bază circulară, prismă octogonală deasupra cornișei, acoperiș piramidal ascuțit, 21,65 m). Bastionul Haller a fost început în 1551. Străjerul, semnele dintre turnuri și firul roșu sunt imaginate.</em></p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<blockquote>\n<p>Scrie cinci însemnări de jurnal (în total 400–550 de cuvinte) ale unui străjer fictiv dintr-un turn al cetății Sibiului, în anul [an ales de voi].<br />\nFolosește doar faptele despre turn pe care ți le dăm noi: [forma, înălțimea, anii, breasla].<br />\nStrăjerul nu are voie să știe lucruri pe care nu le putea ști atunci (de exemplu, înălțimea în metri).<br />\nDeclară la început că personajul e fictiv și adaugă la final o notă „Ce e real”.</p>\n</blockquote>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Ce detalii din jurnal sunt fapte verificate și care sunt invenție? Cum le-ați deosebit?</li>\n<li>De ce a refuzat străjerul să scrie înălțimea exactă a turnului? Ce legătură are asta cu felul în care ar trebui să folosim un asistent AI?</li>\n</ol>\n",
+  "card": "c1/03_literar/carduri/L16_card.png",
+  "titlu_creativ": "Cinci nopți în turnul pânzarilor",
+  "g_img": "assets/img/L16.jpg",
+  "g_th": "assets/th/L16.jpg"
+ },
+ {
+  "cod": "L17",
+  "categorie": "Literar",
+  "titlu": "Scrisoarea unei cărămizi către cărămida de alături — text umoristic",
+  "fisiere": [
+   "c1/03_literar/L17_scrisoare_caramida.md"
+  ],
+  "tip": "text",
+  "instrument": "Claude (Anthropic) – text",
+  "descriere": "„Dragă vecină de la stânga” – o cărămidă din Turnul Scărilor îi scrie vecinei ei despre refacerea din 1542, acoperișul pierdut în 1844 (sau 1863) și refăcut în 2007, și despre oamenii care urcă scările fără să întrebe nimic.",
+  "status": "realizat",
+  "nota": "Umorul se sprijină pe fapte verificate despre Turnul Scărilor (secolul al XIII-lea, 1542, cărămidă, un etaj, pasaj boltit, acoperiș 1844/1863 și 2007); rândul al șaptelea, înclinarea și corespondența sunt invenție, declarată în text. Corpul scrisorii: aproximativ 295 de cuvinte.",
+  "extras": "Apoi, în 2007, ne-au pus la loc forma veche. Am plâns.\nDe fapt, era condens, dar a contat ca plâns.",
+  "calup": 1,
+  "html": "<h1 id=\"dragă-vecină-de-la-stânga\">Dragă vecină de la stânga</h1>\n<p><em>Tema: Scrisoarea unei cărămizi către cărămida de alături — text umoristic · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p>Text umoristic. Cărămizile din Turnul Scărilor nu scriu scrisori (din câte știm). Faptele despre turn sunt verificate și adunate la sfârșit.</p>\n</blockquote>\n<hr />\n<p>Dragă vecină de la stânga,</p>\n<p>Îți scriu pentru că, după câteva sute de ani de stat lipite, am ajuns la concluzia că n-am vorbit niciodată. Știu, mortarul. Dar un zid bun se ține și pe comunicare.</p>\n<p>În primul rând, felicitări. Suntem în singura poartă din prima incintă a cetății care a mai rămas în picioare. Celelalte două au plecat. Noi am rămas. Nu zic că e meritul nostru, dar nici nu zic că nu e.</p>\n<p>În al doilea rând, am o nemulțumire veche: ești puțin strâmbă. Din 1542, de când ne-au refăcut, te apleci spre mine cu vreo jumătate de deget. Nu m-am plâns, pentru că eram o construcție masivă cu un singur etaj și un pasaj boltit, și masivitatea cere demnitate. Dar acum, că tot scriu, am zis să menționez.</p>\n<p>În al treilea rând, acoperișul. Îți amintești în 1844? Sau 1863? Nici cronicarii nu s-au înțeles, așa că nu mă aștept să-ți amintești tu. Cert e că ne-au luat acoperișul cel înalt de deasupra capului și am stat descoperite peste un secol și jumătate. Ploaie, zăpadă, porumbei cu păreri. Apoi, în 2007, ne-au pus la loc forma veche. Am plâns. De fapt, era condens, dar a contat ca plâns.</p>\n<p>În al patrulea rând, scările. Zilnic trec prin pasajul nostru oameni care urcă din Orașul de Jos în Orașul de Sus și coboară înapoi. Unii gâfâie, alții se fotografiază cu noi. Nimeni nu ne întreabă nimic. Tu te-ai obișnuit?</p>\n<p>Închei aici, pentru că mi-a venit o fisură de la atâta emoție. Răspunde-mi când poți. Avem timp, se pare.</p>\n<p>Cu stimă și cu un strat subțire de mușchi, Cărămida de la dreapta, rândul al șaptelea de sus, Turnul Scărilor</p>\n<p>P.S. Dacă îi scrii și cărămizii de deasupra ta, spune-i că nu port pică pentru 1542. Aproape.</p>\n<hr />\n<p><em>Ce e real în scrisoare: Turnul Scărilor datează din secolul al XIII-lea și a fost refăcut în 1542; este singura dintre cele trei porți de acces în prima incintă care s-a păstrat; este o construcție masivă din cărămidă, cu un singur etaj și pasaj boltit, prin care se ajunge la scările dintre Orașul de Sus și Orașul de Jos; acoperișul înalt a fost demolat în 1844 (sau 1863), iar forma originală a fost refăcută în 2007. Rândul al șaptelea, înclinarea și corespondența sunt invenție.</em></p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<blockquote>\n<p>Scrie o scrisoare umoristică (250–350 de cuvinte) de la un element de construcție (cărămidă, piatră, țiglă, grindă) dintr-un monument sibian către vecinul lui.<br />\nFolosește doar aceste fapte verificate despre monument: [anii, materialul, transformările].<br />\nUmorul să vină din perspectiva neobișnuită, nu din fapte inventate.<br />\nAdaugă la final o notă „Ce e real”.</p>\n</blockquote>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Care dintre glumele din scrisoare se sprijină pe un fapt real și care sunt pură fantezie?</li>\n<li>Cum poate un text umoristic să transmită informație istorică fără să o deformeze?</li>\n</ol>\n",
+  "card": "c1/03_literar/carduri/L17_card.png",
+  "titlu_creativ": "Dragă vecină de la stânga",
+  "g_img": "assets/img/L17.jpg",
+  "g_th": "assets/th/L17.jpg"
+ },
+ {
+  "cod": "L18",
+  "categorie": "Literar",
+  "titlu": "Legenda inventată a unui turn dispărut — povestire în stil de basm",
+  "fisiere": [
+   "c1/03_literar/L18_legenda_turn_disparut.md"
+  ],
+  "tip": "text",
+  "instrument": "Claude (Anthropic) – text",
+  "descriere": "„Turnul Ceasornicarilor” – legenda, inventată și declarată ca atare, a unui turn care nu a existat, cu o roată care arăta „când e timpul pentru ceva”, pe fundalul real al demolării a peste douăzeci de turnuri între 1830 și 1898.",
+  "status": "realizat",
+  "nota": "Marcaj „Legendă inventată” la începutul textului; turnul, roata, pietricica și personajele nu au existat. Contextul real (39 de turnuri, bresle, demolări 1830–1898, cele trei turnuri păstrate pe Strada Cetății) provine din fapte_verificate.md; existența unei bresle a ceasornicarilor la Sibiu nu este confirmată de fișă și textul spune asta. Corpul povestirii: aproximativ 545 de cuvinte.",
+  "extras": "Deși turnul nu mai e. Deși, dacă e să spunem adevărul până la capăt, turnul n-a fost niciodată.\nDar celelalte au fost. Trei dintre ele mai stau și azi pe Strada Cetății, cu gurile de tragere îndreptate spre un oraș care nu le mai atacă.",
+  "calup": 1,
+  "html": "<h1 id=\"turnul-ceasornicarilor\">Turnul Ceasornicarilor</h1>\n<p><em>Tema: Legenda inventată a unui turn dispărut — povestire în stil de basm · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p><strong>Legendă inventată.</strong> Turnul Ceasornicarilor din această poveste <strong>nu a existat</strong>. Nicio sursă nu îl menționează; l-am imaginat pentru a vorbi despre ceva real: între 1830 și 1898, peste douăzeci de turnuri ale cetății Sibiului au fost demolate, împreună cu porți și bastioane. Ce e verificat și ce e născocit se află în nota de la sfârșit.</p>\n</blockquote>\n<hr />\n<p>A fost odată, se zice, și nu se zice bine, un turn care nu apăra pe nimeni.</p>\n<p>Cetatea avea turnuri multe, iar fiecare era în grija unei bresle: dulgherii aveau al lor, olarii al lor, pânzarii al lor. Fiecare breaslă își ținea turnul cum își ținea atelierul, cu lacăt, cu mătură și cu mândrie. Dar ceasornicarii, care erau puțini și veneau târziu la toate, pentru că mereu mai aveau o rotiță de potrivit, au primit turnul de la urmă: unul scund, cu zidul crăpat, unde nu se întâmpla niciodată nimic.</p>\n<p>Ceasornicarii nu s-au supărat. Au urcat în turn, s-au uitat unul la altul și au spus:</p>\n<p>– Dacă nu putem apăra orașul de dușmani, să-l apărăm măcar de întârziere.</p>\n<p>Și au făcut un ceas. Nu un ceas obișnuit, cu limbi și cifre, ci unul cu o singură roată mare, de lemn de păr, care se învârtea atât de încet, încât nimeni nu o vedea mișcându-se. Roata nu arăta ora. Arăta când e timpul pentru ceva. Când era timpul de semănat, din turn cădea o sămânță. Când era timpul de nuntă, cădea un bănuț. Când era timpul ca cineva să-și ceară iertare, cădea o pietricică albă, și pietricica nimerea întotdeauna în pălăria celui care trebuia să ceară iertare.</p>\n<p>Oamenii din cetate s-au obișnuit cu turnul cum te obișnuiești cu o bunică: nu o asculți mereu, dar te liniștește că e acolo.</p>\n<p>Au trecut anii, mulți, și cetatea a crescut până a început să se simtă strânsă în zidurile ei. Oamenii aveau nevoie de străzi largi, de aer, de case noi. Au început să dărâme. Mai întâi o poartă, apoi un bastion, apoi turnurile, unul câte unul, cum scoți dinții de lapte. Peste douăzeci de turnuri au căzut în mai puțin de un veac, și cu fiecare turn căzut cineva spunea: „Păcat, dar așa trebuie.”</p>\n<p>Când au ajuns la turnul ceasornicarilor, meșterul cu barda s-a oprit. Din turn căzuse ceva și i se oprise pe umăr: o pietricică albă.</p>\n<p>– Cui trebuie să-i cer iertare? a întrebat el, și nu i-a răspuns nimeni, pentru că ceasornicarii, pe atunci, nu mai erau de mult. Își lăsaseră turnul și roata și plecaseră, fiecare cu sculele lui, iar ultimul stinsese lumânarea.</p>\n<p>Meșterul a dărâmat turnul, pentru că așa primise poruncă. Dar pietricica a păstrat-o. Și se zice că a dat-o fiului său, iar fiul fiului său, și tot așa, și că pietricica e și acum undeva în Sibiu, într-un sertar, într-o cutie de nasturi, poate în buzunarul cuiva care citește chiar acum.</p>\n<p>Iar roata? Roata cea mare de lemn de păr, zic unii, n-a fost spartă. S-a rostogolit la vale, prin Orașul de Jos, și s-a oprit unde a vrut ea. Și de atunci, când cineva în Sibiu simte dintr-odată, fără motiv, că e timpul să facă ceva – să cheme un prieten, să repare o ușă, să ceară iertare –, bătrânii ridică din umeri și spun: „Turnul.”</p>\n<p>Deși turnul nu mai e. Deși, dacă e să spunem adevărul până la capăt, turnul n-a fost niciodată.</p>\n<p>Dar celelalte au fost. Trei dintre ele mai stau și azi pe Strada Cetății, cu gurile de tragere îndreptate spre un oraș care nu le mai atacă. Treceți pe lângă ele într-o seară. Dacă vă cade ceva pe umăr, e doar o frunză. Probabil.</p>\n<hr />\n<p><em>Ce e real: cetatea Sibiului a avut 39 de turnuri în ansamblul fortificațiilor, multe în grija breslelor (de exemplu, Turnul Dulgherilor, Turnul Olarilor, Turnul Archebuzierilor, numit ulterior Turnul Pânzarilor, toate trei păstrate pe Strada Cetății). Între 1830 și 1898 au fost demolate porți, bastioane și peste douăzeci de turnuri. Turnul Ceasornicarilor, roata, pietricica și toate personajele sunt inventate. Existența unei bresle a ceasornicarilor la Sibiu nu este confirmată de fișa de fapte a proiectului.</em></p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<blockquote>\n<p>Inventează legenda unui turn dispărut al cetății Sibiului, în stil de basm (500–700 de cuvinte).<br />\nTurnul tău nu a existat și trebuie să spui asta clar la începutul textului.<br />\nContextul real pe care îl poți folosi: [faptele verificate despre demolări și despre turnurile păstrate].<br />\nLegenda să explice ceva din orașul de azi (un obicei, o vorbă, un loc).<br />\nÎncheie cu o notă „Ce e real” care separă faptele de invenție.</p>\n</blockquote>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>De ce e important ca o legendă inventată să fie marcată ca inventată, chiar dacă „sună” adevărat?</li>\n<li>Ce pierde un oraș când dărâmă peste douăzeci de turnuri? Ce câștigă? Cine ar trebui să decidă?</li>\n</ol>\n",
+  "card": "c1/03_literar/carduri/L18_card.png",
+  "titlu_creativ": "Turnul Ceasornicarilor",
+  "g_img": "assets/img/L18.jpg",
+  "g_th": "assets/th/L18.jpg"
+ },
+ {
+  "cod": "A09",
+  "categorie": "Audio",
+  "titlu": "Peisaj sonor AI: o noapte de gardă pe ziduri (pași, vânt, clopot, străjer care strigă ora)",
+  "fisiere": [
+   "c1/04_audio/A09_noapte_de_garda.md",
+   "c1/04_audio/A09_noapte_de_garda.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – scenariu + sinteză audio procedurală (Python/numpy)",
+  "descriere": "O noapte imaginată pe zidurile cetății: vânt în rafale prin gurile de tragere, greieri, pașii străjerului pe piatră, douăsprezece bătăi grave de clopot la miezul nopții și un semnal de corn care anunță ora – toate sintetizate din cod, fără înregistrări.",
+  "status": "realizat",
+  "nota": "Sunete integral sintetizate, fără voce umană: „strigătul” străjerului este redat ca semnal de corn. Scena este imaginată (fișa de fapte nu descrie sunetele cetății); legătura cu faptele verificate este explicată în md. Verificare tehnică în 04_audio/_verificare/.",
+  "audio": "c1/04_audio/A09_noapte_de_garda.mp3",
+  "tts_text": null,
+  "durata_s": 82.05,
+  "loudness_lufs": -14.2,
+  "true_peak_dbtp": -1.3,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "cod_sursa": [
+   "04_audio/_src/A09_noapte_de_garda.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "marcaje_s": {
+   "vant_si_greieri": 0.0,
+   "pasi_1": 10.0,
+   "clopot_miezul_noptii": 22.0,
+   "corn": 44.5,
+   "pasi_2": 56.0,
+   "pasi_3": 70.0,
+   "final": 77.0
+  },
+  "verificare": [
+   "04_audio/_verificare/A09_noapte_de_garda_spectrograma.png",
+   "04_audio/_verificare/A09_noapte_de_garda_forma_unda.png",
+   "04_audio/_verificare/raport_verificare.json"
+  ],
+  "calup": 1,
+  "html": "<h1 id=\"o-noapte-de-gardă-pe-ziduri-peisaj-sonor\">O noapte de gardă pe ziduri – peisaj sonor</h1>\n<p><em>Tema: Peisaj sonor AI: o noapte de gardă pe ziduri (pași, vânt, clopot, străjer care strigă ora) · Artefact-model generat cu AI</em></p>\n<p>O noapte imaginată pe zidurile cetății Sibiului, auzită dintr-un turn al breslelor: vântul trece prin gurile de tragere în rafale, greierii țârâie în șanțul de sub zid, un străjer trece de trei ori pe lângă noi cu pași grei pe piatră, un clopot grav bate de douăsprezece ori miezul nopții, iar imediat după aceea un corn anunță ora. <strong>Toate sunetele sunt sintetizate din formule matematice</strong> (cod Python), fără nicio înregistrare de teren și fără voce umană: „strigătul” străjerului este redat ca semnal de corn, nu ca voce. Turnul nu este unul anume; scena este un model pe care o clasă îl poate reface pentru orice loc.</p>\n<h2 id=\"fișier-audio\">Fișier audio</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Element</th>\n<th>Detalii</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Fișier</td>\n<td><code>A09_noapte_de_garda.mp3</code></td>\n</tr>\n<tr class=\"even\">\n<td>Durată</td>\n<td>aproximativ 82 de secunde</td>\n</tr>\n<tr class=\"odd\">\n<td>Format</td>\n<td>MP3 stereo, 44,1 kHz, 192 kbps, loudness măsurat −14,2 LUFS, vârf real −1,3 dBTP</td>\n</tr>\n<tr class=\"even\">\n<td>Cod sursă</td>\n<td><code>_src/A09_noapte_de_garda.py</code> (folosește biblioteca comună <code>audiolib.py</code> din <code>04_audio/_src</code>)</td>\n</tr>\n<tr class=\"odd\">\n<td>Verificare</td>\n<td><code>_verificare/A09_noapte_de_garda_spectrograma.png</code>, <code>_verificare/A09_noapte_de_garda_forma_unda.png</code>, <code>_verificare/raport_verificare.json</code></td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"straturile-sonore\">Straturile sonore</h2>\n<table>\n<colgroup>\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Strat</th>\n<th>Ce se aude</th>\n<th>Cum a fost construit</th>\n<th>Când apare</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Vânt cu rafale</td>\n<td>un fond jos, continuu, care se umflă în șase rafale; în rafale apare un fluierat subțire, ca prin crăpături</td>\n<td>zgomot colorat trecut printr-un filtru trece-bandă a cărui limită superioară urcă odată cu rafala; pentru fluierat, o bandă îngustă care glisează în sus; cele două canale pornesc din zgomote diferite</td>\n<td>permanent; rafale la aproximativ 6, 17, 31, 47, 61 și 73 s</td>\n</tr>\n<tr class=\"even\">\n<td>Greieri</td>\n<td>trei greieri, în stânga, în dreapta și la mijloc, cu ritmuri diferite</td>\n<td>purtătoare de 3,9–4,7 kHz modulată în amplitudine de impulsuri scurte (24–33 pe secundă), în „țârâituri” de sub o secundă</td>\n<td>permanent; mai discreți cât timp bat clopotul și cornul</td>\n</tr>\n<tr class=\"odd\">\n<td>Pași de străjer</td>\n<td>pași grei, rari (aproximativ trei la două secunde), care se apropie, trec prin fața ascultătorului și se depărtează</td>\n<td>pentru fiecare pas: călcâi (zgomot filtrat jos și un ton scurt grav), vârf (zgomot granular) și un clic de contact; vârfuri rotunjite</td>\n<td>10–18 s (stânga → dreapta), 56–64 s (dreapta → stânga), 70–77 s (mai departe, mai înfundat)</td>\n</tr>\n<tr class=\"even\">\n<td>Clopot de miezul nopții</td>\n<td>un clopot grav de turn care bate de douăsprezece ori, la aproximativ 1,9 secunde</td>\n<td>sinteză modală: zece parțiale inarmonice (hum, prim, terță, cvintă, nominal și parțiale superioare), fiecare cu decădere proprie de până la 18 secunde, plus bătăi lente între perechi de parțiale</td>\n<td>22–43 s, ultima lovitură se stinge până spre 55 s</td>\n</tr>\n<tr class=\"odd\">\n<td>Corn</td>\n<td>un semnal scurt în două fraze: do–sol, apoi do–mi–sol lung, cu o ușoară cădere la final</td>\n<td>sinteză aditivă (douăsprezece armonice), filtru care se „deschide” pe atac, vibrato lent, saturație blândă; reverberație lungă, ca de departe</td>\n<td>44,5–50,5 s</td>\n</tr>\n</tbody>\n</table>\n<p>Straturile apropiate (vânt, greieri, pași) trec printr-o reverberație scurtă; clopotul și cornul, printr-una lungă, ca să sune „de peste acoperișuri”.</p>\n<h2 id=\"harta-în-timp\">Harta în timp</h2>\n<table>\n<thead>\n<tr class=\"header\">\n<th>Secunde</th>\n<th>Ce se întâmplă</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>0–10</td>\n<td>vânt și greieri; urechea se obișnuiește cu noaptea</td>\n</tr>\n<tr class=\"even\">\n<td>10–18</td>\n<td>străjerul trece prima dată, de la stânga la dreapta</td>\n</tr>\n<tr class=\"odd\">\n<td>22–43</td>\n<td>clopotul bate de douăsprezece ori</td>\n</tr>\n<tr class=\"even\">\n<td>44–51</td>\n<td>cornul anunță ora; greierii tac aproape de tot</td>\n</tr>\n<tr class=\"odd\">\n<td>56–64</td>\n<td>străjerul trece a doua oară, în sens invers</td>\n</tr>\n<tr class=\"even\">\n<td>70–77</td>\n<td>o a treia trecere, mai departe</td>\n</tr>\n<tr class=\"odd\">\n<td>77–82</td>\n<td>vântul rămâne singur și se stinge (fade-out în ultimele 5 s)</td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"ce-e-real-și-ce-e-imaginat\">Ce e real și ce e imaginat</h2>\n<p>Nu există înregistrări ale unei nopți de gardă din cetatea medievală, așa că totul este o reconstituire sonoră imaginată. Elementele care au o bază în fișa de fapte verificate: turnurile de pe Strada Cetății aveau guri de tragere (la Turnul Archebuzierilor, „în formă de gaură de cheie”), iar turnurile erau în grija breslelor. Nu știm cum suna clopotul, cât de des trecea straja sau dacă ora era anunțată cu un corn; acestea sunt alegeri artistice, nu afirmații istorice.</p>\n<h2 id=\"idei-pentru-o-clasă\">Idei pentru o clasă</h2>\n<ul>\n<li>Înregistrați cu telefonul, seara, 30–60 de secunde lângă un zid sau un turn al cetății (fără conversații ale unor persoane care nu și-au dat acordul) și comparați cu versiunea sintetizată.</li>\n<li>Alegeți un singur sunet (vânt, pași, clopot) și încercați să-l descrieți în cuvinte atât de precis, încât un coleg să-l poată reface.</li>\n</ul>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<ol type=\"1\">\n<li>Generați fundalul cu un generator de efecte sonore cu AI care are plan gratuit (verificați condițiile actuale și vârsta minimă): „Vânt de noapte printre ziduri de piatră, cu rafale, fără muzică, 80 de secunde.”</li>\n<li>Adăugați evenimentele: „pași grei pe piatră care se apropie și se depărtează”, „clopot grav de turn, douăsprezece bătăi”, „semnal scurt de corn, de departe”; verificați licența fiecărui sunet.</li>\n<li>Mixați straturile într-un editor audio gratuit (de exemplu, Audacity): fundalul încet, evenimentele în prim-plan, fade-in și fade-out; țintiți un volum confortabil, fără vârfuri care distorsionează.</li>\n<li>Notați în descriere ce este înregistrat, ce este generat și cu ce instrument, și spuneți clar că scena este imaginată.</li>\n</ol>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Ce ne spune despre un loc faptul că îl putem „auzi” fără să-l vedem? Ce detalii sonore v-ar ajuta să recunoașteți un turn al cetății?</li>\n<li>Peisajul sonor pare „autentic”, dar e în întregime inventat. Cum ar trebui prezentat publicului ca să nu fie luat drept înregistrare istorică?</li>\n</ol>\n",
+  "card": "c1/04_audio/carduri/A09_card.png",
+  "titlu_creativ": "O noapte de gardă pe ziduri – peisaj sonor",
+  "g_img": "assets/img/A09.jpg",
+  "g_audio": "assets/aud/A09.mp3",
+  "g_th": "assets/th/A09.jpg"
+ },
+ {
+  "cod": "A10",
+  "categorie": "Audio",
+  "titlu": "Ghid audio de 3 minute pe Strada Cetății — narațiune AI pentru turiști",
+  "fisiere": [
+   "c1/04_audio/A10_ghid_strada_cetatii.md",
+   "c1/04_audio/A10_ghid_strada_cetatii.txt"
+  ],
+  "tip": "scenariu",
+  "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+  "descriere": "Un ghid audio de trei minute pe Strada Cetății, de la Turnul Archebuzierilor (Pânzarilor) la Turnul Olarilor și Turnul Dulgherilor, cu anii, înălțimile, formele și breslele fiecărui turn, plus Bastionul Haller (1551) și demolările din secolul al XIX-lea.",
+  "status": "realizat",
+  "nota": "Toate afirmațiile provin din fapte_verificate.md (tabel de surse în md). Textul pentru TTS are cifrele scrise în litere și fără abrevieri; „Activ A I” este scris pentru pronunție, ca în A01. Durata reală depinde de voce și de viteza de citire. Distanțele dintre turnuri și poziția Bastionului Haller nu sunt afirmate (nu sunt în fișă).",
+  "audio": null,
+  "tts_text": "c1/04_audio/A10_ghid_strada_cetatii.txt",
+  "tts_lang": "ro-RO",
+  "durata_s": null,
+  "durata_estimata_s": 189,
+  "cuvinte_rostite": 473,
+  "calup": 1,
+  "html": "<h1 id=\"trei-turnuri-trei-minute-strada-cetății\">Trei turnuri, trei minute: Strada Cetății</h1>\n<p><em>Tema: Ghid audio de 3 minute pe Strada Cetății — narațiune AI pentru turiști · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p>Traseu: Turnul Archebuzierilor (sud) → Turnul Olarilor → Turnul Dulgherilor, de-a lungul zidului de pe Strada Cetății, cu o scurtă privire spre Bastionul Haller și spre demolările din secolul al XIX-lea. Toate datele din text provin din fișa de fapte verificate a proiectului (fișele monumentelor de pe patrimoniu.sibiu.ro).</p>\n</blockquote>\n<h2 id=\"fișa-ghidului\">Fișa ghidului</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Element</th>\n<th>Detalii</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Format</td>\n<td>ghid audio cu o singură voce, aproximativ 3 minute</td>\n</tr>\n<tr class=\"even\">\n<td>Voce</td>\n<td>sintetizatorul vocal al browserului (limba română), redat în galeria digitală</td>\n</tr>\n<tr class=\"odd\">\n<td>Text pentru vocea sintetică</td>\n<td><code>A10_ghid_strada_cetatii.txt</code> (doar textul rostit; cifrele sunt scrise în litere, fără abrevieri)</td>\n</tr>\n<tr class=\"even\">\n<td>Cuvinte rostite</td>\n<td>473</td>\n</tr>\n<tr class=\"odd\">\n<td>Durată estimată</td>\n<td>180–200 de secunde, la 145–155 de cuvinte pe minut</td>\n</tr>\n<tr class=\"even\">\n<td>Opriri</td>\n<td>trei turnuri, plus o introducere și o încheiere</td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"scenariu\">Scenariu</h2>\n<p>[SUNET – vânt ușor, pași pe piatră; fundal discret, poate fi folosit A09 la volum mic]</p>\n<h3 id=\"introducere\">Introducere</h3>\n<p>Bună! Vă invit la o plimbare de trei minute pe Strada Cetății, acolo unde Sibiul păstrează un fragment de zid și trei turnuri ale breslelor. Mergem de la sud spre nord. Anii și dimensiunile pe care le veți auzi provin din fișele oficiale ale monumentelor.</p>\n<p>Sibiul a avut patru incinte de ziduri, ridicate una după alta. A treia, construită între 1357 și 1366, înconjura Orașul de Sus. Turnurile erau în grija breslelor, care le întrețineau.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-1-turnul-archebuzierilor-turnul-pânzarilor\">Oprirea 1 – Turnul Archebuzierilor (Turnul Pânzarilor)</h3>\n<p>Prima oprire: Turnul Archebuzierilor, cel mai sudic dintre cele trei. A fost construit între 1357 și 1366. Priviți forma lui: o prismă cu opt fețe, iar partea de sus iese în afară, sprijinită pe console. Căutați gurile de tragere. Au formă de gaură de cheie: rotunde sus și alungite jos. Turnul măsoară 20,75 m. Pe el este inscripționat anul 1668, când a fost restaurat, iar girueta datează din 1873. Mai târziu a primit și numele de Turnul Pânzarilor, după breasla care îl avea în îngrijire.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-2-turnul-olarilor\">Oprirea 2 – Turnul Olarilor</h3>\n<p>A doua oprire: Turnul Olarilor, cel mai tânăr dintre cele trei. A fost construit din piatră în secolul al XV-lea și consolidat un secol mai târziu. Observați planul dreptunghiular și felul în care zidul se retrage la al doilea nivel. Turnul are cinci guri de tragere pentru archebuze și măsoară 19,60 m.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-3-turnul-dulgherilor\">Oprirea 3 – Turnul Dulgherilor</h3>\n<p>Ultima oprire: Turnul Dulgherilor, ridicat între 1337 și 1366. Aici forma se schimbă sub ochii noștri: baza este circulară, iar deasupra cornișei turnul devine o prismă cu opt fețe. Acoperișul piramidal, ascuțit, îl face ușor de recunoscut de departe. Este cel mai înalt dintre cele trei: 21,65 m. A fost restaurat în 1967 și în 2008. Toate cele trei turnuri au fost renovate în 2019–2020.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"încheiere-bastioane-și-demolări\">Încheiere – bastioane și demolări</h3>\n<p>Înainte de a încheia, două lucruri de reținut. Primul: după anul 1540, epoca tunurilor a cerut alt fel de apărare, iar Sibiul a construit bastioane. Bastionul Haller a fost început în 1551. Al doilea: între 1830 și 1898, orașul a demolat porți, bastioane și peste douăzeci de turnuri. Din cele 39 de turnuri ale fortificațiilor, cele trei de pe Strada Cetății sunt printre puținele rămase.</p>\n<p>Aici se încheie plimbarea. Puneți palma pe zid și ascultați orașul. Ați ascultat un ghid audio, un artefact-model generat cu inteligență artificială pentru proiectul ACTIV AI.</p>\n<p>[SUNET – final]</p>\n<h2 id=\"surse-pentru-afirmațiile-din-text\">Surse pentru afirmațiile din text</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Afirmație</th>\n<th>Sursa din fișa de fapte verificate</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Patru incinte; a treia 1357–1366, în jurul Orașului de Sus</td>\n<td>Fortificațiile Sibiului – incinte</td>\n</tr>\n<tr class=\"even\">\n<td>Turnul Archebuzierilor: cel mai sudic, 1357–1366, prismă octogonală, console, guri „gaură de cheie”, 20,75 m, anul 1668, girueta 1873, numit ulterior Turnul Pânzarilor</td>\n<td>Fortificațiile Sibiului – fișa turnului</td>\n</tr>\n<tr class=\"odd\">\n<td>Turnul Olarilor: secolul al XV-lea, piatră, consolidat un secol mai târziu, plan dreptunghiular cu retragere la nivelul al doilea, cinci guri de tragere, 19,60 m</td>\n<td>Fortificațiile Sibiului – fișa turnului</td>\n</tr>\n<tr class=\"even\">\n<td>Turnul Dulgherilor: 1337–1366, bază circulară, prismă octogonală deasupra cornișei, acoperiș piramidal, 21,65 m, restaurat 1967, 2008</td>\n<td>Fortificațiile Sibiului – fișa turnului</td>\n</tr>\n<tr class=\"odd\">\n<td>Cele trei turnuri renovate 2019–2020</td>\n<td>Fortificațiile Sibiului – fișele turnurilor</td>\n</tr>\n<tr class=\"even\">\n<td>Bastioane după 1540; Bastionul Haller început în 1551</td>\n<td>Fortificațiile Sibiului – bastioane</td>\n</tr>\n<tr class=\"odd\">\n<td>Demolări 1830–1898: porți, bastioane, peste 20 de turnuri</td>\n<td>Fortificațiile Sibiului – demolări</td>\n</tr>\n<tr class=\"even\">\n<td>39 de turnuri în ansamblul fortificațiilor</td>\n<td>Monumente – Fortificații</td>\n</tr>\n</tbody>\n</table>\n<p>Ordinea „de la sud spre nord” pornește de la faptul că Turnul Archebuzierilor este cel mai sudic dintre cele trei; distanțele dintre turnuri și poziția Bastionului Haller față de stradă nu sunt precizate în fișă și nu sunt afirmate în text.</p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<ol type=\"1\">\n<li>Alegeți trei monumente apropiate unul de altul și notați pentru fiecare două sau trei date verificate (an, dimensiune, material, breaslă), cu trimitere la sursă.</li>\n<li>Cereți unui asistent AI gratuit: „Scrie textul unui ghid audio de 450 de cuvinte pentru traseul de mai jos, cu fraze scurte, ușor de citit de o voce sintetică, cu toate cifrele scrise în litere. Folosește doar informațiile pe care ți le dau.”</li>\n<li>Verificați fiecare afirmație din text, apoi redați-l cu o voce sintetică gratuită sau înregistrați-l cu vocea voastră, chiar pe traseu.</li>\n</ol>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>De ce cerem ca anii și dimensiunile să fie scrise în litere într-un text pentru voce sintetică? Ce s-ar putea citi greșit altfel?</li>\n<li>Ghidul spune „printre puținele rămase”, nu „singurele rămase”. Ce diferență face această alegere și de ce contează?</li>\n</ol>\n",
+  "tts": "Bună! Vă invit la o plimbare de trei minute pe Strada Cetății, acolo unde Sibiul păstrează un fragment de zid și trei turnuri ale breslelor. Mergem de la sud spre nord. Anii și dimensiunile pe care le veți auzi provin din fișele oficiale ale monumentelor.\n\nSibiul a avut patru incinte de ziduri, ridicate una după alta. A treia, construită între o mie trei sute cincizeci și șapte și o mie trei sute șaizeci și șase, înconjura Orașul de Sus. Turnurile erau în grija breslelor, care le întrețineau.\n\nPrima oprire: Turnul Archebuzierilor, cel mai sudic dintre cele trei. A fost construit între o mie trei sute cincizeci și șapte și o mie trei sute șaizeci și șase. Priviți forma lui: o prismă cu opt fețe, iar partea de sus iese în afară, sprijinită pe console. Căutați gurile de tragere. Au formă de gaură de cheie: rotunde sus și alungite jos. Turnul măsoară douăzeci de metri și șaptezeci și cinci de centimetri. Pe el este inscripționat anul o mie șase sute șaizeci și opt, când a fost restaurat, iar girueta datează din o mie opt sute șaptezeci și trei. Mai târziu a primit și numele de Turnul Pânzarilor, după breasla care îl avea în îngrijire.\n\nA doua oprire: Turnul Olarilor, cel mai tânăr dintre cele trei. A fost construit din piatră în secolul al cincisprezecelea și consolidat un secol mai târziu. Observați planul dreptunghiular și felul în care zidul se retrage la al doilea nivel. Turnul are cinci guri de tragere pentru archebuze și măsoară nouăsprezece metri și șaizeci de centimetri.\n\nUltima oprire: Turnul Dulgherilor, ridicat între o mie trei sute treizeci și șapte și o mie trei sute șaizeci și șase. Aici forma se schimbă sub ochii noștri: baza este circulară, iar deasupra cornișei turnul devine o prismă cu opt fețe. Acoperișul piramidal, ascuțit, îl face ușor de recunoscut de departe. Este cel mai înalt dintre cele trei: douăzeci și unu de metri și șaizeci și cinci de centimetri. A fost restaurat în o mie nouă sute șaizeci și șapte și în două mii opt. Toate cele trei turnuri au fost renovate în două mii nouăsprezece și două mii douăzeci.\n\nÎnainte de a încheia, două lucruri de reținut. Primul: după anul o mie cinci sute patruzeci, epoca tunurilor a cerut alt fel de apărare, iar Sibiul a construit bastioane. Bastionul Haller a fost început în o mie cinci sute cincizeci și unu. Al doilea: între o mie opt sute treizeci și o mie opt sute nouăzeci și opt, orașul a demolat porți, bastioane și peste douăzeci de turnuri. Din cele treizeci și nouă de turnuri ale fortificațiilor, cele trei de pe Strada Cetății sunt printre puținele rămase.\n\nAici se încheie plimbarea. Puneți palma pe zid și ascultați orașul. Ați ascultat un ghid audio, un artefact-model generat cu inteligență artificială pentru proiectul Activ A I.\n",
+  "card": "c1/04_audio/carduri/A10_card.png",
+  "titlu_creativ": "Trei turnuri, trei minute: Strada Cetății",
+  "g_img": "assets/img/A10.jpg",
+  "g_th": "assets/th/A10.jpg"
+ },
+ {
+  "cod": "S08",
+  "categorie": "Spațial",
+  "titlu": "Harta celor trei inele de ziduri — reconstituire schematică AI",
+  "fisiere": [
+   "c1/05_spatial/S08_trei_inele.svg",
+   "c1/05_spatial/S08_trei_inele.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Hartă schematică a centrului istoric cu cele patru incinte de fortificare (1191–1224, 1224–1241, 1357–1366, 1457), cele șase turnuri păstrate, porțile principale și bastioanele; legenda explică de ce sursele vorbesc de „trei inele”, dar de patru etape.",
+  "status": "realizat",
+  "nota": "Hartă schematică – nu la scară; poziții relative aproximative. Date din fapte_verificate.md (patrimoniu.sibiu.ro, de.wikipedia).",
+  "calup": 1,
+  "g_img": "assets/img/S08.jpg",
+  "g_th": "assets/th/S08.jpg"
+ },
+ {
+  "cod": "S09",
+  "categorie": "Spațial",
+  "titlu": "Traseul unui negustor intrat în cetate acum 500 de ani — hartă narativă",
+  "fisiere": [
+   "c1/05_spatial/S09_traseul_negustorului.svg",
+   "c1/05_spatial/S09_traseul_negustorului.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Un negustor fictiv intră în 1526 prin Poarta Cisnădiei, trece pe lângă turnurile breslelor, Piața Mare, Turnul Sfatului, Piața Mică și Piața Huet și coboară prin Turnul Scărilor în Orașul de Jos; opt stații cu text scurt la persoana I.",
+  "status": "realizat",
+  "nota": "Personaj și traseu fictive, construite pe fapte verificate; fără prețuri, nume de localuri sau persoane. Hartă schematică, nu la scară.",
+  "calup": 1,
+  "g_img": "assets/img/S09.jpg",
+  "g_th": "assets/th/S09.jpg"
+ },
+ {
+  "cod": "S10",
+  "categorie": "Spațial",
+  "titlu": "Harta „zidurilor invizibile” — unde erau zidurile azi dispărute, peste orașul de azi",
+  "fisiere": [
+   "c1/05_spatial/S10_zidurile_invizibile.svg",
+   "c1/05_spatial/S10_zidurile_invizibile.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Orașul de azi (străzi și piețe schematice, Cibinul) cu traseele zidurilor demolate între 1830 și 1898 desenate fantomatic, porțiunea păstrată de pe Strada Cetății desenată plin, cele șase turnuri păstrate și cele patru porți dispărute ca siluete șterse.",
+  "status": "realizat",
+  "nota": "Trasee și poziții aproximative, declarate explicit pe hartă; străzile sunt schematice.",
+  "calup": 1,
+  "g_img": "assets/img/S10.jpg",
+  "g_th": "assets/th/S10.jpg"
+ },
+ {
+  "cod": "D06",
+  "categorie": "Date",
+  "titlu": "Cetatea în cifre — inele, turnuri, porți, bastioane, infografic AI",
+  "fisiere": [
+   "c1/06_date/D06_cetatea_in_cifre.svg",
+   "c1/06_date/D06_cetatea_in_cifre.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Cifrele cetății: 4 incinte și anii lor, 39 de turnuri în total, 4 porți principale, 2 bastioane, peste 20 de turnuri demolate (1830–1898) și înălțimile celor cinci turnuri cu cifră în fișă, în bare la scară; Turnul Scărilor este marcat fără înălțime.",
+  "status": "realizat",
+  "nota": "Exclusiv cifre din fapte_verificate.md, cu sursa sub fiecare cifră; nicio valoare completată prin estimare.",
+  "calup": 1,
+  "g_img": "assets/img/D06.jpg",
+  "g_th": "assets/th/D06.jpg"
+ },
+ {
+  "cod": "D07",
+  "categorie": "Date",
+  "titlu": "Cronologia fortificațiilor Sibiului — linie a timpului ilustrată AI",
+  "fisiere": [
+   "c1/06_date/D07_cronologia_fortificatiilor.svg",
+   "c1/06_date/D07_cronologia_fortificatiilor.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Linie a timpului în serpentină, cu 13 momente ilustrate: de la prima atestare (1191) și cele patru incinte, prin bastioane și restaurări, la demolările din secolul al XIX-lea și renovările din 2007 și 2019–2020.",
+  "status": "realizat",
+  "nota": "Intervalele nu sunt la scară; date din fapte_verificate.md (patrimoniu.sibiu.ro, ziarulnatiunea.ro 2025).",
+  "calup": 1,
+  "g_img": "assets/img/D07.jpg",
+  "g_th": "assets/th/D07.jpg"
+ },
+ {
+  "cod": "I07",
+  "categorie": "Interactiv",
+  "titlu": "Quiz AI: recunoaște turnul după siluetă",
+  "fisiere": [
+   "c1/07_interactiv/I07_quiz_turnuri.html",
+   "c1/07_interactiv/I07_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – cod HTML/JS + siluete SVG",
+  "descriere": "Quiz în 10 runde: silueta schematică a unuia dintre cele șase turnuri păstrate ale cetății (Archebuzierilor, Olarilor, Dulgherilor, Pielarilor, Pulberăriei, Scărilor) și patru nume; după fiecare răspuns, o fișă cu anul, înălțimea și breasla, cu sursa patrimoniu.sibiu.ro.",
+  "status": "realizat",
+  "nota": "Siluetele sunt desenate după descrierile din fișele turnurilor (octogon pe console, dreptunghi cu retragere, bază circulară → octogon cu acoperiș ascuțit, octogon cu patru niveluri, turn circular scund, turn-poartă cu pasaj boltit), la aceeași scară (1,7 m = omulețul); înălțimea Turnului Scărilor nu e în fișă, silueta lui e marcată ca orientativă. Ordinea rundelor și a variantelor se amestecă la fiecare joc; taste A–D/1–4 și Enter funcționează.",
+  "calup": 1,
+  "g_img": "assets/img/I07.jpg",
+  "g_html": "assets/html/I07_quiz_turnuri.html",
+  "g_th": "assets/th/I07.jpg"
+ },
+ {
+  "cod": "I08",
+  "categorie": "Interactiv",
+  "titlu": "Joc de text AI: apără cetatea — strategie pe ture, în rolul unui străjer",
+  "fisiere": [
+   "c1/07_interactiv/I08_apara_cetatea.html",
+   "c1/07_interactiv/I08_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – cod HTML/JS + ilustrație SVG dinamică",
+  "descriere": "Opt nopți de gardă, în 1526, în rolul unui căpitan de străji fictiv: la fiecare noapte o situație și trei decizii care mută moralul, proviziile și vigilența (bare); ilustrația zidului se schimbă cu starea (torțe, străjeri, steag, saci, fum). Trei finaluri.",
+  "status": "realizat",
+  "nota": "Scenariu declarat imaginat (fără asediu real inventat ca fapt); elementele reale – turnurile Archebuzierilor/Dulgherilor/Olarilor și Pielarilor, porțile Cisnădiei/Ocnei/Turnului/Elisabeta, archebuzele, pulberăria, Turnul Sfatului – sunt separate de ficțiune în caseta „Ce e real și ce e inventat” de la final. Finaluri: „Zorii liniștiți” (medie ≥ 62 și minim ≥ 42), „Cetatea rezistă, cu prețul ei”, „Noaptea grea” (o resursă ajunge la 0; întrerupe jocul). Simulare pe toate cele 6.561 de combinații: ≈14 % final bun, ≈82 % mediu, ≈4 % eșec.",
+  "calup": 1,
+  "g_img": "assets/img/I08.jpg",
+  "g_html": "assets/html/I08_apara_cetatea.html",
+  "g_th": "assets/th/I08.jpg"
+ },
+ {
+  "cod": "I09",
+  "categorie": "Interactiv",
+  "titlu": "Puzzle digital AI: reconstruiește zidul din fragmente",
+  "fisiere": [
+   "c1/07_interactiv/I09_puzzle_zid.html",
+   "c1/07_interactiv/I09_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – cod HTML/JS + ilustrație SVG",
+  "descriere": "Un segment de zid de pe Strada Cetății, cu Turnul Dulgherilor, tăiat în 6, 12 sau 20 de piese amestecate: trage piesele (mouse sau atingere) sau atinge două piese ca să le schimbi; cronometru, număr de mutări, animație la final și o fișă „Știai că?” cu trei fapte din fișa turnului.",
+  "status": "realizat",
+  "nota": "Piesele sunt decupaje <svg viewBox> din aceeași ilustrație (fără imagini raster). Interacțiune prin pointer events (mouse + touch), alternativ click-click și Enter/Spațiu de la tastatură. Amestecarea garantează cel mult un sfert din piese la locul lor la start.",
+  "calup": 1,
+  "g_img": "assets/img/I09.jpg",
+  "g_html": "assets/html/I09_puzzle_zid.html",
+  "g_th": "assets/th/I09.jpg"
+ },
+ {
+  "cod": "P07",
+  "categorie": "Identitate",
+  "titlu": "Dacă aș fi un turn al cetății — portret AI și motivare",
+  "fisiere": [
+   "c1/08_identitate/P07_daca_as_fi_un_turn.svg",
+   "c1/08_identitate/P07_daca_as_fi_un_turn.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Turnul Dulgherilor ca portret-afiș de noapte – bază circulară, prismă octogonală, acoperiș ascuțit, 21,65 m – și un text de 78 de cuvinte la persoana I, în care un elev fictiv explică de ce ar fi acest turn; fișa turnului cu faptele verificate.",
+  "status": "realizat",
+  "nota": "Personaj fictiv. Ilustrație schematică, proporțiile nu sunt exacte. Date din fapte_verificate.md.",
+  "calup": 1,
+  "g_img": "assets/img/P07.jpg",
+  "g_th": "assets/th/P07.jpg"
+ },
+ {
+  "cod": "P08",
+  "categorie": "Identitate",
+  "titlu": "Blazonul breslei clasei mele — breasla unei meserii a viitorului, desenată AI",
+  "fisiere": [
+   "c1/08_identitate/P08_blazonul_breslei.svg",
+   "c1/08_identitate/P08_blazonul_breslei.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Blazon inventat pentru „Breasla Creatorilor Digitali”: scut cu stilou digital și tastatură încrucișate, scânteie, valurile Cibinului, chenar cu rozete și deviza „Imaginăm, construim, împărtășim”, cu un panou care explică fiecare element.",
+  "status": "realizat",
+  "nota": "Blazon inventat – nu reproduce blazoane reale de breaslă; motivele tradiționale sunt generice. Faptele despre breslele Sibiului provin din fapte_verificate.md.",
+  "calup": 1,
+  "g_img": "assets/img/P08.jpg",
+  "g_th": "assets/th/P08.jpg"
+ }
+]

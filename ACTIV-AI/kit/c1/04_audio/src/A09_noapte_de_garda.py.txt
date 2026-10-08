@@ -1,0 +1,260 @@
+"""A09 – O noapte de gardă pe ziduri (peisaj sonor sintetizat, ~82 s).
+
+Straturi: vânt filtrat cu rafale (zgomot colorat prin filtre variabile), greieri
+(impulsuri AM pe purtătoare înaltă), pași de străjer pe piatră (trei treceri),
+clopot grav de „miezul nopții” (sinteză modală, 12 lovituri) și un semnal de corn
+sintetizat (aditiv, fără voce) imediat după clopot. Totul procedural, fără eșantioane.
+
+Folosește biblioteca comună audiolib.py din /home/claude/expo/04_audio/_src
+(adăugată prin sys.path; o copie locală ar funcționa la fel).
+
+Rulare: python3 A09_noapte_de_garda.py  -> ../A09_noapte_de_garda.mp3
+"""
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+for cand in (HERE, os.path.join(HERE, "..", "..", "..", "04_audio", "_src")):
+    if os.path.exists(os.path.join(cand, "audiolib.py")) and cand not in sys.path:
+        sys.path.insert(0, cand)
+
+from audiolib import (SR, add, additive, bp, colored_noise, env_ar, env_exp, finalize, hp,
+                      hz, lp, make_ir, match_lufs, modal, ns, pan_gains, peaking, report,
+                      reverb, rng_of, smooth_random, stereo, t_axis)
+
+DUR = 82.0
+OUT = os.path.join(HERE, "..", "A09_noapte_de_garda.mp3")
+
+# repere în timp (secunde) – folosite și în fișa .md / manifest
+MARKS = {
+    "vant_si_greieri": 0.0,
+    "pasi_1": 10.0,
+    "clopot_miezul_noptii": 22.0,
+    "corn": 44.5,
+    "pasi_2": 56.0,
+    "pasi_3": 70.0,
+    "final": 77.0,
+}
+
+
+# ------------------------------------------------------------------ vânt
+def var_bp(x, lo, fc_vec, order=2, step_s=0.2):
+    """Filtru trece-bandă cu frecvența superioară variabilă, pe bucăți scurte."""
+    n = len(x)
+    y = np.zeros(n)
+    step = ns(step_s)
+    ov = ns(0.03)
+    for s in range(0, n, step):
+        e = min(n, s + step + ov)
+        hi = float(np.clip(fc_vec[min(s + step // 2, n - 1)], lo * 1.3, 0.45 * SR))
+        y[s:e] = bp(x[s:e], lo, hi, order=order)[: e - s]
+    return y
+
+
+def wind_layer(rng):
+    n = ns(DUR)
+    t = t_axis(n)
+    buf = stereo(DUR)
+    # curba rafalelor: fond lent + câteva rafale mai puternice, pe bucăți
+    base = smooth_random(n, rng, 0.07, 0.35, 0.75)
+    gust = np.zeros(n)
+    for tc in [6.0, 17.5, 31.0, 47.0, 61.5, 73.0]:
+        d = rng.uniform(4.0, 7.0)
+        i0 = ns(tc)
+        m = min(ns(d), n - i0)
+        tt = t_axis(m)
+        gust[i0:i0 + m] += (np.sin(np.pi * tt / d) ** 1.6) * rng.uniform(0.5, 0.9)
+    env = np.clip(base + gust, 0, 1.1)
+    for ch, seed_off in ((0, 1), (1, 2)):
+        nz = colored_noise(n, rng_of(900 + seed_off), 1.4)
+        # corpul vântului: bandă largă joasă, deschisă de rafale
+        fc = 350 + 900 * env
+        body = var_bp(nz, 60, fc, order=2)
+        # fluierat: bandă îngustă care urcă odată cu rafala
+        f_wh = 900 + 700 * env + 120 * np.sin(2 * np.pi * 0.11 * t + ch)
+        whistle = np.zeros(n)
+        step = ns(0.15)
+        for s in range(0, n, step):
+            e = min(n, s + step + ns(0.03))
+            f0 = float(f_wh[min(s, n - 1)])
+            whistle[s:e] = bp(nz[s:e], f0 * 0.93, f0 * 1.07, order=2)[: e - s]
+        whistle *= np.clip(env - 0.55, 0, 1) * 1.8
+        buf[ch] = np.tanh(1.2 * (body * (0.5 + 0.6 * env) + whistle)) / np.tanh(1.2)
+    # ușoară decorelare suplimentară și curățare sub 40 Hz
+    buf[1] = np.roll(buf[1], ns(0.009))
+    buf = hp(buf, 40, order=2)
+    return buf
+
+
+# ------------------------------------------------------------------ greieri
+def cricket_call(rng, f0, pulse_hz, dur):
+    """Un „țârâit”: purtătoare înaltă modulată în amplitudine de impulsuri scurte."""
+    n = ns(dur)
+    t = t_axis(n)
+    car = np.sin(2 * np.pi * f0 * t) + 0.25 * np.sin(2 * np.pi * 2 * f0 * t + 0.7)
+    ph = (t * pulse_hz) % 1.0
+    pulses = np.exp(-ph / 0.18) * (ph < 0.6)
+    win = np.sin(np.pi * t / dur) ** 0.6
+    return car * pulses * win
+
+
+def crickets_layer(rng):
+    buf = stereo(DUR)
+    crickets = [  # (frecvență purtătoare, impulsuri/s, pan, gain)
+        (4300.0, 28.0, -0.7, 1.0),
+        (4750.0, 33.0, 0.6, 0.8),
+        (3950.0, 24.0, 0.15, 0.55),
+    ]
+    for f0, pz, pan, g in crickets:
+        t = rng.uniform(0.2, 1.5)
+        while t < DUR - 1.0:
+            d = rng.uniform(0.35, 0.9)
+            x = cricket_call(rng, f0 * rng.uniform(0.995, 1.005), pz, d)
+            # greierii tac puțin când sună clopotul / cornul
+            quiet = 0.45 if MARKS["clopot_miezul_noptii"] - 1 < t < MARKS["pasi_2"] else 1.0
+            add(buf, x, t, gain=g * quiet * rng.uniform(0.8, 1.0), pan=pan + rng.uniform(-0.1, 0.1))
+            t += d + rng.uniform(0.15, 0.7)
+    buf = bp(buf, 2500, 9000, order=2)
+    return buf
+
+
+# ------------------------------------------------------------------ pași
+def bootstep(rng, heavy=1.0):
+    n = ns(0.2)
+    t = t_axis(n)
+    heel = lp(rng.standard_normal(n), 520) * env_ar(n, 0.001, 0.045) * 1.0
+    heel += np.sin(2 * np.pi * rng.uniform(85, 120) * t) * env_ar(n, 0.001, 0.04) * 0.6 * heavy
+    toe = np.zeros(n)
+    k = ns(rng.uniform(0.06, 0.09))
+    grit = bp(rng.standard_normal(n - k), 1500, 6000) * env_ar(n - k, 0.0005, 0.035)
+    toe[k:] = grit * 0.5
+    click = np.zeros(n)
+    kc = ns(0.004)
+    click[:kc] = bp(rng.standard_normal(kc), 2000, 7000)[:kc] * 0.25
+    x = heel + toe + click
+    x /= np.max(np.abs(x)) + 1e-12
+    return np.tanh(1.8 * x) / np.tanh(1.8)
+
+
+def steps_layer(rng):
+    buf = stereo(DUR)
+    passes = [  # (start, stop, direcție, apropiere maximă 0..1)
+        (MARKS["pasi_1"], MARKS["pasi_1"] + 8.0, 1, 1.0),
+        (MARKS["pasi_2"], MARKS["pasi_2"] + 8.0, -1, 0.85),
+        (MARKS["pasi_3"], MARKS["pasi_3"] + 7.0, 1, 0.55),
+    ]
+    for t0, t1, direction, near in passes:
+        t = t0
+        while t < t1:
+            u = (t - t0) / (t1 - t0)
+            amp = np.sin(np.pi * u) ** 1.3
+            pan = direction * (-0.75 + 1.5 * u)
+            x = bootstep(rng)
+            if near < 0.7:  # trecere mai îndepărtată: mai înfundată
+                x = lp(x, 1800)
+            add(buf, x, t, gain=(0.25 + 0.75 * amp) * near, pan=pan)
+            t += 0.66 + rng.uniform(-0.035, 0.035)
+    return buf
+
+
+# ------------------------------------------------------------------ clopot
+BELL_RATIOS = [0.5, 1.0, 1.19, 1.5, 2.0, 2.51, 2.66, 3.01, 4.07, 5.4]
+BELL_AMPS = [0.7, 0.5, 0.45, 0.2, 0.6, 0.25, 0.18, 0.14, 0.08, 0.04]
+BELL_T60 = [18.0, 11.0, 8.0, 5.0, 6.0, 3.2, 2.8, 2.0, 1.4, 0.9]
+
+
+def bell_strike(prime_hz, rng, dur=16.0):
+    ratios = [r * (1 + rng.uniform(-0.003, 0.003)) for r in BELL_RATIOS]
+    amps = [a * rng.uniform(0.9, 1.1) for a in BELL_AMPS]
+    x = modal([prime_hz * r for r in ratios], amps, BELL_T60, dur, rng=rng, beat_hz=0.45)
+    n = len(x)
+    clang = bp(rng.standard_normal(n), 700, 3000) * env_exp(n, 0.05) * 0.22
+    return x + clang
+
+
+def bell_layer(rng):
+    buf = stereo(DUR)
+    prime = hz("G3")  # clopot grav, de turn
+    variants = [bell_strike(prime, rng) for _ in range(3)]
+    t = MARKS["clopot_miezul_noptii"]
+    for i in range(12):  # cele douăsprezece bătăi ale miezului nopții
+        x = variants[rng.integers(0, 3)]
+        add(buf, x, t, gain=rng.uniform(0.9, 1.0), pan=0.25 + rng.uniform(-0.05, 0.05))
+        t += 1.9 + rng.uniform(-0.05, 0.05)
+    return lp(buf, 3200, order=2)
+
+
+# ------------------------------------------------------------------ corn
+def horn_note(f0, dur, rng, fall=0.0):
+    """Ton de corn: sumă de armonice cu plic lent, mic vibrato, ușoară saturație."""
+    n = ns(dur)
+    t = t_axis(n)
+    ramp = np.clip((t - 0.25) / 0.3, 0, 1)
+    vib = 1 + 0.004 * ramp * np.sin(2 * np.pi * 5.2 * t + rng.uniform(0, 6.28))
+    glide = 1 - fall * np.clip((t - (dur - 0.35)) / 0.35, 0, 1) * 0.06
+    f = f0 * vib * glide * (1 + 0.012 * np.exp(-t / 0.06))  # mic „atac” de intonație
+    amps = [1.0 / k ** 0.9 for k in range(1, 13)]
+    x = additive(f, amps, phase0=rng.uniform())
+    # „deschiderea” pavilionului: filtru care se deschide pe atac
+    bright = lp(x, 2600) * ramp + lp(x, 1100) * (1 - ramp)
+    env = np.ones(n)
+    a, r = ns(0.09), ns(min(0.35, dur * 0.4))
+    env[:a] = np.sin(np.linspace(0, np.pi / 2, a)) ** 2
+    env[n - r:] *= np.cos(np.linspace(0, np.pi / 2, r)) ** 2
+    y = np.tanh(1.6 * bright * env) / np.tanh(1.6)
+    return y
+
+
+def horn_layer(rng):
+    buf = stereo(DUR)
+    t0 = MARKS["corn"]
+    phrase = [  # (notă, durată, pauză după, cădere la final)
+        ("C4", 0.55, 0.08, 0.0),
+        ("G4", 1.5, 0.45, 0.0),
+        ("C4", 0.55, 0.08, 0.0),
+        ("E4", 0.55, 0.08, 0.0),
+        ("G4", 2.2, 0.0, 1.0),
+    ]
+    t = t0
+    for nm, d, gap, fall in phrase:
+        x = horn_note(hz(nm), d, rng, fall=fall)
+        add(buf, x, t, gain=1.0, pan=-0.45)
+        t += d + gap
+    return buf
+
+
+# ------------------------------------------------------------------ mix
+def render(seed=20261006):
+    rng = rng_of(seed)
+    ir_near = make_ir(t60=1.6, predelay=0.015, seed=21)
+    ir_far = make_ir(t60=3.2, predelay=0.035, seed=22, hf_ratio=0.35)
+    layers = {
+        "vant": (wind_layer(rng), -24.0, ir_near, 0.10),
+        "greieri": (crickets_layer(rng), -31.0, ir_near, 0.12),
+        "pasi": (steps_layer(rng), -24.5, ir_near, 0.28),
+        "clopot": (bell_layer(rng), -20.0, ir_far, 0.55),
+        "corn": (horn_layer(rng), -21.0, ir_far, 0.65),
+    }
+    mix = stereo(DUR)
+    windows = {"pasi_1": (10, 18), "clopot": (23, 40), "corn": (44.5, 50.5), "liniste": (2, 9)}
+    for name, (x, target, ir, wet) in layers.items():
+        x = match_lufs(x, target)
+        report(x, name)
+        from audiolib import lufs
+        segs = ", ".join(f"{w}: {lufs(x[:, ns(a):ns(b)]):6.1f}" for w, (a, b) in windows.items())
+        print(f"      ferestre LUFS -> {segs}")
+        mix += reverb(x, ir, wet=wet, dry=1.0)
+    mix = peaking(mix, 3200, -1.5, 0.9)
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "A09 O noapte de gardă pe ziduri",
+                   "Peisaj sonor sintetizat procedural (Python/numpy) – ACTIV AI, calupul Cetatea",
+                   target_lufs=-14.0, fin=3.0, fout=5.0)
+    report(out, "A09 final")
+    print("scris:", os.path.abspath(OUT))
+    print("repere:", MARKS)

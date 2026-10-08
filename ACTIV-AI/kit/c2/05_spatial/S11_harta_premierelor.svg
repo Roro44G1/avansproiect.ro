@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="201" height="44" fill="#0E7C86"/>
+<text x="100.6" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">SPAȚIAL · S11</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="60" fill="#F3EFE6">Harta premierelor Sibiului</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">fiecare „prima” așezată pe harta orașului · poziții aproximative</text>
+<clipPath id="mclip"><rect x="80" y="230" width="1150" height="770" rx="22"/></clipPath>
+<g clip-path="url(#mclip)">
+<rect x="80" y="230" width="1150" height="770" fill="#F4EEE2" filter="url(#paper)"/>
+<rect x="80" y="230" width="1150" height="770" fill="#E6DCC6" opacity="0.35"/>
+<path d="M80.0,282.0 C100.0,280.0 158.3,269.7 200.0,270.0 C241.7,270.3 285.0,283.7 330.0,284.0 C375.0,284.3 421.7,272.3 470.0,272.0 C518.3,271.7 568.3,282.3 620.0,282.0 C671.7,281.7 726.7,270.0 780.0,270.0 C833.3,270.0 888.3,281.7 940.0,282.0 C991.7,282.3 1041.7,272.0 1090.0,272.0 C1138.3,272.0 1206.7,280.3 1230.0,282.0" fill="none" stroke="#8FBFD1" stroke-width="30" stroke-linecap="round"/>
+<path d="M80.0,282.0 C100.0,280.0 158.3,269.7 200.0,270.0 C241.7,270.3 285.0,283.7 330.0,284.0 C375.0,284.3 421.7,272.3 470.0,272.0 C518.3,271.7 568.3,282.3 620.0,282.0 C671.7,281.7 726.7,270.0 780.0,270.0 C833.3,270.0 888.3,281.7 940.0,282.0 C991.7,282.3 1041.7,272.0 1090.0,272.0 C1138.3,272.0 1206.7,280.3 1230.0,282.0" fill="none" stroke="#F4EEE2" stroke-width="2" stroke-dasharray="14 18" opacity="0.8"/>
+<text x="104.0" y="326.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#2F7A91" text-anchor="start" font-style="italic">râul Cibin →</text>
+<path d="M190.0,372.0 C264.4,331.2 282.0,349.0 420.0,334.0 C558.0,319.0 515.0,322.6 650.0,322.0 C785.0,321.4 747.0,317.0 870.0,332.0 C993.0,347.0 976.0,336.0 1060.0,372.0 C1144.0,408.0 1129.6,402.8 1150.0,452.0 C1170.4,501.2 1161.0,503.6 1128.0,536.0 C1095.0,568.4 1099.4,573.8 1040.0,560.0 C980.6,546.2 1014.0,522.4 930.0,490.0 C846.0,457.6 871.0,464.6 760.0,452.0 C649.0,439.4 668.0,439.6 560.0,448.0 C452.0,456.4 497.5,442.8 400.0,480.0 C302.5,517.2 303.4,575.0 235.0,572.0 C166.6,569.0 185.5,530.0 172.0,470.0 C158.5,410.0 115.6,412.8 190.0,372.0 Z" fill="#8C86B8" fill-opacity="0.1" stroke="none"/>
+<path d="M190.0,372.0 C264.4,331.2 282.0,349.0 420.0,334.0 C558.0,319.0 515.0,322.6 650.0,322.0 C785.0,321.4 747.0,317.0 870.0,332.0 C993.0,347.0 976.0,336.0 1060.0,372.0 C1144.0,408.0 1129.6,402.8 1150.0,452.0 C1170.4,501.2 1161.0,503.6 1128.0,536.0 C1095.0,568.4 1099.4,573.8 1040.0,560.0 C980.6,546.2 1014.0,522.4 930.0,490.0 C846.0,457.6 871.0,464.6 760.0,452.0 C649.0,439.4 668.0,439.6 560.0,448.0 C452.0,456.4 497.5,442.8 400.0,480.0 C302.5,517.2 303.4,575.0 235.0,572.0 C166.6,569.0 185.5,530.0 172.0,470.0 C158.5,410.0 115.6,412.8 190.0,372.0 Z" fill="none" stroke="#8C86B8" stroke-width="8" stroke-linejoin="round" filter="url(#rough)"/>
+<path d="M190.0,372.0 C264.4,331.2 282.0,349.0 420.0,334.0 C558.0,319.0 515.0,322.6 650.0,322.0 C785.0,321.4 747.0,317.0 870.0,332.0 C993.0,347.0 976.0,336.0 1060.0,372.0 C1144.0,408.0 1129.6,402.8 1150.0,452.0 C1170.4,501.2 1161.0,503.6 1128.0,536.0 C1095.0,568.4 1099.4,573.8 1040.0,560.0 C980.6,546.2 1014.0,522.4 930.0,490.0 C846.0,457.6 871.0,464.6 760.0,452.0 C649.0,439.4 668.0,439.6 560.0,448.0 C452.0,456.4 497.5,442.8 400.0,480.0 C302.5,517.2 303.4,575.0 235.0,572.0 C166.6,569.0 185.5,530.0 172.0,470.0 C158.5,410.0 115.6,412.8 190.0,372.0 Z" fill="none" stroke="#F4EEE2" stroke-width="2.2" stroke-dasharray="7 9" opacity="0.9"/>
+<path d="M235.0,572.0 C291.4,503.0 302.5,517.2 400.0,480.0 C497.5,442.8 452.0,456.4 560.0,448.0 C668.0,439.6 649.0,439.4 760.0,452.0 C871.0,464.6 846.0,457.6 930.0,490.0 C1014.0,522.4 1016.0,500.0 1040.0,560.0 C1064.0,620.0 1043.0,616.5 1010.0,690.0 C977.0,763.5 1005.0,746.5 930.0,805.0 C855.0,863.5 871.0,858.0 760.0,885.0 C649.0,912.0 689.0,905.5 560.0,895.0 C431.0,884.5 434.4,905.5 330.0,850.0 C225.6,794.5 240.5,793.4 212.0,710.0 C183.5,626.6 178.6,641.0 235.0,572.0 Z" fill="#5E9AA0" fill-opacity="0.1" stroke="none"/>
+<path d="M235.0,572.0 C291.4,503.0 302.5,517.2 400.0,480.0 C497.5,442.8 452.0,456.4 560.0,448.0 C668.0,439.6 649.0,439.4 760.0,452.0 C871.0,464.6 846.0,457.6 930.0,490.0 C1014.0,522.4 1016.0,500.0 1040.0,560.0 C1064.0,620.0 1043.0,616.5 1010.0,690.0 C977.0,763.5 1005.0,746.5 930.0,805.0 C855.0,863.5 871.0,858.0 760.0,885.0 C649.0,912.0 689.0,905.5 560.0,895.0 C431.0,884.5 434.4,905.5 330.0,850.0 C225.6,794.5 240.5,793.4 212.0,710.0 C183.5,626.6 178.6,641.0 235.0,572.0 Z" fill="none" stroke="#5E9AA0" stroke-width="8" stroke-linejoin="round" filter="url(#rough)"/>
+<path d="M235.0,572.0 C291.4,503.0 302.5,517.2 400.0,480.0 C497.5,442.8 452.0,456.4 560.0,448.0 C668.0,439.6 649.0,439.4 760.0,452.0 C871.0,464.6 846.0,457.6 930.0,490.0 C1014.0,522.4 1016.0,500.0 1040.0,560.0 C1064.0,620.0 1043.0,616.5 1010.0,690.0 C977.0,763.5 1005.0,746.5 930.0,805.0 C855.0,863.5 871.0,858.0 760.0,885.0 C649.0,912.0 689.0,905.5 560.0,895.0 C431.0,884.5 434.4,905.5 330.0,850.0 C225.6,794.5 240.5,793.4 212.0,710.0 C183.5,626.6 178.6,641.0 235.0,572.0 Z" fill="none" stroke="#F4EEE2" stroke-width="2.2" stroke-dasharray="7 9" opacity="0.9"/>
+<path d="M385.0,490.0 C411.4,457.0 405.5,470.4 470.0,462.0 C534.5,453.6 531.0,450.6 600.0,462.0 C669.0,473.4 670.0,463.1 700.0,500.0 C730.0,536.9 727.0,551.4 700.0,585.0 C673.0,618.6 679.0,600.9 610.0,612.0 C541.0,623.1 538.4,634.0 470.0,622.0 C401.6,610.0 407.5,611.6 382.0,572.0 C356.5,532.4 358.6,523.0 385.0,490.0 Z" fill="none" stroke="#B9583A" stroke-width="9" stroke-linejoin="round" opacity="0.18" filter="url(#blur3)"/>
+<path d="M385.0,490.0 C411.4,457.0 405.5,470.4 470.0,462.0 C534.5,453.6 531.0,450.6 600.0,462.0 C669.0,473.4 670.0,463.1 700.0,500.0 C730.0,536.9 727.0,551.4 700.0,585.0 C673.0,618.6 679.0,600.9 610.0,612.0 C541.0,623.1 538.4,634.0 470.0,622.0 C401.6,610.0 407.5,611.6 382.0,572.0 C356.5,532.4 358.6,523.0 385.0,490.0 Z" fill="none" stroke="#B9583A" stroke-width="3" stroke-linejoin="round" stroke-dasharray="4 14" stroke-linecap="round" opacity="0.85"/>
+<path d="M400.0,528.0 C401.5,498.6 406.0,500.0 430.0,482.0 C454.0,464.0 448.5,466.8 480.0,468.0 C511.5,469.2 512.2,467.4 535.0,486.0 C557.8,504.6 556.0,502.4 556.0,530.0 C556.0,557.6 557.8,557.0 535.0,578.0 C512.2,599.0 513.0,599.4 480.0,600.0 C447.0,600.6 449.0,601.6 425.0,580.0 C401.0,558.4 398.5,557.4 400.0,528.0 Z" fill="none" stroke="#C99A2E" stroke-width="9" stroke-linejoin="round" opacity="0.18" filter="url(#blur3)"/>
+<path d="M400.0,528.0 C401.5,498.6 406.0,500.0 430.0,482.0 C454.0,464.0 448.5,466.8 480.0,468.0 C511.5,469.2 512.2,467.4 535.0,486.0 C557.8,504.6 556.0,502.4 556.0,530.0 C556.0,557.6 557.8,557.0 535.0,578.0 C512.2,599.0 513.0,599.4 480.0,600.0 C447.0,600.6 449.0,601.6 425.0,580.0 C401.0,558.4 398.5,557.4 400.0,528.0 Z" fill="none" stroke="#C99A2E" stroke-width="3" stroke-linejoin="round" stroke-dasharray="4 14" stroke-linecap="round" opacity="0.85"/>
+<rect x="672.0" y="592.0" width="150.0" height="108.0" rx="4" fill="#FBF7EE" stroke="#8C7B5E" stroke-width="1.5"/>
+<text x="747.0" y="653.7" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#3B3326" text-anchor="middle">Piața Mare</text>
+<rect x="588.0" y="502.0" width="76.0" height="60.0" rx="4" fill="#FBF7EE" stroke="#8C7B5E" stroke-width="1.5"/>
+<text x="686.0" y="526.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="start" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Piața Mică</text>
+<rect x="459.0" y="504.0" width="42.0" height="52.0" fill="#CDBFA3" stroke="#6B5A3E" stroke-width="1.5"/>
+<polygon points="453.0,504.0 480.0,478.0 507.0,504.0" fill="#B9583A" stroke="#6B5A3E" stroke-width="1.2"/>
+<rect x="474.0" y="464.0" width="12.0" height="40.0" fill="#CDBFA3" stroke="#6B5A3E" stroke-width="1.2"/><polygon points="472.0,464.0 480.0,442.0 488.0,464.0" fill="#B9583A"/>
+<text x="480.0" y="582.0" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#3B3326" text-anchor="middle">Piața Huet</text>
+<rect x="662.0" y="532.0" width="18.0" height="46.0" fill="#CDBFA3" stroke="#6B5A3E" stroke-width="1.5"/><polygon points="658.0,532.0 671.0,512.0 684.0,532.0" fill="#B9583A"/>
+<text x="686.0" y="548.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#5A4D38" text-anchor="start" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Turnul Sfatului</text>
+<g filter="url(#shs)" opacity="0.85"><rect x="641.0" y="883.0" width="28" height="22" rx="3" fill="#6B5A3E" stroke="#2B241A" stroke-width="1.5"/><path d="M648.0,905.0 v-9 a7,7 0 0 1 14,0 v9 Z" fill="#F4EEE2"/></g>
+<text x="633.0" y="899.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#5A4D38" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Poarta Cisnădiei</text>
+<g filter="url(#shs)" opacity="0.85"><rect x="706.0" y="318.0" width="28" height="22" rx="3" fill="#6B5A3E" stroke="#2B241A" stroke-width="1.5"/><path d="M713.0,340.0 v-9 a7,7 0 0 1 14,0 v9 Z" fill="#F4EEE2"/></g>
+<text x="720.0" y="308.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#5A4D38" text-anchor="middle" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Poarta Ocnei</text>
+<g filter="url(#shs)" opacity="0.85"><rect x="176.0" y="400.0" width="28" height="22" rx="3" fill="#6B5A3E" stroke="#2B241A" stroke-width="1.5"/><path d="M183.0,422.0 v-9 a7,7 0 0 1 14,0 v9 Z" fill="#F4EEE2"/></g>
+<text x="212.0" y="416.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#5A4D38" text-anchor="start" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Poarta Turnului</text>
+<g filter="url(#shs)" opacity="0.85"><rect x="1124.0" y="480.0" width="28" height="22" rx="3" fill="#6B5A3E" stroke="#2B241A" stroke-width="1.5"/><path d="M1131.0,502.0 v-9 a7,7 0 0 1 14,0 v9 Z" fill="#F4EEE2"/></g>
+<text x="1116.0" y="522.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#5A4D38" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Poarta Elisabeta</text>
+<g filter="url(#shs)" opacity="0.55"><rect x="1019.2" y="627.2" width="17.6" height="17.6" rx="3" fill="#E2A62B" stroke="#3B3326" stroke-width="2"/><polygon points="1017.4,627.2 1028.0,616.6 1038.6,627.2" fill="#B9583A" stroke="#3B3326" stroke-width="1.5"/></g>
+<g filter="url(#shs)" opacity="0.55"><rect x="976.2" y="715.2" width="17.6" height="17.6" rx="3" fill="#E2A62B" stroke="#3B3326" stroke-width="2"/><polygon points="974.4,715.2 985.0,704.6 995.6,715.2" fill="#B9583A" stroke="#3B3326" stroke-width="1.5"/></g>
+<g filter="url(#shs)" opacity="0.55"><rect x="896.2" y="814.2" width="17.6" height="17.6" rx="3" fill="#E2A62B" stroke="#3B3326" stroke-width="2"/><polygon points="894.4,814.2 905.0,803.6 915.6,814.2" fill="#B9583A" stroke="#3B3326" stroke-width="1.5"/></g>
+<g filter="url(#shs)" opacity="0.55"><rect x="551.2" y="327.2" width="17.6" height="17.6" rx="3" fill="#E2A62B" stroke="#3B3326" stroke-width="2"/><polygon points="549.4,327.2 560.0,316.6 570.6,327.2" fill="#B9583A" stroke="#3B3326" stroke-width="1.5"/></g>
+<g filter="url(#shs)" opacity="0.55"><rect x="995.2" y="339.2" width="17.6" height="17.6" rx="3" fill="#E2A62B" stroke="#3B3326" stroke-width="2"/><polygon points="993.4,339.2 1004.0,328.6 1014.6,339.2" fill="#B9583A" stroke="#3B3326" stroke-width="1.5"/></g>
+<g filter="url(#shs)" opacity="0.55"><rect x="419.2" y="475.2" width="17.6" height="17.6" rx="3" fill="#E2A62B" stroke="#3B3326" stroke-width="2"/><polygon points="417.4,475.2 428.0,464.6 438.6,475.2" fill="#B9583A" stroke="#3B3326" stroke-width="1.5"/></g>
+<text x="480.0" y="805.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#0E5C66" text-anchor="middle" letter-spacing="3">ORAȘUL DE SUS</text>
+<text x="880.0" y="398.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#4A3A99" text-anchor="middle" letter-spacing="3">ORAȘUL DE JOS</text>
+<g filter="url(#shs)"><circle cx="780.0" cy="878.0" r="17" fill="#7A8A95" stroke="#2B3A44" stroke-width="2"/><circle cx="780.0" cy="878.0" r="9" fill="#F4EEE2" opacity="0.7"/></g>
+<g filter="url(#shs)"><circle cx="748.0" cy="584.0" r="19" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="748.0" y="591.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">1</text>
+</g>
+<text x="774.0" y="578.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="start" stroke="#F4EEE2" stroke-width="6" stroke-linejoin="round" paint-order="stroke">Farmacia orașului · 1494</text>
+<text x="774.0" y="598.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5A4D38" text-anchor="start" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">azi: turnul Bisericii Romano-Catolice</text>
+<g filter="url(#shs)"><circle cx="780.0" cy="878.0" r="19" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="780.0" y="885.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">2</text>
+</g>
+<text x="806.0" y="874.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="start" stroke="#F4EEE2" stroke-width="6" stroke-linejoin="round" paint-order="stroke">Prima clădire de teatru · 1788</text>
+<text x="806.0" y="894.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5A4D38" text-anchor="start" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Turnul Gros (azi Sala Thalia)</text>
+<g filter="url(#shs)"><circle cx="680.0" cy="692.0" r="19" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="680.0" y="699.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">3</text>
+</g>
+<text x="654.0" y="688.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="end" stroke="#F4EEE2" stroke-width="6" stroke-linejoin="round" paint-order="stroke">Muzeul Brukenthal · 1817</text>
+<text x="654.0" y="708.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5A4D38" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Palatul Brukenthal, Piața Mare</text>
+<line x1="626.0" y1="488.0" x2="606.0" y2="442.0" stroke="#5A4D38" stroke-width="2" stroke-dasharray="3 4"/>
+<g filter="url(#shs)"><circle cx="626.0" cy="488.0" r="19" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="626.0" y="495.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">4</text>
+</g>
+<text x="600.0" y="416.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="end" stroke="#F4EEE2" stroke-width="6" stroke-linejoin="round" paint-order="stroke">Podul Minciunilor · 1859</text>
+<text x="600.0" y="436.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5A4D38" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">între Piața Mică și Orașul de Jos</text>
+<line x1="642.0" y1="548.0" x2="658.0" y2="618.0" stroke="#5A4D38" stroke-width="2" stroke-dasharray="3 4"/>
+<g filter="url(#shs)"><circle cx="642.0" cy="548.0" r="19" fill="#0E7C86" stroke="#F3EFE6" stroke-width="2.5"/><text x="642.0" y="555.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">5</text>
+</g>
+<text x="665.0" y="628.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="end" stroke="#F4EEE2" stroke-width="6" stroke-linejoin="round" paint-order="stroke">Muzeul Farmaciei · 1972</text>
+<text x="665.0" y="648.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5A4D38" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Piața Mică 26 · reper, nu premieră</text>
+<path d="M1152.0,480.0 L1198.0,380.0" stroke="#E2A62B" stroke-width="4" stroke-dasharray="10 8" fill="none"/>
+<polygon points="1198.0,364.0 1210.0,384.0 1186.0,384.0" fill="#E2A62B" transform="rotate(25 1198.0 380.0)"/>
+<g filter="url(#shs)"><circle cx="1152.0" cy="480.0" r="19" fill="#E2A62B" stroke="#F3EFE6" stroke-width="2.5"/><text x="1152.0" y="487.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#0F1720" text-anchor="middle">6</text>
+</g>
+<text x="1148.0" y="434.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#3B3326" text-anchor="end" stroke="#F4EEE2" stroke-width="6" stroke-linejoin="round" paint-order="stroke">Primul tramvai electric · 1905</text>
+<text x="1148.0" y="454.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5A4D38" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">spre Piața Gării, în afara zidurilor</text>
+<text x="1158.0" y="356.0" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#8A6A1E" text-anchor="end" font-style="italic" stroke="#F4EEE2" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Piața Gării →</text>
+<circle cx="1150" cy="900" r="36" fill="#F4EEE2" stroke="#8C7B5E" stroke-width="1.5"/>
+<polygon points="1150,871.2 1157.2,900 1142.8,900" fill="#B9583A"/><polygon points="1150,928.8 1157.2,900 1142.8,900" fill="#8C7B5E"/>
+<text x="1150.0" y="858.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#3B3326" text-anchor="middle">N</text>
+<text x="1150.0" y="958.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#3B3326" text-anchor="middle">S</text>
+<text x="1100.0" y="906.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#3B3326" text-anchor="middle">V</text>
+<text x="1200.0" y="906.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#3B3326" text-anchor="middle">E</text>
+<text x="100.0" y="978.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#5A4D38" text-anchor="start" font-style="italic">hartă schematică – nu la scară; pozițiile sunt aproximative</text>
+</g>
+<rect x="80" y="230" width="1150" height="770" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>
+<rect x="1260" y="230" width="580" height="770" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<text x="1292.0" y="280.0" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#F3EFE6" text-anchor="start">Premiere cu loc cunoscut</text>
+<text x="1292.0" y="302.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start" font-style="italic">formulări „conform sursei” (patrimoniu.sibiu.ro)</text>
+<g filter="url(#shs)"><circle cx="1312" cy="340" r="16" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="1312.0" y="347.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">1</text>
+</g>
+<text x="1344.0" y="338.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#E2A62B" text-anchor="start">1494</text>
+<text x="1410.0" y="338.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">prima farmacie de pe actualul teritoriu al României –</text>
+<text x="1410.0" y="358.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">Piața Mare</text>
+<g filter="url(#shs)"><circle cx="1312" cy="394" r="16" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="1312.0" y="401.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">2</text>
+</g>
+<text x="1344.0" y="392.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#E2A62B" text-anchor="start">1788</text>
+<text x="1410.0" y="392.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">prima clădire de teatru de pe actualul teritoriu al</text>
+<text x="1410.0" y="412.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">României – Turnul Gros</text>
+<g filter="url(#shs)"><circle cx="1312" cy="448" r="16" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="1312.0" y="455.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">3</text>
+</g>
+<text x="1344.0" y="446.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#E2A62B" text-anchor="start">1817</text>
+<text x="1410.0" y="446.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">Muzeul Brukenthal, primul muzeu din România –</text>
+<text x="1410.0" y="466.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">Piața Mare</text>
+<g filter="url(#shs)"><circle cx="1312" cy="502" r="16" fill="#B9583A" stroke="#F3EFE6" stroke-width="2.5"/><text x="1312.0" y="509.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">4</text>
+</g>
+<text x="1344.0" y="500.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#E2A62B" text-anchor="start">1859</text>
+<text x="1410.0" y="500.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">primul pod din fontă turnată – Podul Minciunilor</text>
+<g filter="url(#shs)"><circle cx="1312" cy="556" r="16" fill="#0E7C86" stroke="#F3EFE6" stroke-width="2.5"/><text x="1312.0" y="563.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="middle">5</text>
+</g>
+<text x="1344.0" y="554.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#E2A62B" text-anchor="start">1972</text>
+<text x="1410.0" y="554.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">Muzeul de Istorie a Farmaciei, Piața Mică 26 – reper,</text>
+<text x="1410.0" y="574.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">nu premieră</text>
+<g filter="url(#shs)"><circle cx="1312" cy="610" r="16" fill="#E2A62B" stroke="#F3EFE6" stroke-width="2.5"/><text x="1312.0" y="617.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#0F1720" text-anchor="middle">6</text>
+</g>
+<text x="1344.0" y="608.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#E2A62B" text-anchor="start">1905</text>
+<text x="1410.0" y="608.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">prima linie de tramvai electric: gară – spitalul militar</text>
+<line x1="1292" y1="658" x2="1808" y2="658" stroke="#2A3845" stroke-width="2"/>
+<text x="1292.0" y="692.0" font-family="'Noto Serif', serif" font-size="22" font-weight="700" fill="#F3EFE6" text-anchor="start">Premiere fără poziție pe hartă</text>
+<circle cx="1312" cy="728" r="12" fill="none" stroke="#A9B4C0" stroke-width="2" stroke-dasharray="4 4"/>
+<text x="1344.0" y="734.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#E2A62B" text-anchor="start">1292</text>
+<text x="1410.0" y="734.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">primul spital de pe actualul teritoriu al României – loc</text>
+<text x="1410.0" y="753.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">neprecizat în surse</text>
+<circle cx="1312" cy="776" r="12" fill="none" stroke="#A9B4C0" stroke-width="2" stroke-dasharray="4 4"/>
+<text x="1344.0" y="782.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#E2A62B" text-anchor="start">1380</text>
+<text x="1410.0" y="782.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">prima atestare a unei școli de pe actualul teritoriu al</text>
+<text x="1410.0" y="801.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">României – loc neprecizat în surse</text>
+<circle cx="1312" cy="824" r="12" fill="none" stroke="#A9B4C0" stroke-width="2" stroke-dasharray="4 4"/>
+<text x="1344.0" y="830.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#E2A62B" text-anchor="start">1555</text>
+<text x="1410.0" y="830.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">prima rachetă în trepte – manuscrisul lui Conrad Haas,</text>
+<text x="1410.0" y="849.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">păstrat la Arhivele Naționale Sibiu</text>
+<rect x="1284" y="868" width="532" height="102" rx="14" fill="#0F1720" stroke="#E2A62B" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="1304.0" y="898.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Pozițiile sunt aproximative; hartă schematică, nu la scară. Farmacia</text>
+<text x="1304.0" y="918.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">din 1494 nu mai există – pe locul ei se află azi turnul Bisericii</text>
+<text x="1304.0" y="938.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Romano-Catolice; teatrul din 1788 a fost amenajat în Turnul Gros, azi</text>
+<text x="1304.0" y="958.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Sala Thalia.</text>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

@@ -1,0 +1,166 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M12</title></head><body>
+<script src="lib.js"></script>
+<script>
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+// 10 premiere: [an, titlu, sursa, culoare, pictogramă]
+const ITEMS = [
+  [1292, 'primul spital de pe actualul teritoriu al României', 'patrimoniu.sibiu.ro (Premiere)', '#E5484D', 'spital'],
+  [1376, 'prima reglementare a breslelor: 25 de meserii grupate în 19 bresle', 'patrimoniu.sibiu.ro (Premiere); capitalcultural.ro', '#E2A62B', 'bresle'],
+  [1494, 'prima farmacie de pe actualul teritoriu al României – „farmacia orașului”, în Piața Mare', 'patrimoniu.sibiu.ro (Premiere); sibiu-turism.ro', '#12A594', 'farmacie'],
+  [1544, 'prima carte în limba română de pe actualul teritoriu al României (Catehismul luteran)', 'patrimoniu.sibiu.ro (Premiere)', '#6E56CF', 'carte'],
+  [1555, 'Conrad Haas experimentează la Sibiu prima rachetă în trepte – „din lume”, conform sursei', 'patrimoniu.sibiu.ro (Premiere)', '#F76B15', 'racheta'],
+  [1788, 'prima clădire de teatru de pe actualul teritoriu al României, ridicată în Turnul Gros', 'patrimoniu.sibiu.ro (Premiere); tnrs.ro', '#D6409F', 'teatru'],
+  [1817, 'Muzeul Brukenthal – primul muzeu din România, deschis public', 'patrimoniu.sibiu.ro (Premiere)', '#E2A62B', 'muzeu'],
+  [1859, 'Podul Minciunilor – primul pod din fontă turnată', 'patrimoniu.sibiu.ro (Premiere)', '#3E63DD', 'pod'],
+  [1905, 'prima linie de tramvai electric din Sibiu: Piața Gării – Parcul Sub Arini', 'patrimoniu.sibiu.ro (Tramvaiul)', '#0E7C86', 'tramvai'],
+  [2007, 'Capitală Culturală Europeană – primul oraș din România cu acest titlu', 'patrimoniu.sibiu.ro (Premiere)', '#F3EFE6', 'stea'],
+];
+const T0 = 3.0, SD = 5.3, TEND = T0 + ITEMS.length * SD; // 3 + 53 = 56 s; cartela finală până la 62 s
+
+// pictograme desenate în cod; p = 0..1 progres de apariție (dezvăluire de jos în sus + scalare)
+function picto(kind, cx, cy, s, col, p, t) {
+  ctx.save(); ctx.translate(cx, cy);
+  const k = .85 + .15 * easeOut(p); ctx.scale(s * k, s * k);
+  ctx.globalAlpha = clamp(p * 1.6);
+  ctx.beginPath(); ctx.rect(-200, 200 - 400 * easeOut(p), 400, 400 * easeOut(p) + 2); ctx.clip();
+  ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = col; ctx.fillStyle = col;
+  const light = rgba('#F3EFE6', .85);
+  if (kind === 'spital') {
+    ctx.strokeRect(-130, -70, 260, 200); ctx.fillRect(-40, 60, 80, 70);
+    ctx.beginPath(); ctx.moveTo(-150, -70); ctx.lineTo(0, -160); ctx.lineTo(150, -70); ctx.stroke();
+    ctx.fillStyle = light; ctx.fillRect(-16, -50, 32, 90); ctx.fillRect(-45, -21, 90, 32);
+    ctx.fillStyle = col; ctx.fillRect(-105, 30, 30, 40); ctx.fillRect(75, 30, 30, 40);
+  }
+  if (kind === 'bresle') { // ciocan și nicovală + pecete
+    ctx.fillRect(-150, 60, 230, 40); ctx.fillRect(-110, 100, 150, 60); ctx.beginPath(); ctx.moveTo(80, 60); ctx.lineTo(130, 40); ctx.lineTo(130, 100); ctx.closePath(); ctx.fill();
+    ctx.save(); ctx.translate(60, -60); ctx.rotate(-.6); ctx.fillRect(-14, -10, 28, 170); ctx.fillRect(-60, -70, 120, 70); ctx.restore();
+    ctx.strokeStyle = light; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(-110, -90, 48, 0, 7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-134, -90); ctx.lineTo(-86, -90); ctx.moveTo(-110, -114); ctx.lineTo(-110, -66); ctx.stroke();
+  }
+  if (kind === 'farmacie') { // mojar cu pistil + borcane
+    ctx.beginPath(); ctx.moveTo(-120, -20); ctx.lineTo(120, -20); ctx.lineTo(80, 130); ctx.lineTo(-80, 130); ctx.closePath(); ctx.fill();
+    ctx.fillRect(-140, -40, 280, 24);
+    ctx.save(); ctx.translate(40, -60); ctx.rotate(.5); ctx.fillStyle = light; roundRect(ctx, -16, -130, 32, 170, 14); ctx.fill(); ctx.restore();
+    ctx.fillStyle = light; ctx.globalAlpha *= .9; roundRect(ctx, -190, -150, 50, 90, 10); ctx.fill(); roundRect(ctx, 140, -150, 50, 90, 10); ctx.fill();
+    ctx.fillStyle = col; ctx.fillRect(-180, -110, 30, 14); ctx.fillRect(150, -110, 30, 14);
+  }
+  if (kind === 'carte') { // carte deschisă
+    ctx.beginPath(); ctx.moveTo(0, -80); ctx.quadraticCurveTo(-90, -130, -190, -100); ctx.lineTo(-190, 100); ctx.quadraticCurveTo(-90, 70, 0, 120); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, -80); ctx.quadraticCurveTo(90, -130, 190, -100); ctx.lineTo(190, 100); ctx.quadraticCurveTo(90, 70, 0, 120); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = PAL.night; ctx.lineWidth = 6; for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.moveTo(-160, -60 + i * 32); ctx.lineTo(-40, -45 + i * 32); ctx.moveTo(40, -45 + i * 32); ctx.lineTo(160, -60 + i * 32); ctx.stroke(); }
+    ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(0, -80); ctx.lineTo(0, 120); ctx.stroke();
+  }
+  if (kind === 'racheta') { // rachetă în trepte cu aripioare delta
+    ctx.fillRect(-45, 20, 90, 120); ctx.fillStyle = mix(col, '#F3EFE6', .3); ctx.fillRect(-36, -90, 72, 110); ctx.fillStyle = mix(col, '#F3EFE6', .55);
+    ctx.beginPath(); ctx.moveTo(-28, -90); ctx.lineTo(0, -190); ctx.lineTo(28, -90); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(-45, 140); ctx.lineTo(-120, 190); ctx.lineTo(-45, 70); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(45, 140); ctx.lineTo(120, 190); ctx.lineTo(45, 70); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = PAL.night; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-45, 20); ctx.lineTo(45, 20); ctx.moveTo(-36, -90); ctx.lineTo(36, -90); ctx.stroke();
+    const f = .7 + .3 * Math.sin(t * 20); ctx.fillStyle = rgba('#FFD27A', .9); ctx.beginPath(); ctx.moveTo(-30, 140); ctx.lineTo(0, 140 + 70 * f); ctx.lineTo(30, 140); ctx.closePath(); ctx.fill();
+  }
+  if (kind === 'teatru') { // cortină și scenă
+    ctx.fillRect(-190, -150, 380, 30);
+    ctx.beginPath(); ctx.moveTo(-180, -120); ctx.quadraticCurveTo(-160, 20, -90, 140); ctx.lineTo(-180, 140); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(180, -120); ctx.quadraticCurveTo(160, 20, 90, 140); ctx.lineTo(180, 140); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = light; ctx.fillRect(-200, 140, 400, 30);
+    // două măști simple
+    ctx.fillStyle = light; ctx.beginPath(); ctx.ellipse(-45, 10, 42, 54, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(45, 10, 42, 54, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = PAL.night; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(-45, 20, 22, .2, Math.PI - .2); ctx.moveTo(23, 42); ctx.arc(45, 42, 22, Math.PI + .2, -.2); ctx.stroke();
+    ctx.fillStyle = PAL.night; for (const x of [-60, -30, 30, 60]) { ctx.beginPath(); ctx.arc(x, -8, 5, 0, 7); ctx.fill(); }
+  }
+  if (kind === 'muzeu') { // fațadă cu coloane + ramă
+    ctx.beginPath(); ctx.moveTo(-200, -90); ctx.lineTo(0, -180); ctx.lineTo(200, -90); ctx.closePath(); ctx.fill();
+    ctx.fillRect(-200, -80, 400, 20); for (let i = 0; i < 5; i++) ctx.fillRect(-170 + i * 80, -60, 24, 170); ctx.fillRect(-210, 110, 420, 26);
+    ctx.strokeStyle = light; ctx.lineWidth = 6; ctx.strokeRect(-40, -30, 80, 60);
+  }
+  if (kind === 'pod') { // pod în arc din fontă
+    ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(-190, 100); ctx.quadraticCurveTo(0, -140, 190, 100); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-200, -10); ctx.lineTo(200, -10); ctx.stroke();
+    ctx.lineWidth = 6; for (let i = -3; i <= 3; i++) { const x = i * 55; const y = 100 - (1 - (x / 190) * (x / 190)) * 240 / 2 - 0; ctx.beginPath(); ctx.moveTo(x, -10); ctx.lineTo(x, Math.max(-10, y)); ctx.stroke(); }
+    ctx.lineWidth = 4; ctx.strokeStyle = light; for (let i = -4; i <= 4; i++) { ctx.beginPath(); ctx.moveTo(i * 44, -10); ctx.lineTo(i * 44, -50); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(-200, -50); ctx.lineTo(200, -50); ctx.stroke();
+  }
+  if (kind === 'tramvai') {
+    roundRect(ctx, -180, -70, 360, 150, 28); ctx.fill();
+    ctx.fillStyle = light; for (let i = 0; i < 5; i++) { roundRect(ctx, -150 + i * 62, -45, 44, 60, 6); ctx.fill(); }
+    ctx.fillStyle = PAL.night; ctx.beginPath(); ctx.arc(-110, 95, 26, 0, 7); ctx.arc(110, 95, 26, 0, 7); ctx.fill();
+    ctx.strokeStyle = col; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(-20, -70); ctx.lineTo(50, -150); ctx.stroke(); ctx.strokeStyle = light; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-220, -155); ctx.lineTo(220, -155); ctx.stroke();
+  }
+  if (kind === 'stea') {
+    for (let j = 0; j < 2; j++) { ctx.beginPath(); const R1 = j ? 150 : 90, R2 = j ? 60 : 36; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5 + (j ? 0 : Math.PI / 10), r = i % 2 ? R2 : R1; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); if (j) { ctx.globalAlpha *= .35; ctx.fill(); ctx.globalAlpha /= .35; } else { ctx.fillStyle = PAL.ocru; ctx.fill(); } }
+  }
+  ctx.restore();
+}
+
+function timeline(t) {
+  const x0 = 160, x1 = 1760, y = 870, n = ITEMS.length;
+  const pos = i => x0 + (x1 - x0) * i / (n - 1);
+  // progres continuu
+  const prog = clamp((t - T0) / SD, 0, n - 1 + .999); // indexul fracționar al itemului curent
+  ctx.save();
+  ctx.strokeStyle = rgba('#A9B4C0', .35); ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+  const px = lerp(x0, x1, clamp((prog) / (n - 1)) );
+  if (t >= T0) { ctx.strokeStyle = PAL.ocru; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(px, y); ctx.stroke(); }
+  for (let i = 0; i < n; i++) {
+    const done = prog >= i, cur = Math.floor(prog) === i && t >= T0;
+    ctx.fillStyle = done ? ITEMS[i][3] : rgba('#A9B4C0', .5); ctx.beginPath(); ctx.arc(pos(i), y, cur ? 16 : 10, 0, 7); ctx.fill();
+    if (cur) { ctx.strokeStyle = rgba(ITEMS[i][3], .6); ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(pos(i), y, 26 + 4 * Math.sin(t * 4), 0, 7); ctx.stroke(); }
+    text(ctx, String(ITEMS[i][0]), pos(i), y + 42, { size: cur ? 26 : 22, weight: cur ? 800 : 500, align: 'center', color: done ? PAL.var : rgba('#A9B4C0', .6) });
+  }
+  // marcator mobil
+  if (t >= T0 && prog < n - 1 + .99) { ctx.fillStyle = PAL.var; ctx.beginPath(); ctx.moveTo(px, y - 26); ctx.lineTo(px - 10, y - 44); ctx.lineTo(px + 10, y - 44); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+}
+
+window.render = function (t) {
+  ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H);
+  const g = ctx.createRadialGradient(1480, 480, 60, 1480, 480, 900); g.addColorStop(0, '#1C2836'); g.addColorStop(1, PAL.night); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(169,180,192,.06)'; ctx.lineWidth = 1; for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+
+  // antet
+  chip(ctx, 'VIDEO · M12', 60, 36, PAL.red);
+  text(ctx, 'Sibiul primelor · 10 premiere în 60 de secunde', 270, 64, { size: 30, weight: 600 });
+
+  // intro
+  const ia = 1 - smooth(T0 - .6, T0, t);
+  if (ia > 0) {
+    serif(ctx, 'Sibiul primelor', 120, 400, { size: 110, alpha: ia });
+    text(ctx, '10 premiere în 60 de secunde', 120, 470, { size: 44, color: PAL.ceata, alpha: ia });
+    text(ctx, 'Formulările „primul/prima de pe actualul teritoriu al României” sunt preluate ca atare din sursă.', 120, 560, { size: 28, color: PAL.ceata, alpha: ia, maxW: 1000, lh: 38 });
+    // mic colaj de pictograme
+    for (let i = 0; i < ITEMS.length; i++) picto(ITEMS[i][4], 1240 + (i % 5) * 130, 380 + Math.floor(i / 5) * 200, .3, rgba(ITEMS[i][3], .7), smooth(i * .18, i * .18 + .5, t) * ia, t);
+  }
+
+  // item curent
+  if (t >= T0 && t < TEND) {
+    const i = Math.min(ITEMS.length - 1, Math.floor((t - T0) / SD)), lt = t - T0 - i * SD;
+    const a = Math.min(smooth(0, .5, lt), 1 - smooth(SD - .4, SD, lt));
+    const [yr, title, src, col, kind] = ITEMS[i];
+    // panou pictogramă
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = rgba('#1B2733', .95); roundRect(ctx, 1180, 170, 620, 600, 36); ctx.fill(); ctx.strokeStyle = rgba(col, .5); ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+    picto(kind, 1490, 470, 1.0, col, smooth(.1, 1.1, lt) * a, t);
+    // an + text
+    const yy = lerp(60, 0, easeOut(smooth(0, .7, lt)));
+    serif(ctx, String(yr), 120, 420 + yy, { size: 200, color: col, alpha: a });
+    text(ctx, `${i + 1} din 10`, 128, 200, { size: 26, color: PAL.ceata, alpha: a, weight: 600 });
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillRect(120, 455, 120, 6); ctx.restore();
+    text(ctx, title, 120, 530, { size: 40, weight: 600, maxW: 980, lh: 52, alpha: a * smooth(.3, .8, lt) });
+    text(ctx, 'conform sursei: ' + src, 120, 760, { size: 24, color: PAL.ceata, alpha: a * smooth(.5, 1, lt) });
+  }
+
+  timeline(t);
+  text(ctx, 'Sursa: patrimoniu.sibiu.ro (Premiere) · cronologie schematică, intervalele nu sunt la scară', 120, 985, { size: 20, color: 'rgba(169,180,192,.7)' });
+
+  // cartela finală
+  const ea = smooth(TEND, TEND + 1, t);
+  if (ea > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.985 * ea})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Sibiul primelor', W / 2, 400, { size: 90, align: 'center', alpha: ea });
+    text(ctx, '10 premiere alese dintre cele 38 enumerate pe pagina oficială patrimoniu.sibiu.ro (Premiere)', W / 2, 470, { size: 30, align: 'center', color: PAL.ceata, alpha: ea });
+    text(ctx, 'Tramvaiul din 1905: patrimoniu.sibiu.ro (Tramvaiul) – prima linie de tramvai electric din Sibiu, nu o premieră națională.', W / 2, 540, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1500, lh: 36 });
+    text(ctx, 'Animație generată cu AI · pictograme desenate în cod, nu reproduceri ale monumentelor · artefact-model ACTIV AI', W / 2, 640, { size: 26, align: 'center', color: PAL.ceata, alpha: ea });
+    for (let i = 0; i < ITEMS.length; i++) picto(ITEMS[i][4], 400 + i * 124, 800, .22, rgba(ITEMS[i][3], .8), ea, t);
+  }
+  ctx.fillStyle = 'rgba(10,16,28,.6)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M12');
+};
+window.READY = true;
+</script></body></html>

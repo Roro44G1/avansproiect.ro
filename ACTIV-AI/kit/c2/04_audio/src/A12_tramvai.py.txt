@@ -1,0 +1,303 @@
+"""A12 – Coloana sonoră a primului tramvai (reconstituire sonoră imaginată, ~52 s).
+
+Scenă imaginată în Sibiul anului 1905: clopoțelul vatmanului (două lovituri),
+motorul electric care accelerează (ton cu armonici și modulație), roțile pe rosturile
+șinelor (clicuri duble, din ce în ce mai dese), un scârțâit scurt la curbă,
+pocnete de scântei la captatorul de curent, murmur de stradă (zgomot filtrat),
+cai la distanță (potcoave sintetizate), oprirea în stație cu frână pneumatică
+(zgomot alb cu anvelopă descrescătoare) și clopoțelul final.
+
+Totul este sintetizat din formule matematice (fără mostre, fără înregistrări).
+Nu este o înregistrare istorică: nu știm cum suna tramvaiul din 1905.
+
+Folosește biblioteca comună audiolib.py din /home/claude/expo/04_audio/_src
+(adăugată prin sys.path).
+
+Rulare: python3 A12_tramvai.py  -> ../A12_tramvai.mp3
+"""
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+for cand in (HERE, os.path.join(HERE, "..", "..", "..", "04_audio", "_src")):
+    if os.path.exists(os.path.join(cand, "audiolib.py")) and cand not in sys.path:
+        sys.path.insert(0, cand)
+
+from audiolib import (SR, add, additive, bp, colored_noise, env_ar, env_exp, finalize, hp,
+                      lp, lufs, make_ir, match_lufs, modal, ns, peaking, report, reverb,
+                      rng_of, smooth_random, stereo, t_axis)
+
+DUR = 52.0
+OUT = os.path.join(HERE, "..", "A12_tramvai.mp3")
+
+# repere în timp (secunde) – folosite și în fișa .md / manifest
+MARKS = {
+    "strada_si_cai": 0.0,
+    "clopotel_plecare": 2.0,
+    "motor_accelerare": 3.2,
+    "roti_pe_rosturi": 5.0,
+    "scantei_pantograf": 9.0,
+    "scartait_curba": 18.5,
+    "viteza_de_croaziera": 22.0,
+    "incetinire": 34.0,
+    "frana_pneumatica": 40.5,
+    "oprire": 44.5,
+    "clopotel_final": 46.0,
+    "final": 48.0,
+}
+
+# profilul de viteză 0..1 (viteză relativă) – comun pentru motor, roți, scârțâit
+def speed_profile(n):
+    t = t_axis(n)
+    v = np.zeros(n)
+    a0, a1 = MARKS["motor_accelerare"], MARKS["viteza_de_croaziera"]
+    d0, d1 = MARKS["incetinire"], MARKS["oprire"]
+    acc = (t >= a0) & (t < a1)
+    v[acc] = np.sin(0.5 * np.pi * (t[acc] - a0) / (a1 - a0)) ** 1.2
+    cru = (t >= a1) & (t < d0)
+    v[cru] = 1.0
+    dec = (t >= d0) & (t < d1)
+    v[dec] = np.cos(0.5 * np.pi * (t[dec] - d0) / (d1 - d0)) ** 1.4
+    # ușoară variație a vitezei de croazieră
+    return np.clip(v, 0, 1)
+
+
+# ------------------------------------------------------------------ murmur de stradă
+def street_layer(rng):
+    n = ns(DUR)
+    buf = stereo(DUR)
+    for ch, seed in ((0, 301), (1, 302)):
+        nz = colored_noise(n, rng_of(seed), 1.2)
+        body = bp(nz, 120, 1400, order=2)
+        # „valuri” lente de agitație, ca glasuri nedeslușite la distanță
+        env = smooth_random(n, rng, 0.25, 0.45, 1.0)
+        mid = bp(nz, 400, 900, order=2) * smooth_random(n, rng, 0.9, 0.0, 1.0)
+        buf[ch] = body * env + 0.5 * mid * env
+    buf[1] = np.roll(buf[1], ns(0.011))
+    return hp(buf, 70, order=2)
+
+
+# ------------------------------------------------------------------ cai la distanță
+def hoof(rng):
+    """O lovitură de potcoavă pe caldarâm: mic „ciocănit” modal + zgomot scurt, înfundat."""
+    n = ns(0.12)
+    f0 = rng.uniform(380, 520)
+    x = modal([f0, f0 * 1.9, f0 * 3.3], [1.0, 0.4, 0.15], [0.07, 0.04, 0.02], 0.12, rng=rng)
+    x += lp(rng.standard_normal(n), 1200) * env_exp(n, 0.02) * 0.5
+    return lp(x, 1500) / (np.max(np.abs(x)) + 1e-12)
+
+
+def horses_layer(rng):
+    buf = stereo(DUR)
+    # două treceri de trăsură la distanță: la început (stânga) și la mijloc (dreapta, mai departe)
+    passes = [(0.5, 9.0, -0.8, 1.0), (25.0, 32.0, 0.7, 0.6)]
+    for t0, t1, pan, near in passes:
+        t = t0
+        while t < t1:
+            u = (t - t0) / (t1 - t0)
+            amp = np.sin(np.pi * u) ** 1.5 * near
+            # trap în patru timpi: ta-ta-TA-ta
+            for k, (off, g) in enumerate([(0.0, 0.7), (0.11, 0.6), (0.24, 1.0), (0.36, 0.55)]):
+                add(buf, hoof(rng), t + off + rng.uniform(-0.01, 0.01),
+                    gain=g * amp * rng.uniform(0.8, 1.0), pan=pan + rng.uniform(-0.05, 0.05))
+            t += 0.72 + rng.uniform(-0.03, 0.03)
+    return lp(buf, 1800, order=2)
+
+
+# ------------------------------------------------------------------ clopoțelul vatmanului
+def bell_strike(rng, prime=1760.0, dur=2.2):
+    ratios = [0.56, 1.0, 1.52, 2.0, 2.7, 3.4, 4.6]
+    amps = [0.5, 1.0, 0.45, 0.6, 0.3, 0.15, 0.08]
+    t60 = [1.8, 1.6, 1.1, 1.3, 0.7, 0.45, 0.3]
+    x = modal([prime * r * (1 + rng.uniform(-0.002, 0.002)) for r in ratios], amps, t60, dur,
+              rng=rng, beat_hz=1.2)
+    n = len(x)
+    x += bp(rng.standard_normal(n), 2000, 7000) * env_exp(n, 0.012) * 0.3
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def bell_layer(rng):
+    buf = stereo(DUR)
+    for t0 in (MARKS["clopotel_plecare"], MARKS["clopotel_final"]):
+        for k in range(2):  # două lovituri
+            add(buf, bell_strike(rng), t0 + k * 0.55 + rng.uniform(-0.02, 0.02),
+                gain=1.0 if k == 0 else 0.9, pan=-0.2)
+    return buf
+
+
+# ------------------------------------------------------------------ motorul electric
+def motor_layer(rng):
+    n = ns(DUR)
+    t = t_axis(n)
+    v = speed_profile(n)
+    running = v > 0.002
+    # fundamentala: 42 Hz la pornire -> 230 Hz la viteză; angrenaj la 7x
+    f = 42 + 188 * v ** 0.85
+    wob = 1 + 0.006 * np.sin(2 * np.pi * 0.8 * t) + 0.002 * smooth_random(n, rng, 3.0, -1, 1)
+    f = f * wob
+    amps = [1.0, 0.55, 0.38, 0.22, 0.16, 0.11, 0.08, 0.06, 0.04, 0.03]
+    hum = additive(f, amps, phase0=rng.uniform())
+    # modulație în amplitudine la dublul fundamentalei (comutație), plus tremur lent
+    am = 1 + 0.25 * np.sin(2 * np.pi * np.cumsum(2 * f) / SR) + 0.08 * np.sin(2 * np.pi * 6.5 * t)
+    hum = hum * am
+    # scâncetul angrenajului – o armonică înaltă care urcă odată cu viteza
+    gear = np.sin(2 * np.pi * np.cumsum(7 * f) / SR) * (0.12 + 0.18 * v) \
+        + np.sin(2 * np.pi * np.cumsum(11.3 * f) / SR) * 0.06 * v
+    # filtrul se deschide cu viteza
+    x = np.zeros(n)
+    step = ns(0.1)
+    for s in range(0, n, step):
+        e = min(n, s + step + ns(0.02))
+        fc = 400 + 2600 * float(v[min(s + step // 2, n - 1)])
+        x[s:e] = lp(hum[s:e], fc, order=2)[: e - s]
+    x = x + gear
+    # anvelopă: pornește/oprește cu viteza, plus o „pornire” rotunjită
+    env = np.clip(v / 0.05, 0, 1) ** 0.6
+    env = lp(env, 4, order=1)
+    env = np.clip(env, 0, 1)
+    x = np.tanh(1.4 * x * env) / np.tanh(1.4)
+    # ușoară vibrație a caroseriei: brum la frecvență joasă
+    rumble = lp(colored_noise(n, rng_of(410), 1.8), 180) * (0.25 + 0.6 * v) * env
+    buf = stereo(DUR)
+    buf[0] = x + rumble
+    buf[1] = np.roll(x, ns(0.004)) + rumble
+    return hp(buf, 35, order=2)
+
+
+# ------------------------------------------------------------------ roțile pe rosturi
+def rail_click(rng, v):
+    """Un clic de roată pe rost: lovitură joasă + ping metalic scurt + zgomot granular."""
+    n = ns(0.16)
+    t = t_axis(n)
+    thump = np.sin(2 * np.pi * rng.uniform(70, 95) * t) * env_ar(n, 0.001, 0.05)
+    f0 = rng.uniform(1500, 2300)
+    ping = modal([f0, f0 * 1.7, f0 * 2.9], [0.6, 0.25, 0.1], [0.06, 0.04, 0.025], 0.16, rng=rng)
+    grit = bp(rng.standard_normal(n), 800, 5000) * env_exp(n, 0.018) * (0.5 + 0.5 * v)
+    x = thump * 1.0 + ping * 0.35 + grit * 0.6
+    x /= np.max(np.abs(x)) + 1e-12
+    return np.tanh(1.5 * x) / np.tanh(1.5)
+
+
+def wheels_layer(rng):
+    n = ns(DUR)
+    v = speed_profile(n)
+    buf = stereo(DUR)
+    t = MARKS["roti_pe_rosturi"]
+    while t < MARKS["oprire"]:
+        vi = float(v[ns(t)])
+        if vi < 0.04:
+            t += 0.1
+            continue
+        # intervalul dintre rosturi scade cu viteza: 1,4 s încet -> 0,42 s la viteză
+        period = 0.42 / max(vi, 0.3) if vi > 0.3 else 1.4
+        period = float(np.clip(period, 0.42, 1.4))
+        g = 0.35 + 0.65 * vi
+        # două boghiuri cu câte două osii: „ta-tac … ta-tac”
+        for boghiu, off in ((0, 0.0), (1, period * 0.33)):
+            for ax, off2 in ((0, 0.0), (1, 0.085 + 0.04 * (1 - vi))):
+                add(buf, rail_click(rng, vi), t + off + off2 + rng.uniform(-0.004, 0.004),
+                    gain=g * (1.0 if ax == 0 else 0.8) * (1.0 if boghiu == 0 else 0.85),
+                    pan=-0.15 if boghiu == 0 else 0.2)
+        t += period * rng.uniform(0.97, 1.03)
+    return buf
+
+
+# ------------------------------------------------------------------ scârțâit la curbă
+def squeal_layer(rng):
+    buf = stereo(DUR)
+    bursts = [(MARKS["scartait_curba"], 1.1, 0.9), (MARKS["scartait_curba"] + 1.35, 0.7, 0.6),
+              (MARKS["frana_pneumatica"] + 2.2, 0.5, 0.35)]
+    for t0, d, g in bursts:
+        n = ns(d)
+        t = t_axis(n)
+        f0 = rng.uniform(2900, 3600)
+        f = f0 * (1 + 0.012 * np.sin(2 * np.pi * rng.uniform(9, 14) * t)
+                  + 0.03 * smooth_random(n, rng, 6.0, -1, 1))
+        x = additive(f, [1.0, 0.35, 0.15, 0.08], phase0=rng.uniform())
+        x += bp(rng.standard_normal(n), f0 * 0.9, f0 * 1.1, order=2) * 0.4
+        env = np.sin(np.pi * t / d) ** 0.7
+        add(buf, x * env, t0, gain=g, pan=0.35)
+    return buf
+
+
+# ------------------------------------------------------------------ scântei la pantograf
+def sparks_layer(rng):
+    n = ns(DUR)
+    v = speed_profile(n)
+    buf = stereo(DUR)
+    t = MARKS["scantei_pantograf"]
+    while t < MARKS["oprire"] - 1.0:
+        vi = float(v[ns(t)])
+        if vi > 0.3 and rng.uniform() < 0.75:
+            k = rng.integers(1, 4)  # o rafală scurtă de 1–3 pocnete
+            for j in range(k):
+                m = ns(rng.uniform(0.02, 0.05))
+                x = bp(rng.standard_normal(m), 2500, 9000, order=2) * env_exp(m, 0.006)
+                x += hp(rng.standard_normal(m), 6000) * env_exp(m, 0.003) * 0.6
+                add(buf, x, t + j * rng.uniform(0.03, 0.09), gain=rng.uniform(0.5, 1.0), pan=0.05)
+        t += rng.uniform(0.9, 2.8)
+    return buf
+
+
+# ------------------------------------------------------------------ frâna pneumatică
+def brake_layer(rng):
+    buf = stereo(DUR)
+    events = [  # (start, durată, atac, timp de decădere, gain)
+        (MARKS["frana_pneumatica"], 3.4, 0.08, 1.4, 1.0),
+        (MARKS["oprire"] + 0.2, 1.6, 0.03, 0.5, 0.75),
+    ]
+    for t0, d, a, tau, g in events:
+        n = ns(d)
+        t = t_axis(n)
+        nz = rng.standard_normal(n)
+        hiss = bp(nz, 700, 9000, order=2)
+        env = np.clip(t / a, 0, 1) * np.exp(-np.clip(t - a, 0, None) / tau)
+        # filtrul se închide pe măsură ce presiunea scade
+        y = np.zeros(n)
+        step = ns(0.05)
+        for s in range(0, n, step):
+            e = min(n, s + step + ns(0.01))
+            fc = 1500 + 7000 * float(env[min(s, n - 1)])
+            y[s:e] = lp(hiss[s:e], fc, order=2)[: e - s]
+        add(buf, y * env, t0, gain=g, pan=-0.1)
+    return buf
+
+
+# ------------------------------------------------------------------ mix
+def render(seed=19050908):
+    rng = rng_of(seed)
+    ir_near = make_ir(t60=0.9, predelay=0.008, seed=31, hf_ratio=0.5)
+    ir_far = make_ir(t60=2.2, predelay=0.03, seed=32, hf_ratio=0.3)
+    layers = {
+        "strada": (street_layer(rng), -30.0, ir_far, 0.35),
+        "cai": (horses_layer(rng), -33.0, ir_far, 0.5),
+        "clopotel": (bell_layer(rng), -19.0, ir_near, 0.3),
+        "motor": (motor_layer(rng), -20.5, ir_near, 0.12),
+        "roti": (wheels_layer(rng), -22.5, ir_near, 0.2),
+        "scartait": (squeal_layer(rng), -26.0, ir_near, 0.25),
+        "scantei": (sparks_layer(rng), -32.0, ir_near, 0.2),
+        "frana": (brake_layer(rng), -22.0, ir_near, 0.2),
+    }
+    mix = stereo(DUR)
+    windows = {"start": (0, 3), "accel": (6, 14), "croaziera": (24, 32), "frana": (40.5, 44), "final": (46, 50)}
+    for name, (x, target, ir, wet) in layers.items():
+        x = match_lufs(x, target)
+        report(x, name)
+        segs = ", ".join(f"{w}: {lufs(x[:, ns(a):ns(b)]):6.1f}" for w, (a, b) in windows.items())
+        print(f"      ferestre LUFS -> {segs}")
+        mix += reverb(x, ir, wet=wet, dry=1.0)
+    mix = peaking(mix, 3300, -2.0, 0.8)
+    mix = peaking(mix, 180, 1.0, 0.7)
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "A12 Coloana sonoră a primului tramvai",
+                   "Reconstituire sonoră imaginată, sintetizată procedural (Python/numpy) – ACTIV AI, calupul Premierele Sibiului",
+                   target_lufs=-14.0, fin=1.5, fout=3.0)
+    report(out, "A12 final")
+    print("scris:", os.path.abspath(OUT))
+    print("repere:", MARKS)

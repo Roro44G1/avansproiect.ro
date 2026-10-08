@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "D08",
+    "categorie": "Date",
+    "titlu": "30 de premiere sibiene pe o linie a timpului — infografic AI",
+    "fisiere": [
+      "06_date/D08_30_premiere.svg",
+      "06_date/D08_30_premiere.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Linie a timpului neliniară, pe trei rânduri și cu segmente pe secole, cu 30 dintre cele 38 de premiere enumerate de patrimoniu.sibiu.ro: de la primul spital (1292) la titlul de Regiune Gastronomică Europeană (2019), colorate pe cinci domenii; secolul al XVII-lea apare ca pauză, fără premiere în listă.",
+    "status": "realizat",
+    "nota": "Selecție fără premierele politice/cu persoane în viață (Summitul din 2019 exclus); omise și 1376 (bresle), 1886 (Datky), 1896 (Hess cântare), 1923 (Arhivele). „(România de azi)” prescurtează formularea sursei „de pe actualul teritoriu al României”, explicată în legendă. Împărțirea pe domenii este a autorilor artefactului."
+  },
+  {
+    "cod": "D09",
+    "categorie": "Date",
+    "titlu": "Premierele pe domenii (sănătate, educație, cultură, tehnică) — infografic AI",
+    "fisiere": [
+      "06_date/D09_premiere_pe_domenii.svg",
+      "06_date/D09_premiere_pe_domenii.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Aceleași 30 de premiere din D08, grupate pe cinci domenii – sănătate (5), educație & știință (4), cultură (10), tehnică & economie (7), sport & turism (4) – cu coloane proporționale cu numărul de premiere, intervalul de ani al fiecărui domeniu și câte o fișă an + premieră.",
+    "status": "realizat",
+    "nota": "Împărțirea pe domenii este a autorilor artefactului (afirmat în subtitlu). Asteriscul marchează formularea sursei „de pe actualul teritoriu al României”; racheta lui Haas – „prima din lume”, conform sursei."
+  },
+  {
+    "cod": "D10",
+    "categorie": "Date",
+    "titlu": "Telurul, elementul descoperit în Transilvania (1782) — fișă-infografic AI în stilul tabelului periodic",
+    "fisiere": [
+      "06_date/D10_telur.svg",
+      "06_date/D10_telur.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Celulă mare de tabel periodic (Te, 52, 127,60, metaloid, grupa 16, perioada 5) și un mini-tabel schematic cu telurul evidențiat; alături, povestea descoperirii în patru pași – Franz-Joseph Müller von Reichenstein, inspector-șef al minelor cu sediul la Sibiu, minereul de la Zlatna (1782), peste 50 de teste în trei ani, denumirea dată de Klaproth în 1798 – și utilizările generale de azi.",
+    "status": "realizat",
+    "nota": "Povestea: en.wikipedia (Franz-Joseph Müller von Reichenstein) și patrimoniu.sibiu.ro, via fapte_verificate.md. Masa atomică, grupa/perioada/blocul și utilizările (aliaje, telurură de cadmiu în panouri solare, electronică) sunt fapte generale de chimie, fără cifre. Mini-tabelul este o schemă simplificată, fără lantanide și actinide."
+  }
+]

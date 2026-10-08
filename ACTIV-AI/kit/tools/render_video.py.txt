@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""Randare deterministă a unei animații HTML (window.render(t)) în MP4 cu Playwright + ffmpeg."""
+import argparse, subprocess, json, sys, os, numpy as np
+from playwright.sync_api import sync_playwright
+
+ap = argparse.ArgumentParser()
+ap.add_argument('html'); ap.add_argument('out')
+ap.add_argument('--dur', type=float, required=True)
+ap.add_argument('--fps', type=int, default=25)
+ap.add_argument('--w', type=int, default=1920); ap.add_argument('--h', type=int, default=1080)
+ap.add_argument('--audio'); ap.add_argument('--astart', type=float, default=0.0)
+ap.add_argument('--fadeout', type=float, default=2.0)
+ap.add_argument('--env', action='store_true', help='trimite anvelopa RMS a audio în window.ENV')
+a = ap.parse_args()
+
+nframes = int(round(a.dur * a.fps))
+env = None
+if a.audio and a.env:
+    raw = subprocess.run(['ffmpeg','-v','error','-ss',str(a.astart),'-t',str(a.dur),'-i',a.audio,'-ac','1','-ar','22050','-f','s16le','-'],capture_output=True).stdout
+    x = np.frombuffer(raw, dtype=np.int16).astype(np.float32)/32768
+    hop = 22050//a.fps
+    rms = [float(np.sqrt(np.mean(x[i*hop:(i+1)*hop]**2)+1e-12)) for i in range(nframes)]
+    m = max(rms) or 1
+    env = [round(r/m,4) for r in rms]
+
+cmd = ['ffmpeg','-y','-v','error','-f','image2pipe','-vcodec','mjpeg','-framerate',str(a.fps),'-i','-']
+if a.audio:
+    cmd += ['-ss',str(a.astart),'-t',str(a.dur),'-i',a.audio,
+            '-af',f'afade=t=in:st=0:d=0.6,afade=t=out:st={max(0,a.dur-a.fadeout)}:d={a.fadeout}',
+            '-c:a','aac','-b:a','160k']
+cmd += ['-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart','-t',str(a.dur),a.out]
+ff = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+with sync_playwright() as p:
+    b = p.chromium.launch(args=['--font-render-hinting=none'])
+    pg = b.new_page(viewport={'width':a.w,'height':a.h}, device_scale_factor=1)
+    errs=[]; pg.on('pageerror', lambda e: errs.append(str(e)))
+    pg.goto('file://'+os.path.abspath(a.html))
+    pg.wait_for_function('window.READY === true', timeout=30000)
+    if env is not None: pg.evaluate('e => { window.ENV = e; }', env)
+    for i in range(nframes):
+        t = i / a.fps
+        pg.evaluate(f'window.render({t})')
+        ff.stdin.write(pg.screenshot(type='jpeg', quality=92))
+        if i % (a.fps*10) == 0: print(f'{os.path.basename(a.out)}: {t:.0f}s / {a.dur:.0f}s', flush=True)
+    b.close()
+ff.stdin.close(); ff.wait()
+if errs: print('ERORI JS:', errs[:5])
+print('gata', a.out, 'cadre', nframes)

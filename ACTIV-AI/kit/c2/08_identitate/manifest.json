@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "P09",
+    "categorie": "Identitate",
+    "titlu": "„Prima mea premieră” — afiș AI despre un lucru făcut pentru prima dată (personaj fictiv)",
+    "fisiere": [
+      "08_identitate/P09_prima_mea_premiera.svg",
+      "08_identitate/P09_prima_mea_premiera.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Afiș în stilul unei „fișe de premieră”: Tudor, 16 ani (personaj fictiv), își consemnează prima urcare singur în Turnul Sfatului, într-un text de 100 de cuvinte la persoana I, pus în paralel cu fișa de premieră a orașului – 1494, prima farmacie de pe actualul teritoriu al României. Siluetă stilizată a turnului, panglică, ștampilă „PREMIERĂ” și mesajul „Orașul a început cu niște «prima dată». Și tu.”",
+    "status": "realizat",
+    "nota": "Personaj fictiv (Tudor, 16 ani); liceul nu este numit. Ilustrație stilizată, generată cu AI. Datele istorice (1494, Johannes, Piața Mare; 1292, 1380, 1788, 1859) provin din fapte_verificate.md, cu formularea „de pe actualul teritoriu al României”."
+  },
+  {
+    "cod": "P10",
+    "categorie": "Identitate",
+    "titlu": "Brevetul inventatorului de 16 ani — invenție imaginară pentru Sibiu, desenată AI",
+    "fisiere": [
+      "08_identitate/P10_brevetul_inventatorului.svg",
+      "08_identitate/P10_brevetul_inventatorului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "„Brevet” imaginar emis de un „Oficiu imaginar de invenții al elevilor sibieni” pentru „Lucarna inteligentă” – un „ochi al Sibiului” cu pleoapă mobilă, care deschide podul când e umezeală, fără electricitate. Desen tehnic schematic cu piese numerotate 1–6 și cote imaginare, rezumat, trei revendicări cu umor și o notă despre tradiția desenelor de asamblare ale lui Conrad Haas.",
+    "status": "realizat",
+    "nota": "Document fictiv, fără valoare legală – oficiul, numărul brevetului, inventatoarea (Ana-Maria, 16 ani) și examinatorul sunt imaginare; filigran „DOCUMENT FICTIV” și ștampilă „FICTIV”. Desenul este schematic, nu un proiect tehnic; cotele sunt imaginare. Faptele reale: rolul lucarnelor „ochii Sibiului” (ventilarea podurilor) și datele despre Conrad Haas și manuscrisul său (1509–1576; la Sibiu din 1551; circa 450 de pagini; 1529–1569; desene de asamblare) – din fapte_verificate.md."
+  },
+  {
+    "cod": "P11",
+    "categorie": "Identitate",
+    "titlu": "Medalia sibianului curios — distincție pentru elevii exploratori, design AI",
+    "fisiere": [
+      "08_identitate/P11_medalia_sibianului_curios.svg",
+      "08_identitate/P11_medalia_sibianului_curios.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Design de medalie cu avers (ochi deschis și semn de întrebare, inscripția „Sibianul curios”) și revers (cinci motive stilizate din premierele orașului – mojar 1494, rachetă în trepte 1555, mască de teatru 1788, pod 1859, tramvai 1905 – cu deviza „Întreb · Caut · Verific”), panglică în culorile proiectului și lista celor opt criterii imaginate pentru elevii exploratori.",
+    "status": "realizat",
+    "nota": "Distincție imaginată pentru proiect – nu este o distincție oficială și nu reproduce stema Sibiului; motivele sunt stilizări libere. Criteriile sunt propuneri imaginate. Anii premierelor provin din fapte_verificate.md (patrimoniu.sibiu.ro)."
+  }
+]

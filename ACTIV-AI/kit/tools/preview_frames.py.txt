@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import sys, os
+from playwright.sync_api import sync_playwright
+from PIL import Image
+html, out = sys.argv[1], sys.argv[2]; times=[float(x) for x in sys.argv[3].split(',')]
+w = int(sys.argv[4]) if len(sys.argv)>4 else 1920; h = int(sys.argv[5]) if len(sys.argv)>5 else 1080
+ims=[]
+with sync_playwright() as p:
+    b=p.chromium.launch(); pg=b.new_page(viewport={'width':w,'height':h})
+    errs=[]; pg.on('pageerror', lambda e: errs.append(str(e))); pg.on('console', lambda m: errs.append('console:'+m.text) if m.type=='error' else None)
+    pg.goto('file://'+os.path.abspath(html)); pg.wait_for_function('window.READY===true', timeout=20000)
+    for t in times:
+        pg.evaluate(f'window.render({t})'); pg.screenshot(path='/tmp/_f.png'); ims.append(Image.open('/tmp/_f.png').convert('RGB').copy())
+    b.close()
+cols=3 if len(ims)>4 else 2; tw=w//3 if w>h else w//4; th=int(tw*h/w)
+rows=(len(ims)+cols-1)//cols; sheet=Image.new('RGB',(tw*cols,th*rows))
+for i,im in enumerate(ims): sheet.paste(im.resize((tw,th)),((i%cols)*tw,(i//cols)*th))
+sheet.save(out, quality=85); print('errs', errs[:5])

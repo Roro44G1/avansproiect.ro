@@ -1,0 +1,141 @@
+# -*- coding: utf-8 -*-
+"""D10 – Telurul, elementul descoperit în Transilvania (1782) – fișă în stilul tabelului periodic."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c2/06_date/D10_telur.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+
+s = frame_head("DATE · D10", BLUE, "Telurul, elementul descoperit în Transilvania (1782)",
+               "fișă-infografic în stilul tabelului periodic · Te · 52", title_size=56)
+
+# ---------------- celula mare (stânga)
+CX, CY, CS = 80, 236, 440
+s += f'<rect x="{CX}" y="{CY}" width="{CS}" height="{CS}" rx="26" fill="{CARD}" stroke="{OCRU}" stroke-width="4" filter="url(#sh)"/>\n'
+s += text(CX + 30, CY + 62, "52", 40, OCRU, "serif", 700)
+s += text(CX + 30, CY + 88, "număr atomic", 14, CEATA)
+pw = measure("metaloid", 15, "sans", 700, letter_spacing=1) + 28
+s += f'<rect x="{CX+CS-30-pw:.1f}" y="{CY+34}" width="{pw:.1f}" height="30" rx="15" fill="{OCRU}"/>\n'
+s += text(CX + CS - 30 - pw / 2, CY + 55, "metaloid", 15, BG, "sans", 700, anchor="middle", extra='letter-spacing="1"')
+s += text(CX + CS / 2, CY + 280, "Te", 200, VAR, "serif", 700, anchor="middle")
+s += text(CX + CS / 2, CY + 332, "Telur", 36, OCRU, "sans", 600, anchor="middle")
+s += text(CX + CS / 2, CY + 368, "127,60", 24, VAR, "sans", 400, anchor="middle")
+s += text(CX + CS / 2, CY + 390, "masă atomică relativă", 14, CEATA, anchor="middle")
+s += f'<line x1="{CX+30}" y1="{CY+404}" x2="{CX+CS-30}" y2="{CY+404}" stroke="#2A3845" stroke-width="1.5"/>\n'
+s += text(CX + CS / 2, CY + 426, "grupa 16 · perioada 5 · blocul p", 15, CEATA, "sans", 500, anchor="middle")
+
+# ---------------- mini-tabel periodic schematic (sub celulă)
+GX, GY, cell, gap = 100, 716, 22, 2
+step = cell + gap
+# ocuparea pe grupe (1..18) pentru perioadele 1..7 (schemă fără lantanide/actinide)
+occ = {1: [1, 18], 2: [1, 2] + list(range(13, 19)), 3: [1, 2] + list(range(13, 19)),
+       4: list(range(1, 19)), 5: list(range(1, 19)), 6: list(range(1, 19)), 7: list(range(1, 19))}
+for p in range(1, 8):
+    for g in occ[p]:
+        x = GX + (g - 1) * step; y = GY + (p - 1) * step
+        if g in (1, 2):
+            col = "#2F4B66"       # bloc s
+        elif g >= 13:
+            col = "#3A3F5C"       # bloc p
+        else:
+            col = "#2A3845"       # bloc d
+        s += f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="3" fill="{col}"/>\n'
+# Te: grupa 16, perioada 5
+tx = GX + 15 * step; ty = GY + 4 * step
+s += f'<rect x="{tx-3}" y="{ty-3}" width="{cell+6}" height="{cell+6}" rx="5" fill="{OCRU}" filter="url(#glow)"/>\n'
+s += text(tx + cell / 2, ty + cell / 2 + 5, "Te", 13, BG, "sans", 700, anchor="middle")
+# repere: grupa 16 (sus) și perioada 5 (stânga)
+s += text(tx + cell / 2, GY - 8, "16", 13, OCRU, "sans", 700, anchor="middle")
+s += text(GX - 8, ty + cell / 2 + 5, "5", 13, OCRU, "sans", 700, anchor="end")
+s += text(GX - 8, GY - 8, "grupa →", 11, MUTED, anchor="end")
+s += text(GX + 17 * step + cell, GY + 7 * step + 14, "", 11, MUTED)
+s += text(GX, GY + 7 * step + 18, "tabel periodic – schemă simplificată (fără lantanide și actinide)", 13, MUTED, "sans", 400, True)
+# legenda blocurilor
+lx = GX; ly = GY + 7 * step + 42
+for col, lab in [("#2F4B66", "bloc s"), ("#2A3845", "bloc d"), ("#3A3F5C", "bloc p"), (OCRU, "telur")]:
+    s += f'<rect x="{lx}" y="{ly-11}" width="14" height="14" rx="3" fill="{col}"/>\n'
+    s += text(lx + 20, ly, lab, 13, CEATA)
+    lx += 20 + measure(lab, 13) + 22
+
+# ---------------- povestea descoperirii (dreapta): 4 pași
+RX0, RX1 = 560, 1840
+s += text(RX0, 262, "Povestea descoperirii", 26, VAR, "serif", 700)
+s += text(RX0 + measure("Povestea descoperirii", 26, "serif", 700) + 16, 262, "— după en.wikipedia (Franz-Joseph Müller von Reichenstein)", 15, MUTED, "sans", 400, True)
+steps = [
+    ("după 1778", "Inspector-șef, cu sediul la Sibiu",
+     "Franz-Joseph Müller von Reichenstein (1740/1742–1825/1826) devine inspector-șef al minelor, topitoriilor și salinelor din Transilvania."),
+    ("1782", "Un minereu de aur ciudat",
+     "Analizează un minereu de aur de la Zlatna (Faczebaja) și bănuiește prezența unui metal necunoscut."),
+    ("1782–1785", "Peste 50 de teste în trei ani",
+     "Nu reușește să-l încadreze: îl numește „aurum paradoxium” (aur paradoxal) și „metallum problematicum” (metal problematic)."),
+    ("1798", "Primește un nume: telur",
+     "Martin Heinrich Klaproth izolează elementul dintr-o probă trimisă de Müller, îl numește telur (de la „tellus” – pământ) și îi atribuie descoperirea lui Müller."),
+]
+N = len(steps); SG = 22
+SW = (RX1 - RX0 - SG * (N - 1)) / N
+SY, SH = 286, 262
+for i, (yr, title, body) in enumerate(steps):
+    x = RX0 + i * (SW + SG)
+    s += card(x, SY, f"{SW:.1f}", SH)
+    s += f'<rect x="{x}" y="{SY}" width="{SW:.1f}" height="6" rx="3" fill="{OCRU}"/>\n'
+    s += text(x + 22, SY + 50, yr, 26, OCRU, "serif", 700)
+    o, ny = para(x + 22, SY + 84, title, 17, SW - 44, VAR, "sans", 700, lh=22)
+    s += o
+    o, ny = para(x + 22, ny + 6, body, 15, SW - 44, CEATA, lh=21)
+    s += o
+    assert ny <= SY + SH - 6, (i, ny)
+    if i < N - 1:
+        ax = x + SW + SG / 2
+        s += f'<polyline points="{ax-5:.1f},{SY+SH/2-8} {ax+4:.1f},{SY+SH/2} {ax-5:.1f},{SY+SH/2+8}" fill="none" stroke="{MUTED}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>\n'
+
+# ---------------- rândul doi: legătura cu Sibiul · numele · utilizări azi
+Y2, H2 = 580, 230
+CW2 = (RX1 - RX0 - 2 * SG) / 3
+blocks = [
+    ("Legătura cu Sibiul",
+     "Müller lucra la Sibiu, ca inspector-șef al minelor din Transilvania, când a analizat minereul de la Zlatna. Pagina patrimoniu.sibiu.ro include descoperirea telurului (1782) printre premierele orașului."),
+    ("Trei nume pentru un element",
+     None),
+    ("La ce folosește azi (fapte generale)",
+     "Aliaje, panouri solare cu telurură de cadmiu, electronică – formulare generală, fără cifre de producție sau de piață."),
+]
+for i, (title, body) in enumerate(blocks):
+    x = RX0 + i * (CW2 + SG)
+    s += card(x, Y2, f"{CW2:.1f}", H2)
+    s += text(x + 22, Y2 + 42, title, 20, VAR, "serif", 700)
+    s += f'<line x1="{x+22}" y1="{Y2+58}" x2="{x+CW2-22:.1f}" y2="{Y2+58}" stroke="#2A3845" stroke-width="1.5"/>\n'
+    if body:
+        o, ny = para(x + 22, Y2 + 90, body, 16, CW2 - 44, CEATA, lh=23)
+        s += o
+        assert ny <= Y2 + H2, (title, ny)
+    else:
+        names = [("aurum paradoxium", "„aur paradoxal” – Müller, 1782", "#2F4B66"),
+                 ("metallum problematicum", "„metal problematic” – Müller", "#3A3F5C"),
+                 ("tellurium / telur", "de la lat. „tellus” – pământ · Klaproth, 1798", OCRU)]
+        yy = Y2 + 92
+        for j, (nm, expl, col) in enumerate(names):
+            s += f'<rect x="{x+22}" y="{yy-26}" width="{CW2-44:.1f}" height="44" rx="10" fill="{col}" opacity="{0.9 if j==2 else 1}"/>\n'
+            tc = BG if j == 2 else VAR
+            s += text(x + 36, yy - 5, nm, 16, tc, "serif", 700, True)
+            s += text(x + 36, yy + 11, expl, 12, tc if j == 2 else CEATA)
+            yy += 54
+
+# ---------------- bandă de fapte rapide
+Y3 = 846
+facts = [("Te", "simbol"), ("52", "număr atomic"), ("127,60", "masă atomică"), ("16", "grupa"), ("5", "perioada"), ("1782", "descoperire"), ("1798", "denumire")]
+fw = (RX1 - RX0) / len(facts)
+for i, (v, l) in enumerate(facts):
+    cx = RX0 + fw * (i + 0.5)
+    s += text(cx, Y3 + 36, v, 34, OCRU if i >= 5 else VAR, "serif", 700, anchor="middle")
+    s += text(cx, Y3 + 60, l, 14, CEATA, anchor="middle")
+    if i:
+        s += f'<line x1="{RX0+fw*i:.1f}" y1="{Y3+4}" x2="{RX0+fw*i:.1f}" y2="{Y3+68}" stroke="#2A3845" stroke-width="1.5"/>\n'
+s += f'<line x1="{RX0}" y1="{Y3-10}" x2="{RX1}" y2="{Y3-10}" stroke="#2A3845" stroke-width="1.5"/>\n'
+
+# ---------------- surse
+s += text(80, 992, "surse: en.wikipedia.org – Franz-Joseph Müller von Reichenstein; patrimoniu.sibiu.ro – Premiere (1782). Masa atomică, grupa, perioada, blocul și utilizările sunt fapte generale de chimie, fără cifre.", 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

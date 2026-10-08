@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "S11",
+    "categorie": "Spațial",
+    "titlu": "Harta premierelor Sibiului — fiecare „prima” așezată pe harta orașului",
+    "fisiere": [
+      "05_spatial/S11_harta_premierelor.svg",
+      "05_spatial/S11_harta_premierelor.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Hartă schematică a centrului istoric cu pini numerotați pentru premierele cu loc cunoscut: farmacia orașului (1494, Piața Mare), teatrul din Turnul Gros (1788), Muzeul Brukenthal (1817), Podul Minciunilor (1859) și primul tramvai electric (1905, spre Piața Gării), plus Muzeul de Istorie a Farmaciei (1972) ca reper; legenda listează premierele fără poziție pe hartă (spitalul 1292, școala 1380, manuscrisul lui Conrad Haas).",
+    "status": "realizat",
+    "nota": "Formulări „conform sursei” (patrimoniu.sibiu.ro) din fapte_verificate.md. Pozițiile sunt aproximative; hartă schematică, nu la scară. Spitalul (1292) și școala (1380) nu au loc precizat în surse; manuscrisul Haas apare doar în legendă (păstrat la Arhivele Naționale Sibiu). Teatrul din 1788 este plasat aproximativ pe latura de sud a incintei a III-a, lângă Poarta Cisnădiei."
+  },
+  {
+    "cod": "S12",
+    "categorie": "Spațial",
+    "titlu": "Traseul primei linii de tramvai (gară – spitalul militar, 1905) — hartă ilustrată AI",
+    "fisiere": [
+      "05_spatial/S12_traseul_tramvaiului.svg",
+      "05_spatial/S12_traseul_tramvaiului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+    "descriere": "Hartă ilustrată, orientată cu nordul în sus, cu traseul primei linii de tramvai electric (1905): Piața Gării – centru – Parcul Sub Arini (zona Spitalului Militar), extinderile din 1910, 1912, 1915 și 1927 cu linii punctate, săgeată spre Rășinari (1948), un vagon-motor stilizat desenat în SVG și o casetă cu faptele verificate (inaugurare, vagoane de la Budapesta, 14 vagoane-motor în 1925, 3.950.197 de călători în 20 de ani, dispariția din 1966–1967).",
+    "status": "realizat",
+    "nota": "Traseu schematic, aproximativ – nu la scară; sunt figurate doar capetele și „centru”, fără nume de stații intermediare (nu sunt în surse). Data inaugurării: 8 septembrie 1905 conform patrimoniu.sibiu.ro; tribuna.ro dă 9 august – ambele menționate. Vagonul este o ilustrație stilizată, nu o reproducere documentară."
+  }
+]

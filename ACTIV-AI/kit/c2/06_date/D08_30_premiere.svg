@@ -1,0 +1,233 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="175" height="44" fill="#3E63DD"/>
+<text x="87.7" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">DATE · D08</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="60" fill="#F3EFE6">30 de premiere sibiene pe o linie a timpului</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">linie a timpului neliniară · 1292 → 2019 · segmente pe secole, intervalele nu sunt la scară</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#56657A"/></marker></defs>
+<line x1="80" y1="330" x2="1830" y2="330" stroke="#2A3845" stroke-width="8" stroke-linecap="round"/>
+<line x1="1830" y1="330" x2="1842" y2="330" stroke="#56657A" stroke-width="8" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="106.8" y="317" width="80.3" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="146.9" y="335.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XIII</text>
+<circle cx="245.9" cy="330" r="15" fill="#0F1720" stroke="#B9583A" stroke-width="4" filter="url(#glow)"/><circle cx="245.9" cy="330" r="6" fill="#B9583A"/>
+<text x="245.9" y="250.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#B9583A" text-anchor="middle">1292</text>
+<text x="245.9" y="278.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">primul spital (România de</text>
+<text x="245.9" y="296.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">azi)</text>
+<line x1="245.9" y1="311" x2="245.9" y2="304" stroke="#B9583A" stroke-width="2"/>
+<rect x="304.1" y="317" width="81.7" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="345.0" y="335.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XIV</text>
+<circle cx="444.0" cy="330" r="15" fill="#0F1720" stroke="#3E63DD" stroke-width="4" filter="url(#glow)"/><circle cx="444.0" cy="330" r="6" fill="#3E63DD"/>
+<text x="444.0" y="384.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#3E63DD" text-anchor="middle">1380</text>
+<text x="444.0" y="408.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima atestare a unei școli</text>
+<text x="444.0" y="426.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">(România de azi)</text>
+<line x1="444.0" y1="349" x2="444.0" y2="356" stroke="#3E63DD" stroke-width="2"/>
+<rect x="504.5" y="317" width="77.0" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="543.0" y="335.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XV</text>
+<circle cx="642.1" cy="330" r="15" fill="#0F1720" stroke="#B9583A" stroke-width="4" filter="url(#glow)"/><circle cx="642.1" cy="330" r="6" fill="#B9583A"/>
+<text x="642.1" y="250.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#B9583A" text-anchor="middle">1494</text>
+<text x="642.1" y="278.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima farmacie (România</text>
+<text x="642.1" y="296.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">de azi)</text>
+<line x1="642.1" y1="311" x2="642.1" y2="304" stroke="#B9583A" stroke-width="2"/>
+<rect x="700.3" y="317" width="81.7" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="741.1" y="335.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XVI</text>
+<circle cx="840.1" cy="330" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="840.1" cy="330" r="6" fill="#6E56CF"/>
+<text x="840.1" y="384.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1525</text>
+<text x="840.1" y="408.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima tipografie din</text>
+<text x="840.1" y="426.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Transilvania</text>
+<line x1="840.1" y1="349" x2="840.1" y2="356" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="944.4" cy="330" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="944.4" cy="330" r="6" fill="#6E56CF"/>
+<text x="944.4" y="250.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1544</text>
+<text x="944.4" y="278.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima carte în limba</text>
+<text x="944.4" y="296.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">română (România de azi)</text>
+<line x1="944.4" y1="311" x2="944.4" y2="304" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="1048.6" cy="330" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="1048.6" cy="330" r="6" fill="#E2A62B"/>
+<text x="1048.6" y="384.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1555</text>
+<text x="1048.6" y="408.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima rachetă în trepte –</text>
+<text x="1048.6" y="426.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Conrad Haas (conform</text>
+<text x="1048.6" y="444.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">sursei)</text>
+<line x1="1048.6" y1="349" x2="1048.6" y2="356" stroke="#E2A62B" stroke-width="2"/>
+<line x1="1112.7" y1="330" x2="1193.0" y2="330" stroke="#0F1720" stroke-width="10"/>
+<line x1="1112.7" y1="330" x2="1193.0" y2="330" stroke="#56657A" stroke-width="3" stroke-dasharray="6 7"/>
+<rect x="1109.7" y="273" width="86.3" height="26" rx="13" fill="#1B2733" stroke="#56657A" stroke-width="1.5"/>
+<text x="1152.8" y="291.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#56657A" text-anchor="middle" letter-spacing="1">sec. XVII</text>
+<text x="1152.8" y="366.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#56657A" text-anchor="middle" font-style="italic">nicio premieră</text>
+<text x="1152.8" y="384.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#56657A" text-anchor="middle" font-style="italic">în lista oficială</text>
+<rect x="1206.4" y="317" width="91.0" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="1251.9" y="335.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XVIII</text>
+<circle cx="1350.9" cy="330" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="1350.9" cy="330" r="6" fill="#E2A62B"/>
+<text x="1350.9" y="250.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1717</text>
+<text x="1350.9" y="278.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima fabrică de bere</text>
+<text x="1350.9" y="296.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">(România de azi)</text>
+<line x1="1350.9" y1="311" x2="1350.9" y2="304" stroke="#E2A62B" stroke-width="2"/>
+<circle cx="1455.2" cy="330" r="15" fill="#0F1720" stroke="#3E63DD" stroke-width="4" filter="url(#glow)"/><circle cx="1455.2" cy="330" r="6" fill="#3E63DD"/>
+<text x="1455.2" y="384.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#3E63DD" text-anchor="middle">1782</text>
+<text x="1455.2" y="408.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">descoperirea telurului –</text>
+<text x="1455.2" y="426.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Franz Joseph Müller</text>
+<line x1="1455.2" y1="349" x2="1455.2" y2="356" stroke="#3E63DD" stroke-width="2"/>
+<circle cx="1559.4" cy="330" r="15" fill="#0F1720" stroke="#3E63DD" stroke-width="4" filter="url(#glow)"/><circle cx="1559.4" cy="330" r="6" fill="#3E63DD"/>
+<text x="1559.4" y="232.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#3E63DD" text-anchor="middle">1786</text>
+<text x="1559.4" y="260.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">bazele Facultății de</text>
+<text x="1559.4" y="278.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Teologie „Andrei Șaguna”,</text>
+<text x="1559.4" y="296.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima din țară</text>
+<line x1="1559.4" y1="311" x2="1559.4" y2="304" stroke="#3E63DD" stroke-width="2"/>
+<circle cx="1663.6" cy="330" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="1663.6" cy="330" r="6" fill="#6E56CF"/>
+<text x="1663.6" y="384.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1788</text>
+<text x="1663.6" y="408.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima clădire de teatru</text>
+<text x="1663.6" y="426.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">(România de azi)</text>
+<line x1="1663.6" y1="349" x2="1663.6" y2="356" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="1767.9" cy="330" r="15" fill="#0F1720" stroke="#B9583A" stroke-width="4" filter="url(#glow)"/><circle cx="1767.9" cy="330" r="6" fill="#B9583A"/>
+<text x="1767.9" y="232.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#B9583A" text-anchor="middle">1793</text>
+<text x="1767.9" y="260.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima carte de</text>
+<text x="1767.9" y="278.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">medicină</text>
+<text x="1767.9" y="296.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">românească</text>
+<line x1="1767.9" y1="311" x2="1767.9" y2="304" stroke="#B9583A" stroke-width="2"/>
+<line x1="80" y1="572" x2="1830" y2="572" stroke="#2A3845" stroke-width="8" stroke-linecap="round"/>
+<line x1="1830" y1="572" x2="1842" y2="572" stroke="#56657A" stroke-width="8" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="130.2" y="559" width="81.5" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="171.0" y="577.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XIX</text>
+<circle cx="320.9" cy="572" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="320.9" cy="572" r="6" fill="#6E56CF"/>
+<text x="320.9" y="492.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1817</text>
+<text x="320.9" y="520.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Muzeul Brukenthal, primul muzeu din</text>
+<text x="320.9" y="538.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">România</text>
+<line x1="320.9" y1="553" x2="320.9" y2="546" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="478.7" cy="572" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="478.7" cy="572" r="6" fill="#6E56CF"/>
+<text x="478.7" y="626.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1853</text>
+<text x="478.7" y="650.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">„Telegraful Român”, cel mai vechi ziar cu</text>
+<text x="478.7" y="668.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">apariție neîntreruptă din sud-estul Europei</text>
+<line x1="478.7" y1="591" x2="478.7" y2="598" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="636.5" cy="572" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="636.5" cy="572" r="6" fill="#E2A62B"/>
+<text x="636.5" y="492.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1859</text>
+<text x="636.5" y="520.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Podul Minciunilor, primul pod din fontă</text>
+<text x="636.5" y="538.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">turnată</text>
+<line x1="636.5" y1="553" x2="636.5" y2="546" stroke="#E2A62B" stroke-width="2"/>
+<circle cx="794.3" cy="572" r="15" fill="#0F1720" stroke="#B9583A" stroke-width="4" filter="url(#glow)"/><circle cx="794.3" cy="572" r="6" fill="#B9583A"/>
+<text x="794.3" y="626.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#B9583A" text-anchor="middle">1863</text>
+<text x="794.3" y="650.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">primul spital de boli nervoase din România</text>
+<line x1="794.3" y1="591" x2="794.3" y2="598" stroke="#B9583A" stroke-width="2"/>
+<circle cx="952.1" cy="572" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="952.1" cy="572" r="6" fill="#6E56CF"/>
+<text x="952.1" y="492.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1869</text>
+<text x="952.1" y="520.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima bibliotecă publică românească din</text>
+<text x="952.1" y="538.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Transilvania</text>
+<line x1="952.1" y1="553" x2="952.1" y2="546" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="1109.9" cy="572" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="1109.9" cy="572" r="6" fill="#E2A62B"/>
+<text x="1109.9" y="626.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1872</text>
+<text x="1109.9" y="650.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Banca Albina, prima bancă cu capital</text>
+<text x="1109.9" y="668.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">integral românesc</text>
+<line x1="1109.9" y1="591" x2="1109.9" y2="598" stroke="#E2A62B" stroke-width="2"/>
+<circle cx="1267.7" cy="572" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="1267.7" cy="572" r="6" fill="#E2A62B"/>
+<text x="1267.7" y="492.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1875</text>
+<text x="1267.7" y="520.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Rieger, prima fabrică de mașini-unelte din</text>
+<text x="1267.7" y="538.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Transilvania</text>
+<line x1="1267.7" y1="553" x2="1267.7" y2="546" stroke="#E2A62B" stroke-width="2"/>
+<circle cx="1425.5" cy="572" r="15" fill="#0F1720" stroke="#12A594" stroke-width="4" filter="url(#glow)"/><circle cx="1425.5" cy="572" r="6" fill="#12A594"/>
+<text x="1425.5" y="626.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#12A594" text-anchor="middle">1894</text>
+<text x="1425.5" y="650.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Păltiniș, prima stațiune montană din</text>
+<text x="1425.5" y="668.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">România</text>
+<line x1="1425.5" y1="591" x2="1425.5" y2="598" stroke="#12A594" stroke-width="2"/>
+<circle cx="1583.3" cy="572" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="1583.3" cy="572" r="6" fill="#6E56CF"/>
+<text x="1583.3" y="492.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1895</text>
+<text x="1583.3" y="520.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Muzeul de Istorie Naturală, prima clădire</text>
+<text x="1583.3" y="538.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">din România ridicată ca muzeu</text>
+<line x1="1583.3" y1="553" x2="1583.3" y2="546" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="1741.1" cy="572" r="15" fill="#0F1720" stroke="#3E63DD" stroke-width="4" filter="url(#glow)"/><circle cx="1741.1" cy="572" r="6" fill="#3E63DD"/>
+<text x="1741.1" y="626.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#3E63DD" text-anchor="middle">1898</text>
+<text x="1741.1" y="650.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima enciclopedie</text>
+<text x="1741.1" y="668.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">românească</text>
+<line x1="1741.1" y1="591" x2="1741.1" y2="598" stroke="#3E63DD" stroke-width="2"/>
+<line x1="80" y1="814" x2="1830" y2="814" stroke="#2A3845" stroke-width="8" stroke-linecap="round"/>
+<line x1="1830" y1="814" x2="1842" y2="814" stroke="#56657A" stroke-width="8" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="133.2" y="801" width="76.9" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="171.7" y="819.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XX</text>
+<circle cx="323.0" cy="814" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="323.0" cy="814" r="6" fill="#E2A62B"/>
+<text x="323.0" y="734.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1904</text>
+<text x="323.0" y="762.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">omnibusul electric, primul transport în</text>
+<text x="323.0" y="780.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">comun electric fără șine din Transilvania</text>
+<line x1="323.0" y1="795" x2="323.0" y2="788" stroke="#E2A62B" stroke-width="2"/>
+<circle cx="482.2" cy="814" r="15" fill="#0F1720" stroke="#B9583A" stroke-width="4" filter="url(#glow)"/><circle cx="482.2" cy="814" r="6" fill="#B9583A"/>
+<text x="482.2" y="868.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#B9583A" text-anchor="middle">1904</text>
+<text x="482.2" y="892.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Baia Populară, primul spa din România</text>
+<line x1="482.2" y1="833" x2="482.2" y2="840" stroke="#B9583A" stroke-width="2"/>
+<circle cx="641.5" cy="814" r="15" fill="#0F1720" stroke="#12A594" stroke-width="4" filter="url(#glow)"/><circle cx="641.5" cy="814" r="6" fill="#12A594"/>
+<text x="641.5" y="734.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#12A594" text-anchor="middle">1921</text>
+<text x="641.5" y="762.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">primul meci și prima echipă de handbal din</text>
+<text x="641.5" y="780.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">România</text>
+<line x1="641.5" y1="795" x2="641.5" y2="788" stroke="#12A594" stroke-width="2"/>
+<circle cx="800.7" cy="814" r="15" fill="#0F1720" stroke="#12A594" stroke-width="4" filter="url(#glow)"/><circle cx="800.7" cy="814" r="6" fill="#12A594"/>
+<text x="800.7" y="868.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#12A594" text-anchor="middle">1929</text>
+<text x="800.7" y="892.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima grădină zoologică din România</text>
+<line x1="800.7" y1="833" x2="800.7" y2="840" stroke="#12A594" stroke-width="2"/>
+<circle cx="960.0" cy="814" r="15" fill="#0F1720" stroke="#E2A62B" stroke-width="4" filter="url(#glow)"/><circle cx="960.0" cy="814" r="6" fill="#E2A62B"/>
+<text x="960.0" y="734.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#E2A62B" text-anchor="middle">1938</text>
+<text x="960.0" y="762.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">prima fabrică de frigidere din România</text>
+<text x="960.0" y="780.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">(Uzinele Hess)</text>
+<line x1="960.0" y1="795" x2="960.0" y2="788" stroke="#E2A62B" stroke-width="2"/>
+<circle cx="1119.3" cy="814" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="1119.3" cy="814" r="6" fill="#6E56CF"/>
+<text x="1119.3" y="868.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1944</text>
+<text x="1119.3" y="892.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">„Junii Sibiului”, primul ansamblu folcloric</text>
+<text x="1119.3" y="910.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">din România</text>
+<line x1="1119.3" y1="833" x2="1119.3" y2="840" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="1278.5" cy="814" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="1278.5" cy="814" r="6" fill="#6E56CF"/>
+<text x="1278.5" y="734.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">1993</text>
+<text x="1278.5" y="762.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">primul muzeu de etnografie universală din</text>
+<text x="1278.5" y="780.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">România (Muzeul „Franz Binder”)</text>
+<line x1="1278.5" y1="795" x2="1278.5" y2="788" stroke="#6E56CF" stroke-width="2"/>
+<rect x="1389.0" y="801" width="81.5" height="26" rx="13" fill="#1B2733" stroke="#A9B4C0" stroke-width="1.5"/>
+<text x="1429.8" y="819.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#A9B4C0" text-anchor="middle" letter-spacing="1">sec. XXI</text>
+<circle cx="1581.1" cy="814" r="15" fill="#0F1720" stroke="#6E56CF" stroke-width="4" filter="url(#glow)"/><circle cx="1581.1" cy="814" r="6" fill="#6E56CF"/>
+<text x="1581.1" y="868.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#6E56CF" text-anchor="middle">2007</text>
+<text x="1581.1" y="892.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Capitală Culturală Europeană, primul oraș</text>
+<text x="1581.1" y="910.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">din România</text>
+<line x1="1581.1" y1="833" x2="1581.1" y2="840" stroke="#6E56CF" stroke-width="2"/>
+<circle cx="1740.4" cy="814" r="15" fill="#0F1720" stroke="#12A594" stroke-width="4" filter="url(#glow)"/><circle cx="1740.4" cy="814" r="6" fill="#12A594"/>
+<text x="1740.4" y="716.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#12A594" text-anchor="middle">2019</text>
+<text x="1740.4" y="744.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Regiune Gastronomică</text>
+<text x="1740.4" y="762.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">Europeană, primul oraș din</text>
+<text x="1740.4" y="780.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="middle">România</text>
+<line x1="1740.4" y1="795" x2="1740.4" y2="788" stroke="#12A594" stroke-width="2"/>
+<text x="80.0" y="968.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#F3EFE6" text-anchor="start">Domenii (împărțire a autorilor artefactului):</text>
+<circle cx="418.234375" cy="963" r="7" fill="#B9583A"/>
+<text x="433.2" y="968.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">sănătate · 5</text>
+<circle cx="546.671875" cy="963" r="7" fill="#3E63DD"/>
+<text x="561.7" y="968.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">educație &amp; știință · 4</text>
+<circle cx="736.828125" cy="963" r="7" fill="#6E56CF"/>
+<text x="751.8" y="968.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">cultură · 10</text>
+<circle cx="860.296875" cy="963" r="7" fill="#E2A62B"/>
+<text x="875.3" y="968.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">tehnică &amp; economie · 7</text>
+<circle cx="1067.359375" cy="963" r="7" fill="#12A594"/>
+<text x="1082.4" y="968.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">sport &amp; turism · 4</text>
+<text x="80.0" y="996.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">„(România de azi)” = „de pe actualul teritoriu al României”, formularea sursei. Secolul al XVII-lea nu are nicio premieră în lista oficială.</text>
+<text x="1840.0" y="996.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="end" font-style="italic">sursa: patrimoniu.sibiu.ro – Premiere (38 de premiere enumerate; aici 30)</text>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

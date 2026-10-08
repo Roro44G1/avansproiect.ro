@@ -1,0 +1,186 @@
+# -*- coding: utf-8 -*-
+"""Harta ilustrata, schematica a Sibiului - vedere spre sud (muntii la orizont).
+Coordonate relative (u,v) in [0,1]: u creste spre vest (dreapta), v creste spre nord (jos)."""
+import random, math
+from lib import *
+
+PAPER = '#F4EEE2'; PAPER_D = '#E7DDC9'; SKY = '#E3ECEA'
+ROOF = '#B9583A'; ROOF_D = '#963F27'; WALLC = '#F1E6D2'; STONE = '#8B5E3C'
+WATER = '#8EC9CC'; WATER_D = '#0E7C86'; GREEN1 = '#5F9C7B'; GREEN2 = '#3E7F6A'; GREEN3 = '#8DBB98'
+
+class Mp:
+    def __init__(s, x, y, w, h):
+        s.x, s.y, s.w, s.h = x, y, w, h
+    def __call__(s, u, v):
+        return (s.x + u*s.w, s.y + v*s.h)
+
+ANCH = {
+    'piata_mare': (0.535, 0.43), 'turnul': (0.465, 0.50), 'piata_mica': (0.41, 0.545),
+    'catedrala': (0.59, 0.56), 'podul': (0.41, 0.615), 'cetatii': (0.336, 0.37),
+    'jos': (0.56, 0.74), 'cibin': (0.72, 0.885), 'dumbrava': (0.86, 0.29), 'gara': (0.2, 0.765),
+    'sus': (0.50, 0.47),
+}
+OC = (0.5, 0.47, 0.2, 0.17)  # centru u,v si raze relative ale platoului
+
+def halo_text(x, y, text, size=24, fill=INK, weight=600, anchor='middle', italic=False, halo=PAPER, hw=6):
+    return T(x, y, text, size, fill, weight=weight, anchor=anchor, italic=italic,
+             extra=f'stroke="{halo}" stroke-width="{hw}" stroke-linejoin="round" paint-order="stroke"')
+
+def draw_map(x, y, w, h, skip_labels=(), clip_id='mclip', extra_under='', label_over=None):
+    m = Mp(x, y, w, h)
+    rnd = random.Random(42)
+    o = []
+    o.append(f'<clipPath id="{clip_id}"><rect x="{x}" y="{y}" width="{w}" height="{h}" rx="22"/></clipPath>')
+    o.append(f'<g clip-path="url(#{clip_id})">')
+    o.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{PAPER}" filter="url(#paper)"/>')
+    # cer
+    hz = 0.17
+    o.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h*hz + 4:.1f}" fill="url(#skyg)"/>')
+    # munti departati
+    far = [(0, 0.15), (0.06, 0.10), (0.12, 0.075), (0.18, 0.095), (0.25, 0.06), (0.31, 0.085), (0.37, 0.07), (0.44, 0.10),
+           (0.5, 0.125), (0.56, 0.105), (0.63, 0.085), (0.7, 0.10), (0.77, 0.08), (0.84, 0.095), (0.92, 0.075), (1.0, 0.11)]
+    d = 'M' + ' L'.join(f'{m(u, v)[0]:.1f},{m(u, v)[1]:.1f}' for u, v in far) + f' L{x + w},{y + h*hz + 6:.1f} L{x},{y + h*hz + 6:.1f} Z'
+    o.append(path(d, '#B7B4CF'))
+    # zapada pe varfuri
+    for u, v in far:
+        if v < 0.09:
+            px, py = m(u, v)
+            o.append(path(f'M{px:.1f},{py:.1f} L{px - 18:.1f},{py + 14:.1f} L{px - 6:.1f},{py + 10:.1f} L{px + 3:.1f},{py + 16:.1f} L{px + 16:.1f},{py + 12:.1f} Z', '#FFFFFF', extra='opacity="0.9"'))
+    near = [(0, 0.17), (0.08, 0.135), (0.16, 0.15), (0.24, 0.125), (0.33, 0.15), (0.42, 0.14), (0.5, 0.16), (0.58, 0.14),
+            (0.66, 0.15), (0.74, 0.13), (0.82, 0.145), (0.9, 0.125), (1.0, 0.15)]
+    d = smooth([m(u, v) for u, v in near]) + f' L{x + w},{y + h*hz + 8:.1f} L{x},{y + h*hz + 8:.1f} Z'
+    o.append(path(d, '#7FA79E'))
+    o.append(halo_text(*m(0.2, 0.058), 'Munții Făgăraș', 24, '#3B3A5A', 600, halo='#E3ECEA'))
+    o.append(halo_text(*m(0.79, 0.052), 'Munții Cindrel', 24, '#3B3A5A', 600, halo='#E3ECEA'))
+    # campuri / dealuri usoare
+    for (u, v, rx, ry, c) in [(0.08, 0.3, 0.12, 0.08, '#E4E6CF'), (0.25, 0.24, 0.1, 0.05, '#E9E3CC'),
+                              (0.62, 0.22, 0.08, 0.04, '#E4E6CF'), (0.95, 0.6, 0.1, 0.12, '#E4E6CF'),
+                              (0.07, 0.58, 0.09, 0.1, '#E9E3CC')]:
+        cx, cy = m(u, v)
+        o.append(f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{rx*w:.1f}" ry="{ry*h:.1f}" fill="{c}"/>')
+    # cartiere moderne (sugestie, blocuri mici)
+    for (u0, u1, v0, v1, n) in [(0.04, 0.3, 0.36, 0.66, 26), (0.68, 0.96, 0.47, 0.8, 26), (0.3, 0.68, 0.2, 0.27, 10)]:
+        for i in range(n):
+            u = rnd.uniform(u0, u1); v = rnd.uniform(v0, v1)
+            bx, by = m(u, v)
+            bw = rnd.choice([16, 20, 26]); bh = rnd.choice([10, 12, 14])
+            o.append(f'<rect x="{bx:.1f}" y="{by:.1f}" width="{bw}" height="{bh}" rx="2" fill="#D6CCB8"/>')
+    o.append(extra_under)
+    # Dumbrava
+    dc = m(*ANCH['dumbrava'])
+    trees = []
+    for i in range(80):
+        u = rnd.uniform(0.72, 0.99); v = rnd.uniform(0.19, 0.40)
+        if ((u - 0.86)/0.14)**2 + ((v - 0.295)/0.105)**2 < 1:
+            trees.append((v, u))
+    for v, u in sorted(trees):
+        tx, ty = m(u, v)
+        if rnd.random() < 0.55:
+            o.append(fir_ill(tx, ty, rnd.uniform(26, 36), rnd.choice([GREEN2, '#2F6B59'])))
+        else:
+            o.append(tree_ill(tx, ty, rnd.uniform(9, 13), rnd.choice([GREEN1, GREEN2]), GREEN3))
+    # rau Cibin
+    pts = [m(1.03, 0.90), m(0.85, 0.87), m(0.68, 0.895), m(0.5, 0.875), m(0.33, 0.9), m(0.16, 0.875), m(-0.03, 0.895)]
+    rp = smooth(pts)
+    o.append(path(rp, 'none', WATER_D, 30, 'opacity="0.35"'))
+    o.append(path(rp, 'none', WATER, 22))
+    o.append(path(rp, 'none', '#D7EEEF', 3, 'stroke-dasharray="14 22" opacity="0.9"'))
+    # cale ferata + gara
+    ry0 = m(0, 0.79)[1]
+    tr = smooth([m(-0.02, 0.80), m(0.14, 0.785), m(0.3, 0.79), m(0.4, 0.81)])
+    o.append(path(tr, 'none', '#6E6A60', 7))
+    o.append(path(tr, 'none', PAPER, 3, 'stroke-dasharray="6 8"'))
+    gx, gy = m(*ANCH['gara'])
+    o.append(f'<rect x="{gx - 34:.1f}" y="{gy - 24:.1f}" width="68" height="28" fill="{WALLC}" stroke="{INK}" stroke-width="2"/>')
+    o.append(path(f'M{gx - 40:.1f},{gy - 24:.1f} L{gx:.1f},{gy - 44:.1f} L{gx + 40:.1f},{gy - 24:.1f} Z', ROOF, INK, 2))
+    o.append(circ(gx, gy - 32, 5, PAPER, INK, 1.5))
+    for dx in (-22, -8, 8, 22):
+        o.append(f'<rect x="{gx + dx - 3:.1f}" y="{gy - 16:.1f}" width="6" height="12" fill="{INK}"/>')
+    # Orasul de Jos - case
+    hs = []
+    for i in range(120):
+        u = rnd.uniform(0.29, 0.73); v = rnd.uniform(0.65, 0.84)
+        if ((u - 0.51)/0.22)**2 + ((v - 0.745)/0.095)**2 < 1 and not (abs(u - 0.41) < 0.05 and v < 0.69) and not (0.52 < u < 0.68 and 0.775 < v < 0.83):
+            hs.append((v, u))
+    for v, u in sorted(hs[:60]):
+        hx, hy = m(u, v)
+        o.append(house_ill(hx, hy, rnd.choice([18, 20, 22]), rnd.choice([11, 12, 14]), WALLC, rnd.choice([ROOF, ROOF_D, '#C96B4A']), eye=rnd.random() < 0.35))
+    # platou Orasul de Sus
+    cx, cy = m(OC[0], OC[1]); rx, ryy = OC[2]*w, OC[3]*h
+    o.append(f'<ellipse cx="{cx:.1f}" cy="{cy + 14:.1f}" rx="{rx + 4:.1f}" ry="{ryy:.1f}" fill="#CDBB9C"/>')
+    o.append(f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{rx:.1f}" ry="{ryy:.1f}" fill="#EFE3CC"/>')
+    # ziduri (latura sudica = sus)
+    a0, a1 = math.radians(195), math.radians(345)
+    wp = []
+    for i in range(41):
+        a = a0 + (a1 - a0)*i/40
+        wp.append((cx + (rx + 2)*math.cos(a), cy + (ryy + 2)*math.sin(a)))
+    wd = 'M' + ' L'.join(f'{px:.1f},{py:.1f}' for px, py in wp)
+    o.append(path(wd, 'none', STONE, 10))
+    o.append(path(wd, 'none', '#C9A27E', 4, 'stroke-dasharray="6 6"'))
+    for i in range(0, 41, 5):
+        px, py = wp[i]
+        o.append(f'<rect x="{px - 8:.1f}" y="{py - 12:.1f}" width="16" height="16" fill="{STONE}"/>')
+        o.append(path(f'M{px - 9:.1f},{py - 12:.1f} L{px:.1f},{py - 24:.1f} L{px + 9:.1f},{py - 12:.1f} Z', ROOF_D))
+    # case Orasul de Sus
+    keep_out = [ANCH[k] for k in ('piata_mare', 'turnul', 'piata_mica', 'catedrala', 'podul')]
+    hs = []
+    for i in range(900):
+        u = rnd.uniform(0.3, 0.7); v = rnd.uniform(0.32, 0.64)
+        if ((u - OC[0])/(OC[2] - 0.02))**2 + ((v - OC[1])/(OC[3] - 0.03))**2 < 1:
+            if all(((u - a)/0.065)**2 + ((v - b)/0.06)**2 > 1 for a, b in keep_out) and not (0.46 < u < 0.61 and 0.38 < v < 0.48) and not (0.29 < u < 0.47 and 0.38 < v < 0.415) and not (0.5 < u < 0.72 and 0.58 < v < 0.625) and not (0.31 < u < 0.37 and 0.53 < v < 0.565):
+                hs.append((v, u))
+    for v, u in sorted(hs[:120]):
+        hx, hy = m(u, v)
+        o.append(house_ill(hx, hy, rnd.choice([18, 20, 22]), rnd.choice([11, 13]), WALLC, rnd.choice([ROOF, ROOF_D, '#C96B4A']), eye=rnd.random() < 0.45))
+    # Piata Mare
+    px, py = m(*ANCH['piata_mare'])
+    o.append(f'<rect x="{px - 0.068*w:.1f}" y="{py - 0.042*h:.1f}" width="{0.136*w:.1f}" height="{0.084*h:.1f}" rx="6" fill="#FBF3E2" stroke="{STONE}" stroke-width="2"/>')
+    o.append(f'<rect x="{px - 0.068*w + 7:.1f}" y="{py - 0.042*h + 7:.1f}" width="{0.136*w - 14:.1f}" height="{0.084*h - 14:.1f}" rx="4" fill="none" stroke="#D9C7A6" stroke-width="2" stroke-dasharray="4 6"/>')
+    # Piata Mica
+    qx, qy = m(*ANCH['piata_mica'])
+    o.append(f'<rect x="{qx - 0.036*w:.1f}" y="{qy - 0.03*h:.1f}" width="{0.072*w:.1f}" height="{0.06*h:.1f}" rx="6" fill="#FBF3E2" stroke="{STONE}" stroke-width="2"/>')
+    # Catedrala, Turnul, Podul
+    kx, ky = m(*ANCH['catedrala'])
+    o.append(cathedral_ill(kx - 16, ky + 18, 13, WALLC, ROOF_D, INK))
+    tx, ty = m(*ANCH['turnul'])
+    o.append(council_tower_ill(tx, ty + 18, 14, WALLC, ROOF, INK))
+    bx, by = m(*ANCH['podul'])
+    o.append(bridge_ill(bx, by + 14, 58, '#3D4A57'))
+    # etichete
+    L = {
+        'sus': (0.38, 0.405, 'Orașul de Sus', 22, '#7A5636', 700),
+        'piata_mare': (0.535, 0.44, 'Piața Mare', 22, INK, 700),
+        'piata_mica': (0.34, 0.553, 'Piața Mică', 22, INK, 600),
+        'turnul': (0.465, 0.53, '', 22, INK, 600),
+        'catedrala': (0.61, 0.612, 'Catedrala Evanghelică', 22, INK, 600),
+        'podul': (0.41, 0.672, 'Podul Minciunilor', 22, INK, 600),
+        'cetatii': (0.5, 0.262, 'Strada Cetății · zidurile', 22, '#7A5636', 700),
+        'jos': (0.6, 0.81, 'Orașul de Jos', 24, INK, 700),
+        'gara': (0.115, 0.775, 'Gara', 24, INK, 700),
+        'cibin': (0.72, 0.955, 'râul Cibin  ←  curge spre est', 24, WATER_D, 700),
+        'dumbrava': (0.84, 0.445, 'Dumbrava Sibiului', 24, '#2F6B59', 700),
+    }
+    for k, val in (label_over or {}).items():
+        L[k] = (val[0], val[1]) + L[k][2:]
+    for k, (u, v, t, sz, c, wt) in L.items():
+        if k in skip_labels or not t:
+            continue
+        lx, ly = m(u, v)
+        o.append(halo_text(lx, ly, t, sz, c, wt))
+    o.append('</g>')
+    o.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="22" fill="none" stroke="#3A4B5C" stroke-width="2"/>')
+    defs = (f'<linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D4E4E6"/>'
+            f'<stop offset="1" stop-color="{SKY}"/></linearGradient>')
+    return ''.join(o), defs, m
+
+def compass(cx, cy, r=34, ink=INK, bg=PAPER, note='vedere spre sud'):
+    """roza vanturilor cu N in jos (harta privita spre sud)."""
+    s = circ(cx, cy, r + 6, bg, ink, 2, 'opacity="0.95"')
+    s += path(f'M{cx:.1f},{cy + r:.1f} L{cx - 10:.1f},{cy:.1f} L{cx:.1f},{cy - r:.1f} L{cx + 10:.1f},{cy:.1f} Z', 'none', ink, 2)
+    s += path(f'M{cx:.1f},{cy + r:.1f} L{cx - 10:.1f},{cy:.1f} L{cx + 10:.1f},{cy:.1f} Z', TIGLA)
+    s += T(cx, cy + r + 34, 'N', 24, ink, weight=700, anchor='middle')
+    s += T(cx, cy - r - 14, 'S', 20, ink, weight=600, anchor='middle')
+    s += T(cx - r - 16, cy + 7, 'E', 20, ink, weight=600, anchor='middle')
+    s += T(cx + r + 18, cy + 7, 'V', 20, ink, weight=600, anchor='middle')
+    return s

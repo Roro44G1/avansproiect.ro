@@ -1,0 +1,144 @@
+# -*- coding: utf-8 -*-
+"""S11 – Harta premierelor Sibiului (Calupul 2). Rulat din /home/claude/expo/_tools/svg."""
+from lib import *
+import sibiu_map as SM
+
+OUT = "/home/claude/expo/c2/05_spatial/S11_harta_premierelor.svg"
+INK = "#3B3326"; INK2 = "#5A4D38"
+
+def halo(x, y, s, size, fill=INK, weight=700, italic=False, anchor="start", hw=6, hcol=PARCH):
+    return text(x, y, s, size, fill, "sans", weight, italic, anchor,
+                extra=f'stroke="{hcol}" stroke-width="{hw}" stroke-linejoin="round" paint-order="stroke"')
+
+s = frame_head("SPAȚIAL · S11", PETROL, "Harta premierelor Sibiului",
+               "fiecare „prima” așezată pe harta orașului · poziții aproximative")
+
+# ---------------- map panel ----------------
+MX, MY, MW, MH = 80, 230, 1150, 770
+P = SM.mk(MX, MY, 1.0)
+s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+s += f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.35"/>\n'
+s += SM.river(P)
+s += text(MX + 24, MY + 96, "râul Cibin →", 22, "#2F7A91", "sans", 600, True)
+
+# walls: outer rings in muted tones (context), inner rings faint
+WALL_IV = "#8C86B8"; WALL_III = "#5E9AA0"
+s += SM.wall(P, SM.IV, WALL_IV, fill_op=0.10, w=8)
+s += SM.wall(P, SM.III, WALL_III, fill_op=0.10, w=8)
+s += SM.ghost_wall(P, SM.II, color="#B9583A", w=3)
+s += SM.ghost_wall(P, SM.I_, color="#C99A2E", w=3)
+
+# squares & landmarks
+s += SM.square(P, 1.0, SM.P_MARE, "Piața Mare", size=22)
+s += SM.square(P, 1.0, SM.P_MICA, "", size=19)
+s += halo(*P(606, 296), "Piața Mică", 17, INK, 700, False, "start", hw=4)
+s += SM.church(P, 1.0, *SM.HUET)
+s += text(*P(400, 352), "Piața Huet", 16, INK, "sans", 700, anchor="middle")
+s += SM.council_tower(P, 1.0, *SM.T_SFAT)
+s += halo(*P(606, 318), "Turnul Sfatului", 15, INK2, 600, True, "start", hw=4)
+# gates (context, light)
+for (gx, gy), name, dx, dy, anc in [(SM.G_CISN, "Poarta Cisnădiei", -22, 6, "end"), (SM.G_OCNA, "Poarta Ocnei", 0, -20, "middle"),
+                                   (SM.G_TURN, "Poarta Turnului", 22, 6, "start"), (SM.G_ELIS, "Poarta Elisabeta", -22, 32, "end")]:
+    X, Y = P(gx, gy)
+    s += SM.gate_icon(X, Y, op=0.85)
+    s += halo(X + dx, Y + dy, name, 15, INK2, 600, True, anc, hw=4)
+# preserved towers as small faint markers (orientation only)
+for t in (SM.T_DULG, SM.T_OLAR, SM.T_ARCH, SM.T_PULB, SM.T_PIEL, SM.T_SCARI):
+    s += SM.tower_icon(*P(*t), sc=0.8, op=0.55)
+
+# area labels
+s += text(*P(400, 575), "ORAȘUL DE SUS", 22, "#0E5C66", "serif", 700, anchor="middle", extra='letter-spacing="3"')
+s += text(*P(800, 168), "ORAȘUL DE JOS", 22, "#4A3A99", "serif", 700, anchor="middle", extra='letter-spacing="3"')
+
+# Turnul Gros (theatre) – drawn as a round artillery tower
+TG = P(700, 648)
+s += f'<g filter="url(#shs)"><circle cx="{TG[0]:.1f}" cy="{TG[1]:.1f}" r="17" fill="#7A8A95" stroke="#2B3A44" stroke-width="2"/>' \
+     f'<circle cx="{TG[0]:.1f}" cy="{TG[1]:.1f}" r="9" fill="{PARCH}" opacity="0.7"/></g>\n'
+
+# ---------------- pins ----------------
+PINS = [
+    # n, pin local x,y, label lines, label local x,y (baseline of line 1), anchor, color, leader
+    (1, 668, 354, ["Farmacia orașului · 1494", "azi: turnul Bisericii Romano-Catolice"], 694, 348, "start", TIGLA, None),
+    (2, 700, 648, ["Prima clădire de teatru · 1788", "Turnul Gros (azi Sala Thalia)"], 726, 644, "start", TIGLA, None),
+    (3, 600, 462, ["Muzeul Brukenthal · 1817", "Palatul Brukenthal, Piața Mare"], 574, 458, "end", TIGLA, None),
+    (4, 546, 258, ["Podul Minciunilor · 1859", "între Piața Mică și Orașul de Jos"], 520, 186, "end", TIGLA, (526, 212)),
+    (5, 562, 318, ["Muzeul Farmaciei · 1972", "Piața Mică 26 · reper, nu premieră"], 585, 398, "end", PETROL, (578, 388)),
+]
+for n, lx, ly, lines, tx, ty, anc, col, lead in PINS:
+    X, Y = P(lx, ly)
+    if lead:
+        LXl, LYl = P(*lead)
+        s += f'<line x1="{X:.1f}" y1="{Y:.1f}" x2="{LXl:.1f}" y2="{LYl:.1f}" stroke="{INK2}" stroke-width="2" stroke-dasharray="3 4"/>\n'
+    s += pin(X, Y, n, col)
+    TX, TY = P(tx, ty)
+    s += halo(TX, TY, lines[0], 17, INK, 700, False, anc)
+    s += halo(TX, TY + 20, lines[1], 15, INK2, 400, True, anc, hw=4)
+
+# 6 – tram, outside the walls: arrow to the north-east edge
+A0 = P(1072, 250); A1 = P(1118, 150)
+s += f'<path d="M{A0[0]:.1f},{A0[1]:.1f} L{A1[0]:.1f},{A1[1]:.1f}" stroke="{OCRU}" stroke-width="4" stroke-dasharray="10 8" fill="none"/>\n'
+s += f'<polygon points="{A1[0]:.1f},{A1[1]-16:.1f} {A1[0]+12:.1f},{A1[1]+4:.1f} {A1[0]-12:.1f},{A1[1]+4:.1f}" fill="{OCRU}" transform="rotate(25 {A1[0]:.1f} {A1[1]:.1f})"/>\n'
+X6, Y6 = P(1072, 250)
+s += pin(X6, Y6, 6, OCRU, textcol=BG)
+s += halo(X6 - 4, Y6 - 46, "Primul tramvai electric · 1905", 17, INK, 700, False, "end")
+s += halo(X6 - 4, Y6 - 26, "spre Piața Gării, în afara zidurilor", 15, INK2, 400, True, "end", hw=4)
+s += halo(*P(1078, 126), "Piața Gării →", 16, "#8A6A1E", 700, True, "end", hw=4)
+
+# compass + note
+s += SM.compass(MX + MW - 80, MY + MH - 100, r=36)
+s += text(MX + 20, MY + MH - 22, "hartă schematică – nu la scară; pozițiile sunt aproximative", 20, INK2, "sans", 400, True)
+s += "</g>\n"
+s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+# ---------------- legend panel ----------------
+LX, LY, LW, LH = 1260, 230, 580, 770
+s += card(LX, LY, LW, LH)
+y = LY + 50
+s += text(LX + 32, y, "Premiere cu loc cunoscut", 28, VAR, "serif", 700)
+y += 22
+s += text(LX + 32, y, "formulări „conform sursei” (patrimoniu.sibiu.ro)", 15, CEATA, "sans", 400, True)
+y += 30
+rows = [
+    (1, TIGLA, "1494", "prima farmacie de pe actualul teritoriu al României – Piața Mare"),
+    (2, TIGLA, "1788", "prima clădire de teatru de pe actualul teritoriu al României – Turnul Gros"),
+    (3, TIGLA, "1817", "Muzeul Brukenthal, primul muzeu din România – Piața Mare"),
+    (4, TIGLA, "1859", "primul pod din fontă turnată – Podul Minciunilor"),
+    (5, PETROL, "1972", "Muzeul de Istorie a Farmaciei, Piața Mică 26 – reper, nu premieră"),
+    (6, OCRU, "1905", "prima linie de tramvai electric: gară – spitalul militar"),
+]
+for n, col, yr, desc in rows:
+    s += pin(LX + 52, y + 8, n, col, r=16, textcol=BG if col == OCRU else VAR)
+    s += text(LX + 84, y + 6, yr, 22, OCRU, "serif", 700)
+    p, _ = para(LX + 150, y + 6, desc, 16, LW - 180, CEATA, lh=20)
+    s += p
+    y += 54
+y += 2
+s += f'<line x1="{LX+32}" y1="{y}" x2="{LX+LW-32}" y2="{y}" stroke="#2A3845" stroke-width="2"/>\n'
+y += 34
+s += text(LX + 32, y, "Premiere fără poziție pe hartă", 22, VAR, "serif", 700)
+y += 30
+rows2 = [
+    ("1292", "primul spital de pe actualul teritoriu al României – loc neprecizat în surse"),
+    ("1380", "prima atestare a unei școli de pe actualul teritoriu al României – loc neprecizat în surse"),
+    ("1555", "prima rachetă în trepte – manuscrisul lui Conrad Haas, păstrat la Arhivele Naționale Sibiu"),
+]
+for yr, desc in rows2:
+    s += f'<circle cx="{LX+52}" cy="{y+6}" r="12" fill="none" stroke="{CEATA}" stroke-width="2" stroke-dasharray="4 4"/>\n'
+    s += text(LX + 84, y + 12, yr, 20, OCRU, "serif", 700)
+    p, _ = para(LX + 150, y + 12, desc, 15, LW - 180, CEATA, lh=19)
+    s += p
+    y += 48
+# note box (sized to text)
+nb_y = y + 2
+note = ("Pozițiile sunt aproximative; hartă schematică, nu la scară. Farmacia din 1494 nu mai există – pe locul ei "
+        "se află azi turnul Bisericii Romano-Catolice; teatrul din 1788 a fost amenajat în Turnul Gros, azi Sala Thalia.")
+ptxt, yend = para(LX + 44, nb_y + 30, note, 15, LW - 90, CEATA, lh=20)
+nb_h = min(yend - 8 - nb_y, LY + LH - nb_y - 24)
+s += f'<rect x="{LX+24}" y="{nb_y}" width="{LW-48}" height="{nb_h}" rx="14" fill="{BG}" stroke="{OCRU}" stroke-opacity="0.5" stroke-width="1.5"/>\n'
+s += ptxt
+assert yend - 8 <= LY + LH - 24, ("legend overflow", yend, LY + LH)
+
+s += frame_foot()
+write(OUT, s)
+print(OUT)

@@ -1,0 +1,166 @@
+# -*- coding: utf-8 -*-
+"""P09 – „Prima mea premieră” – afiș în stilul unei fișe de premieră (personaj fictiv)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math
+
+OUT = "/home/claude/expo/c2/08_identitate/P09_prima_mea_premiera.svg"
+ORANGE = "#F76B15"
+s = frame_head("IDENTITATE · P09", ORANGE, "„Prima mea premieră”",
+               "afiș · personaj fictiv: Tudor, 16 ani · nicio persoană reală")
+
+# ---------- stânga: fișa personală (hârtie)
+LX, LY, LW, LH = 80, 230, 1000, 770
+s += ('<defs><linearGradient id="paperg" x1="0" y1="0" x2="1" y2="1">'
+      '<stop offset="0" stop-color="#F7F2E8"/><stop offset="1" stop-color="#EDE4D2"/></linearGradient>'
+      '<linearGradient id="skyd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C3C66"/><stop offset="1" stop-color="#7A6A8A"/></linearGradient>'
+      '</defs>\n')
+s += f'<g filter="url(#sh)"><rect x="{LX}" y="{LY}" width="{LW}" height="{LH}" rx="18" fill="url(#paperg)"/></g>\n'
+s += f'<rect x="{LX}" y="{LY}" width="{LW}" height="{LH}" rx="18" fill="url(#paperg)" filter="url(#paper)"/>\n'
+# chenar dublu, cu linii punctate
+s += f'<rect x="{LX+18}" y="{LY+18}" width="{LW-36}" height="{LH-36}" rx="10" fill="none" stroke="{TIGLA}" stroke-width="2"/>\n'
+s += f'<rect x="{LX+26}" y="{LY+26}" width="{LW-52}" height="{LH-52}" rx="6" fill="none" stroke="{TIGLA}" stroke-width="1" stroke-dasharray="3 5"/>\n'
+# antet fișă
+INK = "#2B2622"; INK2 = "#6B5E52"
+s += text(LX + 50, LY + 72, "FIȘĂ DE PREMIERĂ PERSONALĂ", 20, TIGLA, "sans", 700, extra='letter-spacing="3"')
+s += text(LX + 50, LY + 100, "Seria TU · nr. 1 · consemnată în 2026 · personaj fictiv", 16, INK2, "sans", 400, True)
+s += f'<line x1="{LX+50}" y1="{LY+118}" x2="{LX+LW-50}" y2="{LY+118}" stroke="{TIGLA}" stroke-width="1.5"/>\n'
+
+# ---- ilustrație: Turnul Sfatului stilizat + siluetă (în stânga fișei)
+IX, IY, IW, IH = LX + 50, LY + 140, 360, 560
+s += f'<clipPath id="ic9"><rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="12"/></clipPath>\n'
+s += f'<g clip-path="url(#ic9)"><rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" fill="url(#skyd)"/>\n'
+# soare
+s += f'<circle cx="{IX+70}" cy="{IY+90}" r="34" fill="{OCRU}" opacity="0.95"/><circle cx="{IX+70}" cy="{IY+90}" r="60" fill="{OCRU}" opacity="0.15"/>\n'
+# acoperișuri în fundal
+GY = IY + IH - 70
+for x, w, h in [(0, 80, 70), (70, 70, 90), (250, 80, 80), (320, 60, 65)]:
+    X = IX + x
+    s += f'<rect x="{X}" y="{GY-h}" width="{w}" height="{h}" fill="#4A3F4F"/><polygon points="{X-4},{GY-h} {X+w/2},{GY-h-34} {X+w+4},{GY-h}" fill="#8A4A36"/>\n'
+    # un „ochi al Sibiului”
+    s += f'<path d="M{X+w/2-12},{GY-h-14} q12,-12 24,0 q-12,10 -24,0 Z" fill="#2A2530"/>\n'
+# turnul
+TX = IX + 180; TW = 110
+top = IY + 60
+s += f'<rect x="{TX-TW/2}" y="{top+70}" width="{TW}" height="{GY-top-70}" fill="#E6D8B8" stroke="#A8987A" stroke-width="1.5"/>\n'
+for r in range(int((GY - top - 70) // 26)):
+    yy = top + 90 + r * 26
+    s += f'<line x1="{TX-TW/2}" y1="{yy}" x2="{TX+TW/2}" y2="{yy}" stroke="#C9B995" stroke-width="1"/>\n'
+# ferestre
+for yy in [top + 130, top + 210, top + 290]:
+    s += f'<rect x="{TX-14}" y="{yy}" width="28" height="38" rx="14" fill="#2A2530"/>\n'
+# galerie cu arcade (etajul de observație)
+s += f'<rect x="{TX-TW/2-14}" y="{top+70}" width="{TW+28}" height="56" fill="#D2C3A0" stroke="#A8987A" stroke-width="1.5"/>\n'
+for i in range(4):
+    ax = TX - TW/2 - 2 + i * 38 + 19
+    s += f'<path d="M{ax-11},{top+118} v-22 a11,11 0 0 1 22,0 v22 Z" fill="#2A2530"/>\n'
+# acoperiș în trepte cu bulb simplificat
+s += f'<polygon points="{TX-TW/2-18},{top+70} {TX},{top-10} {TX+TW/2+18},{top+70}" fill="#B9583A"/>\n'
+s += f'<polygon points="{TX},{top+70} {TX},{top-10} {TX+TW/2+18},{top+70}" fill="#8F4229"/>\n'
+s += f'<line x1="{TX}" y1="{top-10}" x2="{TX}" y2="{top-34}" stroke="{OCRU}" stroke-width="3"/><circle cx="{TX}" cy="{top-36}" r="5" fill="{OCRU}"/>\n'
+# ceas
+s += f'<circle cx="{TX}" cy="{top+160+140}" r="0" fill="none"/>\n'
+# siluetă: adolescent în galerie, mână ridicată
+px, py = TX + 42, top + 112
+s += (f'<g fill="#1B1720"><circle cx="{px}" cy="{py-26}" r="8"/>'
+      f'<path d="M{px-7},{py-16} h14 l3,26 h-20 Z"/>'
+      f'<path d="M{px+6},{py-12} l14,-18" stroke="#1B1720" stroke-width="4" stroke-linecap="round" fill="none"/>'
+      f'<path d="M{px-6},{py-12} l-10,12" stroke="#1B1720" stroke-width="4" stroke-linecap="round" fill="none"/></g>\n')
+# sol
+s += f'<rect x="{IX}" y="{GY}" width="{IW}" height="70" fill="#5A5A48"/>\n'
+# pavaj
+for r in range(3):
+    for c in range(0, IW, 40):
+        off = 20 if r % 2 else 0
+        s += f'<rect x="{IX+c+off}" y="{GY+8+r*20}" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>\n'
+s += "</g>\n"
+s += f'<rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="12" fill="none" stroke="{TIGLA}" stroke-width="1.5"/>\n'
+s += text(IX + IW/2, IY + IH + 26, "Turnul Sfatului – siluetă stilizată, generată cu AI", 14, INK2, "sans", 400, True, anchor="middle")
+
+# ---- panglică „PRIMA MEA PREMIERĂ” peste ilustrație (jos)
+RBY = IY + IH - 120; RBX = IX + 20; RBW = IW - 40
+s += (f'<g filter="url(#shs)"><polygon points="{RBX-22},{RBY} {RBX+8},{RBY+22} {RBX-22},{RBY+44} {RBX},{RBY+44} {RBX},{RBY}" fill="#8F4229"/>'
+      f'<polygon points="{RBX+RBW+22},{RBY} {RBX+RBW-8},{RBY+22} {RBX+RBW+22},{RBY+44} {RBX+RBW},{RBY+44} {RBX+RBW},{RBY}" fill="#8F4229"/>'
+      f'<rect x="{RBX}" y="{RBY-4}" width="{RBW}" height="52" fill="{TIGLA}"/></g>\n')
+s += text(RBX + RBW/2, RBY + 30, "PRIMA MEA PREMIERĂ", 24, VAR, "serif", 700, anchor="middle", extra='letter-spacing="2"')
+
+# ---- ștampilă „PREMIERĂ”
+SX, SY = LX + LW - 120, LY + 110
+s += f'<g transform="rotate(-14 {SX} {SY})" opacity="0.9">\n'
+s += f'<circle cx="{SX}" cy="{SY}" r="62" fill="none" stroke="#B3302A" stroke-width="4"/><circle cx="{SX}" cy="{SY}" r="52" fill="none" stroke="#B3302A" stroke-width="1.5"/>\n'
+s += text(SX, SY + 8, "PREMIERĂ", 19, "#B3302A", "sans", 700, anchor="middle", extra='letter-spacing="2"')
+s += text(SX, SY - 20, "✶ CONSEMNATĂ ✶", 10, "#B3302A", "sans", 700, anchor="middle", extra='letter-spacing="1"')
+s += text(SX, SY + 32, "2026", 13, "#B3302A", "sans", 700, anchor="middle", extra='letter-spacing="3"')
+s += "</g>\n"
+
+# ---- text la persoana I
+TXX = IX + IW + 40; TXW = LX + LW - 50 - TXX
+s += text(TXX, LY + 170, "Tudor, 16 ani", 30, INK, "serif", 700)
+s += text(TXX, LY + 198, "personaj fictiv · elev într-un liceu din Sibiu (neprecizat)", 15, INK2, "sans", 400, True)
+body = ("Mă numesc Tudor, am 16 ani și sunt un personaj fictiv. Premiera mea nu apare în nicio carte de istorie: "
+        "sâmbătă am urcat pentru prima dată singur în Turnul Sfatului. Am numărat treptele, m-am oprit la fiecare fereastră și, "
+        "sus, am văzut Piața Mare și Piața Mică deodată, ca pe o hartă vie. Nimeni nu a aplaudat. Dar am înțeles ceva: "
+        "fiecare lucru mare din orașul acesta a fost, cândva, o primă dată a cuiva – prima farmacie, prima școală, primul pod de fontă. "
+        "Așa că mi-am făcut o fișă de premieră. Următoarea: să vorbesc în fața clasei fără foaie.")
+nw = len(body.split())
+p, y = para(TXX, LY + 240, body, 20, TXW, INK, "sans", 400, lh=30)
+s += p
+s += text(TXX, y + 4, f"text la persoana I · {nw} de cuvinte", 14, INK2, "sans", 400, True)
+# câmpuri de fișă
+fy = y + 36
+rows = [("Premiera", "prima urcare singur în Turnul Sfatului"), ("Data", "o sâmbătă din 2026"),
+        ("Martori", "niciunul – și e în regulă"), ("Următoarea", "primul discurs în fața clasei, fără foaie")]
+for k_, v in rows:
+    s += text(TXX, fy, k_, 15, TIGLA, "sans", 700)
+    s += text(TXX + 118, fy, v, 15, INK)
+    s += f'<line x1="{TXX}" y1="{fy+8}" x2="{TXX+TXW}" y2="{fy+8}" stroke="#D8CDB8" stroke-width="1"/>\n'
+    fy += 30
+s += text(TXX + TXW - 130, LY + LH - 40, "semnătura:", 14, INK2, "sans", 400, True, anchor="end")
+s += f'<path d="M{TXX+TXW-120},{LY+LH-44} q18,-26 36,-4 t34,-10 t28,4" fill="none" stroke="{INK}" stroke-width="1.6"/>\n'
+
+# ---------- dreapta: fișa orașului
+RX = 1120; RW = 1840 - RX
+RC = ""  # right card drawn after measuring
+
+RCS = len(s)
+s += text(RX + 32, 276, "FIȘA DE PREMIERĂ A ORAȘULUI", 18, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(RX + 32, 300, "conform patrimoniu.sibiu.ro · fapte verificate", 14, "#7E8A96", "sans", 400, True)
+s += text(RX + 32, 392, "1494", 84, VAR, "serif", 700)
+# mojar (mortar) icon
+mx, my = RX + RW - 120, 360
+s += (f'<g filter="url(#shs)"><path d="M{mx-56},{my-20} h112 l-14,64 q-42,14 -84,0 Z" fill="{OCRU}"/>'
+      f'<ellipse cx="{mx}" cy="{my-20}" rx="56" ry="12" fill="#F0C65B"/>'
+      f'<rect x="{mx-56}" y="{my+44}" width="112" height="14" rx="4" fill="#C98F22"/>'
+      f'<line x1="{mx+18}" y1="{my-14}" x2="{mx+66}" y2="{my-84}" stroke="#E6D8B8" stroke-width="14" stroke-linecap="round"/>'
+      f'<circle cx="{mx+14}" cy="{my-10}" r="12" fill="#E6D8B8"/></g>\n')
+p, y = para(RX + 32, 440, "prima farmacie de pe actualul teritoriu al României", 26, RW - 240, VAR, "serif", 700, lh=34)
+s += p
+p, y = para(RX + 32, y + 10, "„Farmacia orașului”, publică, în Piața Mare, înființată în perioada marilor epidemii de ciumă. "
+            "Primul farmacist consemnat: Johannes, pe o chitanță din 1494. Sediul nu mai există – pe locul lui se află azi turnul Bisericii Romano-Catolice.",
+            16, RW - 64, CEATA, "sans", 400, lh=24)
+s += p
+# alte „prima dată”
+s += text(RX + 32, y + 22, "Alte «prima dată» ale orașului:", 15, OCRU, "sans", 700)
+others = "1292 – primul spital · 1380 – prima atestare a unei școli · 1788 – prima clădire de teatru · 1859 – primul pod din fontă turnată"
+p, y2 = para(RX + 32, y + 46, others, 15, RW - 64, CEATA, "sans", 400, lh=22)
+s += p
+s += text(RX + 32, y2 + 2, "toate: „de pe actualul teritoriu al României”, conform sursei", 13, "#7E8A96", "sans", 400, True)
+RCH = y2 + 26 - 230
+s = s[:RCS] + card(RX, 230, RW, RCH, fill="#141E28") + s[RCS:]
+SY0 = 230 + RCH + 22; SH = 1000 - SY0
+
+# slogan
+s += card(RX, SY0, RW, SH, fill=PETROL, stroke=PETROL)
+b0 = SY0 + 50
+s += text(RX + 32, b0, "„", 110, OCRU, "serif", 700)
+s += text(RX + 32, b0 + 64, "Orașul a început", 42, VAR, "serif", 700)
+s += text(RX + 32, b0 + 114, "cu niște «prima dată».", 42, VAR, "serif", 700)
+s += text(RX + 32, b0 + 178, "Și tu.", 58, OCRU, "serif", 700)
+s += text(RX + RW - 32, 1000 - 30, "afiș-model · ACTIV AI · „Sibiul meu”", 15, "#CFE6E8", "sans", 400, True, anchor="end")
+# steluțe decorative
+for (dx, dy, r) in [(RX + RW - 90, SY0 + 48, 9), (RX + RW - 150, SY0 + 88, 5), (RX + RW - 60, SY0 + 118, 6), (RX + RW - 120, SY0 + 168, 4)]:
+    s += f'<path d="M{dx},{dy-r} q{r*0.3},{r*0.7} {r},{r} q-{r*0.7},{r*0.3} -{r},{r} q-{r*0.3},-{r*0.7} -{r},-{r} q{r*0.7},-{r*0.3} {r},-{r} Z" fill="{OCRU}" opacity="0.85"/>\n'
+
+s += frame_foot()
+write(OUT, s)
+print(OUT, nw, "cuvinte")

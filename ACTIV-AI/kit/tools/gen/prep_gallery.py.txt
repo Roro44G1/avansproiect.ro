@@ -1,0 +1,42 @@
+import json, os, subprocess, shutil, sys
+from PIL import Image
+R='/home/claude/expo'; G=f'{R}/gallery'
+for d in ['assets/img','assets/th','assets/vid','assets/aud','assets/html']: os.makedirs(f'{G}/{d}',exist_ok=True)
+CAT=[a for a in sys.argv[1:] if a.endswith('.json')]; CAT=CAT[0] if CAT else f'{G}/catalog_full.json'
+items=json.load(open(CAT))
+only_video = '--video' in sys.argv
+for it in items:
+    c=it['cod']; fs=it['fisiere']
+    if it['tip']=='video':
+        src=f'{R}/{fs[0]}'
+        if not os.path.exists(src): print('LIPSĂ', src); continue
+        vert = 'vertical' in src
+        poster=f'{G}/assets/img/{c}.jpg'
+        t=min(8,(it.get('durata_s') or 10)/2)
+        subprocess.run(['ffmpeg','-y','-v','error','-ss',str(t),'-i',src,'-frames:v','1','-q:v','3',poster],check=True)
+        out=f'{G}/assets/vid/{c}.mp4'
+        if not os.path.exists(out) or only_video:
+            sc='scale=720:1280' if vert else 'scale=1280:720'
+            subprocess.run(['ffmpeg','-y','-v','error','-i',src,'-vf',sc,'-c:v','libx264','-preset','veryfast','-crf','28','-pix_fmt','yuv420p','-c:a','aac','-b:a','96k','-movflags','+faststart',out],check=True)
+        it['g_video']=f'assets/vid/{c}.mp4'; it['g_img']=f'assets/img/{c}.jpg'; it['g_vertical']=vert
+    else:
+        if only_video: continue
+        if it.get('card'): scr=it['card']
+        else:
+            pngs=[f for f in fs if f.endswith('.png') and 'preview' not in f] or [f for f in fs if f.endswith('.png')]
+            scr=pngs[0]
+        im=Image.open(f'{R}/{scr}').convert('RGB')
+        im.save(f'{G}/assets/img/{c}.jpg',quality=84,optimize=True)
+        it['g_img']=f'assets/img/{c}.jpg'
+        if it.get('audio'):
+            shutil.copy(f'{R}/{it["audio"]}',f'{G}/assets/aud/{c}.mp3'); it['g_audio']=f'assets/aud/{c}.mp3'
+        htmls=[f for f in fs if f.endswith('.html')]
+        if htmls:
+            shutil.copy(f'{R}/{htmls[0]}',f'{G}/assets/html/{os.path.basename(htmls[0])}'); it['g_html']=f'assets/html/{os.path.basename(htmls[0])}'
+            prev=[f for f in fs if 'preview' in f]
+            if prev and it['tip']=='html' and c.startswith('I'): pass
+    if 'g_img' in it:
+        th=Image.open(f'{G}/{it["g_img"]}').convert('RGB'); th.thumbnail((640,640)); th.save(f'{G}/assets/th/{c}.jpg',quality=80)
+        it['g_th']=f'assets/th/{c}.jpg'
+json.dump(items,open(CAT,'w'),ensure_ascii=False,indent=1)
+print('ok')

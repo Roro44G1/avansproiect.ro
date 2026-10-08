@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "L19",
+    "categorie": "Literar",
+    "titlu": "Interviu imaginar cu Conrad Haas despre racheta descrisă în manuscrisul său",
+    "fisiere": [
+      "03_literar/L19_interviu_conrad_haas.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "„Trei trepte și un sfat de pace” – un elev-reporter fictiv din 2026 stă de vorbă cu Conrad Haas, șeful arsenalului din Sibiu, despre racheta în două și trei trepte din manuscrisul său, despre aripioarele delta și ajutajele în formă de clopot, și îi dă vestea că manuscrisul a fost regăsit abia în 1961.",
+    "status": "realizat",
+    "nota": "Ficțiune declarată în text: Conrad Haas (1509–1576) nu putea fi intervievat; toate replicile sunt inventate, iar reporterul Andrei este personaj fictiv. Faptele (venirea la Sibiu în 1551, manuscris în germană de circa 450 de pagini redactat 1529–1569, trepte cu aprindere succesivă, aripioare triunghiulare, ajutaje în formă de clopot, amestecuri de combustibil, desene de asamblare, cota Varia II 374 la Arhivele Naționale Sibiu, redescoperirea din 1961 de Doru Todericiu, Siemienowicz 1650) provin din fapte_verificate.md și sunt separate de ficțiune în nota „Ce e real”. Îndemnul la pace este parafrazat, nu citat. Formularea „1555 – prima rachetă în trepte” este atribuită explicit paginii patrimoniu.sibiu.ro. Corpul interviului: aproximativ 775 de cuvinte.",
+    "extras": "Haas: Ce e cutia aceea neagră? Lucește ca o oglindă și nu are nici fitil, nici încuietoare.\nHaas: Dar nu scrieți „primul din lume” prea apăsat. Lumea e mare și eu n-am citit tot ce s-a scris în ea.\nHaas: Atunci poate că nu sunt chiar atât de vechi. Acum arată-mi avionul acela."
+  },
+  {
+    "cod": "L20",
+    "categorie": "Literar",
+    "titlu": "Jurnalul unui spectator la prima clădire de teatru (1788) — ficțiune istorică",
+    "fisiere": [
+      "03_literar/L20_jurnal_spectator_1788.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "„Zidul care a învățat să râdă” – cinci însemnări imaginate ale unui tânăr tipograf fictiv, Johann, în jurul zilei de 1 iunie 1788, când teatrul construit de Martin Hochmeister în Turnul Gros se deschide cu piesa „Familia comică” de Johann Karl Wetzel; la final, o notă despre ce a devenit clădirea (incendiul din 1826, primele reprezentații în română din 1868, Sala Thalia, Filarmonica de Stat Sibiu).",
+    "status": "realizat",
+    "nota": "Personaj fictiv, declarat în text. Faptele (Turnul Gros – bastion din secolul al XVI-lea; construcția de un an a lui Martin Hochmeister; inaugurarea la 1 iunie 1788 cu „Familia comică” de Johann Karl Wetzel; incendiul din 1826; primele reprezentații în limba română din 1868; inscripția „1788 – 2004”; Sala Thalia, sediul Filarmonicii; ferestrele asimetrice – foste guri de tragere) provin din fapte_verificate.md. Capacitatea și iluminatul sălii nu sunt în fișă: personajul le descrie doar ca impresii nesigure și spune explicit că nu le știe. Corpul jurnalului: aproximativ 720 de cuvinte.",
+    "extras": "Zidurile acelea au fost zidite să țină ghiulele. În seara asta țineau râsul.\nUn lucru care are casă rămâne.\nÎntr-o seară de iunie, un zid făcut pentru război a învățat să râdă. Eu am fost acolo. Am plătit bilet."
+  }
+]

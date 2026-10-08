@@ -1,0 +1,172 @@
+# -*- coding: utf-8 -*-
+import sys; sys.path.insert(0, "/tmp/claude-0/-home-claude/87269e5e-26b5-5b44-815b-307dc6187e24/scratchpad/gen")
+from lib import *
+
+OUT = "/home/claude/expo/c1/05_spatial/S08_trei_inele.svg"
+s = frame_head("SPAȚIAL · S08", PETROL, "Harta celor trei inele de ziduri",
+               "reconstituire schematică · patru etape de fortificare · poziții aproximative")
+
+# ---- map panel
+MX, MY, MW, MH = 80, 230, 1150, 770
+s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+s += f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+# subtle ground tint north (lower town, lower altitude) / south terrace
+s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.35"/>\n'
+# river Cibin
+riv = [(80, 282), (200, 270), (330, 284), (470, 272), (620, 282), (780, 270), (940, 282), (1090, 272), (1230, 282)]
+s += f'<path d="{smooth_path(riv, closed=False)}" fill="none" stroke="#8FBFD1" stroke-width="30" stroke-linecap="round"/>\n'
+s += f'<path d="{smooth_path(riv, closed=False)}" fill="none" stroke="#F4EEE2" stroke-width="2" stroke-dasharray="14 18" opacity="0.8"/>\n'
+s += text(104, 326, "râul Cibin →", 22, "#2F7A91", "sans", 600, True)
+
+C_I, C_II, C_III, C_IV = OCRU, TIGLA, PETROL, VIOLET
+
+def wall(points, color, fill_op=0.10, w=10, closed=True):
+    d = smooth_path(points, closed=closed, tension=0.9)
+    out = f'<path d="{d}" fill="{color}" fill-opacity="{fill_op}" stroke="none"/>\n'
+    out += f'<path d="{d}" fill="none" stroke="{color}" stroke-width="{w}" stroke-linejoin="round" filter="url(#rough)"/>\n'
+    out += f'<path d="{d}" fill="none" stroke="{PARCH}" stroke-width="{w*0.28:.1f}" stroke-dasharray="7 9" opacity="0.9"/>\n'
+    return out
+
+# Incinta IV – Orașul de Jos (north, wraps to the east)
+IV = [(190, 372), (420, 334), (650, 322), (870, 332), (1060, 372), (1150, 452), (1128, 536), (1040, 560),
+      (930, 490), (760, 452), (560, 448), (400, 480), (235, 572), (172, 470)]
+# Incinta III – Orașul de Sus
+III = [(235, 572), (400, 480), (560, 448), (760, 452), (930, 490), (1040, 560), (1010, 690), (930, 805),
+       (760, 885), (560, 895), (330, 850), (212, 710)]
+# Incinta II – Piața Mică
+II = [(385, 490), (470, 462), (600, 462), (700, 500), (700, 585), (610, 612), (470, 622), (382, 572)]
+# Incinta I – Piața Huet
+I_ = [(400, 528), (430, 482), (480, 468), (535, 486), (556, 530), (535, 578), (480, 600), (425, 580)]
+
+s += wall(IV, C_IV, 0.12)
+s += wall(III, C_III, 0.10)
+s += wall(II, C_II, 0.18, w=8)
+s += wall(I_, C_I, 0.28, w=7)
+
+# squares
+def square(x, y, w, h, label, lx=None, ly=None, size=20):
+    out = f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" fill="#FBF7EE" stroke="#8C7B5E" stroke-width="1.5"/>\n'
+    out += text(lx if lx is not None else x + w / 2, ly if ly is not None else y + h / 2 + 7, label, size, "#3B3326", "sans", 700, anchor="middle")
+    return out
+
+s += square(672, 592, 150, 108, "Piața Mare", size=22)
+s += square(588, 502, 76, 60, "Piața Mică", lx=626, ly=490, size=19)
+# church Sf. Maria in Huet
+s += f'<rect x="458" y="500" width="42" height="52" fill="#CDBFA3" stroke="#6B5A3E" stroke-width="1.5"/>\n'
+s += f'<polygon points="452,500 479,474 506,500" fill="#B9583A" stroke="#6B5A3E" stroke-width="1.2"/>\n'
+s += f'<rect x="466" y="462" width="12" height="40" fill="#CDBFA3" stroke="#6B5A3E" stroke-width="1.2"/><polygon points="464,462 472,442 480,462" fill="#B9583A"/>\n'
+s += text(480, 574, "Piața Huet", 18, "#3B3326", "sans", 700, anchor="middle")
+s += text(480, 593, "Biserica Sf. Maria", 16, "#5A4D38", "sans", 400, True, anchor="middle")
+# Turnul Sfatului
+s += f'<rect x="662" y="540" width="18" height="46" fill="#CDBFA3" stroke="#6B5A3E" stroke-width="1.5"/><polygon points="658,540 671,520 684,540" fill="#B9583A"/>\n'
+s += text(690, 540, "Turnul", 16, "#3B3326", "sans", 600)
+s += text(690, 558, "Sfatului", 16, "#3B3326", "sans", 600)
+
+# area labels
+s += text(690, 760, "ORAȘUL DE SUS", 24, "#0E5C66", "serif", 700, anchor="middle", extra='letter-spacing="3"')
+s += text(690, 790, "incinta III · 1357–1366", 18, "#0E5C66", "sans", 400, True, anchor="middle")
+s += text(660, 395, "ORAȘUL DE JOS", 24, "#4A3A99", "serif", 700, anchor="middle", extra='letter-spacing="3"')
+s += text(660, 422, "incinta IV · 1457", 18, "#4A3A99", "sans", 400, True, anchor="middle")
+s += text(560, 450, "", 10)
+# Strada Cetății label along the east wall
+s += text(1110, 772, "Strada", 18, "#0E5C66", "sans", 700, True)
+s += text(1110, 792, "Cetății", 18, "#0E5C66", "sans", 700, True)
+
+# towers (preserved)
+def tower(x, y, name, dx=14, dy=6, anchor="start", sub=None, suboff=18):
+    out = f'<g filter="url(#shs)"><rect x="{x-11}" y="{y-11}" width="22" height="22" rx="3" fill="{OCRU}" stroke="#3B3326" stroke-width="2"/>'
+    out += f'<polygon points="{x-13},{y-11} {x},{y-24} {x+13},{y-11}" fill="{TIGLA}" stroke="#3B3326" stroke-width="1.5"/></g>\n'
+    out += text(x + dx, y + dy, name, 17, "#3B3326", "sans", 700, anchor=anchor)
+    if sub:
+        out += text(x + dx, y + dy + suboff, sub, 15, "#5A4D38", "sans", 400, True, anchor=anchor)
+    return out
+
+s += tower(1028, 636, "Turnul Dulgherilor", dx=20, dy=4, sub="21,65 m")
+s += tower(985, 724, "Turnul Olarilor", dx=20, dy=4, sub="19,60 m")
+s += tower(905, 823, "Turnul Archebuzierilor", dx=18, dy=6, sub="20,75 m")
+s += tower(428, 484, "Turnul Scărilor", dx=-20, dy=-42, anchor="end", sub="sec. XIII · refăcut 1542")
+s += tower(560, 336, "Turnul Pulberăriei", dx=-18, dy=-16, anchor="end", sub="14,5 m")
+s += tower(1004, 348, "Turnul Pielarilor", dx=18, dy=-16, sub="18,60 m")
+
+# gates (principal) – shown as arch symbols
+def gate(x, y, name, dx, dy, anchor="start"):
+    out = f'<g filter="url(#shs)"><rect x="{x-14}" y="{y-10}" width="28" height="22" rx="3" fill="#6B5A3E" stroke="#2B241A" stroke-width="1.5"/>'
+    out += f'<path d="M{x-7},{y+12} v-9 a7,7 0 0 1 14,0 v9 Z" fill="{PARCH}"/></g>\n'
+    out += text(x + dx, y + dy, name, 16, "#3B3326", "sans", 600, True, anchor=anchor)
+    return out
+
+s += gate(655, 893, "Poarta Cisnădiei", 0, 40, "middle")
+s += gate(720, 324, "Poarta Ocnei", 0, -22, "middle")
+s += gate(190, 410, "Poarta Turnului", 22, 6)
+s += gate(1138, 490, "Poarta Elisabeta", -22, 6, "end")
+
+# bastions
+def bastion(x, y, name, dx, dy, anchor="start"):
+    pts = [(x, y - 18), (x + 18, y - 6), (x + 12, y + 14), (x - 12, y + 14), (x - 18, y - 6)]
+    out = poly(pts, fill="#7A8A95", stroke="#2B3A44", stroke_width=1.5, filter="url(#shs)")
+    out += text(x + dx, y + dy, name, 15, "#3B3326", "sans", 600, True, anchor=anchor)
+    return out
+
+s += bastion(1046, 556, "Bastionul Haller", 22, 30)
+s += text(1068, 604, "1551", 15, "#3B3326", "sans", 600, True)
+s += bastion(252, 760, "Bastionul Soldisch (1622–1629)", 24, 8)
+
+# compass
+cx, cy = 1150, 900
+s += f'<circle cx="{cx}" cy="{cy}" r="40" fill="{PARCH}" stroke="#8C7B5E" stroke-width="1.5"/>\n'
+s += f'<polygon points="{cx},{cy-32} {cx+8},{cy} {cx-8},{cy}" fill="{TIGLA}"/><polygon points="{cx},{cy+32} {cx+8},{cy} {cx-8},{cy}" fill="#8C7B5E"/>\n'
+s += text(cx, cy - 46, "N", 18, "#3B3326", "sans", 700, anchor="middle")
+s += text(cx, cy + 62, "S", 16, "#3B3326", "sans", 600, anchor="middle")
+s += text(cx - 54, cy + 6, "V", 16, "#3B3326", "sans", 600, anchor="middle")
+s += text(cx + 54, cy + 6, "E", 16, "#3B3326", "sans", 600, anchor="middle")
+
+s += text(MX + 20, MY + MH - 22, "hartă schematică – nu la scară; poziții relative aproximative", 20, "#6B5A3E", "sans", 400, True)
+s += "</g>\n"
+s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+# ---- legend panel
+LX, LY, LW, LH = 1260, 230, 580, 770
+s += card(LX, LY, LW, LH)
+y = LY + 56
+s += text(LX + 32, y, "Patru incinte, pas cu pas", 30, VAR, "serif", 700)
+y += 44
+rows = [
+    (C_I, "I", "1191–1224", "în jurul Bisericii Sf. Maria (actuala Piața Huet)"),
+    (C_II, "II", "1224–1241", "cuprinde actuala Piața Mică"),
+    (C_III, "III", "1357–1366", "în jurul Orașului de Sus"),
+    (C_IV, "IV", "1457", "Orașul de Jos inclus în centura de fortificații"),
+]
+for col, num, yrs, desc in rows:
+    s += f'<circle cx="{LX+52}" cy="{y+12}" r="17" fill="{col}" fill-opacity="0.18" stroke="{col}" stroke-width="5"/>\n'
+    s += text(LX + 52, y + 18, num, 15, VAR, "sans", 700, anchor="middle")
+    s += text(LX + 86, y + 10, yrs, 24, OCRU, "serif", 700)
+    p, _ = para(LX + 86, y + 38, desc, 19, LW - 120, CEATA)
+    s += p
+    y += 80
+y += 4
+s += f'<line x1="{LX+32}" y1="{y}" x2="{LX+LW-32}" y2="{y}" stroke="#2A3845" stroke-width="2"/>\n'
+y += 40
+# symbols
+s += f'<rect x="{LX+41}" y="{y-11}" width="22" height="22" rx="3" fill="{OCRU}" stroke="#3B3326" stroke-width="2"/><polygon points="{LX+39},{y-11} {LX+52},{y-24} {LX+65},{y-11}" fill="{TIGLA}"/>\n'
+s += text(LX + 86, y + 7, "turn păstrat azi – 6 turnuri", 19, VAR, "sans", 600)
+y += 38
+s += f'<rect x="{LX+38}" y="{y-10}" width="28" height="22" rx="3" fill="#6B5A3E"/><path d="M{LX+45},{y+12} v-9 a7,7 0 0 1 14,0 v9 Z" fill="{PARCH}"/>\n'
+s += text(LX + 86, y + 7, "poartă principală (dispărută) – 4 porți", 19, VAR, "sans", 600)
+y += 38
+s += poly([(LX+52, y-16), (LX+70, y-4), (LX+64, y+14), (LX+40, y+14), (LX+34, y-4)], fill="#7A8A95", stroke="#2B3A44", stroke_width=1.5)
+s += text(LX + 86, y + 7, "bastion din epoca artileriei – 2 bastioane", 19, VAR, "sans", 600)
+y += 40
+# note box
+nb_y = y
+s += f'<rect x="{LX+24}" y="{nb_y}" width="{LW-48}" height="{LY+LH-nb_y-24}" rx="14" fill="{BG}" stroke="{OCRU}" stroke-opacity="0.5" stroke-width="1.5"/>\n'
+yy = nb_y + 36
+s += text(LX + 44, yy, "De ce „trei inele”, dar patru incinte?", 20, OCRU, "serif", 700)
+yy += 30
+note = ("Sursele vorbesc de „trei inele de ziduri” și 39 de turnuri (de.wikipedia); fișele "
+        "patrimoniu.sibiu.ro descriu patru etape succesive, 1191–1457. Harta le arată pe toate patru; "
+        "numărul de turnuri pe fiecare incintă nu este precizat în surse.")
+p, yy = para(LX + 44, yy, note, 16, LW - 90, CEATA, lh=22)
+s += p
+s += frame_foot()
+write(OUT, s)
+print(OUT)

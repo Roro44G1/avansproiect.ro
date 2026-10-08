@@ -1,0 +1,314 @@
+<meta charset="utf-8">
+<title>Galeria ACTIV AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: un perete de muzeu – codurile de catalog (V01, L03…) sunt navigația; fiecare piesă are eticheta ei de muzeu. Design asumat întunecat (identitatea ACTIV AI pentru ecrane). */
+:root{
+  color-scheme: dark;
+  --bg:#0F1720; --surface:#17222D; --surface-2:#1F2C39; --line:#2A3846;
+  --ink:#F3EFE6; --muted:#A9B4C0; --accent:#E2A62B; --accent-ink:#0F1720;
+  --c-vizual:#E2A62B; --c-video:#E5484D; --c-literar:#8B76E0; --c-audio:#12A594; --c-spatial:#14A3AE; --c-date:#5B7FE8; --c-interactiv:#D6409F; --c-identitate:#F76B15;
+  --ok:#3FB37F; --part:#E2A62B; --need:#E5484D;
+  --f-display:"Noto Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r:14px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto;padding-inline:clamp(16px,3vw,40px);padding-block:0}
+header.top{padding-block:36px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,6vw,76px);line-height:1.02;margin:8px 0 12px;text-wrap:balance}
+h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.lede{max-width:62ch;color:var(--muted);font-size:17px;margin:0}
+.lede strong{color:var(--ink);font-weight:600}
+.actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 16px/1 var(--f-body);padding:14px 20px;border-radius:999px;cursor:pointer;display:inline-flex;gap:10px;align-items:center;min-height:48px}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.07)}
+.qrbox{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:13px;line-height:1.35}
+.qrbox svg,.qrbox img{width:84px;height:84px;background:#fff;border-radius:8px;padding:6px}
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;margin:18px 0 0;padding:0;list-style:none;font-size:14px;color:var(--muted)}
+.stats b{font-family:var(--f-display);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:6px}
+.note{margin:20px 0 0;padding:14px 18px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px;color:var(--muted);max-width:110ch}
+.note b{color:var(--ink)}
+nav.filters.calupuri{position:static;border-bottom:0;padding-block:10px 4px}
+nav.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);padding-block:14px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.chip{appearance:none;border:1px solid var(--line);background:transparent;color:var(--ink);font:600 14px/1 var(--f-body);padding:10px 14px;border-radius:999px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;min-height:42px}
+.chip .dot{width:10px;height:10px;border-radius:50%;background:var(--cc,var(--muted))}
+.chip .n{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed="true"] .n{color:var(--bg);opacity:.7}
+section.cat{padding-block:28px 8px}
+.cat h2{font-family:var(--f-display);font-size:clamp(24px,3vw,34px);margin:0 0 4px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.cat h2 .k{font-family:var(--f-body);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--cc);font-weight:700}
+.cat p.sub{color:var(--muted);margin:0 0 16px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px}
+.card{appearance:none;text-align:left;border:0;padding:0;background:none;color:inherit;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card .ph{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:10px;overflow:hidden;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.card:hover img{transform:scale(1.03)}
+.card .badge{position:absolute;left:10px;top:10px;font:700 12px/1 var(--f-body);letter-spacing:.08em;padding:6px 9px;border-radius:999px;background:var(--cc);color:var(--accent-ink)}
+.card .kind{position:absolute;right:10px;bottom:10px;font:600 12px/1 var(--f-body);padding:6px 9px;border-radius:999px;background:rgba(10,16,24,.78);color:var(--ink)}
+.label{display:grid;gap:3px;min-width:0}
+.label .t{font-family:var(--f-display);font-weight:600;font-size:18px;line-height:1.25;text-wrap:balance}
+.label .m{font-size:13px;color:var(--muted)}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.st::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--sc)}
+section.about{padding-block:40px;border-top:1px solid var(--line);margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:32px}
+.about h2{font-family:var(--f-display);font-size:28px;margin:0 0 10px}
+.about p,.about li{color:var(--muted);max-width:65ch}
+.about li{margin-bottom:6px}
+.inv{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
+td.c{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+footer{padding-block:28px 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+/* fișa piesei */
+.ov{position:fixed;inset:0;z-index:20;background:rgba(6,10,15,.86);display:grid;place-items:center;padding:clamp(8px,2vw,28px);padding-top:calc(env(safe-area-inset-top,0px) + 12px)}
+.sheet{width:min(1400px,100%);max-height:100%;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:18px;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
+.sheet .media{background:#05080C;display:flex;flex-direction:column;min-width:0;border-radius:18px 0 0 18px;overflow:hidden;position:sticky;top:0;align-self:start}
+.sheet .media img,.sheet .media video{width:100%;height:auto;display:block;max-height:78vh;object-fit:contain}
+.sheet .media iframe{width:100%;aspect-ratio:16/10;border:0;display:block;background:var(--bg)}
+.sheet .media audio{width:calc(100% - 32px);margin:16px}
+.sheet .info{padding:28px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.info .code{font:700 13px/1 var(--f-body);letter-spacing:.12em;color:var(--cc)}
+.info h3{font-family:var(--f-display);font-size:30px;line-height:1.15;margin:0;text-wrap:balance}
+.info .theme{color:var(--muted);font-size:15px;margin:0}
+.info dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:14px}
+.info dt{color:var(--muted)} .info dd{margin:0}
+.info .desc{font-size:16px;margin:0}
+.info .nota{font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin:0}
+.info .row{display:flex;gap:10px;flex-wrap:wrap}
+.text{border-top:1px solid var(--line);padding-top:14px;font-size:16px;max-width:65ch}
+.text h1{font-size:26px;margin:0 0 6px}
+.text h2{font-family:var(--f-display);font-size:20px;margin:20px 0 6px}
+.text h3{font-size:16px;margin:16px 0 4px}
+.text table{font-size:13px;display:block;overflow-x:auto}
+.text blockquote{margin:10px 0;padding-left:14px;border-left:3px solid var(--accent);color:var(--muted)}
+.close{position:sticky;top:0;align-self:flex-end}
+.canvalinks a{display:inline-block;margin:0 10px 6px 0}
+.tts-msg{font-size:13px;color:var(--muted)}
+/* modul ecran */
+.kiosk{position:fixed;inset:0;z-index:40;background:#000;color:var(--ink);overflow:hidden}
+.kiosk .stage{position:absolute;inset:0;display:grid;place-items:center}
+.kiosk .stage img,.kiosk .stage video{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;animation:kb 14s ease-out both}
+.kiosk .stage video{animation:none}
+@keyframes kb{from{transform:scale(1.0)}to{transform:scale(1.035)}}
+.kiosk .fade{animation:fin .9s ease both}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+.kiosk .hud{position:absolute;left:0;right:0;bottom:0;padding:14px clamp(16px,2vw,28px) calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:16px;align-items:center;background:linear-gradient(to top,rgba(0,0,0,.75),rgba(0,0,0,0));opacity:0;transition:opacity .3s}
+.kiosk:hover .hud,.kiosk.show .hud{opacity:1}
+.kiosk .bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);width:0}
+.kiosk .qr{position:absolute;right:20px;top:20px;display:flex;gap:10px;align-items:center;background:rgba(15,23,32,.82);padding:10px 12px;border-radius:12px;font-size:13px;color:var(--muted)}
+.kiosk .qr svg{width:86px;height:86px;background:#fff;border-radius:6px;padding:5px}
+@media (max-width:900px){
+  .sheet .media{position:static}
+  header.top{grid-template-columns:1fr}
+  .actions{justify-content:flex-start}
+  .sheet{grid-template-columns:1fr}
+  .sheet .media{border-radius:18px 18px 0 0}
+}
+@media (prefers-reduced-motion:reduce){
+  .card img,.kiosk .stage img{transition:none;animation:none}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">ACTIV AI · expoziția de artefacte digitale · Sibiu 2026</div>
+      <h1>Sibiul meu, <em>prin ochii AI</em></h1>
+      <p class="lede">Galeria de <strong>artefacte-model</strong> pentru tema-umbrelă „Sibiul meu – locuri, povești și oameni prin ochii inteligenței artificiale”: câte un exemplu pentru fiecare temă propusă claselor – expoziția inițială (73 de teme) și calupurile tematice adăugate pe parcurs.</p>
+      <ul class="stats" id="stats"></ul>
+    </div>
+    <div class="actions">
+      <div class="qrbox" id="qrTop" hidden></div>
+      <button class="btn primary" id="startKiosk" type="button">▶ Pornește modul ecran</button>
+    </div>
+  </header>
+  <p class="note"><b>Ce vedeți aici.</b> Piesele sunt exemple-model generate cu AI de echipa de proiect (texte, ilustrații, hărți, animații și muzică în cod; imagini fotorealiste generate cu Canva AI), ca punct de plecare pentru clase. Nu sunt lucrări ale elevilor. Personajele sunt fictive, iar faptele istorice provin din surse verificate, citate în fiecare piesă.</p>
+  <nav class="filters" id="filters" aria-label="Categorii"></nav>
+  <nav class="filters calupuri" id="calupuri" aria-label="Colecții"></nav>
+  <main id="wall"></main>
+  <section class="about" id="despre">
+    <div>
+      <h2>Despre expoziție</h2>
+      <p>ACTIV AI formează cadre didactice din liceele sibiene ca facilitatori de creativitate digitală. Clasele lor creează artefacte despre identitatea Sibiului, prezentate pe ecrane într-o expoziție itinerantă.</p>
+      <p>Galeria se poate rula pe orice ecran cu browser: butonul <b>Modul ecran</b> pornește o buclă automată cu toate piesele (clipurile rulează cu sunet după prima atingere). Piesele interactive se deschid pe ecranul tactil din fișa fiecărei piese.</p>
+    </div>
+    <div>
+      <h2>Cum au fost făcute</h2>
+      <ul>
+        <li><b>Texte și scenarii:</b> scrise cu Claude (Anthropic), cu fapte doar din fișa de surse verificate a proiectului.</li>
+        <li><b>Ilustrații, hărți, infografice, piese interactive și animații:</b> generate de Claude direct în cod (SVG, HTML, Canvas).</li>
+        <li><b>Muzică și sunete:</b> sinteză procedurală în cod (Python); temele sunt originale.</li>
+        <li><b>Imagini fotorealiste (12 teme):</b> Canva AI, după prompturi scrise cu Claude; rezoluția completă e în folderul Canva al proiectului.</li>
+        <li><b>Voce:</b> sintetizatorul vocal al browserului (ro-RO), din butonul „Ascultă”.</li>
+      </ul>
+    </div>
+    <div style="grid-column:1/-1">
+      <h2>Inventar</h2>
+      <div class="inv"><table id="inv"><thead><tr><th>Cod</th><th>Colecție</th><th>Tema din listă</th><th>Format</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+  <footer>ACTIV AI – proiect al Asociației AVANS PROIECT Sibiu, cofinanțat de Primăria Municipiului Sibiu prin Agenda Comunității 2026. Toate piesele poartă eticheta „Artefact-model generat cu AI”.</footer>
+</div>
+
+<div class="ov" id="ov" hidden role="dialog" aria-modal="true" aria-labelledby="shT"></div>
+<div class="kiosk" id="kiosk" hidden>
+  <div class="stage" id="stage"></div>
+  <div class="qr" id="qrK" hidden></div>
+  <div class="hud"><button class="btn" id="kPrev" type="button">◀</button><button class="btn" id="kNext" type="button">▶</button><button class="btn" id="kSound" type="button">Sunet: pornit</button><span id="kLabel" style="flex:1;min-width:0;font-size:15px"></span><button class="btn" id="kExit" type="button">Ieșire</button></div>
+  <div class="bar" id="kBar"></div>
+</div>
+
+<script>
+const DATA = /*__CATALOG__*/[];
+const QR_SVG = /*__QR__*/"";
+const CATS = [
+  ["Vizual","vizual","Imagine statică"],["Video","video","Imagine în mișcare / video scurt"],["Literar","literar","Text asistat AI"],["Audio","audio","Sunet și voce"],
+  ["Spațial","spatial","Hărți și vizualizări teritoriale"],["Date","date","Date și infografice"],["Interactiv","interactiv","Interactiv și digital"],["Identitate","identitate","Identitate personală și comunitară"]];
+const KIND = {imagine:"Imagine",video:"Video",text:"Text",audio:"Audio",scenariu:"Scenariu + voce",html:"Interactiv"};
+const ST = {"realizat":["realizat","var(--ok)"],"realizat-partial":["realizat parțial","var(--part)"],"necesita-material-personal":["necesită material personal","var(--need)"]};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const catOf = it => CATS.find(c => c[0] === it.categorie) || CATS[0];
+let filter = "Toate"; let calup = "toate";
+const CALUPURI = {0:"Expoziția inițială (73 de teme)",1:"Calupul 1 · Cetatea: ziduri, turnuri, porți",2:"Calupul 2 · Premierele Sibiului"};
+const inCalup = it => calup === "toate" || String(it.calup||0) === calup;
+
+function stats(){
+  const n = t => DATA.filter(i => i.categorie === t).length;
+  $("#stats").innerHTML = `<li><b>${DATA.length}</b>artefacte-model</li><li><b>${Object.keys(CALUPURI).filter(k => DATA.some(i => String(i.calup||0) === k)).length}</b>colecții</li><li><b>${CATS.length}</b>categorii</li><li><b>${n("Video")}</b>clipuri</li><li><b>${DATA.filter(i=>i.g_audio).length}</b>piese muzicale</li><li><b>${DATA.filter(i=>i.g_html).length}</b>piese interactive</li>`;
+}
+function calupuri(){
+  const f = $("#calupuri");
+  const keys = ["toate", ...Object.keys(CALUPURI).filter(k => DATA.some(i => String(i.calup||0) === k))];
+  f.innerHTML = keys.map(k => `<button class="chip" type="button" aria-pressed="${calup===k}" data-k="${k}">${k==="toate"?"Toate colecțiile":CALUPURI[k]}<span class="n">${k==="toate"?DATA.length:DATA.filter(i=>String(i.calup||0)===k).length}</span></button>`).join("");
+  f.querySelectorAll(".chip").forEach(b => b.onclick = () => { calup = b.dataset.k; calupuri(); filters(); wall(); });
+}
+function filters(){
+  const f = $("#filters");
+  const all = [["Toate","",""]].concat(CATS);
+  f.innerHTML = all.map(([n,k]) => `<button class="chip" type="button" aria-pressed="${filter===n}" data-f="${n}" style="--cc:var(--c-${k||'vizual'})">${k?'<span class="dot"></span>':''}${n}<span class="n">${n==="Toate"?DATA.filter(inCalup).length:DATA.filter(i=>i.categorie===n&&inCalup(i)).length}</span></button>`).join("");
+  f.querySelectorAll(".chip").forEach(b => b.onclick = () => { filter = b.dataset.f; try{localStorage.setItem("activ_f",filter)}catch(e){} filters(); wall(); });
+}
+function card(it){
+  const k = catOf(it)[1], s = ST[it.status] || ST.realizat;
+  const title = it.titlu_creativ || it.titlu;
+  return `<button class="card" type="button" data-c="${it.cod}" style="--cc:var(--c-${k})" aria-label="${esc(it.cod+' – '+title)}">
+    <span class="ph"><img src="${it.g_th}" alt="" loading="lazy"><span class="badge">${it.cod}</span><span class="kind">${KIND[it.tip]||it.tip}${it.durata_s?` · ${Math.round(it.durata_s)} s`:''}</span></span>
+    <span class="label"><span class="t">${esc(title)}</span>${it.calup?`<span class="m">${CALUPURI[it.calup]}</span>`:''}<span class="m">${esc(it.titlu_creativ ? it.titlu : it.instrument.split('–')[0].trim())}</span><span class="st" style="--sc:${s[1]}">${s[0]}</span></span></button>`;
+}
+function wall(){
+  const cats = filter === "Toate" ? CATS : CATS.filter(c => c[0] === filter);
+  $("#wall").innerHTML = cats.map(([n,k,sub]) => {
+    const its = DATA.filter(i => i.categorie === n && inCalup(i));
+    if (!its.length) return "";
+    return `<section class="cat" style="--cc:var(--c-${k})"><h2><span class="k">${n}</span>${sub}</h2><p class="sub">${its.length} piese · ${its.filter(i=>i.status==='realizat').length} realizate integral</p><div class="grid">${its.map(card).join("")}</div></section>`;
+  }).join("");
+  document.querySelectorAll(".card").forEach(b => b.onclick = () => open(b.dataset.c));
+}
+function inventory(){
+  $("#inv tbody").innerHTML = DATA.map(it => { const s = ST[it.status]||ST.realizat; return `<tr><td class="c">${it.cod}</td><td>${it.calup?`C${it.calup}`:'—'}</td><td>${esc(it.titlu)}</td><td>${KIND[it.tip]||it.tip}</td><td><span class="st" style="--sc:${s[1]}">${s[0]}</span></td></tr>`; }).join("");
+}
+// voce
+let voices = [];
+function loadVoices(){ try{ voices = speechSynthesis.getVoices().filter(v => /^ro/i.test(v.lang)); }catch(e){ voices = []; } }
+if ("speechSynthesis" in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function speakText(it){
+  if (!("speechSynthesis" in window)) return "Browserul nu are sintetizator vocal.";
+  speechSynthesis.cancel();
+  let t = it.tts;
+  if (!t){ const d = document.createElement("div"); d.innerHTML = it.html || ""; d.querySelectorAll("h1,table,hr").forEach(e=>e.remove()); const all=[...d.children]; const stop=all.findIndex(e=>/^H2$/.test(e.tagName)&&/Prompt-model/i.test(e.textContent)); (stop>=0?all.slice(stop):[]).forEach(e=>e.remove()); t = d.innerText.replace(/\*?Tema:[^\n]*\n?/,''); }
+  const chunks = t.match(/[^.!?…\n]+[.!?…]?/g) || [t];
+  const v = voices.find(v => /Natural|Online|Neural/i.test(v.name)) || voices[0];
+  chunks.forEach(c => { const u = new SpeechSynthesisUtterance(c.trim()); u.lang = "ro-RO"; if (v) u.voice = v; u.rate = .95; speechSynthesis.speak(u); });
+  return v ? `Voce: ${v.name}` : "Nu am găsit o voce românească în acest browser; se folosește vocea implicită. Pe Windows, Microsoft Edge are voci românești naturale.";
+}
+function open(code){
+  const it = DATA.find(i => i.cod === code); if (!it) return;
+  const k = catOf(it)[1], s = ST[it.status]||ST.realizat;
+  let media = "";
+  if (it.g_video) media = `<video src="${it.g_video}" controls playsinline poster="${it.g_img}" preload="metadata"></video>`;
+  else if (it.g_html) media = `<iframe src="${it.g_html}" title="${esc(it.titlu_creativ||it.titlu)}" loading="lazy"></iframe>`;
+  else media = `<img src="${it.g_img}" alt="${esc(it.descriere)}">`;
+  if (it.g_audio) media += `<audio src="${it.g_audio}" controls preload="none"></audio>`;
+  const canTTS = it.tts || it.html && it.categorie === "Literar";
+  const canva = (it.canva||[]).map(c => `<a href="${c.url}" target="_blank" rel="noopener">${esc(c.eticheta)} ↗</a>`).join("");
+  $("#ov").innerHTML = `<div class="sheet" style="--cc:var(--c-${k})"><div class="media">${media}</div><div class="info">
+    <button class="btn close" type="button" id="shClose">Închide ✕</button>
+    <div class="code">${it.categorie.toUpperCase()} · ${it.cod}${it.calup?` · ${esc(CALUPURI[it.calup])}`:''}</div>
+    <h3 id="shT">${esc(it.titlu_creativ||it.titlu)}</h3>
+    ${it.titlu_creativ?`<p class="theme">Tema: ${esc(it.titlu)}</p>`:''}
+    <p class="desc">${esc(it.descriere)}</p>
+    ${it.nota?`<p class="nota">${esc(it.nota)}</p>`:''}
+    <dl><dt>Realizat cu</dt><dd>${esc(it.instrument)}</dd><dt>Status</dt><dd><span class="st" style="--sc:${s[1]}">${s[0]}</span></dd>${it.durata_s?`<dt>Durată</dt><dd>${Math.round(it.durata_s)} s</dd>`:''}</dl>
+    ${canva?`<div class="canvalinks"><b>Rezoluție completă în Canva:</b><br>${canva}</div>`:''}
+    <div class="row">${canTTS?'<button class="btn primary" type="button" id="shSpeak">🔊 Ascultă</button><button class="btn" type="button" id="shStop">Oprește vocea</button>':''}${it.g_html?`<a class="btn" href="${it.g_html}" target="_blank" rel="noopener">Deschide pe tot ecranul ↗</a>`:''}</div>
+    <div class="tts-msg" id="ttsMsg"></div>
+    ${it.html?`<div class="text">${it.html}</div>`:''}
+  </div></div>`;
+  $("#ov").hidden = false; document.body.style.overflow = "hidden";
+  $("#shClose").onclick = close; $("#shClose").focus();
+  const sp = $("#shSpeak"); if (sp){ sp.onclick = () => { $("#ttsMsg").textContent = speakText(it); }; $("#shStop").onclick = () => { try{speechSynthesis.cancel()}catch(e){} }; }
+}
+function close(){ $("#ov").hidden = true; $("#ov").innerHTML = ""; document.body.style.overflow = ""; try{speechSynthesis.cancel()}catch(e){} }
+$("#ov").addEventListener("click", e => { if (e.target.id === "ov") close(); });
+// mod ecran
+let kIdx = 0, kTimer = null, kSound = true, wake = null, kStart = 0, kDur = 0, raf = 0;
+const SEQ = () => DATA.filter(i => i.g_img || i.g_video);
+function kShow(i){
+  const seq = SEQ(); kIdx = (i + seq.length) % seq.length; const it = seq[kIdx];
+  clearTimeout(kTimer); cancelAnimationFrame(raf);
+  const st = $("#stage");
+  if (it.g_video){
+    st.innerHTML = `<video class="fade" src="${it.g_video}" playsinline autoplay ${kSound?'':'muted'}></video>`;
+    const v = st.querySelector("video");
+    v.onended = () => kShow(kIdx + 1);
+    v.onerror = () => { kTimer = setTimeout(() => kShow(kIdx + 1), 3000); };
+    v.play().catch(() => { v.muted = true; v.play().catch(()=>{}); });
+    kDur = (it.durata_s || 30) * 1000;
+  } else {
+    st.innerHTML = `<img class="fade" src="${it.g_img}" alt="">`;
+    kDur = it.tip === "text" ? 16000 : it.tip === "html" ? 10000 : 13000;
+    kTimer = setTimeout(() => kShow(kIdx + 1), kDur);
+  }
+  $("#kLabel").textContent = `${it.cod} · ${it.titlu_creativ || it.titlu}  (${kIdx + 1}/${seq.length})`;
+  kStart = performance.now();
+  const tick = () => { const p = Math.min(1, (performance.now() - kStart) / kDur); $("#kBar").style.width = (p * 100) + "%"; raf = requestAnimationFrame(tick); };
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) tick();
+  const nx = seq[(kIdx + 1) % seq.length]; if (nx.g_img){ const im = new Image(); im.src = nx.g_img; }
+}
+async function kioskOn(){
+  $("#kiosk").hidden = false; document.body.style.overflow = "hidden";
+  try{ await document.documentElement.requestFullscreen?.(); }catch(e){}
+  try{ wake = await navigator.wakeLock?.request("screen"); }catch(e){}
+  kShow(0); $("#kiosk").classList.add("show"); setTimeout(() => $("#kiosk").classList.remove("show"), 2500);
+}
+function kioskOff(){
+  clearTimeout(kTimer); cancelAnimationFrame(raf); $("#stage").innerHTML = ""; $("#kiosk").hidden = true; document.body.style.overflow = "";
+  try{ if (document.fullscreenElement) document.exitFullscreen(); }catch(e){} try{ wake?.release(); }catch(e){}
+}
+$("#startKiosk").onclick = kioskOn; $("#kExit").onclick = kioskOff;
+$("#kNext").onclick = () => kShow(kIdx + 1); $("#kPrev").onclick = () => kShow(kIdx - 1);
+$("#kSound").onclick = () => { kSound = !kSound; $("#kSound").textContent = "Sunet: " + (kSound ? "pornit" : "oprit"); const v = $("#stage video"); if (v) v.muted = !kSound; };
+document.addEventListener("keydown", e => {
+  if (!$("#kiosk").hidden){ if (e.key === "Escape") kioskOff(); if (e.key === "ArrowRight") kShow(kIdx + 1); if (e.key === "ArrowLeft") kShow(kIdx - 1); return; }
+  if (!$("#ov").hidden && e.key === "Escape") close();
+});
+document.addEventListener("visibilitychange", async () => { if (!$("#kiosk").hidden && document.visibilityState === "visible"){ try{ wake = await navigator.wakeLock?.request("screen"); }catch(e){} } });
+if (QR_SVG){ $("#qrTop").innerHTML = QR_SVG + "<span>Scanați pentru<br>galeria completă</span>"; $("#qrTop").hidden = false; $("#qrK").innerHTML = QR_SVG + "<span>Galeria<br>completă</span>"; $("#qrK").hidden = false; }
+try{ const f = localStorage.getItem("activ_f"); if (f) filter = f; }catch(e){}
+stats(); calupuri(); filters(); wall(); inventory();
+if (location.hash === "#ecran") $("#startKiosk").focus();
+</script>

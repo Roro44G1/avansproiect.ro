@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mașina timpului</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.95fr);gap:clamp(16px,2.2vw,44px);min-height:0;padding-bottom:clamp(8px,1vw,18px)}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;min-width:56px;padding:.55em 1.1em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s;touch-action:manipulation;user-select:none}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru)}.btn.accent:hover{background:#efb944}}
+.btn:active{transform:scale(.96)}
+.btn:focus-visible,input[type=range]:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.btn.step{font-family:var(--serif);font-size:1.5em;min-height:64px;min-width:64px;padding:0 .5em;border-radius:18px}
+.btn.jump{background:var(--surf);border-color:var(--line);font-variant-numeric:tabular-nums;flex-direction:column;line-height:1.1;gap:.1em;padding:.4em .9em}
+.btn.jump small{color:var(--ceata);font-weight:500;font-size:.7em}
+.btn.jump[aria-pressed="true"]{border-color:var(--ocru)}
+@media (hover:hover){.btn.jump:hover{border-color:var(--petrol2);background:var(--surf2)}}
+
+/* stânga */
+.left{display:flex;flex-direction:column;gap:clamp(12px,1.4vw,26px);min-height:0}
+.sky{position:relative;border-radius:24px;overflow:hidden;background:var(--surf);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.sky>svg{display:block;width:100%;height:auto}
+.sky .lab{position:absolute;left:14px;bottom:10px;color:var(--ceata);font-size:1em;background:rgba(15,23,32,.7);padding:.25em .7em;border-radius:99px}
+.sky .yr{position:absolute;right:18px;top:12px;font-family:var(--serif);font-weight:700;font-size:clamp(28px,2.6vw,54px);color:var(--var);text-shadow:0 2px 12px rgba(0,0,0,.6);font-variant-numeric:tabular-nums;line-height:1}
+.el{transition:opacity .6s ease,transform .6s ease;transform-origin:bottom;transform-box:fill-box}
+.el.off{opacity:0;transform:translateY(10px) scaleY(.6)}
+#tram{transition:opacity .6s ease}
+#tram.off{opacity:0}
+#tram .mv{animation:ride 9s linear infinite}
+@keyframes ride{from{transform:translateX(80px)}to{transform:translateX(1040px)}}
+.ctl{background:var(--surf);border-radius:22px;padding:clamp(14px,1.4vw,26px) clamp(16px,1.6vw,30px);display:flex;flex-direction:column;gap:clamp(10px,1vw,18px)}
+.yearrow{display:flex;align-items:center;gap:clamp(12px,1.4vw,26px)}
+.yearbig{font-family:var(--serif);font-weight:700;font-size:clamp(56px,6vw,120px);line-height:1;font-variant-numeric:tabular-nums;min-width:4.1ch;text-align:center;flex:none;letter-spacing:-.01em}
+.yearrow .era{color:var(--ceata);flex:1;min-width:0}
+.yearrow .era b{display:block;color:var(--var);font-weight:700;font-size:1.1em}
+.srow{display:flex;align-items:center;gap:clamp(10px,1vw,18px)}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:56px;background:transparent;margin:0;cursor:pointer;touch-action:pan-y;min-width:0}
+input[type=range]::-webkit-slider-runnable-track{height:16px;border-radius:99px;background:linear-gradient(90deg,var(--petrol) var(--p,0%),var(--line) var(--p,0%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:52px;height:52px;border-radius:50%;background:var(--ocru);border:5px solid var(--bg);margin-top:-18px;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+input[type=range]::-moz-range-track{height:16px;border-radius:99px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:16px;border-radius:99px;background:var(--petrol)}
+input[type=range]::-moz-range-thumb{width:42px;height:42px;border-radius:50%;background:var(--ocru);border:5px solid var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.ticks{display:flex;justify-content:space-between;color:var(--ceata);font-size:1em;padding:0 32px;margin-top:-6px;font-variant-numeric:tabular-nums}
+.jumps{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.jumps .lbl{color:var(--ceata);margin-right:.3em}
+
+/* dreapta */
+.panel{background:var(--surf);border-radius:22px;padding:clamp(14px,1.4vw,26px) clamp(16px,1.6vw,30px);display:flex;flex-direction:column;gap:clamp(12px,1.3vw,24px);min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.blk h2{font-family:var(--serif);font-size:1.15em;margin:0 0 .5em;display:flex;align-items:center;gap:.6em;color:var(--var)}
+.blk h2 .n{font-family:var(--sans);font-size:.78em;background:var(--petrol);color:var(--var);border-radius:99px;padding:.15em .7em;font-weight:700;font-variant-numeric:tabular-nums}
+.blk p{margin:0;color:var(--ceata)}
+.blk p b{color:var(--var)}
+.list{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.list li{display:inline-flex;align-items:center;gap:.5em;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.3em .75em;line-height:1.25;animation:pop .4s ease both}
+.list li b{font-family:var(--serif);color:var(--ceata);font-variant-numeric:tabular-nums;font-weight:700}
+.list li.new{border-color:var(--ocru);background:rgba(226,166,43,.12)}
+.list li.new b{color:var(--ocru)}
+.list li.new::after{content:"nou";font-size:.8em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bg);background:var(--ocru);border-radius:99px;padding:.15em .6em}
+@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+.empty{color:var(--ceata);font-style:italic;margin:0}
+.rings{display:flex;gap:8px;margin:0 0 .5em}
+.rings i{width:1.1em;height:1.1em;border-radius:50%;border:2px solid var(--line);display:block;transition:background .4s,border-color .4s}
+.rings i.on{background:var(--petrol);border-color:var(--petrol2)}
+.rings i.half{background:linear-gradient(90deg,var(--petrol) 50%,transparent 50%);border-color:var(--petrol2)}
+.rings i.gone{border-style:dashed;border-color:var(--tigla)}
+.pop{display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap}
+.pop .v{font-family:var(--serif);font-weight:700;font-size:1.7em;color:var(--var);font-variant-numeric:tabular-nums;line-height:1}
+.not{margin:0;padding:0;list-style:none;display:grid;gap:.4em}
+.not li{display:flex;gap:.6em;align-items:flex-start;color:var(--ceata)}
+.not li::before{content:"✕";color:var(--tigla);font-weight:700;flex:none}
+.not li b{color:var(--var);font-weight:600}
+.src{color:var(--ceata);font-style:italic;margin:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.3vw,24px)}
+.two .blk:only-child{grid-column:1/-1}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:700px){.top{display:grid;grid-template-columns:1fr;gap:10px}#play{justify-self:start}}
+@media (max-width:1000px){
+  main{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr}
+  .panel{overflow:visible}
+  .yearrow{flex-wrap:wrap;justify-content:center}
+  .yearrow .era{flex:1 1 100%;text-align:center}
+  .sky .lab{font-size:.7em;left:8px;bottom:6px}
+  .yearbig{font-size:clamp(52px,16vw,90px)}
+  .btn.step{min-width:56px;min-height:56px;font-size:1.3em}
+  .ticks{display:none}
+  .sky .yr{font-size:clamp(22px,7vw,40px)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I11</span><h1>Mașina timpului: ce exista deja în Sibiu?</h1></div>
+    <button class="btn ghost" id="play" type="button" aria-pressed="false">▶ Călătorește prin ani</button>
+  </header>
+
+  <main>
+    <section class="left" aria-label="Alege anul">
+      <div class="sky" id="sky">
+        <span class="yr" id="skyYear" aria-hidden="true">1494</span>
+        <span class="lab">Orizont schematic – fără pretenție de exactitate</span>
+      </div>
+      <div class="ctl">
+        <div class="yearrow">
+          <button class="btn ghost step" id="minus" type="button" aria-label="Un an înapoi">−</button>
+          <div class="yearbig" id="yearBig" aria-live="polite">1494</div>
+          <button class="btn ghost step" id="plus" type="button" aria-label="Un an înainte">+</button>
+          <div class="era" id="era"><b>Secolul al XV-lea</b>Mută cursorul sau apasă pe un an.</div>
+        </div>
+        <div class="srow">
+          <input type="range" id="range" min="1150" max="2026" step="1" value="1494" aria-label="Anul, între 1150 și 2026">
+        </div>
+        <div class="ticks" aria-hidden="true"><span>1150</span><span>1400</span><span>1600</span><span>1800</span><span>2026</span></div>
+        <div class="jumps" role="group" aria-label="Salt rapid la un an">
+          <span class="lbl">Salt la:</span>
+          <button class="btn jump" type="button" data-y="1191">1191<small>atestare</small></button>
+          <button class="btn jump" type="button" data-y="1494">1494<small>farmacie</small></button>
+          <button class="btn jump" type="button" data-y="1788">1788<small>teatru</small></button>
+          <button class="btn jump" type="button" data-y="1905">1905<small>tramvai</small></button>
+          <button class="btn jump" type="button" data-y="2007">2007<small>capitală culturală</small></button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel" aria-label="Ce exista în anul ales">
+      <div class="two">
+        <div class="blk">
+          <h2>Fortificațiile</h2>
+          <div class="rings" id="rings" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p id="fort"></p>
+        </div>
+        <div class="blk" id="popBlk">
+          <h2>Populația</h2>
+          <div class="pop"><span class="v" id="popV"></span><span id="popT"></span></div>
+        </div>
+      </div>
+      <div class="blk">
+        <h2>Nu exista încă</h2>
+        <ul class="not" id="not"></ul>
+        <p class="empty" id="notEmpty" hidden></p>
+      </div>
+      <div class="blk">
+        <h2>Exista deja <span class="n" id="cnt">0</span></h2>
+        <ul class="list" id="list"></ul>
+        <p class="empty" id="listEmpty" hidden></p>
+      </div>
+      <p class="src">Sursa: patrimoniu.sibiu.ro (istorie/premiere și fortificații). Pagina oficială enumeră 38 de premiere; aici sunt folosite 34, fără cele legate de personalități politice. Populația: INS și Recensământul 2021.</p>
+    </aside>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+var MIN=1150,MAX=2026;
+
+/* ---------- Premierele (patrimoniu.sibiu.ro/istorie/premiere; fără cele politice) ---------- */
+var P=[
+ [1292,'primul spital','Nu există încă niciun spital – primul apare în 1292.'],
+ [1376,'prima reglementare a breslelor','Breslele nu au încă un regulament scris – vine în 1376.'],
+ [1380,'prima atestare a unei școli','Nicio școală atestată încă – prima mențiune e din 1380.'],
+ [1494,'prima farmacie','Nicio farmacie – prima se deschide în 1494, în Piața Mare.'],
+ [1525,'prima tipografie din Transilvania','Nicio tipografie – cărțile se copiază de mână până în 1525.'],
+ [1544,'prima carte în limba română','Nicio carte tipărită în română – prima apare în 1544.'],
+ [1555,'prima rachetă în trepte (Conrad Haas)','Conrad Haas nu a descris încă racheta în trepte – o face în 1555.'],
+ [1717,'prima fabrică de bere','Nicio fabrică de bere – prima pornește în 1717.'],
+ [1782,'descoperirea telurului (F. J. Müller)','Telurul nu a fost descoperit – Müller îl identifică în 1782.'],
+ [1786,'bazele viitoarei Facultăți de Teologie „Andrei Șaguna”'],
+ [1788,'prima clădire de teatru','Niciun teatru cu clădire proprie – se deschide în 1788, în Turnul Gros.'],
+ [1793,'prima carte de medicină românească'],
+ [1817,'Muzeul Brukenthal, primul muzeu din România','Muzeul Brukenthal nu e încă deschis publicului – abia din 1817.'],
+ [1853,'„Telegraful Român”, cel mai vechi ziar neîntrerupt din sud-estul Europei','„Telegraful Român” nu a apărut – primul număr e din 1853.'],
+ [1859,'Podul Minciunilor, primul pod din fontă turnată','Nu există Podul Minciunilor – podul de fontă e terminat în 1859.'],
+ [1869,'prima bibliotecă publică românească din Transilvania'],
+ [1872,'Banca Albina, prima bancă cu capital integral românesc'],
+ [1875,'Rieger, prima fabrică de mașini-unelte din Transilvania'],
+ [1886,'prima fabrică de arcuri din România (Iosif Datky)'],
+ [1894,'Păltiniș, prima stațiune montană din România','Păltinișul nu e stațiune – devine prima stațiune montană în 1894.'],
+ [1895,'Muzeul de Istorie Naturală, prima clădire ridicată ca muzeu'],
+ [1896,'Hess, prima fabrică de cântare din România'],
+ [1898,'prima enciclopedie românească'],
+ [1904,'omnibusul electric, primul transport în comun electric fără șine din Transilvania','Niciun vehicul electric de transport în comun – omnibusul electric circulă din 1904, doar câteva luni.'],
+ [1904,'Baia Populară, primul spa din România'],
+ [1905,'prima linie de tramvai electric din Sibiu','Niciun tramvai – prima linie electrică pornește în 1905.'],
+ [1921,'primul meci și prima echipă de handbal din România','Nimeni nu joacă handbal în România – primul meci are loc la Sibiu, în 1921.'],
+ [1923,'clădirea Arhivelor, prima construită pentru patrimoniul arhivistic'],
+ [1929,'prima grădină zoologică din România','Nicio grădină zoologică – prima din România se deschide în 1929.'],
+ [1938,'prima fabrică de frigidere din România (Uzinele Hess)','Niciun frigider fabricat în România – Uzinele Hess încep în 1938.'],
+ [1944,'„Junii Sibiului”, primul ansamblu folcloric din România','„Junii Sibiului” nu există – ansamblul se înființează în 1944.'],
+ [1993,'Muzeul „Franz Binder”, primul de etnografie universală din România'],
+ [2007,'Capitală Culturală Europeană, primul oraș din România și Europa de Est','Sibiul nu e încă Capitală Culturală Europeană – titlul vine în 2007.'],
+ [2019,'Regiune Gastronomică Europeană, primul oraș din România','Sibiul nu e încă Regiune Gastronomică Europeană – titlul vine în 2019.']
+];
+var POP=[[1850,'12.765','populația după domiciliu, 1850'],[1900,'21.465','populația după domiciliu, 1900'],[2021,'134.309','populația rezidentă, Recensământul 2021']];
+
+function roman(n){var m=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']],s='';m.forEach(function(p){while(n>=p[0]){s+=p[1];n-=p[0];}});return s;}
+function century(y){var c=Math.floor((y-1)/100)+1;return 'Secolul al '+roman(c)+'-lea';}
+
+function fort(y){
+  if(y<1191)return {t:'Nicio fortificație consemnată în fișă: suntem înainte de prima atestare documentară a Sibiului (1191).',r:[0,0,0,0]};
+  if(y<=1224)return {t:'Se ridică prima incintă (1191–1224), în jurul Bisericii Sf. Maria – actuala Piața Huet.',r:[.5,0,0,0]};
+  if(y<=1241)return {t:'A doua incintă e în construcție (1224–1241): cuprinde actuala Piața Mică.',r:[1,.5,0,0]};
+  if(y<1357)return {t:'Două incinte de ziduri apără nucleul Orașului de Sus. A treia va fi începută în 1357.',r:[1,1,0,0]};
+  if(y<=1366)return {t:'A treia incintă e în construcție (1357–1366), în jurul Orașului de Sus; se ridică turnurile Archebuzierilor și Dulgherilor.',r:[1,1,.5,0]};
+  if(y<1457)return {t:'Trei incinte de ziduri. Orașul de Jos e încă în afara fortificațiilor – va fi cuprins în 1457.',r:[1,1,1,0]};
+  if(y<1551)return {t:'Patru incinte: din 1457 și Orașul de Jos e inclus în centura de fortificații. În total, de-a lungul istoriei, cetatea a avut 39 de turnuri.',r:[1,1,1,1]};
+  if(y<1622)return {t:'Patru incinte, iar odată cu epoca artileriei apar bastioanele: Bastionul Haller e început în 1551.',r:[1,1,1,1]};
+  if(y<1830)return {t:'Patru incinte și bastioane din epoca artileriei: Haller (început 1551), Soldisch (1622–1629). Porțile principale: Cisnădiei, Ocnei, Turnului, Elisabeta.',r:[1,1,1,1]};
+  if(y<1899)return {t:'Demolări sistematice (1830–1898): dispar porți, bastioane și peste 20 de turnuri; până în 1886 dispar ultimele ziduri din Orașul de Jos.',r:[1,1,1,y<1886?.5:-1]};
+  return {t:'Rămân fragmente din cele trei inele vechi și turnurile păstrate: Archebuzierilor, Olarilor, Dulgherilor, Pielarilor, Pulberăriei, Scărilor.',r:[1,1,1,-1]};
+}
+
+/* ---------- Orizontul schematic (SVG) ---------- */
+var VAR='#F3EFE6',CE='#A9B4C0',PE='#0E7C86',OC='#E2A62B',TI='#B9583A',BG='#1B2733',DK='#0F1720';
+function g(id,from,to,inner){return '<g class="el" id="'+id+'" data-from="'+from+'"'+(to?' data-to="'+to+'"':'')+'>'+inner+'</g>';}
+function tower(x,w,h,roofH,oct){var top=300-h;return '<rect x="'+x+'" y="'+top+'" width="'+w+'" height="'+h+'" fill="'+VAR+'"/>'+'<polygon points="'+(x-4)+','+top+' '+(x+w+4)+','+top+' '+(x+w/2)+','+(top-roofH)+'" fill="'+CE+'"/>'+(oct?'<path d="M'+(x+w*.35)+' '+top+' V300 M'+(x+w*.65)+' '+top+' V300" stroke="rgba(15,23,32,.3)" stroke-width="2"/>':'')+'<rect x="'+(x+w/2-2)+'" y="'+(top+h*.35)+'" width="4" height="12" fill="'+BG+'"/>';}
+function wall(x1,x2,h,cren){var y=300-h,s='<rect x="'+x1+'" y="'+y+'" width="'+(x2-x1)+'" height="'+h+'" fill="'+VAR+'" opacity=".9"/>';if(cren)for(var x=x1;x<x2-6;x+=16)s+='<rect x="'+x+'" y="'+(y-7)+'" width="8" height="7" fill="'+VAR+'" opacity=".9"/>';return s;}
+function skyline(){
+  var s='<svg viewBox="170 60 860 300" role="img" aria-label="Orizont schematic al Sibiului, care se schimbă cu anul ales" xmlns="http://www.w3.org/2000/svg">';
+  s+='<rect x="170" y="60" width="860" height="300" fill="'+BG+'"/>';
+  s+='<g fill="'+VAR+'" opacity=".5"><circle cx="90" cy="50" r="2"/><circle cx="330" cy="30" r="1.6"/><circle cx="640" cy="60" r="1.8"/><circle cx="1010" cy="40" r="1.5"/><circle cx="460" cy="90" r="1.3"/><circle cx="820" cy="22" r="1.4"/></g>';
+  s+='<circle cx="760" cy="104" r="30" fill="'+OC+'" opacity=".9"/><circle cx="774" cy="95" r="26" fill="'+BG+'"/>';
+  /* dealuri + Dumbrava (fundal, mereu) */
+  s+='<path d="M0 300 Q150 250 320 275 T700 268 T1200 285 V360 H0Z" fill="#162230"/>';
+  s+='<g fill="#13343a">'+[980,998,1016,1032].map(function(x,i){return '<polygon points="'+(x-12)+',300 '+x+','+(266+i*3)+' '+(x+12)+',300"/>';}).join('')+'</g>';
+  /* 1970: blocuri (cartierele anilor 1970), în fundal */
+  s+=g('blocuri',1970,0,'<g fill="#2b3b4b">'+[172,196,220].map(function(x,i){return '<rect x="'+x+'" y="'+(218+i*12)+'" width="20" height="'+(82-i*12)+'"/>';}).join('')+'<rect x="1000" y="236" width="18" height="64"/><rect x="1022" y="250" width="16" height="50"/></g><g fill="'+OC+'" opacity=".7"><rect x="178" y="230" width="4" height="5"/><rect x="186" y="246" width="4" height="5"/><rect x="202" y="244" width="4" height="5"/><rect x="1006" y="246" width="4" height="5"/><rect x="1026" y="262" width="4" height="5"/></g>');
+  /* 1191: biserica (sec. XII) + incinta I */
+  s+=g('church',1191,0,'<rect x="560" y="240" width="60" height="60" fill="'+VAR+'"/><polygon points="556,240 624,240 590,214" fill="'+CE+'"/><rect x="574" y="226" width="12" height="14" fill="'+VAR+'"/><polygon points="572,226 588,226 580,212" fill="'+CE+'"/><path d="M580 206 v-10 M575 200 h10" stroke="'+VAR+'" stroke-width="2"/>'+wall(520,660,26,true));
+  /* 1224: incinta II */
+  s+=g('ring2',1224,0,wall(470,520,32,true)+wall(660,720,32,true)+tower(462,16,54,10)+tower(718,16,54,10));
+  /* sec. XIV (1350): turnul Catedralei Evanghelice (73 m) */
+  s+=g('cath',1350,0,'<rect x="596" y="150" width="26" height="150" fill="'+VAR+'"/><polygon points="590,150 628,150 609,98" fill="'+CE+'"/><rect x="604" y="168" width="10" height="20" rx="5" fill="'+BG+'"/><rect x="604" y="212" width="10" height="20" rx="5" fill="'+BG+'"/><circle cx="609" cy="94" r="3" fill="'+OC+'"/>');
+  /* 1357: incinta III cu turnuri (Archebuzierilor, Dulgherilor) + porți (demolate 1830) */
+  s+=g('ring3',1357,0,wall(330,470,38,true)+wall(720,860,38,true)+tower(318,30,98,20,true)+tower(858,28,104,26,true));
+  s+=g('gates',1357,1830,tower(395,36,70,16)+'<path d="M405 300 V282 a8 8 0 0 1 16 0 V300Z" fill="'+BG+'"/>'+tower(770,36,70,16)+'<path d="M780 300 V282 a8 8 0 0 1 16 0 V300Z" fill="'+BG+'"/>');
+  /* sec. XV: Turnul Olarilor (1450), Pielarilor (1450) */
+  s+=g('olar',1450,0,tower(250,26,80,14));
+  /* 1457: incinta IV – Orașul de Jos (ziduri demolate până în 1886) */
+  s+=g('ring4',1457,1886,wall(190,300,22,true)+wall(886,990,22,true)+tower(188,14,40,8)+tower(988,14,40,8));
+  s+=g('piel',1450,0,tower(905,22,74,14,true));
+  s+=g('pulb',1500,0,'<rect x="940" y="262" width="26" height="38" rx="2" fill="'+VAR+'"/><path d="M936 262 Q953 236 970 262Z" fill="'+CE+'"/>');
+  /* 1551: Bastionul Haller; 1622: Soldisch */
+  s+=g('haller',1551,0,'<path d="M196 300 V268 L226 258 L256 268 V300Z" fill="'+VAR+'" opacity=".95"/>');
+  s+=g('soldisch',1622,0,'<path d="M262 300 V272 L290 262 L318 272 V300Z" fill="'+VAR+'" opacity=".95"/>');
+  /* 1788: teatrul în Turnul Gros (bastion sec. XVI) */
+  s+=g('gros',1550,0,'<path d="M690 300 V256 Q716 244 742 256 V300Z" fill="'+VAR+'"/><rect x="700" y="268" width="6" height="10" fill="'+BG+'"/><rect x="726" y="264" width="6" height="10" fill="'+BG+'"/>');
+  s+=g('teatru',1788,0,'<path d="M716 244 v-18" stroke="'+VAR+'" stroke-width="2"/><path d="M716 226 h20 l-6 6 6 6 h-20z" fill="'+OC+'"/>');
+  /* 1817: Palatul Brukenthal (muzeu) */
+  s+=g('bruk',1817,0,'<rect x="490" y="250" width="70" height="50" fill="'+VAR+'"/><rect x="486" y="244" width="78" height="6" fill="'+CE+'"/>'+[498,514,530,546].map(function(x){return '<rect x="'+x+'" y="260" width="8" height="14" fill="'+BG+'"/><rect x="'+x+'" y="282" width="8" height="12" fill="'+BG+'"/>';}).join('')+'<rect x="520" y="230" width="10" height="14" fill="'+VAR+'"/>');
+  /* 1859: Podul Minciunilor (fontă) */
+  s+=g('pod',1859,0,'<path d="M972 292 H1030" stroke="'+TI+'" stroke-width="4"/><path d="M976 292 Q1001 268 1026 292" stroke="'+TI+'" stroke-width="4" fill="none"/><path d="M988 292 V279 M1001 292 V276 M1014 292 V279" stroke="'+TI+'" stroke-width="2"/>');
+  /* 1906: Catedrala Ortodoxă (cupole) */
+  s+=g('orto',1906,0,'<rect x="380" y="256" width="64" height="44" fill="'+VAR+'"/><path d="M392 256 a20 20 0 0 1 40 0Z" fill="'+CE+'"/><rect x="384" y="236" width="12" height="20" fill="'+VAR+'"/><rect x="428" y="236" width="12" height="20" fill="'+VAR+'"/><path d="M384 236 a6 6 0 0 1 12 0Z M428 236 a6 6 0 0 1 12 0Z" fill="'+CE+'"/><path d="M412 236 v-8 M408 232 h8" stroke="'+OC+'" stroke-width="2"/>');
+  /* 2007: Capitală Culturală Europeană – steluțe */
+  s+=g('ccce',2007,0,'<g fill="'+OC+'">'+[0,1,2,3,4,5,6,7,8,9,10,11].map(function(i){var a=i/12*Math.PI*2,x=250+Math.cos(a)*26,y=130+Math.sin(a)*26;return '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.6"/>';}).join('')+'</g>');
+  /* sol */
+  s+='<rect x="0" y="300" width="1200" height="60" fill="'+PE+'" opacity=".35"/><path d="M0 300 H1200" stroke="'+PE+'" stroke-width="3"/>';
+  /* 1905–1967: tramvaiul (se mișcă) */
+  s+='<g id="tram" data-from="1905" data-to="1967"><path d="M170 318 H1030" stroke="'+CE+'" stroke-width="1.5" opacity=".5"/><g class="mv"><rect x="0" y="296" width="80" height="24" rx="5" fill="'+OC+'"/><rect x="8" y="301" width="14" height="10" fill="'+DK+'"/><rect x="28" y="301" width="14" height="10" fill="'+DK+'"/><rect x="48" y="301" width="14" height="10" fill="'+DK+'"/><circle cx="18" cy="322" r="4" fill="'+DK+'"/><circle cx="62" cy="322" r="4" fill="'+DK+'"/><path d="M40 296 V286 L52 282" stroke="'+CE+'" stroke-width="2" fill="none"/></g></g>';
+  return s+'</svg>';
+}
+$('sky').insertAdjacentHTML('afterbegin',skyline());
+var ELS=Array.prototype.slice.call(document.querySelectorAll('#sky [data-from]'));
+
+/* ---------- Randare ---------- */
+var year=1494,playing=false,playT=null;
+function setRange(y){var r=$('range');r.value=y;r.style.setProperty('--p',((y-MIN)/(MAX-MIN)*100)+'%');}
+function render(y,anim){
+  year=y;
+  $('yearBig').textContent=y;$('skyYear').textContent=y;setRange(y);
+  var eraTxt=y<1191?'Înainte de prima atestare documentară a Sibiului (1191).':y===1191?'Prima atestare documentară: Cibinium.':y>=2000?'Sibiul de azi.':'Mută cursorul sau apasă pe un an.';
+  $('era').innerHTML='<b></b>';$('era').querySelector('b').textContent=century(y);$('era').appendChild(document.createTextNode(eraTxt));
+  document.querySelectorAll('.btn.jump').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.y===y));});
+  /* orizont */
+  ELS.forEach(function(el){var f=+el.dataset.from,t=el.dataset.to?+el.dataset.to:Infinity;el.classList.toggle('off',!(y>=f&&y<t));});
+  /* existau deja */
+  var have=P.filter(function(p){return p[0]<=y;}),ul=$('list');ul.innerHTML='';
+  $('cnt').textContent=have.length;
+  have.slice().reverse().forEach(function(p,i){
+    var li=document.createElement('li');if(y-p[0]<=30)li.className='new';
+    if(!anim)li.style.animation='none';
+    var b=document.createElement('b');b.textContent=p[0];var s=document.createElement('span');
+    s.textContent=p[1]+(p[0]===1905&&y>=1967?' (în oraș a circulat până în 1966–1967)':'');
+    li.appendChild(b);li.appendChild(s);ul.appendChild(li);
+  });
+  var le=$('listEmpty');le.hidden=have.length>0;
+  le.textContent=y<1191?'Nicio informație în fișă pentru acest an: Sibiul e atestat documentar abia în 1191.':'Niciuna dintre premierele din listă nu a avut loc încă. Prima vine în 1292.';
+  /* fortificații */
+  var f=fort(y);$('fort').textContent=f.t;
+  Array.prototype.forEach.call($('rings').children,function(i,k){var v=f.r[k];i.className=v===1?'on':v===.5?'half':v===-1?'gone':'';});
+  /* populație */
+  var pop=null;POP.forEach(function(p){if(p[0]<=y)pop=p;});
+  $('popBlk').hidden=!pop;
+  if(pop){$('popV').textContent=pop[1];$('popT').textContent=pop[2]+(pop[0]===y?'':' – cel mai apropiat recensământ din fișă');}
+  /* nu exista încă */
+  var nxt=P.filter(function(p){return p[0]>y;}),nl=$('not');nl.innerHTML='';
+  var fun=nxt.filter(function(p){return p[2];}).slice(0,3);
+  if(fun.length<3)fun=fun.concat(nxt.filter(function(p){return !p[2];}).slice(0,3-fun.length)).sort(function(a,b){return a[0]-b[0];});
+  fun.forEach(function(p){var li=document.createElement('li');var sp=document.createElement('span');
+    if(p[2]){var parts=p[2].split(' – ');var b=document.createElement('b');b.textContent=parts[0];sp.appendChild(b);if(parts[1])sp.appendChild(document.createTextNode(' – '+parts.slice(1).join(' – ')));}
+    else{sp.textContent='Nu există încă: '+p[1]+' – abia din '+p[0]+'.';}
+    li.appendChild(sp);nl.appendChild(li);});
+  var ne=$('notEmpty');ne.hidden=nxt.length>0;ne.textContent='Lista de premiere din fișă se încheie cu anul 2019. Ce urmează scrii tu.';
+}
+function go(y){y=Math.max(MIN,Math.min(MAX,y));render(y,true);}
+$('range').addEventListener('input',function(){render(+this.value,false);});
+$('minus').addEventListener('click',function(){stopPlay();go(year-1);});
+$('plus').addEventListener('click',function(){stopPlay();go(year+1);});
+document.querySelectorAll('.btn.jump').forEach(function(b){b.addEventListener('click',function(){stopPlay();go(+b.dataset.y);});});
+/* apăsare lungă pe ± */
+['minus','plus'].forEach(function(id){var t=null,d=id==='plus'?1:-1;function stop(){clearTimeout(t);clearInterval(t);t=null;}
+  $(id).addEventListener('pointerdown',function(){stop();t=setTimeout(function(){t=setInterval(function(){go(year+d*5);},120);},500);});
+  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){$(id).addEventListener(ev,stop);});});
+function stopPlay(){playing=false;clearInterval(playT);$('play').textContent='▶ Călătorește prin ani';$('play').setAttribute('aria-pressed','false');}
+$('play').addEventListener('click',function(){
+  if(playing){stopPlay();return;}
+  playing=true;$('play').textContent='⏸ Oprește';$('play').setAttribute('aria-pressed','true');
+  if(year>=MAX)render(MIN,false);
+  playT=setInterval(function(){var step=year<1280?3:year<1850?2:1;if(year+step>=MAX){render(MAX,true);stopPlay();}else render(year+step,false);},70);
+});
+document.addEventListener('keydown',function(e){if(document.activeElement===$('range'))return;if(e.key==='ArrowRight'){go(year+1);e.preventDefault();}else if(e.key==='ArrowLeft'){go(year-1);e.preventDefault();}else if(e.key==='PageUp'){go(year+50);}else if(e.key==='PageDown'){go(year-50);}});
+render(1494,true);
+window.__tm={go:go,year:function(){return year;},count:function(){return P.length;}};
+})();
+</script>
+</body>
+</html>

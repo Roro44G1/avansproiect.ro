@@ -1,0 +1,75 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M10</title></head><body>
+<script src="lib.js"></script>
+<script>
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const CX = 760, CY = 560;
+// incinte: [rx, ry, dx, dy, culoare, an-start, an-fin, etichetă, t_start, t_end]
+const RINGS = [
+  [120, 85, -40, -60, '#E2A62B', 1191, 1224, 'Incinta I · în jurul Bisericii Sf. Maria (Piața Huet)', 2.5, 7],
+  [230, 160, 20, -20, '#B9583A', 1224, 1241, 'Incinta a II-a · cuprinde actuala Piața Mică', 7.5, 12],
+  [390, 265, 40, 30, '#0E7C86', 1357, 1366, 'Incinta a III-a · în jurul Orașului de Sus', 12.5, 18],
+  [520, 360, -20, 90, '#6E56CF', 1457, 1457, 'Incinta a IV-a · Orașul de Jos inclus în fortificații', 18.5, 24],
+];
+const R = rng(5);
+function ring(rx, ry, dx, dy, prog, col, towers) {
+  const n = 180, x0 = CX + dx, y0 = CY + dy;
+  ctx.save();
+  ctx.strokeStyle = col; ctx.lineWidth = 10; ctx.lineCap = 'round';
+  ctx.beginPath();
+  for (let i = 0; i <= n * prog; i++) {
+    const a = -Math.PI / 2 + i / n * Math.PI * 2;
+    const w = 1 + 0.06 * Math.sin(a * 5) + 0.04 * Math.cos(a * 3);
+    const x = x0 + Math.cos(a) * rx * w, y = y0 + Math.sin(a) * ry * w;
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
+  ctx.stroke();
+  ctx.strokeStyle = rgba('#F3EFE6', .5); ctx.lineWidth = 2; ctx.setLineDash([6, 8]); ctx.stroke(); ctx.setLineDash([]);
+  // turnuri
+  for (let k = 0; k < towers; k++) {
+    const f = (k + .5) / towers; if (f > prog) break;
+    const a = -Math.PI / 2 + f * Math.PI * 2;
+    const w = 1 + 0.06 * Math.sin(a * 5) + 0.04 * Math.cos(a * 3);
+    const x = x0 + Math.cos(a) * rx * w, y = y0 + Math.sin(a) * ry * w;
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, 11, 0, 7); ctx.fill();
+    ctx.fillStyle = '#F3EFE6'; ctx.beginPath(); ctx.arc(x, y, 4, 0, 7); ctx.fill();
+  }
+  ctx.restore();
+}
+window.render = function (t) {
+  ctx.fillStyle = '#0F1720'; ctx.fillRect(0, 0, W, H);
+  // pergament
+  const g = ctx.createRadialGradient(CX, CY, 80, CX, CY, 700); g.addColorStop(0, '#2A3442'); g.addColorStop(1, '#141C26'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(169,180,192,.08)'; ctx.lineWidth = 1; for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  // Cibin la nord (sus)
+  ctx.strokeStyle = rgba('#5EA8E8', .6); ctx.lineWidth = 14; ctx.beginPath(); ctx.moveTo(0, 120); ctx.bezierCurveTo(400, 60, 900, 180, 1500, 110); ctx.stroke();
+  text(ctx, 'râul Cibin', 1300, 90, { size: 22, color: '#5EA8E8' });
+  // biserica în centru
+  ctx.fillStyle = '#E9DCC3'; ctx.fillRect(CX - 70, CY - 95, 60, 60); ctx.fillStyle = '#5B3A2E'; ctx.beginPath(); ctx.moveTo(CX - 78, CY - 95); ctx.lineTo(CX - 40, CY - 175); ctx.lineTo(CX - 2, CY - 95); ctx.fill();
+  text(ctx, 'Biserica Sf. Maria', CX - 40, CY - 20, { size: 18, align: 'center', color: PAL.ceata });
+  let year = 1191, label = '', lcol = PAL.var;
+  RINGS.forEach(([rx, ry, dx, dy, col, y0, y1, lab, a, b], i) => {
+    const p = easeInOut(inv(a, b - 1.2, t));
+    if (p > 0) ring(rx, ry, dx, dy, p, col, [6, 8, 12, 13][i]);
+    if (t >= a && t < b + .5) { year = Math.round(lerp(y0, y1, p)); label = lab; lcol = col; }
+    if (t >= b + .5) year = Math.max(year, y1);
+  });
+  if (t > 24.5) { const p = inv(24.5, 28, t); year = Math.round(lerp(1457, 1898, p)); label = 'Secolul al XIX-lea · demolări 1830–1898: porți, bastioane și peste 20 de turnuri'; lcol = PAL.red;
+    ctx.save(); ctx.globalAlpha = p * .72; ctx.fillStyle = '#141C26'; ctx.fillRect(0, 140, 1300, H - 200); ctx.restore();
+    ctx.save(); ctx.globalAlpha = p; ctx.strokeStyle = PAL.red; ctx.lineWidth = 5; ctx.setLineDash([14, 14]); ctx.beginPath(); ctx.ellipse(CX - 20, CY + 90, 560, 390, 0, 0, 7); ctx.stroke(); ctx.restore();
+    text(ctx, 'ziduri, porți și turnuri demolate', CX - 20, CY + 90, { size: 34, align: 'center', color: PAL.red, alpha: p, weight: 700 });
+  }
+  // panou dreapta
+  chip(ctx, 'VIDEO · M10', 1340, 110, PAL.red);
+  serif(ctx, 'Cetatea care crește', 1340, 210, { size: 54 });
+  text(ctx, 'patru incinte de fortificații, strat cu strat', 1340, 258, { size: 28, color: PAL.ceata });
+  serif(ctx, String(year), 1340, 430, { size: 150, color: lcol });
+  text(ctx, label, 1340, 500, { size: 32, maxW: 520, lh: 44 });
+  const ia = 1 - smooth(2, 2.6, t);
+  if (ia > 0) text(ctx, 'Hartă schematică, nu la scară. Pozițiile sunt aproximative.', 1340, 500, { size: 30, maxW: 520, lh: 42, alpha: ia, color: PAL.ceata });
+  const ea = smooth(28.3, 29.3, t);
+  if (ea > 0) { ctx.fillStyle = `rgba(15,23,32,${.88 * ea})`; ctx.fillRect(0, 0, W, H); serif(ctx, 'Cetatea care crește', W / 2, H / 2 - 40, { size: 84, align: 'center', alpha: ea }); text(ctx, 'Animație schematică generată cu AI · date: patrimoniu.sibiu.ro (Fortificațiile Sibiului – evoluția în timp)', W / 2, H / 2 + 40, { size: 28, align: 'center', color: PAL.ceata, alpha: ea }); text(ctx, 'Azi se păstrează, între altele, turnurile Archebuzierilor, Olarilor, Dulgherilor, Pielarilor, Pulberăriei și Scărilor.', W / 2, H / 2 + 90, { size: 26, align: 'center', color: PAL.ceata, alpha: ea }); }
+  text(ctx, 'Sursa: patrimoniu.sibiu.ro (Fortificațiile Sibiului)', 1340, 960, { size: 20, color: 'rgba(169,180,192,.7)' });
+  footer(ctx, W, H, 'M10');
+};
+window.READY = true;
+</script></body></html>

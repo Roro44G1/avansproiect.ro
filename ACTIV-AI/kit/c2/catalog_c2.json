@@ -1,0 +1,425 @@
+[
+ {
+  "cod": "V21",
+  "categorie": "Vizual",
+  "titlu": "Prima farmacie (1494) — interior reconstituit AI, cu rafturi de borcane și ierburi",
+  "fisiere": [
+   "c2/01_vizual/V21_card_canva.png",
+   "c2/01_vizual/canva_miniaturi/V21_prima_farmacie_1494.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Farmacie orășenească din Transilvania, sfârșitul secolului al XV-lea, imaginată: încăpere boltită, rafturi de stejar cu borcane de lemn și sticluțe, ierburi uscate, mojar de bronz, balanță de alamă, rețete pe pergament, lumânare. Fără persoane, fără text. Prima farmacie (1494, Piața Mare) nu are imagini păstrate: reconstituire liberă.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXPWLhd10",
+    "url": "https://www.canva.com/M/MAHXPWLhd10",
+    "eticheta": "interior imaginat, stil ilustrație istorică"
+   }
+  ],
+  "nota": "Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs",
+  "calup": 2,
+  "g_img": "assets/img/V21.jpg",
+  "g_th": "assets/th/V21.jpg"
+ },
+ {
+  "cod": "V22",
+  "categorie": "Vizual",
+  "titlu": "Racheta în trepte din manuscrisul lui Conrad Haas — ilustrație tehnică AI în stil de gravură veche",
+  "fisiere": [
+   "c2/01_vizual/V22_card_canva.png",
+   "c2/01_vizual/canva_miniaturi/V22_racheta_haas.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Gravură din secolul al XVI-lea, pe hârtie îngălbenită: rachetă cu trei trepte suprapuse, ajutaje în formă de clopot, aripioare triunghiulare, secțiune cu camerele interioare, o rachetă în două trepte alături. Nu reproduce desenele reale din manuscris; preia doar elementele descrise în fișa de fapte.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXPT5hKmI",
+    "url": "https://www.canva.com/M/MAHXPT5hKmI",
+    "eticheta": "interpretare liberă, stil gravură"
+   }
+  ],
+  "nota": "Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs",
+  "calup": 2,
+  "g_img": "assets/img/V22.jpg",
+  "g_th": "assets/th/V22.jpg"
+ },
+ {
+  "cod": "M12",
+  "categorie": "Video",
+  "titlu": "Sibiul primelor: 10 premiere în 60 de secunde — animație AI cu cronologie",
+  "fisiere": [
+   "c2/02_video/M12_sibiul_primelor.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică: A04 „Ochi de țiglă” – instrumental original (sinteză procedurală, din expoziție)",
+  "descriere": "O cronologie animată care trece, în puțin peste un minut, prin zece premiere sibiene: de la primul spital (1292) și prima farmacie (1494) la Muzeul Brukenthal (1817), tramvaiul electric (1905) și titlul de Capitală Culturală Europeană (2007). Fiecare an vine cu o pictogramă desenată în cod și cu formularea „conform sursei”.",
+  "status": "realizat",
+  "durata_s": 62.0,
+  "nota": "Fapte: patrimoniu.sibiu.ro (Premiere) pentru 9 dintre cele 10 premiere; tramvaiul din 1905 provine din patrimoniu.sibiu.ro (Tramvaiul) și este prezentat ca „prima linie de tramvai electric din Sibiu”, nu ca premieră națională (cartela finală o spune explicit). Detaliile suplimentare (25 de meserii în 19 bresle; „farmacia orașului” în Piața Mare; Catehismul luteran; Turnul Gros) sunt din fișa de fapte. Pictogramele sunt simboluri desenate în cod, nu reproduceri ale monumentelor; intervalele de pe linia timpului nu sunt la scară. Sursă HTML: _tools/video/M12_sibiul_primelor.html.",
+  "calup": 2,
+  "g_video": "assets/vid/M12.mp4",
+  "g_img": "assets/img/M12.jpg",
+  "g_vertical": false,
+  "g_th": "assets/th/M12.jpg"
+ },
+ {
+  "cod": "M13",
+  "categorie": "Video",
+  "titlu": "Povestea primului muzeu din România — video animat AI despre colecția Brukenthal",
+  "fisiere": [
+   "c2/02_video/M13_primul_muzeu.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică: A03 „Dimineață în cartier” – peisaj sonor sintetizat (din expoziție)",
+  "descriere": "Povestea Muzeului Brukenthal în șapte scene cu text pe ecran: Samuel von Brukenthal (1721–1803), guvernator al Transilvaniei 1777–1787, palatul din Piața Mare, colecțiile vizitabile din jurul lui 1790, deschiderea publică din 1817, cifrele colecțiilor și locul de odihnă din Catedrala Evanghelică.",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "Fapte: fișa de fapte (Monumente – Muzeul Brukenthal; Muzeul Brukenthal – completări; Catedrala Evanghelică), după patrimoniu.sibiu.ro și en.wikipedia.org. Fără voce: naratorul este text pe ecran. Tablourile sunt rame goale cu dreptunghiuri colorate (nu reproduc opere reale); portretul este o siluetă stilizată; palatul și catedrala sunt scheme, nu la scară. Sursă HTML: _tools/video/M13_primul_muzeu.html.",
+  "calup": 2,
+  "g_video": "assets/vid/M13.mp4",
+  "g_img": "assets/img/M13.jpg",
+  "g_vertical": false,
+  "g_th": "assets/th/M13.jpg"
+ },
+ {
+  "cod": "M14",
+  "categorie": "Video",
+  "titlu": "Primul tramvai electric din Sibiu (1905) — reconstituire animată AI",
+  "fisiere": [
+   "c2/02_video/M14_primul_tramvai.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: A12 „Coloana sonoră a primului tramvai” – reconstituire sonoră sintetizată (din acest calup)",
+  "descriere": "Un tramvai stilizat pleacă din Piața Gării spre Parcul Sub Arini în 1905, iar pe o schemă a rețelei apar, an de an, prelungirile: Dumbrava (1910), Piața Cibin (1912), parcul de 14 vagoane cu 30 de locuri (1925), Turnișor și Piața Cluj (1927), Rășinari (1948), până la dispariția tramvaiului din oraș în 1966–1967.",
+  "status": "realizat",
+  "durata_s": 50.0,
+  "nota": "Fapte: fișa de fapte (Tramvaiul), după patrimoniu.sibiu.ro, tursib.ro, turnulsfatului.ro (2015), tribuna.ro. Data inaugurării: pe ecran apare „1905” mare; cartela finală precizează 8 septembrie 1905 (patrimoniu.sibiu.ro) și 9 august 1905 (tribuna.ro). Vagonul este stilizat (culori sobre, fără siglă reală); străzile și schema rețelei sunt imaginate și nu sunt la scară. Sursă HTML: _tools/video/M14_primul_tramvai.html.",
+  "calup": 2,
+  "g_video": "assets/vid/M14.mp4",
+  "g_img": "assets/img/M14.jpg",
+  "g_vertical": false,
+  "g_th": "assets/th/M14.jpg"
+ },
+ {
+  "cod": "L19",
+  "categorie": "Literar",
+  "titlu": "Interviu imaginar cu Conrad Haas despre racheta descrisă în manuscrisul său",
+  "fisiere": [
+   "c2/03_literar/L19_interviu_conrad_haas.md"
+  ],
+  "tip": "text",
+  "instrument": "Claude (Anthropic) – text",
+  "descriere": "„Trei trepte și un sfat de pace” – un elev-reporter fictiv din 2026 stă de vorbă cu Conrad Haas, șeful arsenalului din Sibiu, despre racheta în două și trei trepte din manuscrisul său, despre aripioarele delta și ajutajele în formă de clopot, și îi dă vestea că manuscrisul a fost regăsit abia în 1961.",
+  "status": "realizat",
+  "nota": "Ficțiune declarată în text: Conrad Haas (1509–1576) nu putea fi intervievat; toate replicile sunt inventate, iar reporterul Andrei este personaj fictiv. Faptele (venirea la Sibiu în 1551, manuscris în germană de circa 450 de pagini redactat 1529–1569, trepte cu aprindere succesivă, aripioare triunghiulare, ajutaje în formă de clopot, amestecuri de combustibil, desene de asamblare, cota Varia II 374 la Arhivele Naționale Sibiu, redescoperirea din 1961 de Doru Todericiu, Siemienowicz 1650) provin din fapte_verificate.md și sunt separate de ficțiune în nota „Ce e real”. Îndemnul la pace este parafrazat, nu citat. Formularea „1555 – prima rachetă în trepte” este atribuită explicit paginii patrimoniu.sibiu.ro. Corpul interviului: aproximativ 775 de cuvinte.",
+  "extras": "Haas: Ce e cutia aceea neagră? Lucește ca o oglindă și nu are nici fitil, nici încuietoare.\nHaas: Dar nu scrieți „primul din lume” prea apăsat. Lumea e mare și eu n-am citit tot ce s-a scris în ea.\nHaas: Atunci poate că nu sunt chiar atât de vechi. Acum arată-mi avionul acela.",
+  "calup": 2,
+  "html": "<h1 id=\"trei-trepte-și-un-sfat-de-pace\">Trei trepte și un sfat de pace</h1>\n<p><em>Tema: Interviu imaginar cu Conrad Haas despre racheta descrisă în manuscrisul său · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p><strong>Ficțiune declarată.</strong> Conrad Haas (1509–1576) a murit cu patru secole și jumătate înainte de acest interviu. Replicile lui sunt inventate, la fel și elevul-reporter Andrei (personaj fictiv) și întâlnirea dintre ei, imaginată la arsenalul cetății, în jurul anului 1569. Faptele despre viața lui Haas și despre manuscris provin din fișa de fapte verificate (en.wikipedia; old.tribuna.ro; patrimoniu.sibiu.ro) și sunt separate de ficțiune în nota „Ce e real” de la final. Nu există niciun citat autentic din Haas în text: îndemnul la pace este parafrazat.</p>\n</blockquote>\n<hr />\n<p><em>Să ne închipuim că un elev de liceu din 2026, Andrei, primește o oră de vorbă cu șeful arsenalului din Hermannstadt. Nimeni nu știe cum s-a întâmplat. Nici el.</em></p>\n<p><strong>Reporterul:</strong> Domnule Haas, vă mulțumesc că ați acceptat. Pot să înregistrez? <em>(scoate telefonul)</em></p>\n<p><strong>Haas:</strong> Ce e cutia aceea neagră? Lucește ca o oglindă și nu are nici fitil, nici încuietoare.</p>\n<p><strong>Reporterul:</strong> E un telefon. Ține minte ce vorbim și poate trimite vorbele oriunde în lume, într-o clipă.</p>\n<p><strong>Haas:</strong> Fără cal? Fără călăreț? Hm. La arsenal avem oameni care duc vești călare, cu schimb de cai, și tot le ia zile. Orice ar fi cutia aceea, ține-o departe de butoaiele cu pulbere.</p>\n<p><strong>Reporterul:</strong> Promit. Să începem cu începutul: cum ați ajuns la Sibiu?</p>\n<p><strong>Haas:</strong> M-am născut, după câte știu, la Dornbach, lângă Viena, în 1509. Am învățat meseria armelor în oastea împăratului și am ajuns Zeugwart, adică omul care răspunde de tunuri, de pulbere și de tot ce bubuie. În 1551 am fost trimis aici, la Hermannstadt, ca inginer de armament. De atunci sunt șeful arsenalului cetății. Țin socoteala la fiecare ghiulea.</p>\n<p><strong>Reporterul:</strong> Și, printre ghiulele, ați scris o carte.</p>\n<p><strong>Haas:</strong> Nu i-aș spune carte. E un caiet gros, în germană, în care am adunat ce am învățat și ce am încercat. Am început să notez de tânăr și tot adaug. Când o să număr paginile, cred că trec de patru sute.</p>\n<p><strong>Reporterul:</strong> Circa 450, spun cei care l-au studiat. Și l-ați scris între 1529 și 1569.</p>\n<p><strong>Haas:</strong> Atunci voi știți mai bine decât mine când m-am oprit. Eu încă scriu.</p>\n<p><strong>Reporterul:</strong> Partea care a uimit lumea este racheta în trepte. Ne-o explicați, ca unor elevi de liceu?</p>\n<p><strong>Haas:</strong> Ce e un liceu?</p>\n<p><strong>Reporterul:</strong> O școală pentru tineri între 15 și 18 ani.</p>\n<p><strong>Haas:</strong> Bun, atunci ca unor ucenici. Ia o rachetă obișnuită: un tub cu pulbere, aprinzi la capăt, zboară cât ține pulberea, apoi cade. Acum pune în vârful ei o a doua rachetă, mai mică. Când prima își arde pulberea, focul trece mai departe și o aprinde pe a doua. Prima a rămas fără treabă, a doua pleacă mai departe, de acolo de unde a ajuns prima. Asta e o rachetă cu două trepte. Dacă mai pui una, ai trei.</p>\n<p><strong>Reporterul:</strong> Aprindere succesivă, așa îi spunem azi.</p>\n<p><strong>Haas:</strong> Spuneți-i cum vreți, dacă merge. Greul e să nu se aprindă toate deodată. Atunci ai o explozie frumoasă și atât.</p>\n<p><strong>Reporterul:</strong> În desenele dumneavoastră apar și niște aripioare.</p>\n<p><strong>Haas:</strong> Cu trei colțuri, ca pana unei săgeți, prinse la coadă. Fără ele, racheta se învârte și pleacă unde vrea ea. Cu ele, merge drept. Sau măcar mai drept.</p>\n<p><strong>Reporterul:</strong> Noi le numim aripioare delta. Le au și avioanele.</p>\n<p><strong>Haas:</strong> Ce e un avion?</p>\n<p><strong>Reporterul:</strong> … O să vă arăt pe telefon, după aceea. Ajutajele?</p>\n<p><strong>Haas:</strong> Gura prin care iese focul. Dacă e un tub simplu, focul iese împrăștiat. Dacă o lărgești la capăt, ca un clopot, împinge mai bine. Am încercat mai multe forme. Clopotul e cea mai bună dintre cele pe care le-am încercat eu.</p>\n<p><strong>Reporterul:</strong> Și combustibilul?</p>\n<p><strong>Haas:</strong> Amestecuri. Nu le spun aici, în fața cutiei tale care duce vorbele în lume. Sunt în caiet, pentru cine are răbdare să citească. Tot acolo sunt și desenele de asamblare, bucată cu bucată, ca să poată face și altul ce am făcut eu.</p>\n<p><strong>Reporterul:</strong> Vă spun ceva ce nu aveți de unde să știți. Caietul dumneavoastră a stat uitat sute de ani. A fost regăsit abia în 1961, de un cercetător pe nume Doru Todericiu, la Arhivele Naționale din Sibiu, unde e păstrat și azi, sub cota Varia II 374.</p>\n<p><strong>Haas:</strong> Uitat. Patru sute de ani. <em>(tăcere)</em> Și cineva l-a deschis și a înțeles ce scrie acolo?</p>\n<p><strong>Reporterul:</strong> A înțeles. Până atunci, prima descriere a unei rachete în trei trepte era pusă pe seama unui alt om, Kazimierz Siemienowicz, din 1650. Caietul dumneavoastră e mai vechi cu aproape un secol. Pagina patrimoniu.sibiu.ro scrie: „1555 – prima rachetă în trepte”.</p>\n<p><strong>Haas:</strong> 1555. Da, cam atunci am făcut încercări mai serioase. Dar nu scrieți „primul din lume” prea apăsat. Lumea e mare și eu n-am citit tot ce s-a scris în ea.</p>\n<p><strong>Reporterul:</strong> Vom scrie „conform sursei”. Ultima întrebare. Capitolul despre folosirea rachetelor în război se termină altfel decât ne-am aștepta de la un șef de arsenal.</p>\n<p><strong>Haas:</strong> Pentru că am văzut destule. Am scris, la sfârșit, cam așa: sfatul meu e mai multă pace și mai puțin război, iar puștile să stea liniștite în depozit. Un om care știe ce poate face pulberea are tot dreptul să-și dorească să n-o folosească nimeni.</p>\n<p><strong>Reporterul:</strong> Pare un gând foarte modern.</p>\n<p><strong>Haas:</strong> Atunci poate că nu sunt chiar atât de vechi. Acum arată-mi avionul acela.</p>\n<hr />\n<p><em>Ce e real în interviu: Conrad Haas (1509–1576) s-a născut probabil la Dornbach, lângă Viena, a fost maestru al arsenalului (Zeugwart) în armata habsburgică, a venit la Sibiu în 1551 ca inginer de armament și a condus arsenalul cetății. Manuscrisul său, în limba germană, are circa 450 de pagini și a fost redactat în perioada 1529–1569 (datare după referințele din text); descrie rachete în două și trei trepte cu aprindere succesivă, aripioare triunghiulare (delta) de stabilizare, ajutaje în formă de clopot și amestecuri de combustibil, și conține desene de asamblare. Este păstrat la Arhivele Naționale – Serviciul Județean Sibiu (cota Varia II 374) și a fost redescoperit în 1961 (unele surse: primăvara 1962) de Doru Todericiu. Până atunci, prima descriere a rachetei în trei trepte era atribuită lui Kazimierz Siemienowicz (1650). Haas încheie capitolul despre folosirea militară a rachetelor cu un îndemn la pace (aici parafrazat, nu citat). Pagina patrimoniu.sibiu.ro consemnează: „1555 – prima rachetă în trepte”. Reporterul, telefonul, atelierul și toate replicile sunt imaginate.</em></p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<blockquote>\n<p>Scrie un interviu imaginar (600–900 de cuvinte) între un elev-reporter fictiv din 2026 și o personalitate istorică din Sibiu, la alegere.<br />\nFolosește doar faptele pe care ți le dăm noi: [ani, locuri, lucrări, surse].<br />\nPersonajul istoric nu are voie să știe nimic din ce s-a întâmplat după moartea lui; reporterul poate să îi spună, iar reacția lui e partea cea mai interesantă.<br />\nNu inventa citate: dacă sursa redă o idee a personajului, parafrazeaz-o și spune că e parafrază.<br />\nDeclară la început că dialogul e ficțiune și adaugă la final o notă „Ce e real”.</p>\n</blockquote>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Care replici ale lui Haas se sprijină pe fapte verificate și care sunt pură invenție? Ce v-a ajutat să le deosebiți?</li>\n<li>Haas refuză să fie numit „primul din lume” și cere formularea „conform sursei”. De ce contează această diferență atunci când scriem cu ajutorul unui asistent AI?</li>\n<li>De ce credeți că textul parafrazează îndemnul la pace în loc să îl citeze?</li>\n</ol>\n",
+  "card": "c2/03_literar/carduri/L19_card.png",
+  "titlu_creativ": "Trei trepte și un sfat de pace",
+  "g_img": "assets/img/L19.jpg",
+  "g_th": "assets/th/L19.jpg"
+ },
+ {
+  "cod": "L20",
+  "categorie": "Literar",
+  "titlu": "Jurnalul unui spectator la prima clădire de teatru (1788) — ficțiune istorică",
+  "fisiere": [
+   "c2/03_literar/L20_jurnal_spectator_1788.md"
+  ],
+  "tip": "text",
+  "instrument": "Claude (Anthropic) – text",
+  "descriere": "„Zidul care a învățat să râdă” – cinci însemnări imaginate ale unui tânăr tipograf fictiv, Johann, în jurul zilei de 1 iunie 1788, când teatrul construit de Martin Hochmeister în Turnul Gros se deschide cu piesa „Familia comică” de Johann Karl Wetzel; la final, o notă despre ce a devenit clădirea (incendiul din 1826, primele reprezentații în română din 1868, Sala Thalia, Filarmonica de Stat Sibiu).",
+  "status": "realizat",
+  "nota": "Personaj fictiv, declarat în text. Faptele (Turnul Gros – bastion din secolul al XVI-lea; construcția de un an a lui Martin Hochmeister; inaugurarea la 1 iunie 1788 cu „Familia comică” de Johann Karl Wetzel; incendiul din 1826; primele reprezentații în limba română din 1868; inscripția „1788 – 2004”; Sala Thalia, sediul Filarmonicii; ferestrele asimetrice – foste guri de tragere) provin din fapte_verificate.md. Capacitatea și iluminatul sălii nu sunt în fișă: personajul le descrie doar ca impresii nesigure și spune explicit că nu le știe. Corpul jurnalului: aproximativ 720 de cuvinte.",
+  "extras": "Zidurile acelea au fost zidite să țină ghiulele. În seara asta țineau râsul.\nUn lucru care are casă rămâne.\nÎntr-o seară de iunie, un zid făcut pentru război a învățat să râdă. Eu am fost acolo. Am plătit bilet.",
+  "calup": 2,
+  "html": "<h1 id=\"zidul-care-a-învățat-să-râdă\">Zidul care a învățat să râdă</h1>\n<p><em>Tema: Jurnalul unui spectator la prima clădire de teatru (1788) — ficțiune istorică · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p><strong>Personaj fictiv.</strong> Johann, calfă de tipograf de nouăsprezece ani, nu a existat; nici jurnalul lui. Însemnările sunt imaginate în jurul zilei de 1 iunie 1788, când a fost inaugurat teatrul din Turnul Gros. Tot ce spune Johann despre interiorul sălii (lumină, lume, locuri) este impresie inventată și marcată ca atare: fișa de fapte nu descrie cum arăta sala, câți spectatori încăpeau sau cum era luminată. Faptele verificate (tnrs.ro; sibiucityapp.ro; patrimoniu.sibiu.ro) sunt adunate în nota „Ce e real” de la final.</p>\n</blockquote>\n<hr />\n<h3 id=\"mai-1788\">26 mai 1788</h3>\n<p>Un an a trecut de când au început lucrările la Turnul Gros și astăzi am trecut iar pe lângă el. Bastionul e vechi, ridicat pe vremea străbunicilor străbunicilor noștri, acum vreo două veacuri, când oamenii se temeau de tunuri și zideau pe măsura fricii. Zidurile nu le poți cuprinde cu brațele. Când eram copil, mă uitam la gurile de tragere și mi le închipuiam ca pe niște ochi răi. Acum, în locul lor, s-au deschis ferestre. Nu stau frumos în rând, ci unde a fost loc. Un zid făcut pentru tunuri se lasă greu convins să fie casă.</p>\n<p>Toți în oraș vorbesc despre asta: domnul Hochmeister, tipograful, a făcut din bastion un teatru. Scriu „domnul Hochmeister” fiindcă așa se cuvine, deși la el în atelier am învățat să culeg literele și știu cum arată când e supărat pe o pagină strâmbă.</p>\n<h3 id=\"mai-1788-1\">30 mai 1788</h3>\n<p>Meșterul n-a mai dat pe la atelier de două zile. Stă la teatru de dimineața până noaptea, zic ceilalți. Piesa cu care se deschide se cheamă „Familia comică” și e scrisă de un anume Johann Karl Wetzel. Am întrebat ce e cu familia aceea și de ce e comică. Mi s-a răspuns să vin și să văd. Am pus deoparte banii. Nu scriu câți, fiindcă nu știu dacă e mult sau puțin pentru un bilet la teatru: e primul pe care îl cumpăr în viața mea.</p>\n<p>Seara am dat ocol bastionului, ca să-l văd înainte. Pe dinafară e același zid, gros și tăcut, și dacă n-ai ști ce e înăuntru, ai trece pe lângă el ca pe lângă orice bucată de cetate. Doar ferestrele cele noi, așezate strâmb, îl dau de gol. M-am gândit la oamenii care l-au ridicat, acum două veacuri, și la ce ar zice dacă ar afla că meșterii au cărat un an întreg scânduri și var ca să-i facă loc, înăuntru, unei scene. Cred că n-ar înțelege. Nici eu nu înțeleg pe de-a-ntregul. Dar poimâine voi fi acolo.</p>\n<h3 id=\"iunie-1788-noaptea-la-lumânare\">1 iunie 1788, noaptea, la lumânare</h3>\n<p>Am fost.</p>\n<p>Nu știu să scriu despre sală. Era lumină, nu știu de la ce și n-am numărat, și era lume multă, mai multă decât am văzut vreodată adunată sub un singur acoperiș care nu e biserică. Scriu asta așa cum mi s-a părut, nu așa cum a fost; mâine poate îmi amintesc altfel. Am stat undeva sus, în spate, cu spinarea lipită de zid. Zidul era rece. Era zidul bastionului, cel pe care îl știu de copil, numai că acum, de partea cealaltă a lui, nu era un dușman, ci strada.</p>\n<p>Când a început, s-a făcut liniște dintr-odată, ca atunci când intră cineva însemnat în odaie. Pe scenă oamenii vorbeau tare și se certau pentru lucruri care semănau cu ale noastre: cine pe cine ascultă în casă, cine are dreptate și cine are doar glas. Sala râdea. Râdeam și eu și, în același timp, mă uitam la ziduri. Zidurile acelea au fost zidite să țină ghiulele. În seara asta țineau râsul. Mi s-a părut că râsul sună mai plin într-un bastion decât în orice odaie. Dar poate că, pur și simplu, eram fericit.</p>\n<h3 id=\"iunie-1788\">2 iunie 1788</h3>\n<p>Azi, la atelier, meșterul a venit cu ochii roșii de nesomn și cu fața unui om care a câștigat o prinsoare cu el însuși. N-a spus nimic despre aseară. A întrebat de hârtie, ca de obicei. Am vrut să-i spun ce am simțit, dar la noi, în atelier, nu se vorbește despre simțit; se vorbește despre litere strâmbe. Așa că am cules literele cu mai multă grijă decât oricând. Cred că a observat. Cred că asta era, de fapt, ce voiam să-i spun.</p>\n<h3 id=\"iunie-1788-1\">20 iunie 1788</h3>\n<p>Am fost din nou, cu ultimii bani. De data asta m-am uitat mai puțin la ziduri și mai mult la oameni. Un gând mi-a umblat prin cap tot drumul spre casă: din câte știu eu, până acum teatrul la noi era ceva care venea și pleca. Acum are casă, și încă una cu ziduri groase. Un lucru care are casă rămâne. Nu știu dacă bastionul va mai ține un veac sau zece și nu știu ce vor face oamenii de atunci cu el. Dar știu că, într-o seară de iunie, un zid făcut pentru război a învățat să râdă. Eu am fost acolo. Am plătit bilet.</p>\n<hr />\n<p><em>Ce a devenit clădirea.</em> Teatrul construit de Martin Hochmeister, tipograf și, mai târziu, primar al orașului, este, conform patrimoniu.sibiu.ro, prima clădire de teatru de pe actualul teritoriu al României. În 1826 a fost mistuit de un incendiu. În 1868 au avut loc aici primele reprezentații în limba română. Inscripția „1788 – 2004” de pe clădire marchează redeschiderea culturală din 2004. Astăzi sala se numește Sala Thalia și este sediul Filarmonicii de Stat Sibiu. Ferestrele ei asimetrice sunt fostele guri de tragere ale bastionului.</p>\n<p><em>Ce e real în jurnal: Turnul Gros este un bastion din secolul al XVI-lea, din epoca artileriei. Tipograful Martin Hochmeister a construit în el un teatru; lucrările au durat un an; inaugurarea a avut loc la 1 iunie 1788, cu piesa „Familia comică” de Johann Karl Wetzel. Ferestrele asimetrice ale clădirii sunt fostele guri de tragere. Johann, atelierul, biletul, locul din sală, lumina și lumea „multă” sunt invenție; nici capacitatea sălii, nici felul în care era luminată nu sunt cunoscute din fișa de fapte, iar personajul spune singur că nu le știe.</em></p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<blockquote>\n<p>Scrie 4–5 însemnări de jurnal (în total 600–900 de cuvinte) ale unui spectator fictiv la un eveniment istoric din Sibiu, la alegere.<br />\nFolosește doar faptele pe care ți le dăm noi: [loc, dată, persoane, ce s-a întâmplat].<br />\nTot ce nu știm din surse (cum arăta sala, câți oameni erau, ce purtau) personajul are voie să îl spună doar ca impresie nesigură („mi s-a părut”, „n-am numărat”).<br />\nPersonajul nu știe ce se va întâmpla după ziua în care scrie.<br />\nDeclară la început că personajul e fictiv, iar la final adaugă două note: „Ce a devenit locul” și „Ce e real”.</p>\n</blockquote>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Johann refuză să spună câți oameni erau în sală sau câte lumini. De ce e important ca un personaj fictiv să nu „umple” golurile din surse? Cum procedează un asistent AI când nu are date și nu i se cere onestitate?</li>\n<li>Care sunt faptele verificate din jurnal și care sunt invenție? Marcați-le pe două culori.</li>\n<li>Johann nu are de unde să știe că teatrul lui Hochmeister va arde în 1826 sau că va deveni sală de filarmonică. Cum ar fi sunat jurnalul dacă ar fi știut? Ce pierde un text istoric când personajul „știe prea mult”?</li>\n</ol>\n",
+  "card": "c2/03_literar/carduri/L20_card.png",
+  "titlu_creativ": "Zidul care a învățat să râdă",
+  "g_img": "assets/img/L20.jpg",
+  "g_th": "assets/th/L20.jpg"
+ },
+ {
+  "cod": "A11",
+  "categorie": "Audio",
+  "titlu": "Podcast AI de 3 minute: „Sibiul a fost primul” — 5 premiere povestite",
+  "fisiere": [
+   "c2/04_audio/A11_podcast_premiere.md",
+   "c2/04_audio/A11_podcast_premiere.txt"
+  ],
+  "tip": "scenariu",
+  "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+  "descriere": "Un episod de podcast de trei minute în care o gazdă fictivă povestește cinci premiere ale Sibiului: primul spital (1292), prima farmacie (1494), racheta în trepte a lui Conrad Haas (1555), prima clădire de teatru (1788) și Muzeul Brukenthal (1817), cu formulările exacte ale sursei.",
+  "status": "realizat",
+  "nota": "Gazda „Ilinca” este un personaj fictiv, declarat ca atare în text. Toate afirmațiile provin din fapte_verificate.md (tabel de surse în md); formulările „primul/prima de pe actualul teritoriu al României” sunt păstrate, iar „din lume” apare doar pentru racheta lui Haas, „conform sursei”. Textul pentru TTS are cifrele în litere și „Activ A I” pentru pronunție. Durata reală depinde de voce și de viteza de citire.",
+  "audio": null,
+  "tts_text": "c2/04_audio/A11_podcast_premiere.txt",
+  "tts_lang": "ro-RO",
+  "durata_s": null,
+  "durata_estimata_s": 180,
+  "cuvinte_rostite": 438,
+  "calup": 2,
+  "html": "<h1 id=\"sibiul-a-fost-primul-podcast-de-trei-minute\">„Sibiul a fost primul” – podcast de trei minute</h1>\n<p><em>Tema: Podcast AI de 3 minute: „Sibiul a fost primul” — 5 premiere povestite · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p>Un episod scurt de podcast, cu o singură voce, în care o gazdă fictivă povestește cinci dintre premierele Sibiului: spitalul (1292), farmacia (1494), racheta în trepte a lui Conrad Haas (1555), clădirea de teatru (1788) și Muzeul Brukenthal (1817). Toate datele provin din fișa de fapte verificate a proiectului (pagina de premiere patrimoniu.sibiu.ro și secțiunile aferente).</p>\n</blockquote>\n<h2 id=\"fișa-episodului\">Fișa episodului</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Element</th>\n<th>Detalii</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Format</td>\n<td>podcast cu o singură voce, aproximativ 3 minute</td>\n</tr>\n<tr class=\"even\">\n<td>Gazda</td>\n<td>„Ilinca” – personaj fictiv, declarat ca atare chiar în text („o gazdă inventată de o inteligență artificială”); nu corespunde niciunei persoane reale</td>\n</tr>\n<tr class=\"odd\">\n<td>Voce</td>\n<td>sintetizatorul vocal al browserului (limba română), redat în galeria digitală</td>\n</tr>\n<tr class=\"even\">\n<td>Text pentru vocea sintetică</td>\n<td><code>A11_podcast_premiere.txt</code> (doar textul rostit; cifrele sunt scrise în litere, fără abrevieri)</td>\n</tr>\n<tr class=\"odd\">\n<td>Cuvinte rostite</td>\n<td>438</td>\n</tr>\n<tr class=\"even\">\n<td>Durată estimată</td>\n<td>175–185 de secunde, la 145–150 de cuvinte pe minut</td>\n</tr>\n<tr class=\"odd\">\n<td>Structură</td>\n<td>introducere, cinci „opriri” (câte una pe premieră), încheiere</td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"cele-cinci-premiere-alese\">Cele cinci premiere alese</h2>\n<table>\n<colgroup>\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Nr.</th>\n<th>An</th>\n<th>Formularea „conform sursei”</th>\n<th>Detalii folosite în text</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>1</td>\n<td>1292</td>\n<td>primul spital de pe actualul teritoriu al României</td>\n<td>–</td>\n</tr>\n<tr class=\"even\">\n<td>2</td>\n<td>1494</td>\n<td>prima farmacie de pe actualul teritoriu al României</td>\n<td>„farmacia orașului”, publică, în Piața Mare; înființată în perioada marilor epidemii de ciumă; primul farmacist consemnat: Johannes (chitanță din 1494); sediul nu mai există (azi, turnul Bisericii Romano-Catolice); Muzeul de Istorie a Farmaciei din Piața Mică – mojare de bronz, borcane de lemn</td>\n</tr>\n<tr class=\"odd\">\n<td>3</td>\n<td>1555</td>\n<td>Conrad Haas experimentează la Sibiu prima rachetă în trepte (conform sursei: „din lume”)</td>\n<td>Haas – șef al arsenalului cetății; manuscris în limba germană, circa 450 de pagini; rachete în două și trei trepte, aprindere succesivă, aripioare triunghiulare, ajutaje în formă de clopot; redescoperit în 1961; păstrat la Arhivele Naționale – Serviciul Județean Sibiu; îndemn la pace la finalul capitolului militar (parafrază, nu citat)</td>\n</tr>\n<tr class=\"even\">\n<td>4</td>\n<td>1788</td>\n<td>prima clădire de teatru de pe actualul teritoriu al României</td>\n<td>construită de tipograful Martin Hochmeister în Turnul Gros (bastion); lucrări de un an; inaugurare 1 iunie 1788 cu „Familia comică”; azi Sala Thalia, sediul Filarmonicii de Stat Sibiu; ferestrele asimetrice sunt fostele guri de tragere</td>\n</tr>\n<tr class=\"odd\">\n<td>5</td>\n<td>1817</td>\n<td>Muzeul Brukenthal, primul muzeu din România</td>\n<td>Samuel von Brukenthal, guvernator al Transilvaniei; colecția vizitabilă din 1790; galeria de artă: circa 1.200 de lucrări ale școlilor europene; biblioteca: aproximativ 300.000 de unități</td>\n</tr>\n</tbody>\n</table>\n<p>De ce aceste cinci: acoperă cinci secole diferite (al XIII-lea, al XV-lea, al XVI-lea, al XVIII-lea, al XIX-lea) și patru domenii (sănătate, tehnică, cultură, patrimoniu). Tramvaiul din 1905 are propria piesă (A12), de aceea nu a fost inclus aici.</p>\n<h2 id=\"scenariu\">Scenariu</h2>\n<p>[SUNET – semnal scurt de deschidere; poate fi folosit un jingle original al expoziției, la volum mic]</p>\n<h3 id=\"introducere\">Introducere</h3>\n<p>Bună și bine ați venit la „Sibiul a fost primul”, un podcast de trei minute despre lucrurile care s-au întâmplat aici înaintea oricărui alt loc de pe actualul teritoriu al României. Eu sunt Ilinca, o gazdă inventată de o inteligență artificială, iar tot ce vă spun vine din pagina de premiere a patrimoniului sibian. Pornim.</p>\n<h3 id=\"oprirea-1-spitalul-1292\">Oprirea 1 – Spitalul (1292)</h3>\n<p>Prima oprire: anul 1292. La Sibiu funcționează primul spital de pe actualul teritoriu al României. Un spital, într-o vreme în care boala era mai mult o taină decât o știință: asta spune mult despre oamenii care l-au ridicat.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-2-farmacia-1494\">Oprirea 2 – Farmacia (1494)</h3>\n<p>A doua oprire: 1494. În Piața Mare se deschide farmacia orașului, prima farmacie de pe actualul teritoriu al României. Era o farmacie publică, înființată în vremea marilor epidemii de ciumă. Primul farmacist consemnat se numea Johannes, și știm asta dintr-o chitanță. Clădirea nu mai există: pe locul ei se află azi turnul Bisericii Romano-Catolice. Dar la Muzeul de Istorie a Farmaciei, din Piața Mică, puteți vedea mojare de bronz și borcane de lemn din farmaciile de altădată.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-3-racheta-lui-conrad-haas-1555\">Oprirea 3 – Racheta lui Conrad Haas (1555)</h3>\n<p>A treia oprire: 1555. Conrad Haas, șeful arsenalului cetății, experimentează la Sibiu o rachetă în trepte. Manuscrisul lui, un tratat în limba germană de circa 450 de pagini, descrie rachete în două și trei trepte, cu aprindere succesivă, aripioare triunghiulare de stabilizare și ajutaje în formă de clopot. Conform sursei, este prima rachetă în trepte din lume. Manuscrisul a fost redescoperit abia în 1961 și se păstrează la Arhivele Naționale din Sibiu. Iar Haas își încheie capitolul despre război cu un îndemn la pace.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-4-teatrul-1788\">Oprirea 4 – Teatrul (1788)</h3>\n<p>A patra oprire: 1788. Tipograful Martin Hochmeister construiește, într-un bastion al cetății numit Turnul Gros, prima clădire de teatru de pe actualul teritoriu al României. Lucrările au durat un an. La 1 iunie, teatrul se deschide cu piesa „Familia comică”. Azi, clădirea este Sala Thalia, sediul Filarmonicii de Stat Sibiu. Dacă vă uitați la ferestrele ei asimetrice, veți vedea fostele guri de tragere.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"oprirea-5-muzeul-brukenthal-1817\">Oprirea 5 – Muzeul Brukenthal (1817)</h3>\n<p>A cincea oprire: 1817. Se deschide oficial Muzeul Brukenthal, primul muzeu din România. Samuel von Brukenthal, guvernator al Transilvaniei, a deschis colecțiile pentru vizitatori încă din anul 1790. Galeria de artă are circa 1.200 de lucrări ale școlilor europene, iar biblioteca, aproximativ 300.000 de unități.</p>\n<p>[PAUZĂ]</p>\n<h3 id=\"încheiere\">Încheiere</h3>\n<p>Cinci premiere, cinci secole. Și pagina oficială enumeră 38. Ați ascultat „Sibiul a fost primul”, un artefact-model generat cu inteligență artificială pentru proiectul ACTIV AI. Pe curând!</p>\n<p>[SUNET – semnal de închidere]</p>\n<h2 id=\"surse-pentru-afirmațiile-din-text\">Surse pentru afirmațiile din text</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Afirmație</th>\n<th>Sursa din fișa de fapte verificate</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>1292 – primul spital de pe actualul teritoriu al României</td>\n<td>Premiere (patrimoniu.sibiu.ro/istorie/premiere)</td>\n</tr>\n<tr class=\"even\">\n<td>1494 – prima farmacie; „farmacia orașului”, publică, Piața Mare; epidemii de ciumă; Johannes, chitanță din 1494; pe loc azi turnul Bisericii Romano-Catolice</td>\n<td>Premiere; Prima farmacie (1494)</td>\n</tr>\n<tr class=\"odd\">\n<td>Muzeul de Istorie a Farmaciei, Piața Mică; mojare de bronz, borcane de lemn</td>\n<td>Prima farmacie (1494) și Muzeul de Istorie a Farmaciei</td>\n</tr>\n<tr class=\"even\">\n<td>1555 – Haas, prima rachetă în trepte, „din lume” conform sursei</td>\n<td>Premierele Sibiului – lista completă</td>\n</tr>\n<tr class=\"odd\">\n<td>Haas – șef al arsenalului cetății; manuscris german, circa 450 de pagini; două și trei trepte, aprindere succesivă, aripioare triunghiulare, ajutaje în formă de clopot; redescoperit 1961; Arhivele Naționale – Serviciul Județean Sibiu; îndemn la pace</td>\n<td>Conrad Haas și Manuscrisul de la Sibiu</td>\n</tr>\n<tr class=\"even\">\n<td>1788 – prima clădire de teatru; Hochmeister, tipograf; Turnul Gros (bastion); lucrări de un an; 1 iunie 1788, „Familia comică”; Sala Thalia, Filarmonica de Stat Sibiu; ferestre asimetrice = foste guri de tragere</td>\n<td>Teatrul din 1788</td>\n</tr>\n<tr class=\"odd\">\n<td>1817 – Muzeul Brukenthal, primul muzeu din România; Brukenthal guvernator al Transilvaniei; colecția vizitabilă din 1790; circa 1.200 de lucrări; aproximativ 300.000 de unități</td>\n<td>Premiere; Monumente – Muzeul Brukenthal; Muzeul Brukenthal – completări</td>\n</tr>\n<tr class=\"even\">\n<td>Pagina oficială enumeră 38 de premiere</td>\n<td>Premierele Sibiului – lista completă</td>\n</tr>\n</tbody>\n</table>\n<p>Ce nu afirmă textul: nu descrie cum arăta spitalul din 1292 (fișa nu spune), nu dă nume de medicamente din 1494, nu citează textual din manuscrisul lui Haas (parafrază), nu spune ce se juca la teatru după 1788 în afara piesei de inaugurare. Afirmația „boala era mai mult o taină decât o știință” este un comentariu al gazdei, nu un fapt din sursă.</p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<ol type=\"1\">\n<li>Alegeți de pe o pagină oficială (de exemplu, pagina de premiere a patrimoniului sibian) cinci premiere din secole diferite și notați pentru fiecare formularea exactă a sursei și două detalii verificate.</li>\n<li>Cereți unui asistent AI gratuit: „Scrie scenariul unui episod de podcast de 440 de cuvinte, cu o gazdă fictivă care se prezintă ca personaj inventat, cu cinci opriri, câte una pentru fiecare premieră de mai jos. Păstrează exact formulările «primul/prima de pe actualul teritoriu al României». Fraze scurte, cifrele scrise în litere. Folosește doar informațiile pe care ți le dau.”</li>\n<li>Verificați fiecare afirmație, apoi redați textul cu o voce sintetică gratuită sau înregistrați-l cu vocea voastră; adăugați, dacă vreți, un semnal sonor original de deschidere.</li>\n</ol>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>De ce păstrăm formularea „de pe actualul teritoriu al României” în loc de „din România” sau „din lume”? Ce s-ar schimba dacă am scurta-o?</li>\n<li>Gazda spune de la început că este un personaj inventat. Ce s-ar întâmpla cu încrederea ascultătorului dacă ar afla asta abia la final sau deloc?</li>\n</ol>\n",
+  "tts": "Bună și bine ați venit la „Sibiul a fost primul”, un podcast de trei minute despre lucrurile care s-au întâmplat aici înaintea oricărui alt loc de pe actualul teritoriu al României. Eu sunt Ilinca, o gazdă inventată de o inteligență artificială, iar tot ce vă spun vine din pagina de premiere a patrimoniului sibian. Pornim.\n\nPrima oprire: anul o mie două sute nouăzeci și doi. La Sibiu funcționează primul spital de pe actualul teritoriu al României. Un spital, într-o vreme în care boala era mai mult o taină decât o știință: asta spune mult despre oamenii care l-au ridicat.\n\nA doua oprire: o mie patru sute nouăzeci și patru. În Piața Mare se deschide farmacia orașului, prima farmacie de pe actualul teritoriu al României. Era o farmacie publică, înființată în vremea marilor epidemii de ciumă. Primul farmacist consemnat se numea Johannes, și știm asta dintr-o chitanță. Clădirea nu mai există: pe locul ei se află azi turnul Bisericii Romano-Catolice. Dar la Muzeul de Istorie a Farmaciei, din Piața Mică, puteți vedea mojare de bronz și borcane de lemn din farmaciile de altădată.\n\nA treia oprire: o mie cinci sute cincizeci și cinci. Conrad Haas, șeful arsenalului cetății, experimentează la Sibiu o rachetă în trepte. Manuscrisul lui, un tratat în limba germană de circa patru sute cincizeci de pagini, descrie rachete în două și trei trepte, cu aprindere succesivă, aripioare triunghiulare de stabilizare și ajutaje în formă de clopot. Conform sursei, este prima rachetă în trepte din lume. Manuscrisul a fost redescoperit abia în o mie nouă sute șaizeci și unu și se păstrează la Arhivele Naționale din Sibiu. Iar Haas își încheie capitolul despre război cu un îndemn la pace.\n\nA patra oprire: o mie șapte sute optzeci și opt. Tipograful Martin Hochmeister construiește, într-un bastion al cetății numit Turnul Gros, prima clădire de teatru de pe actualul teritoriu al României. Lucrările au durat un an. La întâi iunie, teatrul se deschide cu piesa „Familia comică”. Azi, clădirea este Sala Thalia, sediul Filarmonicii de Stat Sibiu. Dacă vă uitați la ferestrele ei asimetrice, veți vedea fostele guri de tragere.\n\nA cincea oprire: o mie opt sute șaptesprezece. Se deschide oficial Muzeul Brukenthal, primul muzeu din România. Samuel von Brukenthal, guvernator al Transilvaniei, a deschis colecțiile pentru vizitatori încă din anul o mie șapte sute nouăzeci. Galeria de artă are circa o mie două sute de lucrări ale școlilor europene, iar biblioteca, aproximativ trei sute de mii de unități.\n\nCinci premiere, cinci secole. Și pagina oficială enumeră treizeci și opt. Ați ascultat „Sibiul a fost primul”, un artefact-model generat cu inteligență artificială pentru proiectul Activ A I. Pe curând!\n",
+  "card": "c2/04_audio/carduri/A11_card.png",
+  "titlu_creativ": "„Sibiul a fost primul” – podcast de trei minute",
+  "g_img": "assets/img/A11.jpg",
+  "g_th": "assets/th/A11.jpg"
+ },
+ {
+  "cod": "A12",
+  "categorie": "Audio",
+  "titlu": "Coloana sonoră a primului tramvai — reconstituire sonoră AI",
+  "fisiere": [
+   "c2/04_audio/A12_tramvai.md",
+   "c2/04_audio/A12_tramvai.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – scenariu + sinteză audio procedurală (Python/numpy)",
+  "descriere": "O călătorie imaginată cu tramvaiul electric al Sibiului din 1905: clopoțelul vatmanului, motorul care accelerează, roțile pe rosturile șinelor, un scârțâit la curbă, scântei la captator, murmur de stradă și cai la distanță, frâna pneumatică și oprirea în stație – toate sintetizate din cod, fără înregistrări.",
+  "status": "realizat",
+  "nota": "Reconstituire sonoră imaginată, nu înregistrare istorică: fișa de fapte nu descrie sunetul tramvaiului. Faptele folosite în md: prima linie în 1905 (Piața Gării – Parcul Sub Arini), vagoane de la Budapesta, în 1925 – 14 vagoane-motor cu 30 de locuri. Sunete integral sintetizate, fără mostre și fără voce. Verificare tehnică în 04_audio/_verificare/.",
+  "audio": "c2/04_audio/A12_tramvai.mp3",
+  "tts_text": null,
+  "durata_s": 52.04,
+  "loudness_lufs": -14.2,
+  "true_peak_dbtp": -1.2,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "cod_sursa": [
+   "04_audio/_src/A12_tramvai.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "marcaje_s": {
+   "strada_si_cai": 0.0,
+   "clopotel_plecare": 2.0,
+   "motor_accelerare": 3.2,
+   "roti_pe_rosturi": 5.0,
+   "scantei_pantograf": 9.0,
+   "scartait_curba": 18.5,
+   "viteza_de_croaziera": 22.0,
+   "incetinire": 34.0,
+   "frana_pneumatica": 40.5,
+   "oprire": 44.5,
+   "clopotel_final": 46.0,
+   "final": 48.0
+  },
+  "verificare": [
+   "04_audio/_verificare/A12_tramvai_spectrograma.png",
+   "04_audio/_verificare/A12_tramvai_forma_unda.png",
+   "04_audio/_verificare/raport_verificare.json"
+  ],
+  "calup": 2,
+  "html": "<h1 id=\"coloana-sonoră-a-primului-tramvai-reconstituire-sonoră\">Coloana sonoră a primului tramvai – reconstituire sonoră</h1>\n<p><em>Tema: Coloana sonoră a primului tramvai — reconstituire sonoră AI · Artefact-model generat cu AI</em></p>\n<p>O călătorie imaginată de un minut cu tramvaiul electric al Sibiului, în 1905: vatmanul sună de două ori din clopoțel, motorul electric prinde viteză, roțile bat ritmic pe rosturile șinelor, un scârțâit scurt anunță curba, la captatorul de curent pocnesc scântei, undeva pe stradă trec cai, apoi frâna pneumatică șuieră și tramvaiul oprește în stație, cu un ultim clopoțel. <strong>Toate sunetele sunt sintetizate din formule matematice</strong> (cod Python), fără nicio înregistrare și fără mostre. Nu este o înregistrare istorică: nimeni nu a înregistrat tramvaiul din 1905, iar sunetul lui real nu este descris în fișa de fapte a proiectului.</p>\n<h2 id=\"fișier-audio\">Fișier audio</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Element</th>\n<th>Detalii</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Fișier</td>\n<td><code>A12_tramvai.mp3</code></td>\n</tr>\n<tr class=\"even\">\n<td>Durată</td>\n<td>aproximativ 52 de secunde</td>\n</tr>\n<tr class=\"odd\">\n<td>Format</td>\n<td>MP3 stereo, 44,1 kHz, 192 kbps, loudness măsurat −14,2 LUFS, vârf real −1,2 dBTP</td>\n</tr>\n<tr class=\"even\">\n<td>Cod sursă</td>\n<td><code>_src/A12_tramvai.py</code> (folosește biblioteca comună <code>audiolib.py</code> din <code>04_audio/_src</code>)</td>\n</tr>\n<tr class=\"odd\">\n<td>Verificare</td>\n<td><code>_verificare/A12_tramvai_spectrograma.png</code>, <code>_verificare/A12_tramvai_forma_unda.png</code>, <code>_verificare/raport_verificare.json</code></td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"straturile-sonore\">Straturile sonore</h2>\n<table>\n<colgroup>\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n<col style=\"width: 25%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Strat</th>\n<th>Ce se aude</th>\n<th>Cum a fost construit</th>\n<th>Când apare</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Murmur de stradă</td>\n<td>un fond nedeslușit, ca o piață animată auzită de la distanță</td>\n<td>zgomot colorat trecut prin filtre trece-bandă (120–1400 Hz), cu „valuri” lente de intensitate; canalele pornesc din zgomote diferite</td>\n<td>permanent, mai evident la început și la final</td>\n</tr>\n<tr class=\"even\">\n<td>Cai la distanță</td>\n<td>trapul unei trăsuri, în stânga la început, apoi în dreapta, mai departe</td>\n<td>fiecare lovitură de potcoavă: un mic „ciocănit” modal (380–520 Hz) plus zgomot scurt, înfundat; ritm în patru timpi</td>\n<td>0,5–9 s și 25–32 s</td>\n</tr>\n<tr class=\"odd\">\n<td>Clopoțelul vatmanului</td>\n<td>două lovituri limpezi, apoi, la final, alte două</td>\n<td>sinteză modală cu șapte parțiale (prima la 1760 Hz) și bătăi lente între perechi; un clic de atac din zgomot filtrat</td>\n<td>2,0 s și 46,0 s</td>\n</tr>\n<tr class=\"even\">\n<td>Motorul electric</td>\n<td>un zumzet care urcă în înălțime odată cu viteza și coboară la frânare</td>\n<td>sumă de zece armonice pe o fundamentală care glisează de la 42 la 230 Hz, cu modulație în amplitudine la dublul fundamentalei; un „scâncet” de angrenaj la armonicele 7 și 11; filtrul trece-jos se deschide cu viteza; brum jos al caroseriei</td>\n<td>3,2–44,5 s</td>\n</tr>\n<tr class=\"odd\">\n<td>Roțile pe rosturi</td>\n<td>clicuri duble („ta-tac… ta-tac”), rare la pornire și tot mai dese la viteză</td>\n<td>pentru fiecare rost: lovitură joasă (70–95 Hz), ping metalic scurt (sinteză modală) și zgomot granular; două boghiuri, câte două osii; intervalul scade de la 1,4 s la 0,42 s</td>\n<td>5–44,5 s</td>\n</tr>\n<tr class=\"even\">\n<td>Scârțâit la curbă</td>\n<td>un sunet subțire, oscilant, în două rafale</td>\n<td>ton de 2900–3600 Hz cu patru armonice și vibrato neregulat, plus o bandă îngustă de zgomot</td>\n<td>18,5 s și 19,9 s (și unul mic la frânare, 42,7 s)</td>\n</tr>\n<tr class=\"odd\">\n<td>Scântei la captator</td>\n<td>pocnete foarte scurte, în rafale de unul până la trei</td>\n<td>zgomot filtrat trece-bandă (2,5–9 kHz) cu anvelopă de câteva milisecunde</td>\n<td>între 9 și 43,5 s, numai la viteză</td>\n</tr>\n<tr class=\"even\">\n<td>Frâna pneumatică</td>\n<td>un șuierat lung care se stinge, apoi un „pșșș” scurt la oprire</td>\n<td>zgomot alb filtrat (700–9000 Hz) cu atac rapid și decădere exponențială; filtrul se închide pe măsură ce „presiunea” scade</td>\n<td>40,5–43,9 s și 44,7–46,3 s</td>\n</tr>\n</tbody>\n</table>\n<p>Straturile apropiate (clopoțel, motor, roți, frână) trec printr-o reverberație scurtă; strada și caii, printr-una mai lungă, ca să sune „de peste piață”.</p>\n<h2 id=\"harta-în-timp\">Harta în timp</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Secunde</th>\n<th>Ce se întâmplă</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>0–2</td>\n<td>piața: murmur de stradă și o trăsură care trece în stânga</td>\n</tr>\n<tr class=\"even\">\n<td>2,0</td>\n<td>clopoțelul vatmanului – două lovituri</td>\n</tr>\n<tr class=\"odd\">\n<td>3,2–22</td>\n<td>motorul pornește și accelerează; roțile încep să bată pe rosturi, tot mai des; primele scântei</td>\n</tr>\n<tr class=\"even\">\n<td>18,5–20,5</td>\n<td>scârțâit la curbă</td>\n</tr>\n<tr class=\"odd\">\n<td>22–34</td>\n<td>viteză de croazieră: zumzet constant, clicuri regulate, scântei; a doua trăsură, în dreapta</td>\n</tr>\n<tr class=\"even\">\n<td>34–44,5</td>\n<td>încetinire: motorul coboară, clicurile se răresc</td>\n</tr>\n<tr class=\"odd\">\n<td>40,5–44</td>\n<td>frâna pneumatică șuieră</td>\n</tr>\n<tr class=\"even\">\n<td>44,5–46</td>\n<td>oprire; „pșșș” de eliberare a aerului</td>\n</tr>\n<tr class=\"odd\">\n<td>46,0</td>\n<td>clopoțelul final – două lovituri</td>\n</tr>\n<tr class=\"even\">\n<td>46–52</td>\n<td>rămâne murmurul străzii, care se stinge (fade-out în ultimele 3 s)</td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"ce-e-real-și-ce-e-imaginat\">Ce e real și ce e imaginat</h2>\n<p>Faptele din fișa verificată a proiectului, pe care se sprijină scena:</p>\n<ul>\n<li>prima linie de tramvai electric din Sibiu a fost inaugurată în 1905 (8 septembrie conform patrimoniu.sibiu.ro; tribuna.ro dă 9 august), pe traseul Piața Gării – Parcul Sub Arini (zona Spitalului Militar);</li>\n<li>vagoanele au fost aduse de la Budapesta, iar linia a fost construită de o firmă din Budapesta;</li>\n<li>în 1925 existau 14 vagoane-motor, cu 30 de locuri fiecare (16 pe scaun); în primii 20 de ani tramvaiul a transportat 3.950.197 de călători;</li>\n<li>în oraș, tramvaiul a dispărut în 1966–1967.</li>\n</ul>\n<p>Tot ce se aude este imaginat: nu știm cum suna clopoțelul, motorul sau frâna vagoanelor din 1905, dacă aveau frână pneumatică, dacă pe traseu era o curbă care scârțâia sau câți cai treceau pe stradă. Acestea sunt alegeri artistice, nu afirmații istorice. Scena nu descrie un loc precis de pe traseu.</p>\n<h2 id=\"idei-pentru-o-clasă\">Idei pentru o clasă</h2>\n<ul>\n<li>Ascultați piesa fără să citiți fișa și notați, cu secunde, fiecare sunet recunoscut; comparați apoi cu harta în timp.</li>\n<li>Alegeți un mijloc de transport de azi (autobuzul, trenul, bicicleta) și descrieți-i „coloana sonoră” în șase–opt straturi, cu momente de început și sfârșit.</li>\n</ul>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<ol type=\"1\">\n<li>Căutați în surse oficiale două sau trei fapte verificate despre subiect (an, traseu, număr de vagoane) și notați sursa.</li>\n<li>Cereți unui generator de efecte sonore cu AI care are plan gratuit (verificați condițiile actuale și vârsta minimă): „Tramvai electric vechi care pornește din stație: clopoțel, motor electric care accelerează, roți pe șine, fără muzică, 50 de secunde.” Generați separat: „scârțâit scurt de roți la curbă”, „frână pneumatică de tramvai”, „murmur de piață de oraș, început de secol douăzeci”.</li>\n<li>Mixați straturile într-un editor audio gratuit (de exemplu, Audacity), în ordinea unei călătorii: plecare, accelerare, croazieră, frânare, oprire; țintiți un volum confortabil, fără vârfuri care distorsionează.</li>\n<li>Scrieți în descriere că este o reconstituire imaginată, nu o înregistrare istorică, și enumerați faptele verificate pe care le-ați folosit, cu sursa.</li>\n</ol>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Piesa sună „credibil”, dar niciun sunet nu e autentic. Ce ar trebui să scrie pe eticheta ei, ca un vizitator să nu o ia drept înregistrare din 1905?</li>\n<li>Care dintre straturi v-a ajutat cel mai mult să „vedeți” tramvaiul? Ce sunet lipsește și de ce credeți că a fost lăsat deoparte?</li>\n</ol>\n",
+  "card": "c2/04_audio/carduri/A12_card.png",
+  "titlu_creativ": "Coloana sonoră a primului tramvai – reconstituire sonoră",
+  "g_img": "assets/img/A12.jpg",
+  "g_audio": "assets/aud/A12.mp3",
+  "g_th": "assets/th/A12.jpg"
+ },
+ {
+  "cod": "A13",
+  "categorie": "Audio",
+  "titlu": "Radio-teatru AI: o zi în prima farmacie, în 1494 (dialog în 3 voci)",
+  "fisiere": [
+   "c2/04_audio/A13_radio_teatru_farmacia.md",
+   "c2/04_audio/A13_radio_teatru_farmacia.txt"
+  ],
+  "tip": "scenariu",
+  "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+  "descriere": "O dimineață imaginată în „farmacia orașului” din Piața Mare, în 1494, în vremea epidemiilor de ciumă: farmacistul Johannes, un ucenic și o clientă vorbesc despre mojarul de bronz, borcanele de lemn, balanță, ierburi și chitanța către oraș.",
+  "status": "realizat",
+  "nota": "Johannes este singurul nume atestat (primul farmacist consemnat, chitanță din 1494); caracterul și replicile lui sunt imaginate. Lukas (ucenic) și Agnes (clientă) sunt personaje fictive, declarate în vocea de încheiere. Nu se numesc leacuri sau rețete ca fapte istorice. Textul pentru TTS are replicile prefixate de numele personajului și un „Povestitor” pentru didascaliile esențiale; cifrele în litere. Tabel „ce e real și ce e imaginat” în md.",
+  "audio": null,
+  "tts_text": "c2/04_audio/A13_radio_teatru_farmacia.txt",
+  "tts_lang": "ro-RO",
+  "durata_s": null,
+  "durata_estimata_s": 300,
+  "cuvinte_rostite": 712,
+  "calup": 2,
+  "html": "<h1 id=\"o-zi-în-prima-farmacie-în-1494-radio-teatru-în-trei-voci\">O zi în prima farmacie, în 1494 – radio-teatru în trei voci</h1>\n<p><em>Tema: Radio-teatru AI: o zi în prima farmacie, în 1494 (dialog în 3 voci) · Artefact-model generat cu AI</em></p>\n<blockquote>\n<p>O dimineață imaginată în „farmacia orașului” din Piața Mare, în anul 1494, cel al primei farmacii atestate pe actualul teritoriu al României. Trei voci: farmacistul Johannes (singurul nume atestat în fișa de fapte – primul farmacist consemnat, printr-o chitanță din 1494), un ucenic și o clientă. Ucenicul și clienta sunt personaje fictive, iar tot dialogul este imaginat: nu există nicio mărturie despre ce s-a vorbit în farmacie. Nu se numesc leacuri sau rețete ca fapte istorice.</p>\n</blockquote>\n<h2 id=\"fișa-piesei\">Fișa piesei</h2>\n<table>\n<colgroup>\n<col style=\"width: 50%\" />\n<col style=\"width: 50%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Element</th>\n<th>Detalii</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>Format</td>\n<td>radio-teatru, trei voci, aproximativ 5–6 minute</td>\n</tr>\n<tr class=\"even\">\n<td>Personaje</td>\n<td><strong>Johannes</strong> – farmacistul orașului (nume atestat; caracterul și replicile sunt imaginate) · <strong>Lukas</strong> – ucenic, personaj fictiv · <strong>Agnes</strong> – clientă, personaj fictiv</td>\n</tr>\n<tr class=\"odd\">\n<td>Voce</td>\n<td>sintetizatorul vocal al browserului (limba română), redat în galeria digitală; în textul pentru TTS fiecare replică începe cu numele personajului, ca ascultătorul să distingă vocile și fără trei voci diferite</td>\n</tr>\n<tr class=\"even\">\n<td>Text pentru vocea sintetică</td>\n<td><code>A13_radio_teatru_farmacia.txt</code> (replici prefixate de nume, fără didascalii lungi, cifrele scrise în litere)</td>\n</tr>\n<tr class=\"odd\">\n<td>Cuvinte în scenariu</td>\n<td>aproximativ 770 (replici și didascalii); textul pentru TTS are 712 cuvinte</td>\n</tr>\n<tr class=\"even\">\n<td>Loc și timp</td>\n<td>„farmacia orașului”, Piața Mare, Sibiu, o dimineață de toamnă din 1494, în vremea epidemiilor de ciumă</td>\n</tr>\n<tr class=\"odd\">\n<td>Obiecte de scenă</td>\n<td>mojar de bronz cu pistil, borcane de lemn pe rafturi, o balanță cu talere, legături de ierburi uscate, o foaie de hârtie și cerneală pentru chitanță</td>\n</tr>\n</tbody>\n</table>\n<h2 id=\"scenariu\">Scenariu</h2>\n<p>[SUNET – zorii în Piața Mare: un cocoș departe, roți de car pe piatră, un clopot de biserică. O ușă de lemn se deschide scârțâind; clopoțelul de deasupra ușii sună.]</p>\n<p><strong>JOHANNES</strong> (dinăuntru, calm): Lukas, închide ușa, se duce căldura. Și ia mojarul de pe raftul de sus, cel de bronz. Azi avem de pisat rădăcinile uscate de ieri.</p>\n<p><strong>LUKAS</strong> (tânăr, grăbit): Vin, meștere! (pași; un zgomot metalic surd, mojarul pus pe masă) E greu ca un clopot. De ce nu-l facem din lemn, ca borcanele?</p>\n<p><strong>JOHANNES</strong>: Pentru că lemnul ia mirosul și praful a tot ce pisezi în el. Bronzul nu ține minte nimic; îl speli și e ca nou. Borcanele de lemn sunt bune pentru păstrat, nu pentru zdrobit. Hai, cu grijă, în cerc, nu bate ca în tobă.</p>\n<p>[SUNET – pistilul care se învârte în mojar, ritmic.]</p>\n<p><strong>LUKAS</strong>: Meștere, e adevărat ce zic oamenii în piață? Că farmacia noastră e prima din tot ținutul?</p>\n<p><strong>JOHANNES</strong>: Așa se spune. Eu știu doar că orașul a vrut o farmacie a lui, publică, aici, în Piața Mare, și că m-a pus pe mine să am grijă de ea. Dacă e prima sau nu, vor spune alții, peste mulți ani. Noi avem de cântărit, nu de ne lăuda.</p>\n<p><strong>LUKAS</strong>: Dar de ce acum? De ce tocmai anul ăsta?</p>\n<p><strong>JOHANNES</strong> (mai încet): Pentru că a venit iar ciuma, Lukas. În alte orașe a secerat străzi întregi. Când frica e mare, oamenii vor un loc unde să ceară ajutor și să găsească pe cineva care știe ce ține în mână. Asta vrea orașul de la noi: să știm ce ținem în mână.</p>\n<p>[SUNET – clopoțelul ușii. Pași mai ușori. O voce de femeie, ușor gâfâită.]</p>\n<p><strong>AGNES</strong>: Bună dimineața. Aici e farmacia orașului?</p>\n<p><strong>JOHANNES</strong>: Aici. Intrați, poftiți mai aproape de sobă. Cu ce vă pot ajuta?</p>\n<p><strong>AGNES</strong>: Mă numesc Agnes, stau în Orașul de Jos. Băiatul meu tușește de trei nopți și nu doarme. Vecina mi-a zis să vin aici, că aveți ierburi care ușurează pieptul.</p>\n<p><strong>JOHANNES</strong>: Avem ierburi uscate de peste vară, da. Dar întâi spuneți-mi: are fierbințeală? Are pete pe piele sau umflături?</p>\n<p><strong>AGNES</strong> (speriată): Nu, nu, Doamne ferește. Doar tușește și e răgușit.</p>\n<p><strong>JOHANNES</strong>: Atunci răsuflați ușurată. Întreb pe toată lumea, în vremurile astea. Lukas, adu legătura a treia de pe grinda din dreapta și borcanul de lemn cu capac roșu.</p>\n<p>[SUNET – pași, foșnet de ierburi uscate, un capac de lemn scos.]</p>\n<p><strong>LUKAS</strong>: Astea, meștere?</p>\n<p><strong>JOHANNES</strong>: Astea. Acum balanța. Pune talerul gol, apoi greutatea mică. (clinchet metalic) Vezi, Agnes, aici nu merge „cât apuci cu mâna”. Prea puțin nu ajută, prea mult poate face rău. De aceea cântărim.</p>\n<p><strong>AGNES</strong>: Și eu ce fac cu ele?</p>\n<p><strong>JOHANNES</strong>: Le fierbeți încet, într-o oală acoperită, și-i dați să bea cald, puțin câte puțin, seara. Și țineți-l în casă, la cald. Dacă în trei zile nu e mai bine, sau dacă apare fierbințeala, veniți înapoi fără să mai așteptați.</p>\n<p><strong>AGNES</strong>: Cât vă datorez?</p>\n<p><strong>JOHANNES</strong>: Pentru ierburi, puțin. Lukas îți spune. Dar hârtia și cerneala le păstrez pentru altceva.</p>\n<p><strong>LUKAS</strong> (curios): Pentru ce, meștere?</p>\n<p><strong>JOHANNES</strong>: Pentru chitanța către oraș. Tot ce intră și iese din farmacia asta se scrie. Sfatul orașului plătește, sfatul orașului vrea să știe. (pană pe hârtie) „Johannes, farmacistul, a primit…” Vezi, Lukas? Cineva, cândva, poate va găsi hârtia asta și va ști că am fost aici.</p>\n<p><strong>AGNES</strong> (zâmbind în voce): Și eu o să le spun vecinelor că am fost la farmacie și am văzut un mojar de bronz cât un cazan.</p>\n<p><strong>JOHANNES</strong>: Spuneți-le și că am întrebat de fierbințeală. Asta e mai important decât mojarul.</p>\n<p>[SUNET – clopoțelul ușii; pașii lui Agnes se depărtează; zgomotul pieței crește o clipă, apoi ușa se închide.]</p>\n<p><strong>LUKAS</strong>: Meștere, dacă vine cineva cu pete și umflături, ce facem?</p>\n<p><strong>JOHANNES</strong> (după o pauză): Nu-l alungăm. Îl ținem departe de ceilalți, îi dăm ce avem și chemăm doctorul orașului. Și ne spălăm mâinile cu apă fiartă, de fiecare dată. Nu știu dacă ajută, dar nu știu nici că nu ajută. Până aflăm, facem ce putem.</p>\n<p><strong>LUKAS</strong>: Și dacă într-o zi n-o să mai fie ciumă deloc?</p>\n<p><strong>JOHANNES</strong>: Atunci va fi altceva, Lukas. Oamenii vor avea mereu nevoie de cineva care cântărește cu grijă și scrie totul pe hârtie. Hai, mai departe la rădăcini. În cerc, ți-am zis. Nu ca în tobă.</p>\n<p>[SUNET – pistilul în mojar reia ritmul; clopotul bisericii bate ora; zgomotul pieței se stinge încet.]</p>\n<p><strong>VOCE DE ÎNCHEIERE</strong> (neutră): Ați ascultat un radio-teatru imaginat, generat cu inteligență artificială pentru proiectul ACTIV AI. Johannes a existat: este primul farmacist al Sibiului consemnat într-un document, o chitanță din 1494. Lukas, Agnes și tot ce au spus sunt ficțiune.</p>\n<h2 id=\"ce-e-real-și-ce-e-imaginat\">Ce e real și ce e imaginat</h2>\n<table>\n<colgroup>\n<col style=\"width: 33%\" />\n<col style=\"width: 33%\" />\n<col style=\"width: 33%\" />\n</colgroup>\n<thead>\n<tr class=\"header\">\n<th>Element din piesă</th>\n<th>Statut</th>\n<th>Sursa din fișa de fapte verificate</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"odd\">\n<td>1494, „farmacia orașului”, publică, în Piața Mare</td>\n<td>fapt</td>\n<td>Prima farmacie (1494)</td>\n</tr>\n<tr class=\"even\">\n<td>Johannes, primul farmacist consemnat; chitanță din 1494</td>\n<td>fapt</td>\n<td>Prima farmacie (1494)</td>\n</tr>\n<tr class=\"odd\">\n<td>Înființată în perioada marilor epidemii de ciumă</td>\n<td>fapt</td>\n<td>Prima farmacie (1494)</td>\n</tr>\n<tr class=\"even\">\n<td>Prima farmacie de pe actualul teritoriu al României</td>\n<td>fapt (formulare „conform sursei”)</td>\n<td>Premiere</td>\n</tr>\n<tr class=\"odd\">\n<td>Mojar de bronz, borcane de lemn, balanță, ierburi</td>\n<td>obiecte atestate în istoria farmaciei sibiene (Muzeul de Istorie a Farmaciei; cel mai vechi mojar păstrat datează din 1597, deci nu din 1494)</td>\n<td>Muzeul de Istorie a Farmaciei</td>\n</tr>\n<tr class=\"even\">\n<td>Lukas (ucenic), Agnes (clientă), băiatul bolnav</td>\n<td>personaje fictive</td>\n<td>–</td>\n</tr>\n<tr class=\"odd\">\n<td>Caracterul lui Johannes, orice replică a lui</td>\n<td>imaginat</td>\n<td>–</td>\n</tr>\n<tr class=\"even\">\n<td>Ce ierburi se dădeau, cum se preparau, cât costau, dacă exista un „doctor al orașului”, spălatul mâinilor cu apă fiartă, soba</td>\n<td>imaginat; nu se afirmă nimic despre practica medicală reală din 1494</td>\n<td>–</td>\n</tr>\n<tr class=\"odd\">\n<td>„Orașul de Jos” ca loc unde stă Agnes</td>\n<td>denumire reală a părții de jos a orașului; faptul că o clientă venea de acolo e imaginat</td>\n<td>Date generale</td>\n</tr>\n</tbody>\n</table>\n<p>Textul evită cu bună știință să numească leacuri sau rețete: nu știm ce se vindea în farmacia din 1494, iar o rețetă „de epocă” inventată ar putea fi luată drept fapt. Sfaturile lui Johannes (fierbere, odihnă, întoarcerea dacă apare febra) sunt replici de personaj, nu recomandări medicale.</p>\n<h2 id=\"prompt-model-pentru-clasă\">Prompt-model pentru clasă</h2>\n<ol type=\"1\">\n<li>Alegeți un loc din Sibiu care are cel puțin trei fapte verificate (an, loc, un nume atestat) și două sau trei obiecte documentate (de exemplu, dintr-un muzeu).</li>\n<li>Cereți unui asistent AI gratuit: „Scrie un scenariu de radio-teatru de 800 de cuvinte, cu trei personaje, într-o singură scenă. Un personaj poartă numele atestat pe care ți-l dau; celelalte două sunt fictive și trebuie declarate ca atare într-o voce de încheiere. Folosește doar faptele și obiectele din lista mea; nu inventa nume de produse, rețete sau prețuri. Fiecare replică începe cu numele personajului. Cifrele scrise în litere.”</li>\n<li>Citiți scenariul pe roluri și înregistrați-l cu telefonul, sau redați-l cu o voce sintetică; adăugați sunete de fundal făcute de voi (ușă, pași, un bol lovit ușor ca mojar).</li>\n<li>Scrieți la final tabelul „ce e real și ce e imaginat”, ca în această fișă.</li>\n</ol>\n<h3 id=\"întrebări-de-reflecție\">Întrebări de reflecție</h3>\n<ol type=\"1\">\n<li>Johannes este o persoană reală, despre care știm un singur lucru sigur: numele într-o chitanță. Ce drepturi are un autor să-i „împrumute” gânduri și cuvinte? Unde ați trage linia?</li>\n<li>De ce piesa nu numește niciun leac? Ce s-ar fi putut întâmpla dacă AI-ul ar fi inventat o „rețetă din 1494” și cineva ar fi crezut-o?</li>\n</ol>\n",
+  "tts": "Povestitor: O zi în prima farmacie. Radio-teatru imaginat, în trei voci. Sibiu, Piața Mare, o dimineață de toamnă din anul o mie patru sute nouăzeci și patru. Farmacia orașului tocmai și-a deschis ușa.\n\nJohannes: Lukas, închide ușa, se duce căldura. Și ia mojarul de pe raftul de sus, cel de bronz. Azi avem de pisat rădăcinile uscate de ieri.\n\nLukas: Vin, meștere! E greu ca un clopot. De ce nu-l facem din lemn, ca borcanele?\n\nJohannes: Pentru că lemnul ia mirosul și praful a tot ce pisezi în el. Bronzul nu ține minte nimic; îl speli și e ca nou. Borcanele de lemn sunt bune pentru păstrat, nu pentru zdrobit. Hai, cu grijă, în cerc, nu bate ca în tobă.\n\nLukas: Meștere, e adevărat ce zic oamenii în piață? Că farmacia noastră e prima din tot ținutul?\n\nJohannes: Așa se spune. Eu știu doar că orașul a vrut o farmacie a lui, publică, aici, în Piața Mare, și că m-a pus pe mine să am grijă de ea. Dacă e prima sau nu, vor spune alții, peste mulți ani. Noi avem de cântărit, nu de ne lăuda.\n\nLukas: Dar de ce acum? De ce tocmai anul ăsta?\n\nJohannes: Pentru că a venit iar ciuma, Lukas. În alte orașe a secerat străzi întregi. Când frica e mare, oamenii vor un loc unde să ceară ajutor și să găsească pe cineva care știe ce ține în mână. Asta vrea orașul de la noi: să știm ce ținem în mână.\n\nPovestitor: Clopoțelul de deasupra ușii sună. Intră o femeie, cu răsuflarea tăiată.\n\nAgnes: Bună dimineața. Aici e farmacia orașului?\n\nJohannes: Aici. Intrați, poftiți mai aproape de sobă. Cu ce vă pot ajuta?\n\nAgnes: Mă numesc Agnes, stau în Orașul de Jos. Băiatul meu tușește de trei nopți și nu doarme. Vecina mi-a zis să vin aici, că aveți ierburi care ușurează pieptul.\n\nJohannes: Avem ierburi uscate de peste vară, da. Dar întâi spuneți-mi: are fierbințeală? Are pete pe piele sau umflături?\n\nAgnes: Nu, nu, Doamne ferește. Doar tușește și e răgușit.\n\nJohannes: Atunci răsuflați ușurată. Întreb pe toată lumea, în vremurile astea. Lukas, adu legătura a treia de pe grinda din dreapta și borcanul de lemn cu capac roșu.\n\nLukas: Astea, meștere?\n\nJohannes: Astea. Acum balanța. Pune talerul gol, apoi greutatea mică. Vezi, Agnes, aici nu merge „cât apuci cu mâna”. Prea puțin nu ajută, prea mult poate face rău. De aceea cântărim.\n\nAgnes: Și eu ce fac cu ele?\n\nJohannes: Le fierbeți încet, într-o oală acoperită, și-i dați să bea cald, puțin câte puțin, seara. Și țineți-l în casă, la cald. Dacă în trei zile nu e mai bine, sau dacă apare fierbințeala, veniți înapoi fără să mai așteptați.\n\nAgnes: Cât vă datorez?\n\nJohannes: Pentru ierburi, puțin. Lukas îți spune. Dar hârtia și cerneala le păstrez pentru altceva.\n\nLukas: Pentru ce, meștere?\n\nJohannes: Pentru chitanța către oraș. Tot ce intră și iese din farmacia asta se scrie. Sfatul orașului plătește, sfatul orașului vrea să știe. „Johannes, farmacistul, a primit…” Vezi, Lukas? Cineva, cândva, poate va găsi hârtia asta și va ști că am fost aici.\n\nAgnes: Și eu o să le spun vecinelor că am fost la farmacie și am văzut un mojar de bronz cât un cazan.\n\nJohannes: Spuneți-le și că am întrebat de fierbințeală. Asta e mai important decât mojarul.\n\nPovestitor: Clopoțelul sună din nou. Agnes pleacă; zgomotul pieței se aude o clipă, apoi ușa se închide.\n\nLukas: Meștere, dacă vine cineva cu pete și umflături, ce facem?\n\nJohannes: Nu-l alungăm. Îl ținem departe de ceilalți, îi dăm ce avem și chemăm doctorul orașului. Și ne spălăm mâinile cu apă fiartă, de fiecare dată. Nu știu dacă ajută, dar nu știu nici că nu ajută. Până aflăm, facem ce putem.\n\nLukas: Și dacă într-o zi n-o să mai fie ciumă deloc?\n\nJohannes: Atunci va fi altceva, Lukas. Oamenii vor avea mereu nevoie de cineva care cântărește cu grijă și scrie totul pe hârtie. Hai, mai departe la rădăcini. În cerc, ți-am zis. Nu ca în tobă.\n\nPovestitor: Ați ascultat un radio-teatru imaginat, generat cu inteligență artificială pentru proiectul Activ A I. Johannes a existat: este primul farmacist al Sibiului consemnat într-un document, o chitanță din anul o mie patru sute nouăzeci și patru. Lukas, Agnes și tot ce au spus sunt ficțiune.\n",
+  "card": "c2/04_audio/carduri/A13_card.png",
+  "titlu_creativ": "O zi în prima farmacie, în 1494 – radio-teatru în trei voci",
+  "g_img": "assets/img/A13.jpg",
+  "g_th": "assets/th/A13.jpg"
+ },
+ {
+  "cod": "S11",
+  "categorie": "Spațial",
+  "titlu": "Harta premierelor Sibiului — fiecare „prima” așezată pe harta orașului",
+  "fisiere": [
+   "c2/05_spatial/S11_harta_premierelor.svg",
+   "c2/05_spatial/S11_harta_premierelor.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Hartă schematică a centrului istoric cu pini numerotați pentru premierele cu loc cunoscut: farmacia orașului (1494, Piața Mare), teatrul din Turnul Gros (1788), Muzeul Brukenthal (1817), Podul Minciunilor (1859) și primul tramvai electric (1905, spre Piața Gării), plus Muzeul de Istorie a Farmaciei (1972) ca reper; legenda listează premierele fără poziție pe hartă (spitalul 1292, școala 1380, manuscrisul lui Conrad Haas).",
+  "status": "realizat",
+  "nota": "Formulări „conform sursei” (patrimoniu.sibiu.ro) din fapte_verificate.md. Pozițiile sunt aproximative; hartă schematică, nu la scară. Spitalul (1292) și școala (1380) nu au loc precizat în surse; manuscrisul Haas apare doar în legendă (păstrat la Arhivele Naționale Sibiu). Teatrul din 1788 este plasat aproximativ pe latura de sud a incintei a III-a, lângă Poarta Cisnădiei.",
+  "calup": 2,
+  "g_img": "assets/img/S11.jpg",
+  "g_th": "assets/th/S11.jpg"
+ },
+ {
+  "cod": "S12",
+  "categorie": "Spațial",
+  "titlu": "Traseul primei linii de tramvai (gară – spitalul militar, 1905) — hartă ilustrată AI",
+  "fisiere": [
+   "c2/05_spatial/S12_traseul_tramvaiului.svg",
+   "c2/05_spatial/S12_traseul_tramvaiului.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Hartă ilustrată, orientată cu nordul în sus, cu traseul primei linii de tramvai electric (1905): Piața Gării – centru – Parcul Sub Arini (zona Spitalului Militar), extinderile din 1910, 1912, 1915 și 1927 cu linii punctate, săgeată spre Rășinari (1948), un vagon-motor stilizat desenat în SVG și o casetă cu faptele verificate (inaugurare, vagoane de la Budapesta, 14 vagoane-motor în 1925, 3.950.197 de călători în 20 de ani, dispariția din 1966–1967).",
+  "status": "realizat",
+  "nota": "Traseu schematic, aproximativ – nu la scară; sunt figurate doar capetele și „centru”, fără nume de stații intermediare (nu sunt în surse). Data inaugurării: 8 septembrie 1905 conform patrimoniu.sibiu.ro; tribuna.ro dă 9 august – ambele menționate. Vagonul este o ilustrație stilizată, nu o reproducere documentară.",
+  "calup": 2,
+  "g_img": "assets/img/S12.jpg",
+  "g_th": "assets/th/S12.jpg"
+ },
+ {
+  "cod": "D08",
+  "categorie": "Date",
+  "titlu": "30 de premiere sibiene pe o linie a timpului — infografic AI",
+  "fisiere": [
+   "c2/06_date/D08_30_premiere.svg",
+   "c2/06_date/D08_30_premiere.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Linie a timpului neliniară, pe trei rânduri și cu segmente pe secole, cu 30 dintre cele 38 de premiere enumerate de patrimoniu.sibiu.ro: de la primul spital (1292) la titlul de Regiune Gastronomică Europeană (2019), colorate pe cinci domenii; secolul al XVII-lea apare ca pauză, fără premiere în listă.",
+  "status": "realizat",
+  "nota": "Selecție fără premierele politice/cu persoane în viață (Summitul din 2019 exclus); omise și 1376 (bresle), 1886 (Datky), 1896 (Hess cântare), 1923 (Arhivele). „(România de azi)” prescurtează formularea sursei „de pe actualul teritoriu al României”, explicată în legendă. Împărțirea pe domenii este a autorilor artefactului.",
+  "calup": 2,
+  "g_img": "assets/img/D08.jpg",
+  "g_th": "assets/th/D08.jpg"
+ },
+ {
+  "cod": "D09",
+  "categorie": "Date",
+  "titlu": "Premierele pe domenii (sănătate, educație, cultură, tehnică) — infografic AI",
+  "fisiere": [
+   "c2/06_date/D09_premiere_pe_domenii.svg",
+   "c2/06_date/D09_premiere_pe_domenii.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Aceleași 30 de premiere din D08, grupate pe cinci domenii – sănătate (5), educație & știință (4), cultură (10), tehnică & economie (7), sport & turism (4) – cu coloane proporționale cu numărul de premiere, intervalul de ani al fiecărui domeniu și câte o fișă an + premieră.",
+  "status": "realizat",
+  "nota": "Împărțirea pe domenii este a autorilor artefactului (afirmat în subtitlu). Asteriscul marchează formularea sursei „de pe actualul teritoriu al României”; racheta lui Haas – „prima din lume”, conform sursei.",
+  "calup": 2,
+  "g_img": "assets/img/D09.jpg",
+  "g_th": "assets/th/D09.jpg"
+ },
+ {
+  "cod": "D10",
+  "categorie": "Date",
+  "titlu": "Telurul, elementul descoperit în Transilvania (1782) — fișă-infografic AI în stilul tabelului periodic",
+  "fisiere": [
+   "c2/06_date/D10_telur.svg",
+   "c2/06_date/D10_telur.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Celulă mare de tabel periodic (Te, 52, 127,60, metaloid, grupa 16, perioada 5) și un mini-tabel schematic cu telurul evidențiat; alături, povestea descoperirii în patru pași – Franz-Joseph Müller von Reichenstein, inspector-șef al minelor cu sediul la Sibiu, minereul de la Zlatna (1782), peste 50 de teste în trei ani, denumirea dată de Klaproth în 1798 – și utilizările generale de azi.",
+  "status": "realizat",
+  "nota": "Povestea: en.wikipedia (Franz-Joseph Müller von Reichenstein) și patrimoniu.sibiu.ro, via fapte_verificate.md. Masa atomică, grupa/perioada/blocul și utilizările (aliaje, telurură de cadmiu în panouri solare, electronică) sunt fapte generale de chimie, fără cifre. Mini-tabelul este o schemă simplificată, fără lantanide și actinide.",
+  "calup": 2,
+  "g_img": "assets/img/D10.jpg",
+  "g_th": "assets/th/D10.jpg"
+ },
+ {
+  "cod": "I10",
+  "categorie": "Interactiv",
+  "titlu": "Joc de memorie AI: perechi „premieră – an”",
+  "fisiere": [
+   "c2/07_interactiv/I10_memorie_premiere.html",
+   "c2/07_interactiv/I10_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – cod HTML/JS + pictograme SVG",
+  "descriere": "Joc de memorie cu cărți care se întorc: potrivește fiecare premieră sibiană (primul spital, prima farmacie, racheta lui Haas, Podul Minciunilor, tramvaiul electric…) cu anul ei. Trei niveluri (6, 8 sau 10 perechi), contor de mutări și cronometru; la fiecare potrivire, o fișă cu formularea exactă a sursei.",
+  "status": "realizat",
+  "nota": "17 premiere din fapte_verificate.md (lista patrimoniu.sibiu.ro/istorie/premiere; tramvaiul 1905 cu sursa patrimoniu.sibiu.ro/istorie/detaliu/77); formulările „primul/prima de pe actualul teritoriu al României” păstrate, iar pentru Haas „prima din lume” e marcată ca formulare a sursei. Perechile se aleg aleator la fiecare joc; animație CSS 3D la întoarcere; cărțile sunt butoane (Enter/Spațiu, săgeți între cărți); pe ecran mic fișa apare ca panou glisant jos. Testat Playwright la 1920×1080 și 390×844: fără erori în consolă, butoane ≥ 56 px, text ≥ 20 px pe ecran mare.",
+  "calup": 2,
+  "g_img": "assets/img/I10.jpg",
+  "g_html": "assets/html/I10_memorie_premiere.html",
+  "g_th": "assets/th/I10.jpg"
+ },
+ {
+  "cod": "I11",
+  "categorie": "Interactiv",
+  "titlu": "Mașina timpului AI: alegi anul și vezi ce exista deja în Sibiu",
+  "fisiere": [
+   "c2/07_interactiv/I11_masina_timpului.html",
+   "c2/07_interactiv/I11_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – cod HTML/JS + ilustrație SVG dinamică",
+  "descriere": "Alege un an între 1150 și 2026 (cursor mare, butoane ±, salturi la 1191, 1494, 1788, 1905, 2007) și vezi ce premiere existau deja (cele recente marcate „nou”), starea fortificațiilor (cele patru incinte, bastioanele, demolările 1830–1898), populația la cel mai apropiat recensământ din fișă și câteva lucruri care „nu existau încă”. Orizontul schematic al orașului se schimbă odată cu anul.",
+  "status": "realizat",
+  "nota": "34 de premiere din lista completă (fără cele legate de personalități politice); textul precizează că pagina oficială enumeră 38. Fortificațiile după secțiunea „Fortificațiile Sibiului” (incintele I 1191–1224, II 1224–1241, III 1357–1366, IV 1457; Haller 1551, Soldisch 1622–1629; demolări 1830–1898, ultimele ziduri din Orașul de Jos până în 1886). Populația afișată doar de la 1850 (12.765), 1900 (21.465), 2021 (134.309), cu mențiunea „cel mai apropiat recensământ din fișă”. Orizontul SVG este declarat schematic (turnuri/ziduri apar la anii incintelor, porțile dispar la 1830, zidurile Orașului de Jos la 1886, tramvaiul circulă 1905–1967, blocuri din anii 1970). Buton „Călătorește prin ani” (redare automată), apăsare lungă pe ±, săgeți de la tastatură. Testat Playwright la 1920×1080 și 390×844 (anii 1180, 1300, 1900, 2026): fără erori în consolă.",
+  "calup": 2,
+  "g_img": "assets/img/I11.jpg",
+  "g_html": "assets/html/I11_masina_timpului.html",
+  "g_th": "assets/th/I11.jpg"
+ },
+ {
+  "cod": "P09",
+  "categorie": "Identitate",
+  "titlu": "„Prima mea premieră” — afiș AI despre un lucru făcut pentru prima dată (personaj fictiv)",
+  "fisiere": [
+   "c2/08_identitate/P09_prima_mea_premiera.svg",
+   "c2/08_identitate/P09_prima_mea_premiera.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Afiș în stilul unei „fișe de premieră”: Tudor, 16 ani (personaj fictiv), își consemnează prima urcare singur în Turnul Sfatului, într-un text de 100 de cuvinte la persoana I, pus în paralel cu fișa de premieră a orașului – 1494, prima farmacie de pe actualul teritoriu al României. Siluetă stilizată a turnului, panglică, ștampilă „PREMIERĂ” și mesajul „Orașul a început cu niște «prima dată». Și tu.”",
+  "status": "realizat",
+  "nota": "Personaj fictiv (Tudor, 16 ani); liceul nu este numit. Ilustrație stilizată, generată cu AI. Datele istorice (1494, Johannes, Piața Mare; 1292, 1380, 1788, 1859) provin din fapte_verificate.md, cu formularea „de pe actualul teritoriu al României”.",
+  "calup": 2,
+  "g_img": "assets/img/P09.jpg",
+  "g_th": "assets/th/P09.jpg"
+ },
+ {
+  "cod": "P10",
+  "categorie": "Identitate",
+  "titlu": "Brevetul inventatorului de 16 ani — invenție imaginară pentru Sibiu, desenată AI",
+  "fisiere": [
+   "c2/08_identitate/P10_brevetul_inventatorului.svg",
+   "c2/08_identitate/P10_brevetul_inventatorului.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "„Brevet” imaginar emis de un „Oficiu imaginar de invenții al elevilor sibieni” pentru „Lucarna inteligentă” – un „ochi al Sibiului” cu pleoapă mobilă, care deschide podul când e umezeală, fără electricitate. Desen tehnic schematic cu piese numerotate 1–6 și cote imaginare, rezumat, trei revendicări cu umor și o notă despre tradiția desenelor de asamblare ale lui Conrad Haas.",
+  "status": "realizat",
+  "nota": "Document fictiv, fără valoare legală – oficiul, numărul brevetului, inventatoarea (Ana-Maria, 16 ani) și examinatorul sunt imaginare; filigran „DOCUMENT FICTIV” și ștampilă „FICTIV”. Desenul este schematic, nu un proiect tehnic; cotele sunt imaginare. Faptele reale: rolul lucarnelor „ochii Sibiului” (ventilarea podurilor) și datele despre Conrad Haas și manuscrisul său (1509–1576; la Sibiu din 1551; circa 450 de pagini; 1529–1569; desene de asamblare) – din fapte_verificate.md.",
+  "calup": 2,
+  "g_img": "assets/img/P10.jpg",
+  "g_th": "assets/th/P10.jpg"
+ },
+ {
+  "cod": "P11",
+  "categorie": "Identitate",
+  "titlu": "Medalia sibianului curios — distincție pentru elevii exploratori, design AI",
+  "fisiere": [
+   "c2/08_identitate/P11_medalia_sibianului_curios.svg",
+   "c2/08_identitate/P11_medalia_sibianului_curios.png"
+  ],
+  "tip": "imagine",
+  "instrument": "Claude (Anthropic) – ilustrație/infografic în cod SVG",
+  "descriere": "Design de medalie cu avers (ochi deschis și semn de întrebare, inscripția „Sibianul curios”) și revers (cinci motive stilizate din premierele orașului – mojar 1494, rachetă în trepte 1555, mască de teatru 1788, pod 1859, tramvai 1905 – cu deviza „Întreb · Caut · Verific”), panglică în culorile proiectului și lista celor opt criterii imaginate pentru elevii exploratori.",
+  "status": "realizat",
+  "nota": "Distincție imaginată pentru proiect – nu este o distincție oficială și nu reproduce stema Sibiului; motivele sunt stilizări libere. Criteriile sunt propuneri imaginate. Anii premierelor provin din fapte_verificate.md (patrimoniu.sibiu.ro).",
+  "calup": 2,
+  "g_img": "assets/img/P11.jpg",
+  "g_th": "assets/th/P11.jpg"
+ }
+]

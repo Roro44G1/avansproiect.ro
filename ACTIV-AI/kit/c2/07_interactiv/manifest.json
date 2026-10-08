@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "I10",
+    "categorie": "Interactiv",
+    "titlu": "Joc de memorie AI: perechi „premieră – an”",
+    "fisiere": [
+      "07_interactiv/I10_memorie_premiere.html",
+      "07_interactiv/I10_preview.png"
+    ],
+    "tip": "html",
+    "instrument": "Claude (Anthropic) – cod HTML/JS + pictograme SVG",
+    "descriere": "Joc de memorie cu cărți care se întorc: potrivește fiecare premieră sibiană (primul spital, prima farmacie, racheta lui Haas, Podul Minciunilor, tramvaiul electric…) cu anul ei. Trei niveluri (6, 8 sau 10 perechi), contor de mutări și cronometru; la fiecare potrivire, o fișă cu formularea exactă a sursei.",
+    "status": "realizat",
+    "nota": "17 premiere din fapte_verificate.md (lista patrimoniu.sibiu.ro/istorie/premiere; tramvaiul 1905 cu sursa patrimoniu.sibiu.ro/istorie/detaliu/77); formulările „primul/prima de pe actualul teritoriu al României” păstrate, iar pentru Haas „prima din lume” e marcată ca formulare a sursei. Perechile se aleg aleator la fiecare joc; animație CSS 3D la întoarcere; cărțile sunt butoane (Enter/Spațiu, săgeți între cărți); pe ecran mic fișa apare ca panou glisant jos. Testat Playwright la 1920×1080 și 390×844: fără erori în consolă, butoane ≥ 56 px, text ≥ 20 px pe ecran mare."
+  },
+  {
+    "cod": "I11",
+    "categorie": "Interactiv",
+    "titlu": "Mașina timpului AI: alegi anul și vezi ce exista deja în Sibiu",
+    "fisiere": [
+      "07_interactiv/I11_masina_timpului.html",
+      "07_interactiv/I11_preview.png"
+    ],
+    "tip": "html",
+    "instrument": "Claude (Anthropic) – cod HTML/JS + ilustrație SVG dinamică",
+    "descriere": "Alege un an între 1150 și 2026 (cursor mare, butoane ±, salturi la 1191, 1494, 1788, 1905, 2007) și vezi ce premiere existau deja (cele recente marcate „nou”), starea fortificațiilor (cele patru incinte, bastioanele, demolările 1830–1898), populația la cel mai apropiat recensământ din fișă și câteva lucruri care „nu existau încă”. Orizontul schematic al orașului se schimbă odată cu anul.",
+    "status": "realizat",
+    "nota": "34 de premiere din lista completă (fără cele legate de personalități politice); textul precizează că pagina oficială enumeră 38. Fortificațiile după secțiunea „Fortificațiile Sibiului” (incintele I 1191–1224, II 1224–1241, III 1357–1366, IV 1457; Haller 1551, Soldisch 1622–1629; demolări 1830–1898, ultimele ziduri din Orașul de Jos până în 1886). Populația afișată doar de la 1850 (12.765), 1900 (21.465), 2021 (134.309), cu mențiunea „cel mai apropiat recensământ din fișă”. Orizontul SVG este declarat schematic (turnuri/ziduri apar la anii incintelor, porțile dispar la 1830, zidurile Orașului de Jos la 1886, tramvaiul circulă 1905–1967, blocuri din anii 1970). Buton „Călătorește prin ani” (redare automată), apăsare lungă pe ±, săgeți de la tastatură. Testat Playwright la 1920×1080 și 390×844 (anii 1180, 1300, 1900, 2026): fără erori în consolă."
+  }
+]

@@ -1,0 +1,48 @@
+import json, os, subprocess, re, glob
+R='/home/claude/expo'
+def load(p):
+    d=json.load(open(f'{R}/{p}')); base=os.path.dirname(p)
+    for it in d:
+        fs=[]
+        for f in it.get('fisiere',[]):
+            fs.append(f if '/' in f else f'{base}/{f}')
+        it['fisiere']=fs
+        for k in ('audio','tts_text'):
+            if it.get(k) and '/' not in it[k]: it[k]=f'{base}/{it[k]}'
+    return d
+items=[]
+for p in ['01_vizual/_manifest_vector.json','01_vizual/_manifest_canva.json','03_literar/_manifest.json','04_audio/_manifest.json','05_spatial/_manifest.json','06_date/_manifest.json','07_interactiv/_manifest.json','08_identitate/_manifest.json']:
+    items+=load(p)
+items.append({'cod':'V01','categorie':'Vizual','titlu':'Portret AI al bunicilor în tinerețe (foto veche + AI restoration/colorization)','fisiere':['01_vizual/V01_fisa_portret_bunici.png'],'tip':'imagine','instrument':'Claude (Anthropic) – fișă de lucru în cod SVG','descriere':'Fișă de lucru în șase pași pentru restaurarea și colorizarea cu AI a unei fotografii reale a bunicilor, cu acordul familiei.','status':'necesita-material-personal','nota':'Piesa cere o fotografie reală din familie; nu a fost inventată. Demonstrația tehnicii: clipul M01.'})
+lst=open(f'{R}/_brief/lista_artefacte.md').read()
+titles={m.group(1):m.group(2).strip() for m in re.finditer(r'^([VMLASDIP]\d\d) (.+)$',lst,re.M)}
+def dur(f):
+    try: return round(float(subprocess.run(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',f],capture_output=True,text=True).stdout),1)
+    except: return None
+VID={'M01':('M01_din_fotografie_in_animatie.mp4','Demonstrație, pe o fotografie ilustrată fictivă, a celor patru pași: scanare, restaurare, colorizare și animație 2.5D, cu regulile de lucru pentru o fotografie reală.','realizat-partial','Clasa repetă pașii pe o fotografie reală din familie, cu acord.'),
+ 'M02':('M02_timelapse_anotimpuri.mp4','Acoperișurile cu „ochi” ale Orașului de Sus trec prin zile, nopți și cele patru anotimpuri în 30 de secunde.','realizat',None),
+ 'M03':('M03_povestea_unui_zid.mp4','Un zid din Cetate își spune povestea: trei inele de ziduri, 39 de turnuri, breslele, 1817, 1859, 1875 – doar fapte verificate.','realizat',None),
+ 'M04':('M04_clip_muzical_jiana.mp4','Motive tradiționale generice animate după ritmul remixului jienei „Hai, mândruță, la poiană” din Mărginimea Sibiului (2/4, vioi, fluier și vioară sintetizate).','realizat','Melodia este o jiană autentică, transcrisă din partitura pentru saxofon „Hai mândruță la poiană – Jiana DoM” (aranjament Natalia Bădilă & Paul Duca) și redată la înălțimea reală, în Do major; nu se folosește nicio înregistrare a vreunui interpret.'),
+ 'M05':('M05_o_zi_in_2050.mp4','Șapte momente dintr-o zi imaginată a unui elev sibian în 2050, de la blocul cu grădină pe acoperiș la scrisoarea de mână către bunica.','realizat',None),
+ 'M06':('M06_animatie_stema.mp4','Elementele stemei Sibiului apar pe rând, cu anul 1323 și legenda jurământului; animație interpretativă.','realizat','Nu înlocuiește reprezentarea oficială a stemei.'),
+ 'M07':('M07_viralul_sibiului_vertical.mp4','Un clip vertical, în stil de rețea socială, în care Sibiul „vorbește” despre cei 835 de ani ai săi și despre premierele lui.','realizat','Cont imaginar; fără aprecieri sau vizualizări inventate.'),
+ 'M08':('M08_reclama_sibiu_2050.mp4','Reclamă imaginară pentru Sibiu în 2050: patrimoniul real (1817, 1859) alături de noutăți marcate clar ca imaginate.','realizat',None),
+ 'M09':('M09_videoclip_ochi_de_tigla.mp4','Videoclip karaoke pentru cântecul original „Ochi de țiglă”, despre Centrul istoric, peste acoperișurile orașului de la răsărit la noapte.','realizat',None)}
+for c,(f,desc,st,nota) in VID.items():
+    it={'cod':c,'categorie':'Video','titlu':titles[c],'fisiere':[f'02_video/{f}','02_video/M_fise_video.md'],'tip':'video','instrument':'Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas), muzică din piesele audio ale expoziției','descriere':desc,'status':st,'durata_s':dur(f'{R}/02_video/{f}')}
+    if nota: it['nota']=nota
+    items.append(it)
+order='VMLASDIP'
+items.sort(key=lambda x:(order.index(x['cod'][0]),x['cod']))
+# titluri exacte din listă + conversie text
+bad=[]
+for it in items:
+    if it['titlu']!=titles[it['cod']]: bad.append((it['cod'],it['titlu'],titles[it['cod']])); it['titlu']=titles[it['cod']]
+    md=[f for f in it['fisiere'] if f.endswith('.md') and not f.endswith('M_fise_video.md')]
+    if md:
+        h=subprocess.run(['pandoc','-f','markdown','-t','html5','--wrap=none',f'{R}/{md[0]}'],capture_output=True,text=True).stdout
+        it['html']=h
+    if it.get('tts_text'): it['tts']=open(f'{R}/{it["tts_text"]}').read()
+print('titluri corectate:',bad)
+json.dump(items,open(f'{R}/gallery/catalog_full.json','w'),ensure_ascii=False,indent=1)
+print(len(items), {s:sum(1 for i in items if i['status']==s) for s in set(i['status'] for i in items)})

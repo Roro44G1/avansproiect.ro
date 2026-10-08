@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "M12",
+  "categorie": "Video",
+  "titlu": "Sibiul primelor: 10 premiere în 60 de secunde — animație AI cu cronologie",
+  "fisiere": [
+   "02_video/M12_sibiul_primelor.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică: A04 „Ochi de țiglă” – instrumental original (sinteză procedurală, din expoziție)",
+  "descriere": "O cronologie animată care trece, în puțin peste un minut, prin zece premiere sibiene: de la primul spital (1292) și prima farmacie (1494) la Muzeul Brukenthal (1817), tramvaiul electric (1905) și titlul de Capitală Culturală Europeană (2007). Fiecare an vine cu o pictogramă desenată în cod și cu formularea „conform sursei”.",
+  "status": "realizat",
+  "durata_s": 62.0,
+  "nota": "Fapte: patrimoniu.sibiu.ro (Premiere) pentru 9 dintre cele 10 premiere; tramvaiul din 1905 provine din patrimoniu.sibiu.ro (Tramvaiul) și este prezentat ca „prima linie de tramvai electric din Sibiu”, nu ca premieră națională (cartela finală o spune explicit). Detaliile suplimentare (25 de meserii în 19 bresle; „farmacia orașului” în Piața Mare; Catehismul luteran; Turnul Gros) sunt din fișa de fapte. Pictogramele sunt simboluri desenate în cod, nu reproduceri ale monumentelor; intervalele de pe linia timpului nu sunt la scară. Sursă HTML: _tools/video/M12_sibiul_primelor.html."
+ },
+ {
+  "cod": "M13",
+  "categorie": "Video",
+  "titlu": "Povestea primului muzeu din România — video animat AI despre colecția Brukenthal",
+  "fisiere": [
+   "02_video/M13_primul_muzeu.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică: A03 „Dimineață în cartier” – peisaj sonor sintetizat (din expoziție)",
+  "descriere": "Povestea Muzeului Brukenthal în șapte scene cu text pe ecran: Samuel von Brukenthal (1721–1803), guvernator al Transilvaniei 1777–1787, palatul din Piața Mare, colecțiile vizitabile din jurul lui 1790, deschiderea publică din 1817, cifrele colecțiilor și locul de odihnă din Catedrala Evanghelică.",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "Fapte: fișa de fapte (Monumente – Muzeul Brukenthal; Muzeul Brukenthal – completări; Catedrala Evanghelică), după patrimoniu.sibiu.ro și en.wikipedia.org. Fără voce: naratorul este text pe ecran. Tablourile sunt rame goale cu dreptunghiuri colorate (nu reproduc opere reale); portretul este o siluetă stilizată; palatul și catedrala sunt scheme, nu la scară. Sursă HTML: _tools/video/M13_primul_muzeu.html."
+ },
+ {
+  "cod": "M14",
+  "categorie": "Video",
+  "titlu": "Primul tramvai electric din Sibiu (1905) — reconstituire animată AI",
+  "fisiere": [
+   "02_video/M14_primul_tramvai.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); sunet: A12 „Coloana sonoră a primului tramvai” – reconstituire sonoră sintetizată (din acest calup)",
+  "descriere": "Un tramvai stilizat pleacă din Piața Gării spre Parcul Sub Arini în 1905, iar pe o schemă a rețelei apar, an de an, prelungirile: Dumbrava (1910), Piața Cibin (1912), parcul de 14 vagoane cu 30 de locuri (1925), Turnișor și Piața Cluj (1927), Rășinari (1948), până la dispariția tramvaiului din oraș în 1966–1967.",
+  "status": "realizat",
+  "durata_s": 50.0,
+  "nota": "Fapte: fișa de fapte (Tramvaiul), după patrimoniu.sibiu.ro, tursib.ro, turnulsfatului.ro (2015), tribuna.ro. Data inaugurării: pe ecran apare „1905” mare; cartela finală precizează 8 septembrie 1905 (patrimoniu.sibiu.ro) și 9 august 1905 (tribuna.ro). Vagonul este stilizat (culori sobre, fără siglă reală); străzile și schema rețelei sunt imaginate și nu sunt la scară. Sursă HTML: _tools/video/M14_primul_tramvai.html."
+ }
+]

@@ -1,0 +1,179 @@
+# -*- coding: utf-8 -*-
+"""P10 – Brevetul inventatorului de 16 ani – document imaginar, fără valoare legală."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math
+
+OUT = "/home/claude/expo/c2/08_identitate/P10_brevetul_inventatorului.svg"
+ORANGE = "#F76B15"
+s = frame_head("IDENTITATE · P10", ORANGE, "Brevetul inventatorului de 16 ani",
+               "document fictiv, fără valoare legală · inventator: personaj fictiv")
+
+INK = "#2B2622"; INK2 = "#6B5E52"; SEPIA = "#8A5A2B"; LINE = "#4A3B2A"
+# ---------- documentul
+DX, DY, DW, DH = 80, 230, 1760, 770
+s += ('<defs><linearGradient id="oldpaper" x1="0" y1="0" x2="1" y2="1">'
+      '<stop offset="0" stop-color="#F3EAD6"/><stop offset="0.5" stop-color="#EEE2C8"/><stop offset="1" stop-color="#E4D5B4"/></linearGradient>'
+      '<pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">'
+      '<path d="M20,0 H0 V20" fill="none" stroke="#B8A98A" stroke-width="0.6" opacity="0.5"/></pattern>'
+      '</defs>\n')
+s += f'<g filter="url(#sh)"><rect x="{DX}" y="{DY}" width="{DW}" height="{DH}" rx="6" fill="url(#oldpaper)"/></g>\n'
+s += f'<rect x="{DX}" y="{DY}" width="{DW}" height="{DH}" rx="6" fill="url(#oldpaper)" filter="url(#paper)"/>\n'
+# pete de vechime
+for cx, cy, r, o in [(DX+120, DY+700, 90, 0.10), (DX+1650, DY+90, 70, 0.08), (DX+900, DY+740, 120, 0.06)]:
+    s += f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="#9C7A4A" opacity="{o}" filter="url(#blur8)"/>\n'
+# chenar triplu, cu colțuri
+s += f'<rect x="{DX+16}" y="{DY+16}" width="{DW-32}" height="{DH-32}" fill="none" stroke="{SEPIA}" stroke-width="3"/>\n'
+s += f'<rect x="{DX+24}" y="{DY+24}" width="{DW-48}" height="{DH-48}" fill="none" stroke="{SEPIA}" stroke-width="1"/>\n'
+s += f'<rect x="{DX+30}" y="{DY+30}" width="{DW-60}" height="{DH-60}" fill="none" stroke="{SEPIA}" stroke-width="1" stroke-dasharray="2 4"/>\n'
+for cx, cy in [(DX+24, DY+24), (DX+DW-24, DY+24), (DX+24, DY+DH-24), (DX+DW-24, DY+DH-24)]:
+    s += f'<circle cx="{cx}" cy="{cy}" r="9" fill="{SEPIA}"/><circle cx="{cx}" cy="{cy}" r="4" fill="#F3EAD6"/>\n'
+
+# filigran „DOCUMENT FICTIV”
+s += f'<g transform="rotate(-18 960 620)" opacity="0.10">\n'
+s += text(960, 650, "DOCUMENT FICTIV", 130, SEPIA, "serif", 700, anchor="middle", extra='letter-spacing="10"')
+s += "</g>\n"
+
+# ---------- antet
+s += text(960, DY + 78, "OFICIUL IMAGINAR DE INVENȚII AL ELEVILOR SIBIENI", 22, SEPIA, "sans", 700, anchor="middle", extra='letter-spacing="4"')
+s += text(960, DY + 128, "BREVET DE INVENȚIE", 46, INK, "serif", 700, anchor="middle", extra='letter-spacing="3"')
+s += text(960, DY + 156, "imaginar · nr. 0016/2026 · document fictiv, realizat pentru expoziția ACTIV AI – fără valoare legală", 15, INK2, "sans", 400, True, anchor="middle")
+s += f'<line x1="{DX+60}" y1="{DY+176}" x2="{DX+DW-60}" y2="{DY+176}" stroke="{SEPIA}" stroke-width="1.5"/>\n'
+s += f'<line x1="{DX+60}" y1="{DY+180}" x2="{DX+DW-60}" y2="{DY+180}" stroke="{SEPIA}" stroke-width="0.7"/>\n'
+
+# ---------- coloana stângă: date + revendicări
+CX = DX + 60; CW = 520
+yy = DY + 205
+rows = [("Inventator", "Ana-Maria, 16 ani – personaj fictiv"), ("Clasa", "a X-a (liceu nenumit)"),
+        ("Titlul", "Lucarna inteligentă – „ochiul” care deschide podul când e umezeală"),
+        ("Domeniu", "acoperișuri istorice · ventilarea podurilor · fără electricitate")]
+for k_, v in rows:
+    s += text(CX, yy, k_, 15, SEPIA, "sans", 700)
+    p, y2 = para(CX + 100, yy, v, 15, CW - 100 + 40, INK, "sans", 400, lh=21)
+    s += p
+    yy = y2 + 8
+s += f'<line x1="{CX}" y1="{yy}" x2="{CX+CW}" y2="{yy}" stroke="{SEPIA}" stroke-width="0.8"/>\n'
+yy += 30
+s += text(CX, yy, "Rezumat", 22, INK, "serif", 700)
+yy += 26
+p, yy = para(CX, yy, "Lucarnele în formă de pleoapă de pe acoperișurile Sibiului – „ochii Sibiului” – au un rol real: ventilează podurile. "
+             "Invenția le dă o pleoapă mobilă: o fâșie de material care se lungește la umezeală trage de o pârghie, pleoapa se ridică, "
+             "podul respiră; când aerul se usucă, fâșia se scurtează și ochiul se închide la loc. Fără curent, fără baterii, fără aplicație.",
+             14, CW + 40, INK, "sans", 400, lh=20)
+s += p
+yy += 12
+s += text(CX, yy, "Revendicări", 22, INK, "serif", 700)
+yy += 28
+claims = ["Lucarna se deschide singură când aerul din pod devine umed și se închide când vine ploaia – adică exact invers față de umbrela mea.",
+          "Pleoapa nu clipește la trecători; se mișcă doar din motive de ventilație. Orice asemănare cu un acoperiș care face cu ochiul este intenționată.",
+          "Dispozitivul funcționează cu o contragreutate și o fâșie care se lungește la umezeală – fizică veche de secole, redescoperită la ora de fizică."]
+for i, c in enumerate(claims, 1):
+    s += f'<circle cx="{CX+11}" cy="{yy-6}" r="11" fill="{SEPIA}"/>'
+    s += text(CX + 11, yy - 1, str(i), 13, "#F3EAD6", "sans", 700, anchor="middle")
+    p, yy = para(CX + 34, yy, c, 14, CW - 34 + 40, INK, "sans", 400, lh=19)
+    s += p
+    yy += 8
+
+# ---------- desenul tehnic (centru-dreapta)
+GX, GY, GW, GH = DX + 680, DY + 200, 760, 400
+s += f'<rect x="{GX}" y="{GY}" width="{GW}" height="{GH}" fill="#F8F2E4" stroke="{SEPIA}" stroke-width="1.2"/>\n'
+s += f'<rect x="{GX}" y="{GY}" width="{GW}" height="{GH}" fill="url(#grid)"/>\n'
+s += text(GX + 12, GY + 22, "FIG. 1 – secțiune prin acoperiș, lucarnă „ochi” cu pleoapă mobilă (schematic, cote imaginare)", 13, INK2, "sans", 500, True)
+# secțiunea acoperișului: pantă de la stânga-jos la dreapta-sus
+ox, oy = GX + 60, GY + 330   # baza stângă a pantei
+ex, ey = GX + 720, GY + 86   # streașina sus
+# grinzi / șarpantă (linii)
+s += f'<polygon points="{ox},{oy} {ex},{ey} {ex},{ey+40} {ox},{oy+40}" fill="#D9C9A5" stroke="{LINE}" stroke-width="1.6"/>\n'
+# țigle (6) – mici arce pe pantă
+n = 26
+for i in range(n):
+    t = i / n; t2 = (i + 1) / n
+    x1 = ox + (ex - ox) * t; y1 = oy + (ey - oy) * t
+    x2 = ox + (ex - ox) * t2; y2 = oy + (ey - oy) * t2
+    s += f'<path d="M{x1:.1f},{y1:.1f} Q{(x1+x2)/2:.1f},{(y1+y2)/2-9:.1f} {x2:.1f},{y2:.1f}" fill="none" stroke="#B9583A" stroke-width="3"/>\n'
+# interiorul podului (5) hașurat
+s += f'<polygon points="{ox},{oy+40} {ex},{ey+40} {ex},{GY+GH-30} {ox},{GY+GH-30}" fill="none" stroke="{LINE}" stroke-width="1" stroke-dasharray="4 4"/>\n'
+# lucarna „ochi”: la mijlocul pantei
+mx = (ox + ex) / 2 + 40; my = oy + (ey - oy) * ((mx - ox) / (ex - ox))
+# pleoapa (1): arc ridicat
+s += f'<path d="M{mx-120},{my+40} Q{mx},{my-130} {mx+120},{my-60}" fill="#E4D5B4" stroke="{LINE}" stroke-width="2.2"/>\n'
+s += f'<path d="M{mx-120},{my+40} Q{mx-10},{my-60} {mx+120},{my-60}" fill="#2B2622" stroke="{LINE}" stroke-width="1.5"/>\n'
+# deschiderea (gol de aer) – săgeți de ventilație
+for k in range(3):
+    ax = mx - 40 + k * 40; ay = my - 20 - k * 12
+    s += f'<path d="M{ax},{ay+30} q6,-14 0,-28" fill="none" stroke="{PETROL}" stroke-width="2.2" stroke-linecap="round"/>'
+    s += f'<polygon points="{ax-5},{ay+6} {ax},{ay-2} {ax+5},{ay+6}" fill="{PETROL}"/>\n'
+# balama (3)
+s += f'<circle cx="{mx-120}" cy="{my+40}" r="7" fill="{SEPIA}" stroke="{LINE}" stroke-width="1.5"/>\n'
+# pârghie și fâșia higroscopică (2) + contragreutate (4), în interiorul podului
+lx1, ly1 = mx - 120, my + 40
+lx2, ly2 = mx - 70, my + 105
+s += f'<line x1="{lx1}" y1="{ly1}" x2="{lx2}" y2="{ly2}" stroke="{LINE}" stroke-width="3"/>\n'
+s += f'<line x1="{lx2}" y1="{ly2}" x2="{lx2}" y2="{ly2+52}" stroke="{VIOLET}" stroke-width="5" stroke-dasharray="8 4"/>\n'  # fâșia
+s += f'<rect x="{lx2-8}" y="{ly2+52}" width="16" height="10" fill="{LINE}"/>\n'
+s += f'<line x1="{lx2+40}" y1="{ly2-10}" x2="{lx2+40}" y2="{ly2+36}" stroke="{LINE}" stroke-width="1.5"/>\n'
+s += f'<rect x="{lx2+26}" y="{ly2+36}" width="28" height="26" rx="3" fill="{SEPIA}" stroke="{LINE}" stroke-width="1.2"/>\n'  # contragreutate
+s += f'<line x1="{lx2}" y1="{ly2}" x2="{lx2+40}" y2="{ly2-10}" stroke="{LINE}" stroke-width="2"/>\n'
+s += f'<circle cx="{lx2}" cy="{ly2}" r="5" fill="{SEPIA}" stroke="{LINE}" stroke-width="1.2"/>\n'
+
+# numerotarea pieselor (cercuri cu linii-indicator)
+def tag(n_, x, y, tx, ty):
+    out = f'<line x1="{x}" y1="{y}" x2="{tx}" y2="{ty}" stroke="{LINE}" stroke-width="1"/>'
+    out += f'<circle cx="{tx}" cy="{ty}" r="12" fill="#F8F2E4" stroke="{LINE}" stroke-width="1.4"/>'
+    out += text(tx, ty + 4.5, str(n_), 13, INK, "sans", 700, anchor="middle")
+    return out + "\n"
+s += tag(1, mx + 40, my - 90, mx + 110, my - 140)
+s += tag(2, lx2, ly2 + 26, lx2 - 60, ly2 + 40)
+s += tag(3, mx - 120, my + 40, mx - 190, my + 10)
+s += tag(4, lx2 + 54, ly2 + 50, lx2 + 110, ly2 + 70)
+s += tag(5, ox + 200, oy + 20 - (oy - ey) * (200 / (ex - ox)), ox + 220, GY + GH - 50)
+s += tag(6, ox + (ex - ox) * 0.88, oy + (ey - oy) * 0.88 - 8, ex - 40, ey - 44)
+# cote
+def dim_h(x1, x2, y, label):
+    out = f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y}" stroke="{TIGLA}" stroke-width="1.2"/>'
+    for xx in (x1, x2):
+        out += f'<line x1="{xx}" y1="{y-6}" x2="{xx}" y2="{y+6}" stroke="{TIGLA}" stroke-width="1.2"/>'
+    out += f'<polygon points="{x1},{y} {x1+9},{y-4} {x1+9},{y+4}" fill="{TIGLA}"/><polygon points="{x2},{y} {x2-9},{y-4} {x2-9},{y+4}" fill="{TIGLA}"/>'
+    out += text((x1 + x2) / 2, y - 7, label, 12, TIGLA, "sans", 600, anchor="middle")
+    return out + "\n"
+s += dim_h(mx - 120, mx + 120, my + 75, "≈ 120 cm (deschiderea „ochiului”)")
+# unghi
+s += f'<path d="M{mx+60},{my-60} A 60 60 0 0 0 {mx+52},{my-90}" fill="none" stroke="{TIGLA}" stroke-width="1.2"/>\n'
+s += text(mx + 75, my - 92, "≈ 15°", 12, TIGLA, "sans", 600)
+# legenda pieselor
+LGX = GX + 14; LGY = GY + 56
+legend = ["1 – pleoapa mobilă (lemn)", "2 – fâșie higroscopică (se lungește la umezeală)", "3 – balama",
+          "4 – contragreutate", "5 – podul (aerul care trebuie să iasă)", "6 – țigle"]
+for i, l in enumerate(legend):
+    col = i // 3; row = i % 3
+    s += text(LGX + (0 if col == 0 else 190), LGY + (row + (3 if col else 0)) * 19, l, 12.5, INK2, "sans", 500)
+s += text(GX + GW - 12, GY + GH - 10, "desen schematic, generat cu AI – nu este un proiect tehnic", 11.5, INK2, "sans", 400, True, anchor="end")
+
+# ---------- notă Conrad Haas (sub desen)
+NX = GX; NW = GW; NY = GY + GH + 18
+s += f'<rect x="{NX}" y="{NY}" width="{NW}" height="118" rx="4" fill="none" stroke="{SEPIA}" stroke-width="1"/>\n'
+s += text(NX + 16, NY + 28, "Inspirație (fapt verificat): tradiția lui Conrad Haas", 16, SEPIA, "serif", 700)
+p, _ = para(NX + 16, NY + 52, "Conrad Haas (1509–1576), șeful arsenalului cetății Sibiului din 1551, a lăsat un manuscris în limba germană de circa 450 de pagini, "
+            "redactat între 1529 și 1569, cu rachete în două și trei trepte și desene de asamblare. Brevetul de față este o joacă în aceeași tradiție: "
+            "întâi desenezi, apoi explici, apoi… încerci. Numărul brevetului, oficiul și inventatoarea sunt imaginare.",
+            13, NW - 32, INK, "sans", 400, lh=18)
+s += p
+
+# ---------- ștampilă + semnături (jos stânga)
+SX, SY = DX + 632, DY + DH - 96
+s += f'<g transform="rotate(-10 {SX} {SY})" opacity="0.85">\n'
+s += f'<circle cx="{SX}" cy="{SY}" r="48" fill="none" stroke="#B3302A" stroke-width="3.5"/><circle cx="{SX}" cy="{SY}" r="40" fill="none" stroke="#B3302A" stroke-width="1.2"/>\n'
+s += text(SX, SY - 10, "OFICIUL IMAGINAR", 9.5, "#B3302A", "sans", 700, anchor="middle", extra='letter-spacing="1"')
+s += text(SX, SY + 8, "FICTIV", 18, "#B3302A", "sans", 700, anchor="middle", extra='letter-spacing="3"')
+s += text(SX, SY + 26, "fără valoare legală", 8.5, "#B3302A", "sans", 600, anchor="middle")
+s += "</g>\n"
+s += f'<line x1="{CX}" y1="{DY+DH-52}" x2="{CX+220}" y2="{DY+DH-52}" stroke="{INK}" stroke-width="1"/>\n'
+s += text(CX, DY + DH - 37, "inventatoare (personaj fictiv)", 12, INK2, "sans", 400, True)
+s += f'<path d="M{CX+20},{DY+DH-58} q14,-22 30,-4 t30,-8 t26,2 t22,-6" fill="none" stroke="{INK}" stroke-width="1.5"/>\n'
+s += f'<line x1="{CX+260}" y1="{DY+DH-52}" x2="{CX+440}" y2="{DY+DH-52}" stroke="{INK}" stroke-width="1"/>\n'
+s += text(CX + 260, DY + DH - 37, "examinator imaginar", 12, INK2, "sans", 400, True)
+s += f'<path d="M{CX+280},{DY+DH-58} q10,-18 24,-6 t26,-10 t30,4" fill="none" stroke="{INK}" stroke-width="1.5"/>\n'
+
+s += frame_foot()
+write(OUT, s)
+print(OUT)

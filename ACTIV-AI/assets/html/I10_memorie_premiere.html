@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Memorie: premiere</title>
+<style>
+:root{
+  --bg:#0F1720;--surf:#1B2733;--surf2:#223241;--line:#2E4153;
+  --petrol:#0E7C86;--petrol2:#12959F;--violet:#6E56CF;--violet2:#8B76E6;--ocru:#E2A62B;--tigla:#B9583A;
+  --var:#F3EFE6;--ceata:#A9B4C0;--chip:#D6409F;
+  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pad:clamp(16px,4.17vw,80px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--var);overflow-x:hidden}
+body{font-family:var(--sans);font-size:clamp(17px,1.05vw,24px);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:clamp(14px,2vw,38px) 0 clamp(10px,1.1vw,22px)}
+.brand{display:flex;align-items:center;gap:clamp(10px,1.2vw,24px);flex-wrap:wrap;min-width:0}
+.chip{background:var(--chip);color:var(--bg);font-weight:700;letter-spacing:.12em;font-size:clamp(12px,.85vw,18px);padding:.5em 1.1em;border-radius:999px;white-space:nowrap}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.5vw,52px);line-height:1.1;margin:0}
+main{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:2px solid var(--surf);padding:12px 0 clamp(12px,1.1vw,22px);color:var(--ceata);font-size:clamp(13px,1.1vw,22px)}
+.foot .tag{color:var(--ocru);font-weight:600}
+.btn{font:inherit;font-weight:600;min-height:56px;padding:.55em 1.3em;border-radius:14px;border:2px solid transparent;background:var(--petrol);color:var(--var);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5em;transition:transform .15s,background .2s,border-color .2s,opacity .25s;touch-action:manipulation}
+@media (hover:hover){.btn:hover{background:var(--petrol2)}.btn.ghost:hover{border-color:var(--ocru)}.btn.accent:hover{background:#efb944}.lvl:hover{border-color:var(--petrol2)}}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.lvl:focus-visible,.cardb:focus-visible{outline:3px solid var(--ocru);outline-offset:3px}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.big{font-size:1.25em;min-height:72px;padding:.5em 1.6em;border-radius:18px}
+.btn.accent{background:var(--ocru);color:var(--bg)}
+.screen{flex:1;display:none;min-height:0;animation:fadeIn .45s ease both}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fadeOnly{from{opacity:0}to{opacity:1}}
+#game{animation-name:fadeOnly}
+.ill{border-radius:24px;overflow:hidden;background:var(--surf);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.ill>svg{display:block;width:100%;height:auto}
+
+/* start */
+#start{align-items:center;gap:clamp(20px,4vw,80px);padding:clamp(8px,1.5vw,30px) 0}
+#start .ill{flex:1.1;max-width:900px}
+#start .intro{flex:1;max-width:760px}
+.kicker{color:var(--ocru);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9em;margin:0 0 .6em}
+.intro h2{font-family:var(--serif);font-size:clamp(30px,3.4vw,68px);line-height:1.08;margin:0 0 .45em}
+.intro p{color:var(--ceata);margin:0 0 1em;max-width:34em}
+.intro .note{font-size:.95em;color:var(--ceata);margin-top:1.2em;display:flex;gap:.6em;align-items:flex-start}
+.intro .note b{color:var(--var)}
+.levels{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 1.1em}
+.lvl{font:inherit;font-weight:600;min-height:56px;padding:.5em 1.1em;border-radius:14px;border:2px solid var(--line);background:var(--surf);color:var(--var);cursor:pointer;display:inline-flex;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.15;transition:border-color .2s,background .2s;touch-action:manipulation}
+.lvl small{color:var(--ceata);font-weight:500;font-size:.8em}
+.lvl[aria-pressed="true"]{border-color:var(--ocru);background:rgba(226,166,43,.14)}
+.lvl[aria-pressed="true"] small{color:var(--ocru)}
+
+/* joc */
+#game{flex-direction:column;gap:clamp(10px,1.2vw,22px);padding-bottom:clamp(8px,1vw,18px)}
+.hud{display:flex;align-items:center;gap:clamp(12px,1.6vw,32px);flex-wrap:wrap;color:var(--ceata)}
+.hud .stat{display:inline-flex;align-items:baseline;gap:.45em;white-space:nowrap}
+.hud .stat b{font-family:var(--serif);color:var(--var);font-size:1.35em;font-variant-numeric:tabular-nums}
+.hud .bar{flex:1;min-width:120px;height:12px;border-radius:99px;background:var(--surf);overflow:hidden}
+.hud .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--petrol),var(--violet));border-radius:99px;transition:width .5s ease}
+.hud .btn{margin-left:auto}
+.area{flex:1;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,24vw,460px);gap:clamp(16px,2vw,40px);min-height:0}
+.board{display:grid;gap:clamp(8px,.9vw,18px);min-height:0;perspective:1600px}
+.cardb{position:relative;font:inherit;background:none;border:0;padding:0;cursor:pointer;min-height:56px;touch-action:manipulation;border-radius:18px}
+.cardb .in{position:absolute;inset:0;transition:transform .55s cubic-bezier(.2,.75,.25,1);transform-style:preserve-3d;border-radius:18px}
+.cardb.up .in,.cardb.ok .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35em;padding:8% 7%;text-align:center;overflow:hidden}
+.face.back{background:linear-gradient(160deg,var(--surf2),var(--surf));border:2px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.face.back svg{width:38%;max-width:96px;height:auto;opacity:.75}
+.face.front{transform:rotateY(180deg);background:var(--surf);border:2px solid var(--line)}
+.cardb[data-t="an"] .face.front{border-color:var(--petrol2);background:linear-gradient(170deg,#163744,var(--surf))}
+.cardb[data-t="pr"] .face.front{border-color:var(--violet2);background:linear-gradient(170deg,#2a2650,var(--surf))}
+.face.front .yr{font-family:var(--serif);font-weight:700;font-size:clamp(28px,3.4vw,72px);line-height:1;letter-spacing:.01em;color:var(--var)}
+.face.front .yl{color:var(--ceata);font-size:clamp(11px,.85vw,19px);letter-spacing:.1em;text-transform:uppercase}
+.face.front .ic{width:30%;max-width:72px;height:auto;color:var(--ocru);flex:none}
+.face.front .ic svg{width:100%;height:auto;display:block}
+.face.front .pl{font-weight:600;font-size:clamp(12px,1.1vw,24px);line-height:1.2;color:var(--var);text-wrap:balance}
+.cardb.ok{cursor:default}
+.cardb.ok .face.front{border-color:var(--ocru);box-shadow:0 0 0 3px rgba(226,166,43,.25),0 0 28px rgba(226,166,43,.25)}
+.cardb.ok .in{animation:pop .5s ease .1s}
+@keyframes pop{0%{transform:rotateY(180deg) scale(1)}45%{transform:rotateY(180deg) scale(1.06)}100%{transform:rotateY(180deg) scale(1)}}
+.cardb.no .in{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:rotateY(180deg) translateX(0)}25%{transform:rotateY(180deg) translateX(-6px)}75%{transform:rotateY(180deg) translateX(6px)}}
+@media (hover:hover){.cardb:not(.up):not(.ok):hover .face.back{border-color:var(--ocru)}}
+
+.aside{background:var(--surf);border-radius:22px;padding:clamp(14px,1.3vw,26px);display:flex;flex-direction:column;gap:clamp(10px,1vw,18px);min-height:0;overflow:auto}
+.aside h3{font-family:var(--serif);margin:0;font-size:1.1em;color:var(--ceata);font-weight:700}
+.fact{border-left:6px solid var(--ocru);background:var(--bg);border-radius:14px;padding:clamp(12px,1vw,20px) clamp(14px,1.2vw,22px);animation:fadeIn .4s ease both}
+.fact .fh{display:flex;align-items:center;gap:.7em;margin:0 0 .4em}
+.fact .fh svg{width:2.2em;height:2.2em;color:var(--ocru);flex:none}
+.fact .fy{font-family:var(--serif);font-weight:700;font-size:1.6em;line-height:1}
+.fact .ft{font-weight:700;margin:0 0 .3em;font-size:1.05em}
+.fact .fq{margin:0 0 .35em;color:var(--var)}
+.fact .fq b{color:var(--ocru);font-weight:700}
+.fact .fx{margin:0 0 .35em;color:var(--ceata);font-size:.95em}
+.fact .fs{margin:0;color:var(--ceata);font-style:italic;font-size:.88em}
+.hint{color:var(--ceata);margin:0}
+.found{display:flex;flex-wrap:wrap;gap:8px}
+.found span{background:var(--bg);border:1px solid var(--line);color:var(--ocru);font-weight:700;font-variant-numeric:tabular-nums;padding:.25em .7em;border-radius:99px;font-size:.9em}
+.aside .close{display:none}
+
+/* rezultat */
+#result{align-items:center;justify-content:center;gap:clamp(24px,5vw,90px);padding:20px 0}
+.ring{width:clamp(220px,22vw,420px);flex:none}
+.ring svg{width:100%;height:auto;display:block}
+.res h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,64px);line-height:1.1;margin:0 0 .4em}
+.res p{color:var(--ceata);max-width:32em;margin:0 0 1em}
+.res .row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.tl{display:flex;flex-wrap:wrap;gap:10px 14px;margin:0 0 1.2em;padding:0;list-style:none}
+.tl li{display:flex;align-items:center;gap:.5em;background:var(--surf);border-radius:12px;padding:.4em .8em;font-size:.9em}
+.tl li b{font-family:var(--serif);color:var(--ocru);font-variant-numeric:tabular-nums}
+.tl li svg{width:1.4em;height:1.4em;color:var(--ceata);flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:700px){.top{display:grid;grid-template-columns:1fr;gap:10px}#restart{justify-self:start;padding:.4em .9em}}
+@media (max-width:900px){
+  #start{flex-direction:column;align-items:stretch}
+  #start .ill{flex:none}
+  .area{grid-template-columns:1fr}
+  .board{min-height:0}
+  .cardb{aspect-ratio:1/1.12}
+  .cardb .in{position:absolute}
+  .hud .btn{margin-left:0;width:100%}
+  .aside{position:fixed;left:12px;right:12px;bottom:12px;z-index:5;max-height:70vh;box-shadow:0 -10px 40px rgba(0,0,0,.5);transform:translateY(calc(100% + 24px));transition:transform .4s cubic-bezier(.2,.8,.2,1);border:1px solid var(--line)}
+  .aside.on{transform:none}
+  .aside .close{display:inline-flex;align-self:flex-end;min-height:56px}
+  .aside h3,.aside .found,.aside .hint{display:none}
+  #result{flex-direction:column;text-align:center}
+  .res .row,.tl{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="chip">INTERACTIV · I10</span><h1>Joc de memorie: perechi „premieră – an”</h1></div>
+    <button class="btn ghost" id="restart" type="button" aria-label="Înapoi la început">↺ Înapoi la început</button>
+  </header>
+
+  <main>
+    <section class="screen on" id="start" aria-label="Ecran de start">
+      <div class="ill" id="startArt"></div>
+      <div class="intro">
+        <p class="kicker">17 premiere · 3 niveluri · cărți amestecate</p>
+        <h2>Ce an se potrivește cu ce premieră?</h2>
+        <p>Sibiul a avut multe „prima dată”: primul spital, prima farmacie, prima clădire de teatru, primul pod din fontă de pe actualul teritoriu al României. Întoarce câte două cărți și caută perechea: o premieră și anul ei.</p>
+        <p>La fiecare potrivire primești o fișă scurtă, cu formularea exactă a sursei.</p>
+        <div class="levels" role="group" aria-label="Alege nivelul">
+          <button class="lvl" type="button" data-p="6" aria-pressed="false">Ușor <small>6 perechi · 12 cărți</small></button>
+          <button class="lvl" type="button" data-p="8" aria-pressed="true">Normal <small>8 perechi · 16 cărți</small></button>
+          <button class="lvl" type="button" data-p="10" aria-pressed="false">Greu <small>10 perechi · 20 de cărți</small></button>
+        </div>
+        <button class="btn big accent" id="go" type="button">Începe jocul →</button>
+        <p class="note"><span aria-hidden="true">✦</span><span><b>Anii și formulările</b> sunt preluate din lista de premiere de pe patrimoniu.sibiu.ro („primul/prima de pe actualul teritoriu al României”). Pictogramele sunt desene schematice, nu reproduceri istorice.</span></p>
+      </div>
+    </section>
+
+    <section class="screen" id="game" aria-label="Tabla de joc">
+      <div class="hud">
+        <span class="stat">Mutări <b id="moves">0</b></span>
+        <span class="stat">Timp <b id="time">0:00</b></span>
+        <span class="stat">Perechi <b id="pairs">0/8</b></span>
+        <div class="bar" aria-hidden="true"><i id="pbar"></i></div>
+        <button class="btn ghost" id="newgame" type="button">↻ Joc nou</button>
+      </div>
+      <div class="area">
+        <div class="board" id="board" role="group" aria-label="Cărțile de joc"></div>
+        <aside class="aside" id="aside" aria-live="polite">
+          <h3>Ultima potrivire</h3>
+          <div id="factBox"><p class="hint" id="hint">Întoarce două cărți. Cărțile cu chenar albastru-verzui au ani, cele cu chenar violet au premiere.</p></div>
+          <h3>Perechi găsite</h3>
+          <div class="found" id="found"></div>
+          <button class="btn ghost close" id="closeSheet" type="button">Închide</button>
+        </aside>
+      </div>
+      <p class="sr" id="status" aria-live="polite"></p>
+    </section>
+
+    <section class="screen" id="result" aria-label="Rezultat">
+      <div class="ring">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="92" fill="none" stroke="#1B2733" stroke-width="18"/>
+          <circle class="val" id="ringVal" cx="110" cy="110" r="92" fill="none" stroke="#E2A62B" stroke-width="18" stroke-linecap="round" transform="rotate(-90 110 110)" stroke-dasharray="578.05" stroke-dashoffset="578.05" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)"/>
+          <text x="110" y="104" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="50" fill="#F3EFE6" id="ringTxt">0</text>
+          <text x="110" y="134" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" fill="#A9B4C0">mutări</text>
+          <text x="110" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="17" fill="#E2A62B" id="ringTime">0:00</text>
+        </svg>
+      </div>
+      <div class="res">
+        <p class="kicker">Toate perechile găsite</p>
+        <h2 id="resTitle"></h2>
+        <p id="resMsg"></p>
+        <ul class="tl" id="timeline" aria-label="Premierele din acest joc, în ordine cronologică"></ul>
+        <div class="row">
+          <button class="btn big accent" id="again" type="button">Joacă din nou</button>
+          <button class="btn ghost" id="harder" type="button">Nivel mai greu</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><span class="tag">#SibiulMeu</span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+
+/* ---------- Pictograme SVG (schematice, stroke currentColor, viewBox 48×48) ---------- */
+var S='<svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+var E='</svg>';
+var ICON={
+ spital:S+'<rect x="8" y="12" width="32" height="28" rx="3"/><path d="M24 20v12M18 26h12M16 12V8h16v4"/>'+E,
+ bresle:S+'<path d="M14 36 28 22M22 16l8 8 6-6-8-8-6 6zM10 40l4-4"/><path d="M30 30l8 8M12 10l6 6"/>'+E,
+ scoala:S+'<path d="M6 18 24 10l18 8-18 8z"/><path d="M14 22v10c0 3 5 6 10 6s10-3 10-6V22M40 18v12"/>'+E,
+ farmacie:S+'<path d="M12 22h24l-3 14H15z"/><path d="M12 22c0-3 2-5 5-5h14c3 0 5 2 5 5"/><path d="M28 8l-8 10M21 13l5 4"/>'+E,
+ tipografie:S+'<rect x="10" y="20" width="28" height="14" rx="2"/><path d="M16 20v-6h16v6M14 34v6h20v-6M20 12h8"/>'+E,
+ carte:S+'<path d="M8 12h12c2 0 4 2 4 4v22c0-2-2-3-4-3H8zM40 12H28c-2 0-4 2-4 4v22c0-2 2-3 4-3h12z"/><path d="M13 20h6M13 26h6"/>'+E,
+ racheta:S+'<path d="M24 6c5 5 7 12 7 18v8H17v-8c0-6 2-13 7-18z"/><path d="M17 26l-6 6v6l6-4M31 26l6 6v6l-6-4M20 32v8M28 32v8M24 40v4"/><circle cx="24" cy="18" r="3"/>'+E,
+ bere:S+'<path d="M12 14h20v26H12z"/><path d="M32 20h5a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-5"/><path d="M12 14c0-4 3-7 7-7 2 0 3 1 4 2 1-1 3-2 5-2 4 0 6 3 6 7"/><path d="M18 22v12M24 22v12"/>'+E,
+ telur:S+'<path d="M24 5l16 9v20l-16 9-16-9V14z"/><path d="M17 20h14M24 20v12M30 28h6"/>'+E,
+ teatru:S+'<path d="M8 12h18v12c0 6-4 10-9 10s-9-4-9-10z"/><path d="M22 18h18v12c0 6-4 10-9 10s-9-4-9-10z"/><path d="M12 18h3M19 18h3M13 26c2 2 6 2 8 0M27 32c2-2 6-2 8 0M28 24h3M34 24h3"/>'+E,
+ muzeu:S+'<path d="M6 18 24 8l18 10zM10 18v18M18 18v18M30 18v18M38 18v18M6 36h36v4H6z"/>'+E,
+ ziar:S+'<rect x="8" y="10" width="32" height="28" rx="2"/><path d="M14 16h10v8H14zM28 16h6M28 20h6M14 30h20M14 34h14"/>'+E,
+ pod:S+'<path d="M4 34h40"/><path d="M8 34V22c8-12 24-12 32 0v12"/><path d="M14 34v-8M24 34V18M34 34v-8M8 22h32"/>'+E,
+ munte:S+'<path d="M4 38 16 18l6 10 8-14 10 24z"/><path d="M12 25l4-3 3 3M32 24l3-4 3 4"/><circle cx="38" cy="12" r="3"/>'+E,
+ tramvai:S+'<rect x="10" y="12" width="28" height="22" rx="4"/><path d="M10 24h28M16 18h6M26 18h6M16 30h2M30 30h2M16 34l-3 6M32 34l3 6M24 12V6M20 8h8"/>'+E,
+ zoo:S+'<circle cx="24" cy="30" r="7"/><circle cx="13" cy="20" r="3.5"/><circle cx="20" cy="12" r="3.5"/><circle cx="28" cy="12" r="3.5"/><circle cx="35" cy="20" r="3.5"/>'+E,
+ stea:S+'<path d="M24 6l5 10 11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2z"/>'+E,
+ semn:S+'<circle cx="24" cy="24" r="17"/><path d="M19 19c0-3 2-5 5-5s5 2 5 5c0 3-5 4-5 8M24 33v1"/>'+E
+};
+
+/* ---------- Premierele (patrimoniu.sibiu.ro/istorie/premiere + fișele din fapte_verificate) ---------- */
+var P=[
+ {y:1292,l:'Primul spital',i:'spital',q:'primul spital de pe actualul teritoriu al României'},
+ {y:1376,l:'Breslele reglementate',i:'bresle',q:'prima reglementare a breslelor – primul regulament cunoscut de pe actualul teritoriu al României',x:'25 de meserii erau grupate în 19 bresle.'},
+ {y:1380,l:'Prima școală atestată',i:'scoala',q:'prima atestare a unei școli de pe actualul teritoriu al României'},
+ {y:1494,l:'Prima farmacie',i:'farmacie',q:'prima farmacie de pe actualul teritoriu al României',x:'Farmacia orașului, publică, în Piața Mare. Primul farmacist consemnat: Johannes.'},
+ {y:1525,l:'Prima tipografie',i:'tipografie',q:'prima tipografie din Transilvania (a doua ca vechime de pe actualul teritoriu al României)'},
+ {y:1544,l:'Prima carte în română',i:'carte',q:'prima carte în limba română de pe actualul teritoriu al României',x:'Catehismul luteran.'},
+ {y:1555,l:'Racheta în trepte',i:'racheta',q:'Conrad Haas experimentează la Sibiu prima rachetă în trepte (pagina o numește prima din lume)',x:'Manuscrisul lui Haas este păstrat la Sibiu.'},
+ {y:1717,l:'Prima fabrică de bere',i:'bere',q:'prima fabrică de bere de pe actualul teritoriu al României'},
+ {y:1782,l:'Telurul descoperit',i:'telur',q:'descoperirea elementului chimic telur, de Franz Joseph Müller',x:'Simbol Te, număr atomic 52; numele i l-a dat Klaproth în 1798.'},
+ {y:1788,l:'Prima clădire de teatru',i:'teatru',q:'prima clădire de teatru de pe actualul teritoriu al României',x:'Construită de Martin Hochmeister în Turnul Gros; azi Sala Thalia.'},
+ {y:1817,l:'Muzeul Brukenthal',i:'muzeu',q:'Muzeul Brukenthal, primul muzeu din România și din sud-estul Europei',x:'Colecția era vizitabilă încă din 1790.'},
+ {y:1853,l:'„Telegraful Român”',i:'ziar',q:'„Telegraful Român”, cel mai vechi ziar cu apariție neîntreruptă din sud-estul Europei'},
+ {y:1859,l:'Podul Minciunilor',i:'pod',q:'Podul Minciunilor, primul pod din fontă turnată',x:'Terminat în 1859, inaugurat la 17 decembrie 1860.'},
+ {y:1894,l:'Păltiniș, stațiune montană',i:'munte',q:'Păltiniș, prima stațiune montană din România'},
+ {y:1905,l:'Tramvaiul electric',i:'tramvai',q:'prima linie de tramvai electric din Sibiu, Piața Gării – Parcul Sub Arini (zona Spitalului Militar)',x:'Vagoanele au fost aduse de la Budapesta.',s:'patrimoniu.sibiu.ro/istorie/detaliu/77'},
+ {y:1929,l:'Grădina zoologică',i:'zoo',q:'prima grădină zoologică din România'},
+ {y:2007,l:'Capitală Culturală Europeană',i:'stea',q:'Capitală Culturală Europeană, primul oraș din România și din Europa de Est cu acest titlu',x:'Titlul a fost împărțit cu Luxemburg.'}
+];
+var SRC='patrimoniu.sibiu.ro/istorie/premiere';
+
+var pairs=8, deck=[], up=[], lock=false, moves=0, matched=0, t0=0, timer=null, elapsed=0, order=[], sheetT=null;
+
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function show(id){['start','game','result'].forEach(function(s){$(s).classList.toggle('on',s===id);});window.scrollTo(0,0);}
+function fmt(ms){var s=Math.floor(ms/1000);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
+function tick(){elapsed=Date.now()-t0;$('time').textContent=fmt(elapsed);}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+function cols(n){var wide=window.innerWidth>900;if(wide)return n<=12?4:n<=16?4:5;return n<=12?3:4;}
+
+function build(){
+  stopTimer();elapsed=0;moves=0;matched=0;up=[];lock=false;
+  order=shuffle(P.map(function(_,i){return i;})).slice(0,pairs).sort(function(a,b){return P[a].y-P[b].y;});
+  deck=[];order.forEach(function(pi){deck.push({p:pi,t:'an'});deck.push({p:pi,t:'pr'});});
+  deck=shuffle(deck);
+  $('moves').textContent='0';$('time').textContent='0:00';$('pairs').textContent='0/'+pairs;$('pbar').style.width='0%';
+  $('factBox').innerHTML='<p class="hint" id="hint">Întoarce două cărți. Cărțile cu chenar albastru-verzui au ani, cele cu chenar violet au premiere.</p>';
+  $('found').innerHTML='';$('aside').classList.remove('on');
+  var b=$('board');b.innerHTML='';
+  var n=deck.length,c=cols(n),r=Math.ceil(n/c);
+  b.style.gridTemplateColumns='repeat('+c+',minmax(0,1fr))';
+  b.style.gridTemplateRows=window.innerWidth>900?'repeat('+r+',minmax(0,1fr))':'';
+  deck.forEach(function(card,i){
+    var el=document.createElement('button');el.type='button';el.className='cardb';el.dataset.i=i;el.dataset.t=card.t;
+    el.setAttribute('aria-label','Cartea '+(i+1)+', acoperită');
+    var pr=P[card.p];
+    var front=card.t==='an'?'<span class="yl">anul</span><span class="yr">'+pr.y+'</span>':'<span class="ic">'+ICON[pr.i]+'</span><span class="pl"></span>';
+    el.innerHTML='<div class="in"><div class="face back">'+ICON.semn+'</div><div class="face front">'+front+'</div></div>';
+    if(card.t==='pr')el.querySelector('.pl').textContent=pr.l;
+    el.addEventListener('click',function(){flip(i);});
+    b.appendChild(el);
+  });
+  $('status').textContent='Joc nou: '+pairs+' perechi, '+n+' cărți.';
+}
+function cardEl(i){return $('board').children[i];}
+function flip(i){
+  if(lock)return;
+  var el=cardEl(i);if(el.classList.contains('up')||el.classList.contains('ok'))return;
+  if(!timer){t0=Date.now()-elapsed;timer=setInterval(tick,250);}
+  el.classList.add('up');
+  var pr=P[deck[i].p];
+  el.setAttribute('aria-label',deck[i].t==='an'?'Anul '+pr.y:pr.l);
+  up.push(i);
+  if(up.length<2)return;
+  moves++;$('moves').textContent=moves;lock=true;
+  var a=deck[up[0]],b=deck[up[1]];
+  if(a.p===b.p&&a.t!==b.t){
+    setTimeout(function(){
+      up.forEach(function(k){var e=cardEl(k);e.classList.remove('up');e.classList.add('ok');e.setAttribute('aria-disabled','true');});
+      matched++;$('pairs').textContent=matched+'/'+pairs;$('pbar').style.width=(matched/pairs*100)+'%';
+      showFact(P[a.p]);
+      $('status').textContent='Pereche găsită: '+P[a.p].y+' – '+P[a.p].l+'.';
+      up=[];lock=false;
+      if(matched===pairs){stopTimer();setTimeout(finish,900);}
+    },420);
+  }else{
+    setTimeout(function(){up.forEach(function(k){cardEl(k).classList.add('no');});},380);
+    setTimeout(function(){
+      up.forEach(function(k){var e=cardEl(k);e.classList.remove('up','no');e.setAttribute('aria-label','Cartea '+(k+1)+', acoperită');});
+      up=[];lock=false;
+    },1150);
+  }
+}
+function showFact(pr){
+  var h='<div class="fact"><div class="fh">'+ICON[pr.i]+'<span class="fy">'+pr.y+'</span></div>'+
+    '<p class="ft"></p><p class="fq"><b>Conform sursei:</b> <span></span>.</p>'+(pr.x?'<p class="fx"></p>':'')+'<p class="fs"></p></div>';
+  var box=$('factBox');box.innerHTML=h;
+  box.querySelector('.ft').textContent=pr.l;
+  box.querySelector('.fq span').textContent=pr.q;
+  if(pr.x)box.querySelector('.fx').textContent=pr.x;
+  box.querySelector('.fs').textContent='Sursa: '+(pr.s||SRC);
+  var f=$('found');f.innerHTML='';
+  order.forEach(function(pi){var done=deck.some(function(c,k){return c.p===pi&&cardEl(k).classList.contains('ok');});if(done){var s=document.createElement('span');s.textContent=P[pi].y;f.appendChild(s);}});
+  if(window.innerWidth<=900){var as=$('aside');as.classList.add('on');clearTimeout(sheetT);sheetT=setTimeout(function(){as.classList.remove('on');},5500);}
+}
+function finish(){
+  show('result');
+  var best=pairs,ratio=best/Math.max(moves,best);
+  var t,m;
+  if(moves<=pairs+2){t='Memorie de arhivar!';m='Aproape fiecare carte întoarsă a fost o pereche. Anii premierelor sibiene ți-au rămas în minte.';}
+  else if(moves<=pairs*2){t='Foarte bine!';m='Ai găsit perechile cu puține încercări. Mai rămâne de reținut diferența dintre secolele apropiate.';}
+  else{t='Toate perechile, găsite.';m='Ai ajuns la capăt; data viitoare încearcă să ții minte poziția anilor întorși o dată.';}
+  $('resTitle').textContent=t;
+  $('resMsg').textContent=pairs+' perechi în '+moves+' mutări și '+fmt(elapsed)+'. '+m;
+  $('ringTxt').textContent=moves;$('ringTime').textContent=fmt(elapsed);
+  var ul=$('timeline');ul.innerHTML='';
+  order.forEach(function(pi){var li=document.createElement('li');li.innerHTML=ICON[P[pi].i]+'<b>'+P[pi].y+'</b><span></span>';li.querySelector('span').textContent=P[pi].l;ul.appendChild(li);});
+  $('harder').hidden=pairs>=10;
+  var c=$('ringVal'),L=578.05;
+  c.style.transition='none';c.setAttribute('stroke-dashoffset',L);void c.getBoundingClientRect();c.style.transition='';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){c.setAttribute('stroke-dashoffset',L*(1-ratio));});});
+}
+function startGame(){show('game');build();}
+
+/* ecran de start: cărți în evantai */
+(function(){
+  var s='<svg viewBox="0 0 1000 440" role="img" aria-label="Cărți de joc cu ani și pictograme ale premierelor sibiene" xmlns="http://www.w3.org/2000/svg"><rect width="1000" height="440" fill="#1B2733"/>';
+  s+='<g fill="#F3EFE6" opacity=".5"><circle cx="80" cy="60" r="2"/><circle cx="300" cy="36" r="1.6"/><circle cx="640" cy="50" r="1.8"/><circle cx="900" cy="30" r="1.5"/><circle cx="520" cy="400" r="1.4"/></g>';
+  function card(x,y,rot,type,txt,icon){
+    var g='<g transform="translate('+x+' '+y+') rotate('+rot+')"><rect x="-80" y="-110" width="160" height="220" rx="18" fill="#0F1720" stroke="'+(type==='an'?'#12959F':type==='pr'?'#8B76E6':'#2E4153')+'" stroke-width="3"/>';
+    if(type==='an')g+='<text x="0" y="-62" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" letter-spacing="2" fill="#A9B4C0">ANUL</text><text x="0" y="22" text-anchor="middle" font-family="Noto Serif, Georgia, serif" font-weight="700" font-size="58" fill="#F3EFE6">'+txt+'</text>';
+    else if(type==='pr')g+='<g transform="translate(-36 -70) scale(1.5)" color="#E2A62B">'+ICON[icon]+'</g><text x="0" y="50" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="20" fill="#F3EFE6">'+txt+'</text>';
+    else g+='<g transform="translate(-40 -40) scale(1.66)" color="#A9B4C0" opacity=".7">'+ICON.semn+'</g>';
+    return g+'</g>';
+  }
+  s+=card(170,250,-14,'x')+card(330,220,-6,'an','1494')+card(500,205,0,'pr','Prima farmacie','farmacie')+card(670,220,6,'an','1788')+card(830,250,14,'x');
+  s+='<g font-family="Noto Serif, Georgia, serif" font-weight="700" fill="#E2A62B"><text x="60" y="110" font-size="40" opacity=".9">?</text><text x="905" y="120" font-size="34" opacity=".7" fill="#D6409F">?</text></g>';
+  s+='<path d="M413 300 Q500 360 587 300" stroke="#E2A62B" stroke-width="4" fill="none" stroke-dasharray="10 10" opacity=".8"/>';
+  $('startArt').innerHTML=s+'</svg>';
+})();
+
+/* ---------- Niveluri / butoane ---------- */
+function setLevel(p){pairs=p;document.querySelectorAll('.lvl').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.p===p));});}
+document.querySelectorAll('.lvl').forEach(function(b){b.addEventListener('click',function(){setLevel(+b.dataset.p);});});
+$('go').addEventListener('click',startGame);
+$('again').addEventListener('click',startGame);
+$('harder').addEventListener('click',function(){setLevel(pairs===6?8:10);startGame();});
+$('newgame').addEventListener('click',build);
+$('restart').addEventListener('click',function(){stopTimer();show('start');});
+$('closeSheet').addEventListener('click',function(){$('aside').classList.remove('on');clearTimeout(sheetT);});
+window.addEventListener('resize',function(){if(!$('game').classList.contains('on'))return;var b=$('board'),n=deck.length,c=cols(n);b.style.gridTemplateColumns='repeat('+c+',minmax(0,1fr))';b.style.gridTemplateRows=window.innerWidth>900?'repeat('+Math.ceil(n/c)+',minmax(0,1fr))':'';});
+/* tastatură: săgeți între cărți, Enter/Spațiu întoarce (nativ pe button) */
+$('board').addEventListener('keydown',function(e){
+  var el=document.activeElement;if(!el||!el.classList.contains('cardb'))return;
+  var i=+el.dataset.i,n=deck.length,c=cols(n),j=null;
+  if(e.key==='ArrowRight')j=(i+1)%n;else if(e.key==='ArrowLeft')j=(i-1+n)%n;else if(e.key==='ArrowDown')j=(i+c)%n;else if(e.key==='ArrowUp')j=(i-c+n)%n;
+  if(j!==null){e.preventDefault();cardEl(j).focus();}
+});
+window.__mem={state:function(){return {pairs:pairs,moves:moves,matched:matched,deck:deck.map(function(c){return {p:c.p,t:c.t};}),lock:lock};},flip:flip};
+})();
+</script>
+</body>
+</html>

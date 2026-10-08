@@ -1,0 +1,48 @@
+import json, re, html, subprocess, numpy as np, os
+from playwright.sync_api import sync_playwright
+R='/home/claude/expo'
+import sys
+CAT=sys.argv[1] if len(sys.argv)>1 else f'{R}/gallery/catalog_full.json'
+items=json.load(open(CAT))
+def h1(it):
+    md=[f for f in it['fisiere'] if f.endswith('.md')][0]
+    m=re.search(r'^# (.+)$',open(f'{R}/{md}').read(),re.M); return m.group(1).strip()
+def wave(mp3,n=120):
+    raw=subprocess.run(['ffmpeg','-v','error','-i',mp3,'-ac','1','-ar','8000','-f','s16le','-'],capture_output=True).stdout
+    x=np.abs(np.frombuffer(raw,dtype=np.int16).astype(float)); k=len(x)//n
+    v=[x[i*k:(i+1)*k].mean() for i in range(n)]; m=max(v) or 1; return [a/m for a in v]
+CSS='''*{box-sizing:border-box;margin:0}body{width:1920px;height:1080px;background:#0F1720;color:#F3EFE6;font-family:Inter,sans-serif;position:relative;overflow:hidden}
+.chip{position:absolute;left:80px;top:70px;padding:10px 22px;border-radius:22px;font-weight:700;font-size:20px;letter-spacing:2px;color:#0F1720}
+h1{position:absolute;left:80px;top:140px;right:80px;font-family:"Noto Serif",serif;font-size:64px;line-height:1.15}
+.theme{position:absolute;left:80px;top:300px;right:80px;font-size:26px;color:#A9B4C0}
+.quote{position:absolute;left:160px;right:160px;top:370px;bottom:150px;display:flex;align-items:center;font-family:"Noto Serif",serif;font-style:italic;font-size:52px;line-height:1.5;white-space:pre-line}.quote span{border-left:8px solid var(--c);padding-left:48px}
+.desc{position:absolute;left:80px;right:900px;top:440px;font-size:40px;line-height:1.45}
+.wave{position:absolute;right:80px;top:400px;width:760px;height:420px;display:flex;align-items:center;gap:3px}
+.wave i{flex:1;background:var(--c);border-radius:3px;opacity:.85}
+.listen{position:absolute;left:80px;bottom:150px;font-size:30px;font-weight:600;color:#E2A62B}
+.foot{position:absolute;left:80px;right:80px;bottom:24px;border-top:2px solid #1B2733;padding-top:14px;display:flex;justify-content:space-between;font-size:22px;color:#A9B4C0}.foot b{color:#E2A62B}'''
+with sync_playwright() as p:
+    b=p.chromium.launch(); pg=b.new_page(viewport={'width':1920,'height':1080})
+    for it in items:
+        c=it['cod']
+        if c[0] not in 'LA': continue
+        col='#6E56CF' if c[0]=='L' else '#12A594'; cat='LITERAR' if c[0]=='L' else 'AUDIO'
+        title=h1(it)
+        if c[0]=='L':
+            q=it.get('extras','')
+            body=f'<div class="quote"><span>{html.escape(q)}</span></div>'
+        else:
+            body=f'<div class="desc">{html.escape(it["descriere"])}</div>'
+            if it.get('audio'):
+                w=wave(f'{R}/{it["audio"]}'); body+='<div class="wave">'+''.join(f'<i style="height:{max(4,v*100):.0f}%"></i>' for v in w)+'</div>'
+                body+='<div class="listen">▶ Ascultă piesa în galeria digitală ACTIV AI</div>'
+            else:
+                body+='<div class="listen">▶ Ascultă în galerie (voce sintetizată de browser, ro-RO)</div>'
+        doc=f'<!doctype html><html lang="ro"><head><meta charset="utf-8"><style>{CSS}</style></head><body style="--c:{col}"><div class="chip" style="background:{col}">{cat} · {c}</div><h1>{html.escape(title)}</h1><div class="theme">Tema: {html.escape(it["titlu"])}</div>{body}<div class="foot"><span>ACTIV AI · Sibiul meu · Artefact-model generat cu AI</span><b>#SibiulMeu</b></div></body></html>'
+        pg.set_content(doc); pg.wait_for_timeout(50)
+        base=os.path.dirname(md:=[f for f in it['fisiere'] if f.endswith('.md')][0]); os.makedirs(f'{R}/{base}/carduri',exist_ok=True); out=f'{R}/{base}/carduri/{c}_card.png'
+        pg.screenshot(path=out); it.setdefault('card',out.replace(R+'/',''))
+        it['titlu_creativ']=title
+    b.close()
+json.dump(items,open(CAT,'w'),ensure_ascii=False,indent=1)
+print('ok')

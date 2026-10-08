@@ -1,0 +1,133 @@
+# -*- coding: utf-8 -*-
+import sys; sys.path.insert(0, "/tmp/claude-0/-home-claude/87269e5e-26b5-5b44-815b-307dc6187e24/scratchpad/gen")
+from lib import *
+import math, random
+
+OUT = "/home/claude/expo/c1/08_identitate/P07_daca_as_fi_un_turn.svg"
+ORANGE = "#F76B15"
+s = frame_head("IDENTITATE · P07", ORANGE, "Dacă aș fi un turn al cetății",
+               "personaj fictiv: un elev de liceu vorbește în numele turnului")
+
+# ---------- illustration panel
+IX, IY, IW, IH = 80, 230, 790, 770
+s += ('<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1430"/><stop offset="0.6" stop-color="#1A2A52"/><stop offset="1" stop-color="#3B3A58"/></linearGradient>'
+      '<linearGradient id="stone" x1="0" x2="1"><stop offset="0" stop-color="#B9A98A"/><stop offset="0.5" stop-color="#E4D7BA"/><stop offset="1" stop-color="#9E8E72"/></linearGradient>'
+      '<linearGradient id="stone2" x1="0" x2="1"><stop offset="0" stop-color="#A8987A"/><stop offset="0.45" stop-color="#D8CBAE"/><stop offset="1" stop-color="#8E7E62"/></linearGradient>'
+      '<radialGradient id="moon"><stop offset="0" stop-color="#FFF6DC"/><stop offset="1" stop-color="#F3E3B0"/></radialGradient>'
+      '<radialGradient id="moonglow"><stop offset="0" stop-color="#F3E3B0" stop-opacity="0.35"/><stop offset="1" stop-color="#F3E3B0" stop-opacity="0"/></radialGradient></defs>\n')
+s += f'<clipPath id="iclip"><rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="22"/></clipPath>\n<g clip-path="url(#iclip)">\n'
+s += f'<rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" fill="url(#sky)"/>\n'
+random.seed(21)
+for _ in range(90):
+    x = random.uniform(IX + 10, IX + IW - 10); y = random.uniform(IY + 10, IY + 520)
+    r = random.choice([1, 1, 1.4, 1.8, 2.2])
+    s += f'<circle cx="{x:.0f}" cy="{y:.0f}" r="{r}" fill="#F3EFE6" opacity="{random.uniform(0.35, 0.95):.2f}"/>\n'
+s += f'<circle cx="{IX+150}" cy="{IY+120}" r="120" fill="url(#moonglow)"/><circle cx="{IX+150}" cy="{IY+120}" r="44" fill="url(#moon)"/>\n'
+GY = IY + IH - 60   # ground line y = 940
+TX = IX + 470       # tower axis
+# distant town silhouette (left/right), simple roofs
+for i, (x, w, h) in enumerate([(100, 70, 60), (180, 60, 80), (250, 90, 55), (640, 80, 70), (730, 70, 58), (800, 60, 76)]):
+    X = IX + x
+    s += f'<rect x="{X}" y="{GY-120-h+60}" width="{w}" height="{h+60}" fill="#2A3045"/><polygon points="{X-4},{GY-120-h+60} {X+w/2},{GY-150-h+60} {X+w+4},{GY-120-h+60}" fill="#3A3246"/>\n'
+# wall (Strada Cetății), both sides
+s += f'<rect x="{IX}" y="{GY-110}" width="{IW}" height="110" fill="#6E6150"/>\n'
+for r in range(6):
+    y = GY - 110 + r * 18
+    off = 0 if r % 2 == 0 else 30
+    for xx in range(IX - 30 + off, IX + IW, 60):
+        s += f'<rect x="{xx}" y="{y}" width="56" height="15" rx="1.5" fill="#7B6D5A" stroke="#5A4E3F" stroke-width="1"/>\n'
+# ground
+s += f'<rect x="{IX}" y="{GY}" width="{IW}" height="60" fill="#2E3A2B"/>\n'
+s += f'<rect x="{IX}" y="{GY}" width="{IW}" height="6" fill="#3F4F39"/>\n'
+
+# ---- tower: 21,65 m; scale: apex at y=IY+70 (300), base at GY (940): 640 px for 21.65 m -> 29.6 px/m
+apex = IY + 70
+total = GY - apex
+# proportions: roof 32%, octagonal prism 38%, circular base 30%
+roof_h = total * 0.32; oct_h = total * 0.38; base_h = total - roof_h - oct_h
+base_top = GY - base_h; oct_top = base_top - oct_h
+BW = 190; OW = 164
+# circular base (cylinder)
+s += f'<rect x="{TX-BW/2}" y="{base_top}" width="{BW}" height="{base_h:.1f}" fill="url(#stone)"/>\n'
+s += f'<ellipse cx="{TX}" cy="{GY}" rx="{BW/2}" ry="14" fill="#8E7E62"/>\n'
+# stone courses on base (curved lines)
+for r in range(int(base_h // 22)):
+    y = base_top + 10 + r * 22
+    s += f'<path d="M{TX-BW/2},{y} Q{TX},{y+9} {TX+BW/2},{y}" fill="none" stroke="#7C6C52" stroke-width="1.2" opacity="0.7"/>\n'
+# cornice ring (transition)
+s += f'<rect x="{TX-BW/2-10}" y="{base_top-16}" width="{BW+20}" height="22" rx="4" fill="#CBB996"/><ellipse cx="{TX}" cy="{base_top-16}" rx="{BW/2+10}" ry="9" fill="#E0D3B3"/>\n'
+# octagonal prism: three visible faces
+f1 = OW * 0.28; f2 = OW * 0.44
+s += f'<rect x="{TX-OW/2}" y="{oct_top}" width="{f1:.1f}" height="{oct_h+6:.1f}" fill="#A8987A"/>\n'
+s += f'<rect x="{TX-OW/2+f1:.1f}" y="{oct_top}" width="{f2:.1f}" height="{oct_h+6:.1f}" fill="#E4D7BA"/>\n'
+s += f'<rect x="{TX+OW/2-f1:.1f}" y="{oct_top}" width="{f1:.1f}" height="{oct_h+6:.1f}" fill="#8E7E62"/>\n'
+# horizontal courses on prism
+for r in range(int(oct_h // 24)):
+    y = oct_top + 12 + r * 24
+    s += f'<line x1="{TX-OW/2}" y1="{y}" x2="{TX+OW/2}" y2="{y}" stroke="#7C6C52" stroke-width="1" opacity="0.5"/>\n'
+# keyhole slits (gun loops) on the middle face
+for yy in [oct_top + oct_h * 0.3, oct_top + oct_h * 0.62]:
+    for xx in [TX - 24, TX + 24]:
+        s += f'<path d="M{xx-4},{yy-14} h8 v22 a4,4 0 0 1 -8,0 Z" fill="#1B2733"/><circle cx="{xx}" cy="{yy+8}" r="6" fill="#1B2733"/><circle cx="{xx}" cy="{yy+8}" r="3" fill="#E2A62B" opacity="0.9"/>\n'
+# eave band under roof
+s += f'<rect x="{TX-OW/2-12}" y="{oct_top-14}" width="{OW+24}" height="16" fill="#B9583A"/>\n'
+# pointed pyramidal roof (two visible facets)
+s += f'<polygon points="{TX-OW/2-12},{oct_top-12} {TX},{apex} {TX+OW/2+12},{oct_top-12}" fill="#B9583A"/>\n'
+s += f'<polygon points="{TX},{oct_top-12} {TX},{apex} {TX+OW/2+12},{oct_top-12}" fill="#8F4229"/>\n'
+for r in range(1, 9):
+    yy = apex + (oct_top - 12 - apex) * r / 9
+    half = (OW / 2 + 12) * r / 9
+    s += f'<line x1="{TX-half:.1f}" y1="{yy:.1f}" x2="{TX+half:.1f}" y2="{yy:.1f}" stroke="#6E3220" stroke-width="1" opacity="0.5"/>\n'
+# finial
+s += f'<line x1="{TX}" y1="{apex}" x2="{TX}" y2="{apex-26}" stroke="#E2A62B" stroke-width="3"/><circle cx="{TX}" cy="{apex-28}" r="5" fill="#E2A62B"/>\n'
+
+# dimension line 21,65 m
+dx = TX + 170
+s += f'<line x1="{dx}" y1="{apex}" x2="{dx}" y2="{GY}" stroke="{OCRU}" stroke-width="2" stroke-dasharray="6 6"/>\n'
+for yy in (apex, GY):
+    s += f'<line x1="{dx-10}" y1="{yy}" x2="{dx+10}" y2="{yy}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += f'<polygon points="{dx},{apex} {dx-6},{apex+14} {dx+6},{apex+14}" fill="{OCRU}"/><polygon points="{dx},{GY} {dx-6},{GY-14} {dx+6},{GY-14}" fill="{OCRU}"/>\n'
+s += f'<rect x="{dx+14}" y="{(apex+GY)/2-24}" width="104" height="46" rx="8" fill="{BG}" stroke="{OCRU}" stroke-width="1.5"/>\n'
+s += text(dx + 66, (apex + GY) / 2 + 8, "21,65 m", 22, OCRU, "serif", 700, anchor="middle")
+# part labels (left side)
+lx = TX - BW / 2 - 24
+for yy, lab in [((apex + oct_top) / 2, "acoperiș piramidal ascuțit"), (oct_top + oct_h / 2, "prismă octogonală"), (base_top - 10, "cornișă"), (base_top + base_h / 2, "bază circulară")]:
+    s += f'<line x1="{lx}" y1="{yy}" x2="{lx-12}" y2="{yy}" stroke="{CEATA}" stroke-width="1.5"/>\n'
+    s += text(lx - 18, yy + 5, lab, 16, CEATA, "sans", 500, True, anchor="end")
+s += text(IX + 20, IY + IH - 20, "ilustrație schematică, generată cu AI – proporțiile nu sunt exacte", 16, "#8FA0B4", "sans", 400, True)
+s += "</g>\n"
+s += f'<rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+# ---------- right column
+RX = 910; RW = 1840 - RX
+s += text(RX, 290, "Aș fi Turnul Dulgherilor –", 40, VAR, "serif", 700)
+s += text(RX, 340, "pentru că…", 40, OCRU, "serif", 700)
+body = ("Aș fi Turnul Dulgherilor pentru că pornesc rotund și devin, pe măsură ce urc, cu muchii clare – așa cresc și eu. "
+        "Nu sunt cel mai înalt din oraș, dar stau drept de aproape șapte secole pe Strada Cetății, între doi vecini de nădejde. "
+        "Am fost restaurat de câteva ori și nu mi-e rușine: a fi reparat înseamnă că cineva te vrea în picioare. "
+        "Iar acoperișul ascuțit? E felul meu de a arăta mereu spre ceva mai sus.")
+nw = len(body.split())
+p, y = para(RX, 392, body, 22, RW, VAR, "sans", 400, lh=33)
+s += p
+s += text(RX, y + 2, f"text la persoana I, {nw} de cuvinte · personaj fictiv", 15, "#7E8A96", "sans", 400, True)
+# fact sheet card
+FY = y + 30
+FH = 1000 - FY
+s += card(RX, FY, RW, FH, fill="#141E28")
+s += text(RX + 28, FY + 42, "Fișa turnului", 26, OCRU, "serif", 700)
+s += text(RX + RW - 28, FY + 42, "fapte verificate · patrimoniu.sibiu.ro", 15, "#7E8A96", "sans", 400, True, anchor="end")
+rows = [("Construit", "1337–1366"), ("Locul", "Strada Cetății, Orașul de Sus (incinta III)"),
+        ("Forma", "bază circulară care trece în prismă octogonală deasupra cornișei"),
+        ("Acoperiș", "piramidal, ascuțit"), ("Înălțime", "21,65 m"), ("Restaurări", "1967 · 2008 · 2019–2020"),
+        ("Vecinii", "Turnul Olarilor (19,60 m) și Turnul Archebuzierilor (20,75 m)"),
+        ("Numele", "al breslei dulgherilor – unul dintre cele trei turnuri de breaslă păstrate pe Strada Cetății")]
+yy = FY + 84
+avail = FY + FH - 20 - yy
+step = min(40, avail / len(rows))
+for k_, v in rows:
+    s += text(RX + 28, yy, k_, 17, CEATA, "sans", 600)
+    s += text(RX + 150, yy, v, 17, VAR)
+    yy += step
+s += frame_foot()
+write(OUT, s)
+print(OUT, nw, "cuvinte")

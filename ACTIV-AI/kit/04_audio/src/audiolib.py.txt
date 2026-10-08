@@ -1,0 +1,576 @@
+"""audiolib – utilitare de sinteză audio procedurală (numpy/scipy).
+
+Proiect ACTIV AI · Sibiul meu · artefacte-model audio generate cu AI.
+Toate sunetele sunt sintetizate din formule matematice (fără eșantioane înregistrate).
+
+Conține: oscilatoare (polyBLEP, aditiv), coarde ciupite Karplus-Strong,
+sinteză modală (clopote, metal), zgomote colorate, filtre, plicuri,
+reverberație prin convoluție cu un răspuns la impuls sintetic,
+măsurare de loudness (ITU-R BS.1770, aproximativ), limitator și export MP3 (ffmpeg).
+"""
+import os
+import subprocess
+import tempfile
+
+import numpy as np
+from scipy import signal
+from scipy.io import wavfile
+from scipy.ndimage import minimum_filter1d, uniform_filter1d
+
+SR = 44100
+LN1000 = 6.907755278982137  # ln(1000) – pentru T60 (scădere cu 60 dB)
+
+
+# ---------------------------------------------------------------- timp, note
+def ns(sec):
+    """Secunde -> număr de eșantioane."""
+    return int(round(sec * SR))
+
+
+def stereo(sec):
+    return np.zeros((2, ns(sec)))
+
+
+_NOTE = {"C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11}
+
+
+def midi(name):
+    """'A4' -> 69, 'C#5' -> 73, 'Bb3' -> 58."""
+    letter = name[0].upper()
+    rest = name[1:]
+    acc = 0
+    while rest and rest[0] in "#b":
+        acc += 1 if rest[0] == "#" else -1
+        rest = rest[1:]
+    octave = int(rest)
+    return 12 * (octave + 1) + _NOTE[letter] + acc
+
+
+def mhz(m):
+    return 440.0 * 2.0 ** ((m - 69) / 12.0)
+
+
+def hz(name, transpose=0):
+    return mhz(midi(name) + transpose)
+
+
+# ---------------------------------------------------------------- plasare, panoramare
+def pan_gains(pan):
+    """Panoramare cu putere constantă; pan în [-1, 1]."""
+    a = (np.clip(pan, -1, 1) + 1) * np.pi / 4
+    return np.cos(a), np.sin(a)
+
+
+def add(buf, sig, t0, gain=1.0, pan=0.0):
+    """Adaugă semnal mono (n,) sau stereo (2, n) în bufferul stereo, la t0 secunde."""
+    i0 = ns(t0)
+    if sig.ndim == 1:
+        gl, gr = pan_gains(pan)
+        sig = np.vstack([sig * gl, sig * gr])
+    if i0 < 0:
+        sig = sig[:, -i0:]
+        i0 = 0
+    n = min(sig.shape[1], buf.shape[1] - i0)
+    if n <= 0:
+        return
+    buf[:, i0:i0 + n] += gain * sig[:, :n]
+
+
+def to_stereo(x, pan=0.0):
+    gl, gr = pan_gains(pan)
+    return np.vstack([x * gl, x * gr])
+
+
+# ---------------------------------------------------------------- filtre
+def _sos(kind, fc, order):
+    return signal.butter(order, fc, btype=kind, fs=SR, output="sos")
+
+
+def lp(x, fc, order=2):
+    return signal.sosfilt(_sos("lowpass", fc, order), x, axis=-1)
+
+
+def hp(x, fc, order=2):
+    return signal.sosfilt(_sos("highpass", fc, order), x, axis=-1)
+
+
+def bp(x, lo, hi, order=2):
+    return signal.sosfilt(_sos("bandpass", [lo, hi], order), x, axis=-1)
+
+
+def peaking(x, f0, gain_db, q=1.0):
+    """Egalizator parametric (RBJ cookbook)."""
+    A = 10 ** (gain_db / 40)
+    w0 = 2 * np.pi * f0 / SR
+    al = np.sin(w0) / (2 * q)
+    b = np.array([1 + al * A, -2 * np.cos(w0), 1 - al * A])
+    a = np.array([1 + al / A, -2 * np.cos(w0), 1 - al / A])
+    return signal.lfilter(b / a[0], a / a[0], x, axis=-1)
+
+
+def onepole_lp(x, fc):
+    a = np.exp(-2 * np.pi * fc / SR)
+    return signal.lfilter([1 - a], [1, -a], x, axis=-1)
+
+
+# ---------------------------------------------------------------- zgomote
+def rng_of(seed):
+    return np.random.default_rng(seed)
+
+
+def colored_noise(n, rng, exponent=1.0):
+    """Zgomot 1/f^exponent (0 = alb, 1 = roz, 2 = brun), normalizat la RMS 1."""
+    w = rng.standard_normal(n)
+    if exponent == 0:
+        return w
+    spec = np.fft.rfft(w)
+    f = np.fft.rfftfreq(n, 1 / SR)
+    f[0] = f[1]
+    spec *= f ** (-exponent / 2.0)
+    y = np.fft.irfft(spec, n)
+    y -= y.mean()
+    return y / (np.sqrt(np.mean(y ** 2)) + 1e-12)
+
+
+def smooth_random(n, rng, rate_hz, lo=0.0, hi=1.0):
+    """Curbă aleatoare lentă (interpolare cubică între puncte la rate_hz)."""
+    k = max(4, int(n / SR * rate_hz) + 4)
+    pts = rng.uniform(lo, hi, k)
+    xs = np.linspace(0, n, k)
+    from scipy.interpolate import CubicSpline
+    return np.clip(CubicSpline(xs, pts)(np.arange(n)), min(lo, hi), max(lo, hi))
+
+
+# ---------------------------------------------------------------- plicuri
+def t_axis(n):
+    return np.arange(n) / SR
+
+
+def env_exp(n, t60):
+    return np.exp(-LN1000 * t_axis(n) / t60)
+
+
+def env_ar(n, attack, t60):
+    e = env_exp(n, t60)
+    k = min(n, max(1, ns(attack)))
+    e[:k] *= np.linspace(0, 1, k)
+    return e
+
+
+def env_adsr(n, a, d, s, r):
+    """Plic ADSR care se încadrează în n eșantioane (release la final)."""
+    na, nd, nr = ns(a), ns(d), ns(r)
+    ns_ = max(0, n - na - nd - nr)
+    e = np.concatenate([
+        np.linspace(0, 1, na, endpoint=False),
+        np.linspace(1, s, nd, endpoint=False),
+        np.full(ns_, s),
+        np.linspace(s, 0, nr),
+    ])
+    if len(e) < n:
+        e = np.pad(e, (0, n - len(e)))
+    return e[:n]
+
+
+def fade(x, fin=0.5, fout=2.0):
+    y = x.copy()
+    n = y.shape[-1]
+    a, b = ns(fin), ns(fout)
+    if a > 0:
+        y[..., :a] *= np.sin(np.linspace(0, np.pi / 2, a)) ** 2
+    if b > 0:
+        y[..., n - b:] *= np.cos(np.linspace(0, np.pi / 2, b)) ** 2
+    return y
+
+
+# ---------------------------------------------------------------- oscilatoare
+def _polyblep(phase, dt):
+    out = np.zeros_like(phase)
+    m1 = phase < dt
+    t = phase[m1] / dt[m1]
+    out[m1] = t + t - t * t - 1.0
+    m2 = phase > 1.0 - dt
+    t = (phase[m2] - 1.0) / dt[m2]
+    out[m2] = t * t + t + t + 1.0
+    return out
+
+
+def saw(freq, n=None, phase0=0.0):
+    """Dinte de fierăstrău limitat în bandă (polyBLEP); freq scalar sau vector."""
+    f = np.full(n, float(freq)) if np.isscalar(freq) else np.asarray(freq, float)
+    dt = f / SR
+    phase = (phase0 + np.cumsum(dt)) % 1.0
+    return 2.0 * phase - 1.0 - _polyblep(phase, dt)
+
+
+def square(freq, n=None, phase0=0.0, duty=0.5):
+    f = np.full(n, float(freq)) if np.isscalar(freq) else np.asarray(freq, float)
+    dt = f / SR
+    p1 = (phase0 + np.cumsum(dt)) % 1.0
+    p2 = (p1 + duty) % 1.0
+    s1 = 2.0 * p1 - 1.0 - _polyblep(p1, dt)
+    s2 = 2.0 * p2 - 1.0 - _polyblep(p2, dt)
+    return 0.5 * (s1 - s2)
+
+
+def additive(freq, amps, n=None, phase0=0.0):
+    """Sumă de armonice cu amplitudinile date (fără aliasing)."""
+    f = np.full(n, float(freq)) if np.isscalar(freq) else np.asarray(freq, float)
+    ph = 2 * np.pi * (phase0 + np.cumsum(f / SR))
+    out = np.zeros(len(f))
+    fmax = np.max(f)
+    for k, a in enumerate(amps, start=1):
+        if a == 0 or k * fmax > 0.45 * SR:
+            continue
+        out += a * np.sin(k * ph)
+    return out
+
+
+def vibrato(n, f_base, rate=5.5, depth_semitones=0.25, delay=0.15, rng=None):
+    """Vector de frecvență cu vibrato care intră progresiv după `delay`."""
+    t = t_axis(n)
+    ramp = np.clip((t - delay) / 0.25, 0, 1)
+    ph0 = rng.uniform(0, 2 * np.pi) if rng is not None else 0.0
+    semis = depth_semitones * ramp * np.sin(2 * np.pi * rate * t + ph0)
+    return f_base * 2 ** (semis / 12)
+
+
+# ---------------------------------------------------------------- Karplus-Strong
+def ks_pluck(freq, dur, t60=3.0, bright=0.5, pos=0.18, rng=None, damp=0.0):
+    """Coardă ciupită Karplus-Strong cu întârziere fracționară.
+
+    bright: 0..1 (filtrarea excitației), pos: poziția ciupirii (filtru pieptene),
+    damp: 0..1 amortizare suplimentară a armonicelor înalte în buclă.
+    """
+    rng = rng if rng is not None else rng_of(0)
+    P = SR / freq
+    M = int(np.floor(P - 0.5 - 0.5 * damp))
+    f = P - 0.5 - 0.5 * damp - M
+    # filtru în buclă: medie (0.5,0.5) convoluat cu interpolare liniară (1-f, f)
+    w = np.array([0.5 * (1 - f), 0.5, 0.5 * f])
+    if damp > 0:  # încă o medie -> mai întunecat (întârziere +0.5*damp aproximativ)
+        w = (1 - damp) * np.append(w, 0) + damp * 0.5 * (np.append(w, 0) + np.insert(w, 0, 0))
+    taps = len(w)
+    g = 10 ** (-3.0 / (t60 * freq))
+    N = ns(dur)
+    pad = M + taps
+    y = np.zeros(N + pad)
+    exc = rng.uniform(-1, 1, M)
+    if bright < 1.0:
+        exc = onepole_lp(exc, 200 + 12000 * bright ** 2)
+    k = max(1, int(pos * M))
+    exc = exc - np.concatenate([np.zeros(k), exc[:-k]])
+    exc -= exc.mean()
+    exc /= np.max(np.abs(exc)) + 1e-12
+    y[pad:pad + M] = exc
+    for s in range(pad, N + pad, M):
+        e = min(s + M, N + pad)
+        acc = np.zeros(e - s)
+        for j in range(taps):
+            acc += w[j] * y[s - M - j:e - M - j]
+        y[s:e] += g * acc
+    out = y[pad:]
+    return out / (np.max(np.abs(out)) + 1e-12)
+
+
+# ---------------------------------------------------------------- sinteză modală
+def modal(freqs, amps, t60s, dur, rng=None, attack=0.0008, beat_hz=0.0):
+    """Sumă de sinusoide amortizate (moduri de vibrație) – clopote, metal, lemn.
+
+    beat_hz > 0: fiecare mod este dublat cu o pereche ușor dezacordată (bătăi lente).
+    """
+    n = ns(dur)
+    t = t_axis(n)
+    out = np.zeros(n)
+    for f, a, T in zip(freqs, amps, t60s):
+        if f >= 0.45 * SR or a == 0:
+            continue
+        ph = rng.uniform(0, 2 * np.pi) if rng is not None else 0.0
+        env = np.exp(-LN1000 * t / T)
+        if beat_hz > 0:
+            d = beat_hz * (0.5 + (rng.uniform() if rng is not None else 0.5))
+            out += 0.5 * a * env * (np.sin(2 * np.pi * f * t + ph) + np.sin(2 * np.pi * (f + d) * t + ph * 1.3))
+        else:
+            out += a * env * np.sin(2 * np.pi * f * t + ph)
+    k = max(1, ns(attack))
+    out[:k] *= np.linspace(0, 1, k)
+    return out
+
+
+# ---------------------------------------------------------------- percuție electronică
+def kick(dur=0.45, f_hi=140.0, f_lo=48.0, pitch_tau=0.035, t60=0.35, click=0.15, rng=None):
+    n = ns(dur)
+    t = t_axis(n)
+    f = f_lo + (f_hi - f_lo) * np.exp(-t / pitch_tau)
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    body = np.sin(ph) * env_ar(n, 0.002, t60)
+    rng = rng if rng is not None else rng_of(1)
+    cl = hp(rng.standard_normal(n), 1500) * env_exp(n, 0.012) * click
+    return np.tanh(1.3 * (body + cl))
+
+
+def clap(dur=0.35, rng=None, bright=1.0):
+    rng = rng if rng is not None else rng_of(2)
+    n = ns(dur)
+    nz = bp(rng.standard_normal(n), 900, 2600 * bright + 400, order=2)
+    t = t_axis(n)
+    e = np.zeros(n)
+    for i, off in enumerate([0.0, 0.011, 0.022, 0.031]):
+        k = ns(off)
+        e[k:] += (0.8 if i < 3 else 1.0) * np.exp(-(t[: n - k]) / (0.006 if i < 3 else 0.06))
+    return nz * e / (np.max(np.abs(nz * e)) + 1e-12)
+
+
+def hat(dur=0.06, rng=None, open_=False):
+    rng = rng if rng is not None else rng_of(3)
+    n = ns(0.35 if open_ else dur)
+    nz = hp(rng.standard_normal(n), 7000, order=2)
+    e = env_ar(n, 0.0005, 0.25 if open_ else dur * 0.8)
+    return nz * e / (np.max(np.abs(nz * e)) + 1e-12)
+
+
+def shaker(dur=0.09, rng=None):
+    rng = rng if rng is not None else rng_of(4)
+    n = ns(dur)
+    nz = bp(rng.standard_normal(n), 4500, 11000)
+    t = t_axis(n)
+    e = (t / 0.025) * np.exp(1 - t / 0.025)
+    return nz * e / (np.max(np.abs(nz * e)) + 1e-12)
+
+
+# ---------------------------------------------------------------- reverberație
+def make_ir(t60=1.8, length=None, predelay=0.012, hf_ratio=0.45, lf_ratio=1.15,
+            early=8, seed=7, width=1.0):
+    """Răspuns la impuls stereo sintetic: reflexii timpurii + coadă difuză
+    cu decădere dependentă de frecvență. Energie normalizată la 1."""
+    rng = rng_of(seed)
+    L = length or min(6.0, t60 * 1.25)
+    n = ns(L)
+    t = t_axis(n)
+    ir = np.zeros((2, n))
+    for ch in range(2):
+        nz = rng.standard_normal(n)
+        low = lp(nz, 450)
+        mid = bp(nz, 450, 4000)
+        high = hp(nz, 4000)
+        tail = (low * np.exp(-LN1000 * t / (t60 * lf_ratio))
+                + mid * np.exp(-LN1000 * t / t60)
+                + 0.7 * high * np.exp(-LN1000 * t / (t60 * hf_ratio)))
+        tail *= 1 - np.exp(-t / 0.025)
+        ir[ch] = tail
+    if width < 1.0:
+        m = ir.mean(axis=0)
+        ir = width * ir + (1 - width) * m
+    for _ in range(early):
+        d = rng.uniform(0.004, 0.07)
+        g = 0.6 * np.exp(-d / 0.04)
+        ch = rng.integers(0, 2)
+        k = ns(d)
+        if k < n:
+            ir[ch, k] += g * (np.sqrt(np.sum(ir[ch] ** 2)) / 30)
+    ir /= np.sqrt(np.sum(ir ** 2) / 2) + 1e-12
+    pd = ns(predelay)
+    return np.pad(ir, ((0, 0), (pd, 0)))[:, :n]
+
+
+def reverb(x, ir, wet=0.25, dry=1.0):
+    """Convoluție stereo: x (2, n) cu ir (2, m). Returnează dry*x + wet*rev."""
+    n = x.shape[1]
+    y = np.vstack([signal.oaconvolve(x[c], ir[c])[:n] for c in range(2)])
+    return dry * x + wet * y
+
+
+def delay(x, time_s, feedback=0.35, mix=0.25, lp_hz=5000, pingpong=True):
+    """Ecou simplu (repetiții calculate explicit, cu filtrare trece-jos)."""
+    out = x.copy()
+    d = ns(time_s)
+    tap = x.copy()
+    g = mix
+    for i in range(1, 7):
+        tap = lp(tap, lp_hz)
+        if pingpong:
+            tap = tap[::-1]  # inversează canalele L/R
+        shifted = np.zeros_like(x)
+        if d * i >= x.shape[1]:
+            break
+        shifted[:, d * i:] = tap[:, : x.shape[1] - d * i]
+        out += g * shifted
+        g *= feedback
+    return out
+
+
+# ---------------------------------------------------------------- loudness, limitare
+def _biquad_coeffs(kind, G, Q, fc):
+    A = 10 ** (G / 40.0)
+    w0 = 2.0 * np.pi * fc / SR
+    al = np.sin(w0) / (2.0 * Q)
+    c = np.cos(w0)
+    if kind == "high_shelf":
+        b0 = A * ((A + 1) + (A - 1) * c + 2 * np.sqrt(A) * al)
+        b1 = -2 * A * ((A - 1) + (A + 1) * c)
+        b2 = A * ((A + 1) + (A - 1) * c - 2 * np.sqrt(A) * al)
+        a0 = (A + 1) - (A - 1) * c + 2 * np.sqrt(A) * al
+        a1 = 2 * ((A - 1) - (A + 1) * c)
+        a2 = (A + 1) - (A - 1) * c - 2 * np.sqrt(A) * al
+    else:  # high_pass
+        b0 = (1 + c) / 2
+        b1 = -(1 + c)
+        b2 = (1 + c) / 2
+        a0 = 1 + al
+        a1 = -2 * c
+        a2 = 1 - al
+    return np.array([b0, b1, b2]) / a0, np.array([a0, a1, a2]) / a0
+
+
+_KW = [
+    _biquad_coeffs("high_shelf", 3.99984385397, 0.7071752369554193, 1681.9744509555319),
+    _biquad_coeffs("high_pass", 0.0, 0.5003270373253953, 38.13547087613982),
+]
+
+
+def lufs(x):
+    """Loudness integrat (LUFS), ITU-R BS.1770 cu porți absolută/relativă."""
+    x = np.atleast_2d(x)
+    y = x
+    for b, a in _KW:
+        y = signal.lfilter(b, a, y, axis=-1)
+    n = y.shape[1]
+    block, hop = ns(0.4), ns(0.1)
+    if n < block:
+        return -120.0
+    cs = np.concatenate([np.zeros((y.shape[0], 1)), np.cumsum(y ** 2, axis=1)], axis=1)
+    st = np.arange(0, n - block + 1, hop)
+    z = ((cs[:, st + block] - cs[:, st]) / block).sum(axis=0)
+    lk = -0.691 + 10 * np.log10(z + 1e-20)
+    a = lk > -70
+    if not np.any(a):
+        return -120.0
+    rel = -0.691 + 10 * np.log10(np.mean(z[a])) - 10
+    g = a & (lk > rel)
+    return float(-0.691 + 10 * np.log10(np.mean(z[g])))
+
+
+def match_lufs(x, target):
+    """Scalează un strat la loudness-ul țintă (util pentru echilibrarea mixului)."""
+    cur = lufs(x)
+    if cur < -100:
+        return x
+    return x * 10 ** ((target - cur) / 20)
+
+
+def soft_knee(x, thr, knee=0.7):
+    """Clipare moale doar peste knee*thr (vârfurile scurte sunt rotunjite, restul neatins)."""
+    k = knee * thr
+    a = np.abs(x)
+    over = a > k
+    y = x.copy()
+    y[over] = np.sign(x[over]) * (k + (thr - k) * np.tanh((a[over] - k) / (thr - k)))
+    return y
+
+
+def _true_peak_env(x, os_factor=4):
+    """Anvelopa de vârf „true peak” (supraeșantionare x4), aliniată la eșantioanele originale."""
+    n = x.shape[1]
+    up = signal.resample_poly(x, os_factor, 1, axis=1)
+    pk = np.max(np.abs(up), axis=0)[: n * os_factor]
+    return np.maximum(pk.reshape(n, os_factor).max(axis=1), np.max(np.abs(x), axis=0))
+
+
+def limiter(x, ceiling_db=-1.5, look_ms=8.0, release_ms=90.0, true_peak=True):
+    """Limitator fără depășiri (min-filtru + medie glisantă, în două trepte),
+    cu detecție de vârf supraeșantionată (true peak)."""
+    thr = 10 ** (ceiling_db / 20)
+    peak = _true_peak_env(x) if true_peak else np.max(np.abs(x), axis=0)
+    g = np.minimum(1.0, thr / np.maximum(peak, 1e-12))
+    for ms in (look_ms, release_ms):
+        w = max(3, int(ms / 1000 * SR)) | 1
+        g = uniform_filter1d(minimum_filter1d(g, size=w, mode="nearest"), size=w, mode="nearest")
+    y = x * g
+    return np.clip(y, -thr, thr)
+
+
+def master(x, target_lufs=-14.0, ceiling_db=-1.8, fin=0.5, fout=2.5, hp_hz=25, verbose=True,
+           knee=0.75, lp_hz=16000):
+    """Lanț final: DC/HPF, LPF blând (evită depășirile introduse de codorul MP3),
+    fade, normalizare la LUFS țintă cu limitare la plafon (true peak)."""
+    x = x - x.mean(axis=1, keepdims=True)
+    x = hp(x, hp_hz, order=2)
+    if lp_hz:
+        x = lp(x, lp_hz, order=2)
+    x = fade(x, fin, fout)
+    gain_db = target_lufs - lufs(x)
+    y = x
+    for _ in range(5):
+        z = x * 10 ** (gain_db / 20)
+        if knee:
+            z = soft_knee(z, 10 ** ((ceiling_db + 0.5) / 20), knee)
+        y = limiter(z, ceiling_db)
+        err = target_lufs - lufs(y)
+        if abs(err) < 0.05:
+            break
+        gain_db += err
+    if verbose:
+        pre = np.max(np.abs(x * 10 ** (gain_db / 20)), axis=0)
+        thr = 10 ** (ceiling_db / 20)
+        over = pre > thr
+        gr = 20 * np.log10(np.max(pre) / thr) if np.any(over) else 0.0
+        # proporția de timp în care limitatorul reduce cu > 1 dB (ferestre de 50 ms)
+        w = ns(0.05)
+        m = len(pre) // w
+        blocks = pre[: m * w].reshape(m, w).max(axis=1)
+        busy = np.mean(blocks > thr * 10 ** (1 / 20)) * 100
+        print(f"   master: câștig {gain_db:+.1f} dB, reducere maximă {gr:.1f} dB, "
+              f"ferestre cu reducere >1 dB: {busy:.1f}%")
+    return y
+
+
+# ---------------------------------------------------------------- export
+def export_mp3(x, path, title, comment="", bitrate="192k"):
+    """Scrie WAV temporar (float32) și îl codează MP3 cu ffmpeg/libmp3lame."""
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with tempfile.TemporaryDirectory() as td:
+        wav = os.path.join(td, "mix.wav")
+        wavfile.write(wav, SR, x.T.astype(np.float32))
+        cmd = [
+            "ffmpeg", "-y", "-loglevel", "error", "-i", wav,
+            "-c:a", "libmp3lame", "-b:a", bitrate, "-ar", str(SR), "-ac", "2",
+            "-id3v2_version", "3",
+            "-metadata", f"title={title}",
+            "-metadata", "artist=ACTIV AI – artefact-model generat cu AI",
+            "-metadata", "album=Sibiul meu – expoziție digitală ACTIV AI",
+            "-metadata", f"comment={comment}",
+            path,
+        ]
+        subprocess.run(cmd, check=True)
+    return path
+
+
+def report(x, label):
+    pk = 20 * np.log10(np.max(np.abs(x)) + 1e-12)
+    print(f"[{label}] durată {x.shape[1] / SR:.2f} s · vârf {pk:.2f} dBFS · {lufs(x):.2f} LUFS")
+
+
+def measure_mp3(path):
+    """Loudness integrat și true peak ale fișierului codat (ffmpeg ebur128)."""
+    import re
+    err = subprocess.run(["ffmpeg", "-nostats", "-i", path, "-filter_complex", "ebur128=peak=true",
+                          "-f", "null", "-"], capture_output=True, text=True).stderr
+    summ = err[err.rfind("Summary:"):]
+    i = float(re.search(r"I:\s+(-?[\d.]+) LUFS", summ).group(1))
+    tp = float(re.search(r"Peak:\s+(-?[\d.]+) dBFS", summ).group(1))
+    return i, tp
+
+
+def finalize(mix, path, title, comment="", target_lufs=-14.0, fin=0.5, fout=2.5,
+             max_tp=-1.2, ceiling_db=-1.8, tries=4):
+    """Mastering + export MP3 + verificare true peak după codare.
+    Dacă codorul MP3 produce depășiri, coboară plafonul limitatorului și reia."""
+    for _ in range(tries):
+        out = master(mix, target_lufs=target_lufs, ceiling_db=ceiling_db, fin=fin, fout=fout)
+        export_mp3(out, path, title, comment)
+        i, tp = measure_mp3(path)
+        print(f"   MP3: {i:.1f} LUFS, true peak {tp:.1f} dBTP (plafon limitator {ceiling_db:.1f} dB)")
+        if tp <= max_tp:
+            break
+        ceiling_db -= (tp - max_tp) + 0.2
+    return out

@@ -1,0 +1,165 @@
+# -*- coding: utf-8 -*-
+"""D08 – 30 de premiere sibiene pe o linie a timpului (neliniară, segmente pe secole)."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c2/06_date/D08_30_premiere.svg"
+BLUE = "#3E63DD"
+
+# domenii (împărțirea este a autorilor artefactului)
+DOM = {
+    "S": ("sănătate", TIGLA),
+    "E": ("educație & știință", BLUE),
+    "C": ("cultură", VIOLET),
+    "T": ("tehnică & economie", OCRU),
+    "P": ("sport & turism", "#12A594"),
+}
+RA = "(România de azi)"   # = „de pe actualul teritoriu al României”, formularea sursei
+
+# cele 30 de premiere alese (din cele 38 enumerate de patrimoniu.sibiu.ro)
+EV = [
+    ("1292", "primul spital " + RA, "S"),
+    ("1380", "prima atestare a unei școli " + RA, "E"),
+    ("1494", "prima farmacie " + RA, "S"),
+    ("1525", "prima tipografie din Transilvania", "C"),
+    ("1544", "prima carte în limba română " + RA, "C"),
+    ("1555", "prima rachetă în trepte – Conrad Haas (conform sursei)", "T"),
+    ("1717", "prima fabrică de bere " + RA, "T"),
+    ("1782", "descoperirea telurului – Franz Joseph Müller", "E"),
+    ("1786", "bazele Facultății de Teologie „Andrei Șaguna”, prima din țară", "E"),
+    ("1788", "prima clădire de teatru " + RA, "C"),
+    ("1793", "prima carte de medicină românească", "S"),
+    ("1817", "Muzeul Brukenthal, primul muzeu din România", "C"),
+    ("1853", "„Telegraful Român”, cel mai vechi ziar cu apariție neîntreruptă din sud-estul Europei", "C"),
+    ("1859", "Podul Minciunilor, primul pod din fontă turnată", "T"),
+    ("1863", "primul spital de boli nervoase din România", "S"),
+    ("1869", "prima bibliotecă publică românească din Transilvania", "C"),
+    ("1872", "Banca Albina, prima bancă cu capital integral românesc", "T"),
+    ("1875", "Rieger, prima fabrică de mașini-unelte din Transilvania", "T"),
+    ("1894", "Păltiniș, prima stațiune montană din România", "P"),
+    ("1895", "Muzeul de Istorie Naturală, prima clădire din România ridicată ca muzeu", "C"),
+    ("1898", "prima enciclopedie românească", "E"),
+    ("1904", "omnibusul electric, primul transport în comun electric fără șine din Transilvania", "T"),
+    ("1904", "Baia Populară, primul spa din România", "S"),
+    ("1921", "primul meci și prima echipă de handbal din România", "P"),
+    ("1929", "prima grădină zoologică din România", "P"),
+    ("1938", "prima fabrică de frigidere din România (Uzinele Hess)", "T"),
+    ("1944", "„Junii Sibiului”, primul ansamblu folcloric din România", "C"),
+    ("1993", "primul muzeu de etnografie universală din România (Muzeul „Franz Binder”)", "C"),
+    ("2007", "Capitală Culturală Europeană, primul oraș din România", "C"),
+    ("2019", "Regiune Gastronomică Europeană, primul oraș din România", "P"),
+]
+assert len(EV) == 30
+by_year = {}
+for e in EV:
+    by_year.setdefault(e[0], []).append(e)
+
+ROMAN = {13: "XIII", 14: "XIV", 15: "XV", 16: "XVI", 17: "XVII", 18: "XVIII", 19: "XIX", 20: "XX", 21: "XXI"}
+
+def century(y):
+    return (int(y) - 1) // 100 + 1
+
+# rândurile (fiecare citit de la stânga la dreapta)
+ROWS = [[e for e in EV if int(e[0]) < 1800],
+        [e for e in EV if 1800 <= int(e[0]) < 1900],
+        [e for e in EV if int(e[0]) >= 1900]]
+ROW_Y = [330, 572, 814]
+X0, X1 = 100, 1820
+MARK_W = 0.9   # lățimea (în sloturi) a marcajului de secol
+GAP_W = 1.0    # slot pentru un secol fără premiere în listă
+
+s = frame_head("DATE · D08", BLUE, "30 de premiere sibiene pe o linie a timpului",
+               "linie a timpului neliniară · 1292 → 2019 · segmente pe secole, intervalele nu sunt la scară")
+s += ('<defs><marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto">'
+      '<path d="M0,0 L10,5 L0,10 Z" fill="#56657A"/></marker></defs>\n')
+
+def node(x, y, col):
+    return (f'<circle cx="{x:.1f}" cy="{y}" r="15" fill="{BG}" stroke="{col}" stroke-width="4" filter="url(#glow)"/>'
+            f'<circle cx="{x:.1f}" cy="{y}" r="6" fill="{col}"/>\n')
+
+def cpill(x, y, label, muted=False):
+    w = measure(label, 13, "sans", 700, letter_spacing=1) + 22
+    col = "#56657A" if muted else CEATA
+    o = f'<rect x="{x-w/2:.1f}" y="{y-13}" width="{w:.1f}" height="26" rx="13" fill="{CARD}" stroke="{col}" stroke-width="1.5"/>\n'
+    o += text(x, y + 5, label, 13, col, "sans", 700, anchor="middle", extra='letter-spacing="1"')
+    return o
+
+LH = 18
+for r, (row, Y) in enumerate(zip(ROWS, ROW_Y)):
+    # construim secvența de elemente: marcaj secol / eveniment / pauză
+    items = []
+    cents = sorted({century(e[0]) for e in row})
+    first_c, last_c = cents[0], cents[-1]
+    for c in range(first_c, last_c + 1):
+        evs = [e for e in row if century(e[0]) == c]
+        if evs:
+            items.append(("mark", c, MARK_W))
+            for e in evs:
+                items.append(("ev", e, 1.0))
+        else:
+            items.append(("gap", c, GAP_W))
+    total = sum(it[2] for it in items)
+    unit = (X1 - X0) / total
+    # linia
+    s += f'<line x1="{X0-20}" y1="{Y}" x2="{X1+10}" y2="{Y}" stroke="#2A3845" stroke-width="8" stroke-linecap="round"/>\n'
+    s += f'<line x1="{X1+10}" y1="{Y}" x2="{X1+22}" y2="{Y}" stroke="#56657A" stroke-width="8" stroke-linecap="round" marker-end="url(#arr)"/>\n'
+    pos = X0
+    ev_i = 0
+    slot = unit
+    for kind, val, w in items:
+        cx = pos + w * unit / 2
+        if kind == "mark":
+            s += cpill(cx, Y, "sec. " + ROMAN[val])
+        elif kind == "gap":
+            # pauză: secol fără premieră în lista oficială
+            s += f'<line x1="{pos+12:.1f}" y1="{Y}" x2="{pos+w*unit-12:.1f}" y2="{Y}" stroke="{BG}" stroke-width="10"/>\n'
+            s += f'<line x1="{pos+12:.1f}" y1="{Y}" x2="{pos+w*unit-12:.1f}" y2="{Y}" stroke="#56657A" stroke-width="3" stroke-dasharray="6 7"/>\n'
+            s += cpill(cx, Y - 44, "sec. " + ROMAN[val], muted=True)
+            s += text(cx, Y + 36, "nicio premieră", 13, "#56657A", "sans", 400, True, anchor="middle")
+            s += text(cx, Y + 54, "în lista oficială", 13, "#56657A", "sans", 400, True, anchor="middle")
+        else:
+            yr, label, d = val
+            col = DOM[d][1]
+            s += node(cx, Y, col)
+            above = (ev_i % 2 == 0)
+            maxw = min(2 * slot - 14, 2 * (1840 - cx), 2 * (cx - 80))
+            lines = wrap(label, maxw, 15)
+            if len(lines) > 3:
+                lines = wrap(label, maxw, 14)
+            fs = 15 if len(wrap(label, maxw, 15)) <= 3 else 14
+            assert len(lines) <= 4, (yr, lines)
+            if above:
+                ly = Y - 34 - LH * (len(lines) - 1)
+                s += text(cx, ly - 28, yr, 26, col, "serif", 700, anchor="middle")
+                for ln in lines:
+                    s += text(cx, ly, ln, fs, CEATA, anchor="middle"); ly += LH
+                # tijă
+                s += f'<line x1="{cx:.1f}" y1="{Y-19}" x2="{cx:.1f}" y2="{Y-26}" stroke="{col}" stroke-width="2"/>\n'
+            else:
+                s += text(cx, Y + 54, yr, 26, col, "serif", 700, anchor="middle")
+                ly = Y + 78
+                for ln in lines:
+                    s += text(cx, ly, ln, fs, CEATA, anchor="middle"); ly += LH
+                s += f'<line x1="{cx:.1f}" y1="{Y+19}" x2="{cx:.1f}" y2="{Y+26}" stroke="{col}" stroke-width="2"/>\n'
+            ev_i += 1
+        pos += w * unit
+
+# legendă (două rânduri)
+ly = 968
+lx = 80
+s += text(lx, ly, "Domenii (împărțire a autorilor artefactului):", 15, VAR, "sans", 700)
+lx += measure("Domenii (împărțire a autorilor artefactului):", 15, "sans", 700) + 18
+for k in ["S", "E", "C", "T", "P"]:
+    name, col = DOM[k]
+    n = sum(1 for e in EV if e[2] == k)
+    lab = f"{name} · {n}"
+    s += f'<circle cx="{lx+7}" cy="{ly-5}" r="7" fill="{col}"/>\n'
+    s += text(lx + 22, ly, lab, 15, CEATA)
+    lx += 22 + measure(lab, 15) + 24
+ly2 = 996
+s += text(80, ly2, "„(România de azi)” = „de pe actualul teritoriu al României”, formularea sursei. Secolul al XVII-lea nu are nicio premieră în lista oficială.", 14, "#7E8A96", "sans", 400, True)
+s += text(1840, ly2, "sursa: patrimoniu.sibiu.ro – Premiere (38 de premiere enumerate; aici 30)", 14, "#7E8A96", "sans", 400, True, anchor="end")
+s += frame_foot()
+write(OUT, s)
+print(OUT)

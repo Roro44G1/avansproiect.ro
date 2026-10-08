@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="250" height="44" fill="#F76B15"/>
+<text x="125.1" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">IDENTITATE · P09</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="60" fill="#F3EFE6">„Prima mea premieră”</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">afiș · personaj fictiv: Tudor, 16 ani · nicio persoană reală</text>
+<defs><linearGradient id="paperg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F2E8"/><stop offset="1" stop-color="#EDE4D2"/></linearGradient><linearGradient id="skyd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C3C66"/><stop offset="1" stop-color="#7A6A8A"/></linearGradient></defs>
+<g filter="url(#sh)"><rect x="80" y="230" width="1000" height="770" rx="18" fill="url(#paperg)"/></g>
+<rect x="80" y="230" width="1000" height="770" rx="18" fill="url(#paperg)" filter="url(#paper)"/>
+<rect x="98" y="248" width="964" height="734" rx="10" fill="none" stroke="#B9583A" stroke-width="2"/>
+<rect x="106" y="256" width="948" height="718" rx="6" fill="none" stroke="#B9583A" stroke-width="1" stroke-dasharray="3 5"/>
+<text x="130.0" y="302.0" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#B9583A" text-anchor="start" letter-spacing="3">FIȘĂ DE PREMIERĂ PERSONALĂ</text>
+<text x="130.0" y="330.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#6B5E52" text-anchor="start" font-style="italic">Seria TU · nr. 1 · consemnată în 2026 · personaj fictiv</text>
+<line x1="130" y1="348" x2="1030" y2="348" stroke="#B9583A" stroke-width="1.5"/>
+<clipPath id="ic9"><rect x="130" y="370" width="360" height="560" rx="12"/></clipPath>
+<g clip-path="url(#ic9)"><rect x="130" y="370" width="360" height="560" fill="url(#skyd)"/>
+<circle cx="200" cy="460" r="34" fill="#E2A62B" opacity="0.95"/><circle cx="200" cy="460" r="60" fill="#E2A62B" opacity="0.15"/>
+<rect x="130" y="790" width="80" height="70" fill="#4A3F4F"/><polygon points="126,790 170.0,756 214,790" fill="#8A4A36"/>
+<path d="M158.0,776 q12,-12 24,0 q-12,10 -24,0 Z" fill="#2A2530"/>
+<rect x="200" y="770" width="70" height="90" fill="#4A3F4F"/><polygon points="196,770 235.0,736 274,770" fill="#8A4A36"/>
+<path d="M223.0,756 q12,-12 24,0 q-12,10 -24,0 Z" fill="#2A2530"/>
+<rect x="380" y="780" width="80" height="80" fill="#4A3F4F"/><polygon points="376,780 420.0,746 464,780" fill="#8A4A36"/>
+<path d="M408.0,766 q12,-12 24,0 q-12,10 -24,0 Z" fill="#2A2530"/>
+<rect x="450" y="795" width="60" height="65" fill="#4A3F4F"/><polygon points="446,795 480.0,761 514,795" fill="#8A4A36"/>
+<path d="M468.0,781 q12,-12 24,0 q-12,10 -24,0 Z" fill="#2A2530"/>
+<rect x="255.0" y="500" width="110" height="360" fill="#E6D8B8" stroke="#A8987A" stroke-width="1.5"/>
+<line x1="255.0" y1="520" x2="365.0" y2="520" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="546" x2="365.0" y2="546" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="572" x2="365.0" y2="572" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="598" x2="365.0" y2="598" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="624" x2="365.0" y2="624" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="650" x2="365.0" y2="650" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="676" x2="365.0" y2="676" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="702" x2="365.0" y2="702" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="728" x2="365.0" y2="728" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="754" x2="365.0" y2="754" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="780" x2="365.0" y2="780" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="806" x2="365.0" y2="806" stroke="#C9B995" stroke-width="1"/>
+<line x1="255.0" y1="832" x2="365.0" y2="832" stroke="#C9B995" stroke-width="1"/>
+<rect x="296" y="560" width="28" height="38" rx="14" fill="#2A2530"/>
+<rect x="296" y="640" width="28" height="38" rx="14" fill="#2A2530"/>
+<rect x="296" y="720" width="28" height="38" rx="14" fill="#2A2530"/>
+<rect x="241.0" y="500" width="138" height="56" fill="#D2C3A0" stroke="#A8987A" stroke-width="1.5"/>
+<path d="M261.0,548 v-22 a11,11 0 0 1 22,0 v22 Z" fill="#2A2530"/>
+<path d="M299.0,548 v-22 a11,11 0 0 1 22,0 v22 Z" fill="#2A2530"/>
+<path d="M337.0,548 v-22 a11,11 0 0 1 22,0 v22 Z" fill="#2A2530"/>
+<path d="M375.0,548 v-22 a11,11 0 0 1 22,0 v22 Z" fill="#2A2530"/>
+<polygon points="237.0,500 310,420 383.0,500" fill="#B9583A"/>
+<polygon points="310,500 310,420 383.0,500" fill="#8F4229"/>
+<line x1="310" y1="420" x2="310" y2="396" stroke="#E2A62B" stroke-width="3"/><circle cx="310" cy="394" r="5" fill="#E2A62B"/>
+<circle cx="310" cy="730" r="0" fill="none"/>
+<g fill="#1B1720"><circle cx="352" cy="516" r="8"/><path d="M345,526 h14 l3,26 h-20 Z"/><path d="M358,530 l14,-18" stroke="#1B1720" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M346,530 l-10,12" stroke="#1B1720" stroke-width="4" stroke-linecap="round" fill="none"/></g>
+<rect x="130" y="860" width="360" height="70" fill="#5A5A48"/>
+<rect x="130" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="170" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="210" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="250" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="290" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="330" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="370" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="410" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="450" y="868" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="150" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="190" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="230" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="270" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="310" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="350" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="390" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="430" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="470" y="888" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="130" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="170" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="210" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="250" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="290" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="330" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="370" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="410" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+<rect x="450" y="908" width="36" height="16" rx="3" fill="#6E6B55" opacity="0.7"/>
+</g>
+<rect x="130" y="370" width="360" height="560" rx="12" fill="none" stroke="#B9583A" stroke-width="1.5"/>
+<text x="310.0" y="956.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#6B5E52" text-anchor="middle" font-style="italic">Turnul Sfatului – siluetă stilizată, generată cu AI</text>
+<g filter="url(#shs)"><polygon points="128,810 158,832 128,854 150,854 150,810" fill="#8F4229"/><polygon points="492,810 462,832 492,854 470,854 470,810" fill="#8F4229"/><rect x="150" y="806" width="320" height="52" fill="#B9583A"/></g>
+<text x="310.0" y="840.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#F3EFE6" text-anchor="middle" letter-spacing="2">PRIMA MEA PREMIERĂ</text>
+<g transform="rotate(-14 960 340)" opacity="0.9">
+<circle cx="960" cy="340" r="62" fill="none" stroke="#B3302A" stroke-width="4"/><circle cx="960" cy="340" r="52" fill="none" stroke="#B3302A" stroke-width="1.5"/>
+<text x="960.0" y="348.0" font-family="Inter, sans-serif" font-size="19" font-weight="700" fill="#B3302A" text-anchor="middle" letter-spacing="2">PREMIERĂ</text>
+<text x="960.0" y="320.0" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#B3302A" text-anchor="middle" letter-spacing="1">✶ CONSEMNATĂ ✶</text>
+<text x="960.0" y="372.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#B3302A" text-anchor="middle" letter-spacing="3">2026</text>
+</g>
+<text x="530.0" y="400.0" font-family="'Noto Serif', serif" font-size="30" font-weight="700" fill="#2B2622" text-anchor="start">Tudor, 16 ani</text>
+<text x="530.0" y="428.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#6B5E52" text-anchor="start" font-style="italic">personaj fictiv · elev într-un liceu din Sibiu (neprecizat)</text>
+<text x="530.0" y="470.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">Mă numesc Tudor, am 16 ani și sunt un personaj</text>
+<text x="530.0" y="500.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">fictiv. Premiera mea nu apare în nicio carte de</text>
+<text x="530.0" y="530.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">istorie: sâmbătă am urcat pentru prima dată singur în</text>
+<text x="530.0" y="560.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">Turnul Sfatului. Am numărat treptele, m-am oprit la</text>
+<text x="530.0" y="590.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">fiecare fereastră și, sus, am văzut Piața Mare și Piața</text>
+<text x="530.0" y="620.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">Mică deodată, ca pe o hartă vie. Nimeni nu a</text>
+<text x="530.0" y="650.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">aplaudat. Dar am înțeles ceva: fiecare lucru mare din</text>
+<text x="530.0" y="680.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">orașul acesta a fost, cândva, o primă dată a cuiva –</text>
+<text x="530.0" y="710.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">prima farmacie, prima școală, primul pod de fontă.</text>
+<text x="530.0" y="740.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">Așa că mi-am făcut o fișă de premieră. Următoarea:</text>
+<text x="530.0" y="770.0" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#2B2622" text-anchor="start">să vorbesc în fața clasei fără foaie.</text>
+<text x="530.0" y="804.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#6B5E52" text-anchor="start" font-style="italic">text la persoana I · 100 de cuvinte</text>
+<text x="530.0" y="836.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#B9583A" text-anchor="start">Premiera</text>
+<text x="648.0" y="836.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">prima urcare singur în Turnul Sfatului</text>
+<line x1="530" y1="844" x2="1030" y2="844" stroke="#D8CDB8" stroke-width="1"/>
+<text x="530.0" y="866.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#B9583A" text-anchor="start">Data</text>
+<text x="648.0" y="866.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">o sâmbătă din 2026</text>
+<line x1="530" y1="874" x2="1030" y2="874" stroke="#D8CDB8" stroke-width="1"/>
+<text x="530.0" y="896.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#B9583A" text-anchor="start">Martori</text>
+<text x="648.0" y="896.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">niciunul – și e în regulă</text>
+<line x1="530" y1="904" x2="1030" y2="904" stroke="#D8CDB8" stroke-width="1"/>
+<text x="530.0" y="926.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#B9583A" text-anchor="start">Următoarea</text>
+<text x="648.0" y="926.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#2B2622" text-anchor="start">primul discurs în fața clasei, fără foaie</text>
+<line x1="530" y1="934" x2="1030" y2="934" stroke="#D8CDB8" stroke-width="1"/>
+<text x="900.0" y="960.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#6B5E52" text-anchor="end" font-style="italic">semnătura:</text>
+<path d="M910,956 q18,-26 36,-4 t34,-10 t28,4" fill="none" stroke="#2B2622" stroke-width="1.6"/>
+<rect x="1120" y="230" width="720" height="476" rx="22" fill="#141E28" stroke="#2A3845" stroke-width="1.5" />
+<text x="1152.0" y="276.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start" letter-spacing="3">FIȘA DE PREMIERĂ A ORAȘULUI</text>
+<text x="1152.0" y="300.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">conform patrimoniu.sibiu.ro · fapte verificate</text>
+<text x="1152.0" y="392.0" font-family="'Noto Serif', serif" font-size="84" font-weight="700" fill="#F3EFE6" text-anchor="start">1494</text>
+<g filter="url(#shs)"><path d="M1664,340 h112 l-14,64 q-42,14 -84,0 Z" fill="#E2A62B"/><ellipse cx="1720" cy="340" rx="56" ry="12" fill="#F0C65B"/><rect x="1664" y="404" width="112" height="14" rx="4" fill="#C98F22"/><line x1="1738" y1="346" x2="1786" y2="276" stroke="#E6D8B8" stroke-width="14" stroke-linecap="round"/><circle cx="1734" cy="350" r="12" fill="#E6D8B8"/></g>
+<text x="1152.0" y="440.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#F3EFE6" text-anchor="start">prima farmacie de pe actualul</text>
+<text x="1152.0" y="474.0" font-family="'Noto Serif', serif" font-size="26" font-weight="700" fill="#F3EFE6" text-anchor="start">teritoriu al României</text>
+<text x="1152.0" y="518.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">„Farmacia orașului”, publică, în Piața Mare, înființată în perioada marilor epidemii de</text>
+<text x="1152.0" y="542.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">ciumă. Primul farmacist consemnat: Johannes, pe o chitanță din 1494. Sediul nu mai</text>
+<text x="1152.0" y="566.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">există – pe locul lui se află azi turnul Bisericii Romano-Catolice.</text>
+<text x="1152.0" y="612.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#E2A62B" text-anchor="start">Alte «prima dată» ale orașului:</text>
+<text x="1152.0" y="636.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">1292 – primul spital · 1380 – prima atestare a unei școli · 1788 – prima clădire de teatru · 1859</text>
+<text x="1152.0" y="658.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">– primul pod din fontă turnată</text>
+<text x="1152.0" y="682.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">toate: „de pe actualul teritoriu al României”, conform sursei</text>
+<rect x="1120" y="728" width="720" height="272" rx="22" fill="#0E7C86" stroke="#0E7C86" stroke-width="1.5" />
+<text x="1152.0" y="778.0" font-family="'Noto Serif', serif" font-size="110" font-weight="700" fill="#E2A62B" text-anchor="start">„</text>
+<text x="1152.0" y="842.0" font-family="'Noto Serif', serif" font-size="42" font-weight="700" fill="#F3EFE6" text-anchor="start">Orașul a început</text>
+<text x="1152.0" y="892.0" font-family="'Noto Serif', serif" font-size="42" font-weight="700" fill="#F3EFE6" text-anchor="start">cu niște «prima dată».</text>
+<text x="1152.0" y="956.0" font-family="'Noto Serif', serif" font-size="58" font-weight="700" fill="#E2A62B" text-anchor="start">Și tu.</text>
+<text x="1808.0" y="970.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#CFE6E8" text-anchor="end" font-style="italic">afiș-model · ACTIV AI · „Sibiul meu”</text>
+<path d="M1750,767 q2.6999999999999997,6.3 9,9 q-6.3,2.6999999999999997 -9,9 q-2.6999999999999997,-6.3 -9,-9 q6.3,-2.6999999999999997 9,-9 Z" fill="#E2A62B" opacity="0.85"/>
+<path d="M1690,811 q1.5,3.5 5,5 q-3.5,1.5 -5,5 q-1.5,-3.5 -5,-5 q3.5,-1.5 5,-5 Z" fill="#E2A62B" opacity="0.85"/>
+<path d="M1780,840 q1.7999999999999998,4.199999999999999 6,6 q-4.199999999999999,1.7999999999999998 -6,6 q-1.7999999999999998,-4.199999999999999 -6,-6 q4.199999999999999,-1.7999999999999998 6,-6 Z" fill="#E2A62B" opacity="0.85"/>
+<path d="M1720,892 q1.2,2.8 4,4 q-2.8,1.2 -4,4 q-1.2,-2.8 -4,-4 q2.8,-1.2 4,-4 Z" fill="#E2A62B" opacity="0.85"/>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>
