@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "S18",
+    "categorie": "Spațial",
+    "titlu": "Harta străzilor cu nume de meserii — ilustrată AI",
+    "fisiere": [
+      "05_spatial/S18_strazile_meseriilor.svg",
+      "05_spatial/S18_strazile_meseriilor.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă ilustrată a centrului istoric cu șase plăcuțe stradale cu nume de meserii, fiecare cu unealta desenată și un fapt verificat. Măcelarilor și Piața Aurarilor sunt pe hartă; celelalte patru au poziția de verificat pe o hartă reală.",
+    "status": "realizat",
+    "nota": "Străzile: fișa „Bresle și meșteșuguri” (Măcelarilor – singura cu nume de breaslă în Orașul de Sus). Fapte: 1570 – statutul măcelarilor în 13 puncte (turnulsfatului.ro, 2023); 1376 – brutarii numiți în statutul comun (mnir.ro, limbaromana.org); 1346 – aurarul Kunz (limbaromana.org); 1695 – însemnul croitorilor (mnir.ro), croitorii – Poarta Turnului (limbaromana.org). Bărbierii („bărbieri-chirurgi”, Evul Mediu) și vopsitorii (alizarina, 1869) – informații generale de pe en.wikipedia, marcate „nu despre Sibiu” (vezi _fapte_noi_S18_S20.md). Geometria: sibiu_map.py. Piața Aurarilor – orientativ, la capătul Pasajului Aurarilor; Măcelarilor – doar zona (Orașul de Sus); Brutarilor, Bărbierilor, Vopsitorilor, Croitorilor – în caseta „poziție de verificat pe o hartă reală”. Hartă schematică, poziții aproximative – nu la scară."
+  },
+  {
+    "cod": "S19",
+    "categorie": "Spațial",
+    "titlu": "Harta atelierelor imaginare ale breslelor pe străzile de azi",
+    "fisiere": [
+      "05_spatial/S19_atelierele_breslelor.svg",
+      "05_spatial/S19_atelierele_breslelor.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Harta centrului istoric în două straturi: porțile, turnurile, bastioanele și piețele legate de bresle, cu anul din surse, și opt ateliere imaginate de AI – case cu firme desenate fără text și meșteri fictivi.",
+    "status": "realizat",
+    "nota": "Documentat (limbaromana.org): măcelari – Poarta Cisnădiei; croitori – Poarta Turnului (Turnul Croitorilor 1492, 1575); cizmari – Poarta Ocnei (bastionul porții 1556); cojocari – Poarta Elisabeta (și pielarii, 1457); Bastionul Haller – cositorari și olari, 1556; Bastionul Soldisch – țesători, 1556 (bastionul e datat 1622–1629 de patrimoniu.sibiu.ro – divergență arătată). Strada Cetății (patrimoniu.sibiu.ro): Turnul Archebuzierilor, numit apoi al Pânzarilor (1357–1366), Turnul Olarilor (sec. al XV-lea), Turnul Dulgherilor (însemnul breslei 1450, mnir.ro); pentru Olarilor și Dulgherilor sursele nu spun cine le îngrijea. Piața Mică – hala măcelarilor 1320 (inyourpocket.com) / 1370 (turnulsfatului.ro). Piața Aurarilor – aurari din 1346, statut 1494; poziție orientativă. Atelierele, firmele și meșterii sunt imaginați (personaje fictive), așezați lângă reperele reale. Geometria: sibiu_map.py. Hartă schematică, poziții aproximative – nu la scară."
+  },
+  {
+    "cod": "S20",
+    "categorie": "Spațial",
+    "titlu": "Drumul telemelei: de la stână la masă — hartă narativă schematică AI",
+    "fisiere": [
+      "05_spatial/S20_drumul_telemelei.svg",
+      "05_spatial/S20_drumul_telemelei.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă narativă a Mărginimii Sibiului: telemeaua de Sibiu în șapte etape, de la stâna din Munții Cindrel la piața din Sibiu, cu IGP-ul din 16 octombrie 2019, calendarul păstoresc și o atenționare despre laptele crud.",
+    "status": "realizat",
+    "nota": "Telemeaua (economica.net, 16 octombrie 2019): IGP – al șaptelea produs românesc; lapte de oaie crud, nepasteurizat, oi hrănite mai ales pe pășune; cheag; semitare; minimum 21 de zile de maturare, dacă se vinde maturată; zece producători. Calendar (sibiu-turism.ro): mai – urcarea oilor; 30 iulie – „Sus pe muntele din Jina”; 15 august – Sărbătoarea oierilor, Tilișca; septembrie – coborârea oilor. Cheagul – en.wikipedia (Rennet), informație generală. Pe piesă: „Aria exactă a IGP nu e dată de sursele noastre” și „Nu consumați lapte crud nepasteurizat fără informare”. Satele și Vf. Cindrel (2.244 m) urmează coordonatele comune ale regiunii; stâna și steagul de la Jina sunt orientative; ordinea și locul etapelor 2–6 sunt narative, nu un traseu real. Ilustrațiile (oi, stână, găleată, cheag simbolic, roată de brânză, piață) sunt decorative. Hartă schematică, poziții aproximative – nu la scară."
+  }
+]

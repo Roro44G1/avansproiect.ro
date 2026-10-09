@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "P14",
+    "categorie": "Identitate",
+    "titlu": "Copacul meu — portret AI al arborelui care mă reprezintă",
+    "fisiere": [
+      "08_identitate/P14_copacul_meu.svg",
+      "08_identitate/P14_copacul_meu.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Portretul unui stejar ales de un elev fictiv: ilustrația arborelui, cu coroana, ghindele pe codițe lungi și rădăcinile, o fișă de identitate cu trăsături botanice verificate și patru motive „de ce mă reprezintă” – rădăcina, vârsta, ghinda și „casa multora”.",
+    "status": "realizat",
+    "nota": "„Elevul A.” este un personaj fictiv (pseudonim evident), iar citatul lui e imaginat. Simbolismul este declarat pe piesă interpretare personală, nu fapt botanic. Trăsăturile botanice provin din en.wikipedia (Quercus robur, Oak, Taproot) și sunt notate cu sursa în 08_identitate/_fapte_noi.md: înălțime de regulă până la 20 m, uneori până la 40 m; 3–6 lobi rotunjiți și codiță de 2–3 mm; flori primăvara (perioadă orientativă), polenizate de vânt; ghinde câte 2–3 pe codițe de 4–8 cm; adesea peste 500 de ani; circa 2.300 de specii asociate în Marea Britanie; veverițele și gaițele mănâncă și răspândesc ghinde. Despre rădăcini se spune doar ce dă sursa: majoritatea arborilor pornesc cu o rădăcină principală, iar la mulți stejari, în soluri adânci și bogate, ea crește vertical. Faptele locale sunt din fapte_verificate.md: Pădurea Dumbrava (993 ha, domină stejăretul, peste jumătate din arborete au peste 100 de ani, câteva zeci de stejari trec de 200 de ani, gaița și veverița în fauna listată), stejarul de peste 600 de ani de la intrarea Grădinii Zoologice (agerpres.ro, 2021) și propunerea lui Martin von Seeberg din 1754. Ilustrația este stilizată, nu redă un arbore anume."
+  },
+  {
+    "cod": "P15",
+    "categorie": "Identitate",
+    "titlu": "Angajamentul micului ecologist sibian — afiș AI cu 7 promisiuni",
+    "fisiere": [
+      "08_identitate/P15_angajamentul_ecologistului.svg",
+      "08_identitate/P15_angajamentul_ecologistului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Un afiș cu 7 promisiuni concrete pentru natura din jurul Sibiului, fiecare legată de un loc real: Pădurea Dumbrava, Cibinul, Parcul Sub Arini, Păltiniș, apa de la Gura Râului, un copac nou și promenada Cibinului. Fiecare are o pictogramă și un fapt verificat, iar jos e loc pentru semnătură și dată.",
+    "status": "realizat",
+    "nota": "Afiș-model: promisiunile sunt propuse de echipa de proiect, nu sunt un regulament oficial (mențiune vizibilă). Faptele vin toate din fapte_verificate.md, cu sursa scrisă pe fiecare rând: Dumbrava – 993 ha, la limita sud-vestică a Sibiului, orhidee, brândușe și opaița, plantă endemică (sibiul.ro; ecomagazin.ro); Cibinul – 82 km, din Munții Cindrel până în Olt, lângă Tălmaciu (en.wikipedia); Sub Arini – 1856, 95 de specii de păsări, arbori de peste 150 de ani (zilesinopti.ro); Păltiniș – 1894, cea mai veche stațiune montană din România, pădure de conifere (turistintransilvania.com; en.wikipedia); barajul de lângă Gura Râului – cea mai mare sursă de apă potabilă a Sibiului (en.wikipedia); Martin von Seeberg, 1754 – propunerea ca fiecare tânăr de 10 ani să planteze doi puieți de stejar (ecomagazin.ro); promenada Cibinului – aproape 4 km de piste pentru biciclete, trotuare, pontoane și zone de relaxare (zilesinopti.ro, 2024). „Ce ajunge în apă pleacă la vale” e o deducție din cursul râului. Panorama din antet este stilizată și nu e o hartă."
+  },
+  {
+    "cod": "P16",
+    "categorie": "Identitate",
+    "titlu": "Animalul-totem al clasei, din fauna Carpaților — ilustrat AI",
+    "fisiere": [
+      "08_identitate/P16_animalul_totem.svg",
+      "08_identitate/P16_animalul_totem.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "O clasă fictivă își alege prin vot animalul-totem: râsul, ilustrat stilizat pe o stâncă din Carpați, sub lună. Alături sunt fișa animalului, cu informații verificate, cele patru „valori ale clasei” deduse simbolic și ceilalți trei candidați – ursul brun, capra neagră și lupul –, fiecare cu motivul umoristic pentru care a pierdut votul.",
+    "status": "realizat",
+    "nota": "Clasa (a IX-a) și votul sunt fictive, iar valorile clasei sunt declarate simbolism, nu trăsături „morale” ale animalului. Ilustrațiile sunt originale și stilizate și nu copiază un logo sau o mascotă. Faptul din fișă: Carpații au cele mai mari populații europene de urși bruni, lupi, capre negre și râși, cu cea mai mare concentrare în România (en.wikipedia, Carpathian Mountains). Informațiile despre râs sunt din en.wikipedia (Eurasian lynx), notate în 08_identitate/_fapte_noi.md: blană roșiatică sau maronie, cu pete negre; smocuri negre pe urechi; coadă scurtă, cu vârful negru; labe mari, ca niște rachete de zăpadă; corpul de 73–106 cm, 55–75 cm la umăr, 7–32 kg după regiune (orientativ); prada, de regulă căpriori, local capre negre sau iepuri; trăiește singur, vânează la pândă și e activ mai ales noaptea și în amurg. Motivele candidaților se sprijină pe fapte reale (en.wikipedia: Brown bear – iarna stă în bârlog; Chamois – vara pe pajiștile alpine, deasupra limitei pădurii; Wolf – haita medie din Europa are 5,5 lupi), iar umorul („clasa e la etajul 1”, „votul cu toată familia”) este ficțiune declarată. Cifra de peste 2.000 de râși din România nu e folosită pe piesă, pentru că sursa notează că unii experți o consideră supraestimată."
+  }
+]

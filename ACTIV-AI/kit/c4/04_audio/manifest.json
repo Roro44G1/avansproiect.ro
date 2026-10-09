@@ -1,0 +1,117 @@
+[
+ {
+  "cod": "A16",
+  "categorie": "Audio",
+  "titlu": "Peisaj sonor AI: dimineața în Dumbrava Sibiului",
+  "titlu_creativ": "Între bufniță și soare",
+  "fisiere": [
+   "04_audio/A16_dimineata_in_dumbrava.md",
+   "04_audio/A16_dimineata_in_dumbrava.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – scenariu + sinteză audio procedurală (Python/numpy)",
+  "descriere": "O dimineață imaginată în pădurea de stejar a Dumbravei: bufnița pe întuneric, apoi mierla, pițigoiul, presura, ciocănitoarea, gaița și corbul, vânt, lacuri, pași și o veveriță – sunete sintetizate din cod.",
+  "status": "realizat",
+  "nota": "Peisaj sonor imaginat, fără voce și fără muzică; toate sunetele sunt sintetizate din cod, fără mostre și fără înregistrări. Animalele sunt doar cele din fapte_verificate.md („Pădurea / Parcul natural Dumbrava Sibiului” – faună: pițigoi, mierlă, presură, ciocănitoare, gaiță, bufniță, corb; veveriță; sibiul.ro, ecomagazin.ro). Sunetele de păsări sunt aproximări sintetizate, nu înregistrări și nu identificare ornitologică exactă: fișa nu dă speciile; s-a pornit de la descrieri generale ale vocii unor specii reprezentative (en.wikipedia, rezumate în 04_audio/_fapte_noi_A16_A17.md). Imaginate: ordinea și momentele evenimentelor, anotimpul (primăvară), drumețul nevăzut care calcă pe frunze (personaj fictiv), veverița care urcă pe trunchi. Alăturarea bufniței (dacă e buha, se aude mai ales în lunile reci) cu corul de primăvară este o alegere artistică, declarată în md. Lacurile: salba de lacuri (dssibiu.ro) / trei lacuri artificiale (sibiul.ro); pârâul – Valea Aurie sau Trinkbach, după sursă. Verificare tehnică în 04_audio/_verificare/.",
+  "audio": "04_audio/A16_dimineata_in_dumbrava.mp3",
+  "tts_text": null,
+  "tts_lang": null,
+  "durata_s": 90.04,
+  "loudness_lufs": -14.1,
+  "true_peak_dbtp": -1.3,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "cod_sursa": [
+   "04_audio/_src/A16_dimineata_in_dumbrava.py",
+   "04_audio/_src/verificare_A16_A17.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "fapte_noi": "04_audio/_fapte_noi_A16_A17.md",
+  "marcaje_s": {
+   "Întuneric: vânt, lac, bufniță": 0.0,
+   "Prima mierlă": 17.0,
+   "Pițigoiul": 24.0,
+   "Presura": 30.5,
+   "Ciocănitoarea": 36.0,
+   "Pași pe frunze": 44.0,
+   "Gaița": 50.5,
+   "Veverița": 59.5,
+   "Corbul": 67.5,
+   "Răsăritul: corul plin": 75.0,
+   "Final": 86.0
+  },
+  "verificare": [
+   "04_audio/_verificare/A16_dimineata_in_dumbrava_spectrograma.png",
+   "04_audio/_verificare/A16_dimineata_in_dumbrava_forma_unda.png",
+   "04_audio/_verificare/raport_A16_A17.json"
+  ]
+ },
+ {
+  "cod": "A17",
+  "categorie": "Audio",
+  "titlu": "Cântec de leagăn AI pentru râul Cibin",
+  "titlu_creativ": "Optzeci și doi de kilometri",
+  "fisiere": [
+   "04_audio/A17_cantec_de_leagan_cibin.md",
+   "04_audio/A17_cantec_de_leagan_cibin.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – versuri, melodie, acorduri și aranjament + sinteză audio procedurală (Python/numpy)",
+  "descriere": "Un cântec de leagăn original pentru râul Cibin, de la izvorul de lângă Vârful Cindrel până în Olt, lângă Tălmaciu: versuri, melodie notată și un instrumental demo în care celesta cântă melodia vocii.",
+  "status": "realizat",
+  "nota": "Temă originală în stil de cântec de leagăn: melodie, acorduri și versuri originale, fără formule tradiționale de leagăn; nu este prelucrarea unei melodii existente. Melodia notată (note și acorduri pe versuri, 6/8, Fa major) și marcajele de timp sunt în md. Vocea nu e generată – versurile se cântă peste instrumental; melodia vocii e cântată de o celestă sintetizată, ca ghid (136 din 136 de note recunoscute la verificare). Fapte din fapte_verificate.md („Râul Cibin”): izvorul în Munții Cindrel, lângă Vf. Cindrel; Cheile Cibinului; barajul și lacul de la Gura Râului – cea mai mare sursă de apă potabilă a Sibiului; trece prin Sibiu; se varsă în Olt lângă Tălmaciu; 82 km. Râul este personificat; imaginile poetice sunt marcate în tabelul „ce e real și ce e imaginat”. Sunete integral sintetizate, fără mostre; verificare tehnică în 04_audio/_verificare/.",
+  "audio": "04_audio/A17_cantec_de_leagan_cibin.mp3",
+  "tts_text": null,
+  "tts_lang": null,
+  "durata_s": 84.04,
+  "loudness_lufs": -14.2,
+  "true_peak_dbtp": -1.7,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "tempo": "162 de optimi pe minut (54 de pătrimi cu punct)",
+  "tonalitate": "Fa major",
+  "masura": "6/8",
+  "cod_sursa": [
+   "04_audio/_src/A17_cantec_de_leagan_cibin.py",
+   "04_audio/_src/verificare_A16_A17.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "marcaje_s": {
+   "Intro": 0.0,
+   "Strofa 1": 4.44,
+   "Refren": 22.22,
+   "Strofa 2": 40.0,
+   "Refren, reluare": 57.78,
+   "Coda": 75.56,
+   "Acord final": 80.0
+  },
+  "verificare": [
+   "04_audio/_verificare/A17_cantec_de_leagan_cibin_spectrograma.png",
+   "04_audio/_verificare/A17_cantec_de_leagan_cibin_forma_unda.png",
+   "04_audio/_verificare/raport_A16_A17.json"
+  ]
+ },
+ {
+  "cod": "A18",
+  "categorie": "Audio",
+  "titlu": "Ghid audio AI: 7 copaci pe care să-i recunoști în parcul tău",
+  "titlu_creativ": "Frunză, scoarță, fruct: șapte copaci de recunoscut la Sibiu",
+  "fisiere": [
+   "04_audio/A18_sapte_copaci.md",
+   "04_audio/A18_sapte_copaci.txt"
+  ],
+  "tip": "scenariu",
+  "instrument": "Claude (Anthropic) – scenariu; voce prin sintetizatorul vocal al browserului (Web Speech API, ro-RO) în galerie",
+  "descriere": "Ilinca, un ghid inventat, te învață să recunoști șapte copaci după frunză, scoarță și fruct: teiul, castanul, arinul, platanul și ginkgo din Parcul Sub Arini, stejarul și carpenul din Pădurea Dumbrava.",
+  "status": "realizat",
+  "nota": "Ilinca este un personaj fictiv (nume inventat), o singură voce. Locurile vin din fapte_verificate.md: Parcul Sub Arini – arin, tei, castan, platan (unii de peste 150 de ani) și ginkgo (zilesinopti.ro); Pădurea Dumbrava – stejăret, tei, carpen; stejarul de peste 600 de ani de la intrarea Grădinii Zoologice (agerpres.ro, 2021). Indiciile de recunoaștere nu sunt în fișă: verificate pe en.wikipedia (Tilia, Tilia cordata, Aesculus hippocastanum, Alnus glutinosa, Platanus × hispanica și Platanus, Ginkgo biloba, Quercus robur, Quercus petraea, Carpinus betulus), cu citate în 04_audio/_fapte_noi_A18.md și tabel „copac – indicii – sursă” în md. Fișa nu dă speciile exacte; indiciile sunt pentru castanul sălbatic, arinul negru, platanul hibrid și stejarul pedunculat (declarat). Perioadele (începutul verii, primăvara, toamna) sunt orientative. Comparațiile și sunetele din indicațiile de regie sunt imaginate. Textul pentru TTS: 9 replici prefixate cu „Ilinca:”, numerele în litere, „Activ A I”, fără indicații de regie; 472 de cuvinte rostite (463 fără prefixe). Durata reală depinde de voce și de viteza de citire.",
+  "audio": null,
+  "tts_text": "04_audio/A18_sapte_copaci.txt",
+  "tts_lang": "ro-RO",
+  "durata_s": null,
+  "durata_estimata_s": 190,
+  "cuvinte_rostite": 472
+ }
+]

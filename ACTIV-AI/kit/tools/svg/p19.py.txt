@@ -1,0 +1,440 @@
+# -*- coding: utf-8 -*-
+"""P19 – Afișul spectacolului vieții mele – design AI (personaj fictiv).
+Personaj fictiv: „Matei S., 16 ani”. Titlu, distribuție (roluri, fără nume reale), acte și date – inventate.
+Decorul real: Podul Minciunilor (fapte_verificate.md – „Monumente”); Sala Thalia (secțiunea Calupului 6).
+Nota despre afișe: en.wikipedia, „Poster” și „Playbill” (vezi /home/claude/expo/c6/08_identitate/_fapte_noi_P19_P21.md).
+Funcțiile de desen (lucarne „ochi”, case, Turnul Sfatului, Podul Minciunilor, siluetă) sunt refolosite de p20.py și p21.py."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math, random
+
+ORANGE = "#F76B15"
+MUTED = "#7E8A96"
+
+
+def P(pts):
+    return " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+
+
+# ============================================================ desene comune (refolosite în P20, P21)
+def eye_dormer(cx, cy, w, h, lid, line, opening="#1A1410", sw=1.4, pupil=None, lash=False):
+    """Lucarnă „ochi” pe acoperiș: pleoapa (arcul de țiglă ridicat) și fanta de ventilare dedesubt.
+    (cx, cy) = mijlocul bazei; w = lățimea, h = înălțimea pleoapei."""
+    o = (f'<path d="M{cx-w/2:.1f},{cy:.1f} C{cx-w*0.30:.1f},{cy-h*1.32:.1f} {cx+w*0.30:.1f},{cy-h*1.32:.1f} {cx+w/2:.1f},{cy:.1f} Z" '
+         f'fill="{lid}" stroke="{line}" stroke-width="{sw:.1f}" stroke-linejoin="round"/>')
+    o += (f'<path d="M{cx-w*0.31:.1f},{cy:.1f} C{cx-w*0.17:.1f},{cy-h*0.78:.1f} {cx+w*0.17:.1f},{cy-h*0.78:.1f} {cx+w*0.31:.1f},{cy:.1f} Z" '
+          f'fill="{opening}" stroke="{line}" stroke-width="{sw*0.7:.1f}"/>')
+    if pupil:
+        o += f'<circle cx="{cx:.1f}" cy="{cy-h*0.2:.1f}" r="{h*0.26:.1f}" fill="{pupil}"/>'
+    if lash:
+        for k in (-1, 0, 1):
+            x_ = cx + k * w * 0.16
+            o += (f'<line x1="{x_:.1f}" y1="{cy-h*0.98:.1f}" x2="{x_+k*w*0.05:.1f}" y2="{cy-h*1.28:.1f}" '
+                  f'stroke="{line}" stroke-width="{sw:.1f}" stroke-linecap="round"/>')
+    return o + "\n"
+
+
+def house(x, base, w, wall_h, roof_h, wall, roof, line, eyes=1, eye_open="#1A1410", win="#3A3128",
+          sw=1.4, tiles=True, gable=False, wins=2, lit=None):
+    """Casă simplificată, cu acoperiș înalt și lucarne „ochi”. Returnează SVG."""
+    o = ""
+    top = base - wall_h
+    o += f'<rect x="{x:.1f}" y="{top:.1f}" width="{w:.1f}" height="{wall_h:.1f}" fill="{wall}" stroke="{line}" stroke-width="{sw:.1f}"/>'
+    # ferestre
+    if wins:
+        ww = w * 0.16; wh = wall_h * 0.34
+        for i in range(wins):
+            wx = x + w * (i + 1) / (wins + 1) - ww / 2
+            for row in range(1 if wall_h < 60 else 2):
+                wy = top + wall_h * (0.16 + row * 0.44)
+                fc = lit if (lit and (i + row) % 2 == 0) else win
+                o += f'<rect x="{wx:.1f}" y="{wy:.1f}" width="{ww:.1f}" height="{wh:.1f}" fill="{fc}" stroke="{line}" stroke-width="{sw*0.6:.1f}"/>'
+    # acoperișul
+    ov = w * 0.06
+    if gable:
+        pts = [(x - ov, top), (x + w / 2, top - roof_h), (x + w + ov, top)]
+    else:
+        pts = [(x - ov, top), (x + w * 0.2, top - roof_h), (x + w * 0.8, top - roof_h), (x + w + ov, top)]
+    o += f'<polygon points="{P(pts)}" fill="{roof}" stroke="{line}" stroke-width="{sw:.1f}" stroke-linejoin="round"/>'
+    if tiles:
+        n = max(3, int(roof_h / 9))
+        for k in range(1, n):
+            yy = top - roof_h * k / n
+            t = k / n
+            if gable:
+                xl = x - ov + (w / 2 + ov) * t; xr = x + w + ov - (w / 2 + ov) * t
+            else:
+                xl = x - ov + (w * 0.2 + ov) * t; xr = x + w + ov - (w * 0.2 + ov) * t
+            o += f'<line x1="{xl+1:.1f}" y1="{yy:.1f}" x2="{xr-1:.1f}" y2="{yy:.1f}" stroke="{line}" stroke-width="{sw*0.45:.1f}" opacity="0.35"/>'
+    # lucarnele
+    ew = min(w * 0.30, roof_h * 0.9)
+    eh = ew * 0.30
+    if eyes == 1:
+        o += eye_dormer(x + w / 2, top - roof_h * 0.40, ew, eh, roof, line, eye_open, sw)
+    elif eyes >= 2:
+        for f_ in (0.30, 0.70):
+            o += eye_dormer(x + w * f_, top - roof_h * 0.36, ew * 0.85, eh * 0.85, roof, line, eye_open, sw)
+        if eyes >= 3:
+            o += eye_dormer(x + w / 2, top - roof_h * 0.70, ew * 0.62, eh * 0.62, roof, line, eye_open, sw)
+    return o + "\n"
+
+
+def council_tower(cx, base, w, h, stone, roof, line, dark="#2A231C", sw=1.6, detail=True):
+    """Turnul Sfatului, desen simplificat: corp prismatic cu gang boltit la bază, galerie sus,
+    acoperiș ascuțit cu patru turnulețe de colț (două vizibile). Returnează SVG."""
+    o = ""
+    top = base - h
+    o += f'<rect x="{cx-w/2:.1f}" y="{top:.1f}" width="{w:.1f}" height="{h:.1f}" fill="{stone}" stroke="{line}" stroke-width="{sw:.1f}"/>'
+    # gangul boltit
+    aw = w * 0.52; ah = h * 0.20
+    o += (f'<path d="M{cx-aw/2:.1f},{base:.1f} V{base-ah*0.62:.1f} A{aw/2:.1f},{aw/2:.1f} 0 0 1 {cx+aw/2:.1f},{base-ah*0.62:.1f} V{base:.1f} Z" '
+          f'fill="{dark}" stroke="{line}" stroke-width="{sw*0.8:.1f}"/>')
+    if detail:
+        # brâuri
+        for f_ in (0.30, 0.56):
+            yy = base - h * f_
+            o += f'<line x1="{cx-w/2:.1f}" y1="{yy:.1f}" x2="{cx+w/2:.1f}" y2="{yy:.1f}" stroke="{line}" stroke-width="{sw*0.7:.1f}"/>'
+        # ferestre înguste
+        for f_ in (0.40, 0.66):
+            yy = base - h * f_
+            o += f'<rect x="{cx-w*0.07:.1f}" y="{yy-h*0.05:.1f}" width="{w*0.14:.1f}" height="{h*0.09:.1f}" rx="{w*0.07:.1f}" fill="{dark}"/>'
+    # galeria de sus (ușor ieșită)
+    gy = top + h * 0.02
+    gh = h * 0.16
+    o += f'<rect x="{cx-w/2-w*0.06:.1f}" y="{gy:.1f}" width="{w*1.12:.1f}" height="{gh:.1f}" fill="{stone}" stroke="{line}" stroke-width="{sw:.1f}"/>'
+    for i in range(3):
+        wx = cx - w * 0.36 + i * w * 0.36
+        o += (f'<path d="M{wx-w*0.08:.1f},{gy+gh*0.85:.1f} V{gy+gh*0.42:.1f} A{w*0.08:.1f},{w*0.08:.1f} 0 0 1 {wx+w*0.08:.1f},{gy+gh*0.42:.1f} V{gy+gh*0.85:.1f} Z" fill="{dark}"/>')
+    # acoperișul ascuțit
+    rt = gy
+    rh = h * 0.55
+    o += f'<polygon points="{P([(cx-w/2-w*0.10, rt), (cx, rt-rh), (cx+w/2+w*0.10, rt)])}" fill="{roof}" stroke="{line}" stroke-width="{sw:.1f}" stroke-linejoin="round"/>'
+    o += f'<line x1="{cx:.1f}" y1="{rt-rh:.1f}" x2="{cx:.1f}" y2="{rt:.1f}" stroke="{line}" stroke-width="{sw*0.5:.1f}" opacity="0.45"/>'
+    # turnulețele de colț
+    for sg in (-1, 1):
+        tx = cx + sg * (w / 2 + w * 0.02)
+        tw = w * 0.20; th = rh * 0.42
+        o += f'<rect x="{tx-tw/2:.1f}" y="{rt-th*0.28:.1f}" width="{tw:.1f}" height="{th*0.28:.1f}" fill="{stone}" stroke="{line}" stroke-width="{sw*0.8:.1f}"/>'
+        o += f'<polygon points="{P([(tx-tw/2-1, rt-th*0.28), (tx, rt-th*1.15), (tx+tw/2+1, rt-th*0.28)])}" fill="{roof}" stroke="{line}" stroke-width="{sw*0.8:.1f}" stroke-linejoin="round"/>'
+    # vârful
+    o += f'<line x1="{cx:.1f}" y1="{rt-rh:.1f}" x2="{cx:.1f}" y2="{rt-rh-h*0.07:.1f}" stroke="{line}" stroke-width="{sw:.1f}"/>'
+    o += f'<circle cx="{cx:.1f}" cy="{rt-rh-h*0.035:.1f}" r="{max(1.6, w*0.04):.1f}" fill="{line}"/>'
+    return o + "\n"
+
+
+def lies_bridge(x0, x1, deck, rise, iron, line, rail_h, sw=1.6, stone="#8C8274", stone_h=None, ground=None,
+                detail=True, rail_fill=None):
+    """Podul Minciunilor, desen simplificat: arc de fontă cu cercuri în timpane, balustradă, culei de piatră."""
+    o = ""
+    mid = (x0 + x1) / 2
+    y0 = deck + rise
+    yc = 2 * (deck + 3) - y0
+    # culeele de piatră
+    gh = stone_h if stone_h else rise + 10
+    cw = (x1 - x0) * 0.07
+    for xa in (x0 - cw, x1):
+        o += f'<rect x="{xa:.1f}" y="{deck:.1f}" width="{cw:.1f}" height="{gh:.1f}" fill="{stone}" stroke="{line}" stroke-width="{sw:.1f}"/>'
+        if detail:
+            for k in range(1, 4):
+                yy = deck + gh * k / 4
+                o += f'<line x1="{xa:.1f}" y1="{yy:.1f}" x2="{xa+cw:.1f}" y2="{yy:.1f}" stroke="{line}" stroke-width="{sw*0.5:.1f}" opacity="0.6"/>'
+    # cercurile din timpane (mai mari spre capete)
+    if detail:
+        n = 9
+        for i in range(n):
+            t = (i + 0.5) / n
+            xx = x0 + (x1 - x0) * t
+            # înălțimea arcului în acest punct
+            ya = (1 - t) ** 2 * y0 + 2 * (1 - t) * t * yc + t ** 2 * y0
+            gap = ya - (deck + 6)
+            if gap > 7:
+                r = min(gap * 0.40, (x1 - x0) / n * 0.38)
+                o += f'<circle cx="{xx:.1f}" cy="{deck+6+gap/2:.1f}" r="{r:.1f}" fill="none" stroke="{iron}" stroke-width="{sw*1.1:.1f}"/>'
+    # arcul (dublu)
+    o += f'<path d="M{x0:.1f},{y0:.1f} Q{mid:.1f},{yc:.1f} {x1:.1f},{y0:.1f}" fill="none" stroke="{iron}" stroke-width="{sw*3.2:.1f}"/>'
+    o += f'<path d="M{x0:.1f},{y0-6:.1f} Q{mid:.1f},{yc-6:.1f} {x1:.1f},{y0-6:.1f}" fill="none" stroke="{iron}" stroke-width="{sw*1.2:.1f}"/>'
+    # tablierul
+    o += f'<rect x="{x0-4:.1f}" y="{deck:.1f}" width="{x1-x0+8:.1f}" height="7" fill="{iron}" stroke="{line}" stroke-width="{sw*0.6:.1f}"/>'
+    # balustrada
+    ry = deck - rail_h
+    if rail_fill:
+        o += f'<rect x="{x0:.1f}" y="{ry:.1f}" width="{x1-x0:.1f}" height="{rail_h:.1f}" fill="{rail_fill}"/>'
+    o += f'<line x1="{x0-4:.1f}" y1="{ry:.1f}" x2="{x1+4:.1f}" y2="{ry:.1f}" stroke="{iron}" stroke-width="{sw*1.8:.1f}" stroke-linecap="round"/>'
+    step = max(6.0, rail_h * 0.55)
+    nb = int((x1 - x0) / step)
+    for i in range(nb + 1):
+        xx = x0 + (x1 - x0) * i / nb
+        o += f'<line x1="{xx:.1f}" y1="{ry:.1f}" x2="{xx:.1f}" y2="{deck:.1f}" stroke="{iron}" stroke-width="{sw*0.75:.1f}"/>'
+    if detail and rail_h > 9:
+        for i in range(nb):
+            xx = x0 + (x1 - x0) * (i + 0.5) / nb
+            o += f'<circle cx="{xx:.1f}" cy="{ry+rail_h*0.5:.1f}" r="{min(step, rail_h)*0.26:.1f}" fill="none" stroke="{iron}" stroke-width="{sw*0.6:.1f}"/>'
+    # stâlpii de capăt
+    for xa in (x0 - 4, x1 + 4):
+        o += f'<rect x="{xa-3:.1f}" y="{ry-5:.1f}" width="6" height="{rail_h+5:.1f}" fill="{iron}"/>'
+    return o + "\n"
+
+
+def teen(cx, foot, h, fill, arm_up=True):
+    """Siluetă simplă de adolescent (cu rucsac), cu o mână ridicată ca la salutul de la final."""
+    hr = h * 0.095
+    o = f'<circle cx="{cx:.1f}" cy="{foot-h+hr:.1f}" r="{hr:.1f}" fill="{fill}"/>'
+    sh = foot - h + hr * 2 + h * 0.03     # umerii
+    hip = foot - h * 0.45
+    o += f'<path d="M{cx-h*0.12:.1f},{sh+h*0.02:.1f} Q{cx:.1f},{sh-h*0.02:.1f} {cx+h*0.12:.1f},{sh+h*0.02:.1f} L{cx+h*0.10:.1f},{hip:.1f} L{cx-h*0.10:.1f},{hip:.1f} Z" fill="{fill}"/>'
+    # rucsacul
+    o += f'<rect x="{cx-h*0.20:.1f}" y="{sh+h*0.04:.1f}" width="{h*0.10:.1f}" height="{h*0.22:.1f}" rx="{h*0.03:.1f}" fill="{fill}"/>'
+    # picioarele
+    o += f'<path d="M{cx-h*0.09:.1f},{hip-1:.1f} L{cx-h*0.10:.1f},{foot:.1f} L{cx-h*0.02:.1f},{foot:.1f} L{cx:.1f},{hip+h*0.08:.1f} L{cx+h*0.02:.1f},{foot:.1f} L{cx+h*0.10:.1f},{foot:.1f} L{cx+h*0.09:.1f},{hip-1:.1f} Z" fill="{fill}"/>'
+    # brațele
+    aw = max(2.0, h * 0.055)
+    o += f'<line x1="{cx-h*0.11:.1f}" y1="{sh+h*0.04:.1f}" x2="{cx-h*0.16:.1f}" y2="{hip+h*0.02:.1f}" stroke="{fill}" stroke-width="{aw:.1f}" stroke-linecap="round"/>'
+    if arm_up:
+        o += f'<path d="M{cx+h*0.11:.1f},{sh+h*0.04:.1f} L{cx+h*0.25:.1f},{sh-h*0.08:.1f} L{cx+h*0.30:.1f},{sh-h*0.26:.1f}" fill="none" stroke="{fill}" stroke-width="{aw:.1f}" stroke-linecap="round" stroke-linejoin="round"/>'
+    else:
+        o += f'<line x1="{cx+h*0.11:.1f}" y1="{sh+h*0.04:.1f}" x2="{cx+h*0.16:.1f}" y2="{hip+h*0.02:.1f}" stroke="{fill}" stroke-width="{aw:.1f}" stroke-linecap="round"/>'
+    return o + "\n"
+
+
+def fit(s_, maxw, size, fam="serif", weight=700, italic=False, step=0.5, min_size=8):
+    while measure(s_, size, fam, weight, italic) > maxw and size > min_size:
+        size -= step
+    return size
+
+
+# ============================================================ afișul
+def poster(X, Y, W, H):
+    PAPER = "#F3EAD7"; PAPER_D = "#E3D4B6"
+    INK = "#2A211B"; INK2 = "#5E5145"
+    RED = "#9B2C24"; RED_D = "#6E1D18"; GOLD = "#C9962E"
+    o = ('<defs>'
+         f'<linearGradient id="pp19" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8F0DF"/><stop offset="1" stop-color="{PAPER_D}"/></linearGradient>'
+         '<linearGradient id="sky19" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#121D33"/><stop offset="0.65" stop-color="#2D3F63"/><stop offset="1" stop-color="#6A5872"/></linearGradient>'
+         '<linearGradient id="floor19" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5B3A22"/><stop offset="1" stop-color="#2E1D12"/></linearGradient>'
+         '<linearGradient id="cur19" x1="0" y1="0" x2="1" y2="0" spreadMethod="repeat"><stop offset="0" stop-color="#6E1A16"/><stop offset="0.5" stop-color="#B0352B"/><stop offset="1" stop-color="#6E1A16"/></linearGradient>'
+         '<radialGradient id="spot19" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFF4D6" stop-opacity="0.75"/><stop offset="1" stop-color="#FFF4D6" stop-opacity="0"/></radialGradient>'
+         '<linearGradient id="beam19" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4D6" stop-opacity="0.05"/><stop offset="1" stop-color="#FFF4D6" stop-opacity="0.38"/></linearGradient>'
+         '</defs>\n')
+    # hârtia, cu umbră, și două benzi adezive
+    o += f'<g filter="url(#sh)"><rect x="{X}" y="{Y}" width="{W}" height="{H}" fill="url(#pp19)"/></g>\n'
+    o += f'<rect x="{X}" y="{Y}" width="{W}" height="{H}" fill="url(#pp19)" filter="url(#paper)"/>\n'
+    for (tx, ty, a) in ((X + 24, Y + 8, -30), (X + W - 24, Y + 8, 30)):
+        o += f'<rect x="{tx-30:.1f}" y="{ty-9:.1f}" width="60" height="18" fill="#F1E7CC" opacity="0.9" transform="rotate({a} {tx:.1f} {ty:.1f})"/>'
+    o += "\n"
+    M = 18
+    o += f'<rect x="{X+M}" y="{Y+M}" width="{W-2*M}" height="{H-2*M}" fill="none" stroke="{RED}" stroke-width="2.6"/>'
+    o += f'<rect x="{X+M+6}" y="{Y+M+6}" width="{W-2*M-12}" height="{H-2*M-12}" fill="none" stroke="{RED}" stroke-width="1"/>\n'
+    cx = X + W / 2
+    IX0 = X + M + 22; IX1 = X + W - M - 22; IW = IX1 - IX0
+    y = Y + M + 40
+    o += text(cx, y, "TEATRUL VIEȚII · STAGIUNEA A XVI-A", 14, RED, "sans", 700, anchor="middle", extra='letter-spacing="3.2"')
+    # ornamente
+    o += f'<line x1="{IX0}" y1="{y+14}" x2="{cx-14}" y2="{y+14}" stroke="{GOLD}" stroke-width="1.4"/><line x1="{cx+14}" y1="{y+14}" x2="{IX1}" y2="{y+14}" stroke="{GOLD}" stroke-width="1.4"/>'
+    o += f'<polygon points="{P([(cx, y+8), (cx+6, y+14), (cx, y+20), (cx-6, y+14)])}" fill="{GOLD}"/>\n'
+    y += 44
+    o += text(cx, y, "Matei S. prezintă", 19, INK2, "serif", 400, True, anchor="middle")
+    TITLE_P = "„Pe pod nu se minte”"
+    ts = fit(TITLE_P, IW, 50)
+    y += ts * 1.05
+    o += text(cx + 1.5, y + 1.5, TITLE_P, ts, "#C7B48C", "serif", 700, anchor="middle")
+    o += text(cx, y, TITLE_P, ts, RED, "serif", 700, anchor="middle")
+    y += 28
+    o += text(cx, y, "comedie dramatică în trei acte, cu o pauză: vacanța de vară", 16.5, INK, "serif", 400, True, anchor="middle")
+    y += 16
+    # ---------------------------------------------------- ilustrația (scena)
+    SX0, SX1 = IX0 - 4, IX1 + 4
+    SY0 = y; SH = 192; SY1 = SY0 + SH
+    k = SH / 252.0
+    SW = SX1 - SX0
+    o += f'<clipPath id="stage19"><rect x="{SX0}" y="{SY0}" width="{SW}" height="{SH}"/></clipPath>\n'
+    o += f'<g clip-path="url(#stage19)">'
+    o += f'<rect x="{SX0}" y="{SY0}" width="{SW}" height="{SH}" fill="url(#sky19)"/>'
+    rnd = random.Random(19)
+    for _ in range(26):
+        sx = rnd.uniform(SX0 + 60, SX1 - 60); sy = rnd.uniform(SY0 + 34, SY0 + SH * 0.40)
+        o += f'<circle cx="{sx:.1f}" cy="{sy:.1f}" r="{rnd.uniform(0.7, 1.6):.1f}" fill="#F3EFE6" opacity="{rnd.uniform(0.4, 0.9):.2f}"/>'
+    # luna
+    mx_ = (SX0 + SX1) / 2 + 78
+    o += f'<circle cx="{mx_}" cy="{SY0+50}" r="12" fill="#F3E3B5"/><circle cx="{mx_+6}" cy="{SY0+46}" r="10.5" fill="#1C2A45"/>'
+    # orașul: case cu „ochi” luminați
+    deck = SY0 + SH * 0.75
+    HB = deck + 6
+    WALL = "#6F6658"; ROOF = "#7A3426"; LN = "#1E1712"
+    houses = [(SX0 + 30, 62, 34, 60, 1, False), (SX0 + 92, 58, 44, 74, 2, False), (SX0 + 152, 50, 30, 50, 1, True),
+              (SX1 - 202, 52, 30, 56, 1, True), (SX1 - 152, 64, 44, 78, 3, False), (SX1 - 86, 58, 36, 62, 1, False)]
+    for hx, hw, wh, rh, ne, gb in houses:
+        o += house(hx, HB, hw, wh * k * 0.86, rh * k * 0.86, WALL, ROOF, LN, eyes=ne, eye_open="#F2C46B", win="#2B241E",
+                   sw=1.1, gable=gb, lit="#E9B556")
+    # Turnul Sfatului, în spate, la mijloc
+    o += council_tower((SX0 + SX1) / 2, HB, 28, 70, "#8A7E6C", "#5E2A20", LN, dark="#231C16", sw=1.1)
+    # podeaua scenei
+    o += f'<rect x="{SX0}" y="{deck+18}" width="{SW}" height="{SH}" fill="url(#floor19)"/>'
+    for j in range(1, 8):
+        xx = SX0 + SW * j / 8
+        o += f'<line x1="{(SX0+SX1)/2 + (xx-(SX0+SX1)/2)*0.55:.1f}" y1="{deck+18}" x2="{xx:.1f}" y2="{SY1}" stroke="#24160D" stroke-width="1" opacity="0.7"/>'
+    # podul
+    o += lies_bridge(SX0 + 118, SX1 - 118, deck, 28, "#1C252D", "#0E1418", 13, sw=1.3, stone="#6C6355", stone_h=22)
+    # reflectorul și silueta
+    bx = (SX0 + SX1) / 2
+    o += f'<polygon points="{P([(bx-12, SY0), (bx+12, SY0), (bx+62, deck), (bx-62, deck)])}" fill="url(#beam19)"/>'
+    o += f'<ellipse cx="{bx}" cy="{deck-1}" rx="78" ry="9" fill="url(#spot19)"/>'
+    o += teen(bx, deck - 1, 54, "#141015")
+    # cortina
+    DW = 64
+    for sg in (-1, 1):
+        if sg < 0:
+            pts = f"M{SX0},{SY0} H{SX0+DW} C{SX0+DW-6},{SY0+90*k:.1f} {SX0+DW*0.30},{SY0+150*k:.1f} {SX0+DW*0.48},{SY1} H{SX0} Z"
+        else:
+            pts = f"M{SX1},{SY0} H{SX1-DW} C{SX1-DW+6},{SY0+90*k:.1f} {SX1-DW*0.30},{SY0+150*k:.1f} {SX1-DW*0.48},{SY1} H{SX1} Z"
+        o += f'<path d="{pts}" fill="url(#cur19)" stroke="{RED_D}" stroke-width="1.2"/>'
+        # cute
+        for j in range(1, 4):
+            xx = SX0 + DW * j / 4.4 if sg < 0 else SX1 - DW * j / 4.4
+            o += f'<path d="M{xx:.1f},{SY0} Q{xx + sg*6:.1f},{SY0+120} {xx - sg*4:.1f},{SY1}" fill="none" stroke="{RED_D}" stroke-width="1.6" opacity="0.6"/>'
+        # cordonul auriu
+        cyy = SY0 + 150 * k
+        o += f'<path d="M{SX0 if sg<0 else SX1},{cyy} q{-sg*-22},6 {-sg*-34},-4" fill="none" stroke="{GOLD}" stroke-width="3" stroke-linecap="round"/>'
+    # draperia de sus (cu festoane)
+    o += f'<rect x="{SX0}" y="{SY0}" width="{SW}" height="14" fill="#8E2620"/>'
+    nsc = 11
+    for j in range(nsc):
+        x_a = SX0 + SW * j / nsc; x_b = SX0 + SW * (j + 1) / nsc
+        o += f'<path d="M{x_a:.1f},{SY0+12} Q{(x_a+x_b)/2:.1f},{SY0+32} {x_b:.1f},{SY0+12} Z" fill="#8E2620" stroke="{RED_D}" stroke-width="1"/>'
+        o += f'<path d="M{x_a:.1f},{SY0+14} Q{(x_a+x_b)/2:.1f},{SY0+34} {x_b:.1f},{SY0+14}" fill="none" stroke="{GOLD}" stroke-width="2"/>'
+    o += '</g>\n'
+    o += f'<rect x="{SX0}" y="{SY0}" width="{SW}" height="{SH}" fill="none" stroke="{INK}" stroke-width="2"/>\n'
+    y = SY1 + 30
+    # ---------------------------------------------------- distribuția
+    o += text(cx, y, "DISTRIBUȚIA", 15, RED, "sans", 700, anchor="middle", extra='letter-spacing="3.5"')
+    y += 23
+    cast = [("Eroul principal", "Matei S."),
+            ("Regizoarea", "mama"),
+            ("Maestrul de lumini și decoruri", "tata"),
+            ("Sufleorul (știe toate replicile)", "bunica"),
+            ("Publicul din primul rând", "sora mai mică"),
+            ("Partenerul de scenă", "cel mai bun prieten"),
+            ("Juriul care dă note", "profesorii")]
+    CS = 15
+    for role, who in cast:
+        rw = measure(role, CS, "serif", 400, True)
+        ww = measure(who, CS, "sans", 700)
+        o += text(IX0 + 8, y, role, CS, INK, "serif", 400, True)
+        o += text(IX1 - 8, y, who, CS, INK, "sans", 700, anchor="end")
+        x_a = IX0 + 8 + rw + 8; x_b = IX1 - 8 - ww - 8
+        o += f'<line x1="{x_a:.1f}" y1="{y-4}" x2="{x_b:.1f}" y2="{y-4}" stroke="{INK2}" stroke-width="1.6" stroke-dasharray="1.2 5" stroke-linecap="round"/>'
+        y += 19.5
+    y -= 6
+    # ---------------------------------------------------- actele
+    o += f'<line x1="{IX0}" y1="{y}" x2="{IX1}" y2="{y}" stroke="{GOLD}" stroke-width="1.4"/>'
+    y += 22
+    acts = [("ACTUL I", "Copilăria", "bicicleta, primele cărți, mii de întrebări"),
+            ("ACTUL II", "Liceul", "prieteni, emoții, prima trupă de muzică"),
+            ("ACTUL III", "Visurile", "în repetiție, cu final deschis")]
+    AW = IW / 3
+    ACTS_END = y
+    for i, (a, t_, d_) in enumerate(acts):
+        ax = IX0 + AW * i + AW / 2
+        o += text(ax, y, a, 12, RED, "sans", 700, anchor="middle", extra='letter-spacing="2.5"')
+        o += text(ax, y + 23, t_, 19, INK, "serif", 700, anchor="middle")
+        yy = y + 42
+        for ln in wrap(d_, AW - 16, 12.5, "sans", 400, True):
+            o += text(ax, yy, ln, 12.5, INK2, "sans", 400, True, anchor="middle"); yy += 15
+        ACTS_END = max(ACTS_END, yy - 15)
+        if i:
+            o += f'<line x1="{IX0+AW*i:.1f}" y1="{y-12}" x2="{IX0+AW*i:.1f}" y2="{y+60}" stroke="{PAPER_D}" stroke-width="1.6"/>'
+    # ---------------------------------------------------- banda de jos
+    BY0 = Y + H - M - 6 - 74
+    o += f'<rect x="{X+M+6}" y="{BY0}" width="{W-2*M-12}" height="74" fill="{RED}"/>'
+    o += text(cx, BY0 + 29, "SCENA: Podul Minciunilor, Sibiu", 19, "#FBF3E2", "serif", 700, anchor="middle")
+    o += text(cx, BY0 + 52, "în fiecare zi, de la 7:30 · intrarea liberă · durata: o viață", 14.5, "#F2D9B8", "sans", 500, anchor="middle")
+    o += text(cx, BY0 + 68, "Afiș imaginar: Matei S. (16 ani) e un personaj fictiv, iar spectacolul nu există.", 11, "#F2D9B8", "sans", 400, True, anchor="middle")
+    return o, {"acts_end": ACTS_END, "band": BY0, "title_size": ts, "stage_end": SY1}
+
+
+def main():
+    OUT = "/home/claude/expo/c6/08_identitate/P19_afisul_spectacolului_vietii.svg"
+    TITLE = "Afișul spectacolului vieții mele"
+    s = frame_head("IDENTITATE · P19", ORANGE, TITLE, "personaj fictiv · spectacol imaginar, nu e un eveniment real")
+    s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— design AI (personaj fictiv)", 30, CEATA, "serif", 400, True)
+
+    PX, PY, PW, PH = 92, 228, 590, 780
+    p_svg, info = poster(PX, PY, PW, PH)
+    s += p_svg
+
+    Y0, Y1 = 236, 1004
+    # ------------------------------------------------ coloana A: cum îți faci afișul
+    AX0, AX1 = 724, 1270
+    AW = AX1 - AX0
+    s += f'<rect x="{AX0}" y="{Y0}" width="{AW}" height="{Y1-Y0}" rx="22" fill="#0D3A40" stroke="{PETROL}" stroke-width="1.6"/>'
+    s += f'<rect x="{AX0}" y="{Y0}" width="{AW}" height="7" rx="3.5" fill="{PETROL}"/>\n'
+    s += text(AX0 + 28, Y0 + 50, "Cum îți faci afișul", 27, VAR, "serif", 700)
+    s += text(AX1 - 26, Y0 + 50, "în 5 pași", 15, "#9CC9CD", "sans", 400, True, anchor="end")
+    steps = [("Titlul", "Cere AI-ului zece titluri pentru „piesa” vieții tale, apoi alege unul și rescrie-l cu vorbele tale."),
+             ("Distribuția", "Oamenii importanți devin roluri: mama – regizoarea, prietenul – partenerul de scenă. Fără nume reale."),
+             ("Actele", "Împarte povestea în trei acte – copilăria, liceul, visurile. Ultimul act poate rămâne deschis."),
+             ("Decorul", "Alege un loc din Sibiu care contează pentru tine și verifică un fapt despre el în surse sigure."),
+             ("Compoziția", "Titlul mare sus, imaginea în centru, informațiile mici jos. Privește afișul de la 3 metri: se citește titlul?")]
+    yy = Y0 + 96
+    for i, (a_, b_) in enumerate(steps, 1):
+        s += f'<circle cx="{AX0+46}" cy="{yy-8}" r="17" fill="{PETROL}"/>' + text(AX0 + 46, yy - 1, str(i), 18, VAR, "sans", 700, anchor="middle")
+        s += text(AX0 + 78, yy, a_, 21, VAR, "serif", 700)
+        p, yy = para(AX0 + 78, yy + 28, b_, 17, AW - 104, "#D6E6E8", "sans", 400, lh=23)
+        s += p
+        yy += 14
+    STEPS_END = yy
+    # caseta cu promptul
+    QY0 = Y1 - 196
+    s += f'<rect x="{AX0+24}" y="{QY0}" width="{AW-48}" height="172" rx="14" fill="#0A2E33" stroke="#1F6B72" stroke-width="1.4" stroke-dasharray="6 5"/>'
+    s += text(AX0 + 46, QY0 + 36, "EXEMPLU DE CERERE PENTRU AI", 14, OCRU, "sans", 700, extra='letter-spacing="2.5"')
+    prompt = ("„Sunt un elev de 16 ani din Sibiu. Propune zece titluri amuzante pentru o piesă de teatru despre viața mea, "
+              "în trei acte, cu decorul pe Podul Minciunilor.”")
+    p, PROMPT_END = para(AX0 + 46, QY0 + 66, prompt, 16.5, AW - 92, VAR, "serif", 400, True, lh=23)
+    s += p
+    s += text(AX0 + 46, QY0 + 152, "AI-ul propune, tu alegi: afișul rămâne al tău.", 15.5, "#9CC9CD", "sans", 600)
+
+    # ------------------------------------------------ coloana B: despre afișe + decorul
+    BX0, BX1 = 1290, 1840
+    BW = BX1 - BX0
+    CH1 = 440
+    s += card(BX0, Y0, BW, CH1)
+    s += f'<rect x="{BX0}" y="{Y0}" width="{BW}" height="7" rx="3.5" fill="{ORANGE}"/>\n'
+    s += text(BX0 + 26, Y0 + 48, "Despre afișele de teatru", 25, VAR, "serif", 700)
+    notes = ["Un afiș îmbină de regulă text și imagine: e gândit să atragă privirea și, în același timp, să informeze.",
+             "Afișe doar cu text au anunțat, vreme de secole, piesele lui Shakespeare.",
+             "Afișul modern apare în anii 1840–1850, când tiparul perfecționează litografia color (inventată în 1796 de Alois Senefelder).",
+             "La sfârșitul secolului al XIX-lea, unele vedete ale teatrului își alegeau singure artistul care le desena afișul.",
+             "Programul de sală – de exemplu revista americană Playbill, din 1884 – cuprinde distribuția, lista scenelor, decorul și numărul de pauze."]
+    yy = Y0 + 88
+    for f_ in notes:
+        s += f'<circle cx="{BX0+32}" cy="{yy-6}" r="4" fill="{OCRU}"/>'
+        p, yy = para(BX0 + 48, yy, f_, 16.5, BW - 72, VAR, "sans", 400, lh=22)
+        s += p
+        yy += 9
+    NOTES_END = yy
+    s += text(BX0 + 26, Y0 + CH1 - 20, "Sursa: en.wikipedia, „Poster” și „Playbill” (formulări prudente)", 13, MUTED, "sans", 400, True)
+
+    DY0 = Y0 + CH1 + 18
+    s += f'<rect x="{BX0}" y="{DY0}" width="{BW}" height="{Y1-DY0}" rx="22" fill="#141E28" stroke="{ORANGE}" stroke-width="1.8"/>\n'
+    s += text(BX0 + 26, DY0 + 44, "Decorul ales: Podul Minciunilor", 23, VAR, "serif", 700)
+    dec = [("Terminat în 1859, inaugurat la 17 decembrie 1860: primul pod din fontă din România, între Orașul de Sus și Orașul de Jos.", VAR),
+           ("Pe pod se văd inscripțiile „1859” și „FRIEDRICHSHÜTTE”.", VAR),
+           ("Legenda spune că se prăbușește dacă cineva minte pe el – de aici titlul piesei.", VAR),
+           ("Tot aici: Sala Thalia (1787–1788), prima clădire de teatru din țară.", VAR)]
+    yy = DY0 + 76
+    for f_, col in dec:
+        s += f'<circle cx="{BX0+32}" cy="{yy-6}" r="4" fill="{OCRU}"/>'
+        p, yy = para(BX0 + 48, yy, f_, 15.5, BW - 72, col, "sans", 400, lh=20)
+        s += p
+        yy += 6
+    DEC_END = yy
+    s += text(BX0 + 26, Y1 - 46, "Inventate: Matei S., titlul, distribuția, actele și orele.", 15, OCRU, "sans", 700)
+    s += text(BX0 + 26, Y1 - 20, "Fapte: fișa proiectului (patrimoniu.sibiu.ro; en.wikipedia, „Thalia Hall”)", 13, MUTED, "sans", 400, True)
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT, info, "steps_end", STEPS_END, "/", QY0 - 10, "prompt_end", PROMPT_END, "/", QY0 + 140,
+          "notes_end", NOTES_END, "/", Y0 + CH1 - 40, "dec_end", DEC_END, "/", Y1 - 66)
+
+
+if __name__ == "__main__":
+    main()

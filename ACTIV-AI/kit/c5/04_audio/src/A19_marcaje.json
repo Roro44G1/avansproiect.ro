@@ -1,0 +1,231 @@
+{
+ "durata_s": 100.0,
+ "loudness_tinta_lufs": -18.0,
+ "marcaje_s": {
+  "Liniște: ceasul de perete": 0.0,
+  "Ușița sobei, chibritul, focul pornește": 3.0,
+  "Ușița se închide; lemnele trosnesc": 11.5,
+  "Apa turnată în ceaun": 15.0,
+  "Cuțitul pe tocător: ceapa": 24.0,
+  "Ceaunul începe să fiarbă": 34.0,
+  "Lingura de lemn în umplutură": 40.0,
+  "Frunzele de varză": 51.0,
+  "Pauză: ceas, foc, ceaun": 63.0,
+  "Oala de ceramică pe plită": 68.0,
+  "Clopotul de duminică, departe": 73.0,
+  "Cana pe masă": 86.5,
+  "Final": 93.0
+ },
+ "evenimente": [
+  {
+   "nume": "focul pornește (surcele)",
+   "t": 7.0,
+   "banda_hz": [
+    1500,
+    8000
+   ],
+   "durata_s": 4.0,
+   "referinta_s": [
+    0.5,
+    2.9
+   ]
+  },
+  {
+   "nume": "lemnele trosnesc (ușița închisă)",
+   "t": 64.0,
+   "banda_hz": [
+    700,
+    3000
+   ],
+   "durata_s": 3.5,
+   "referinta_s": [
+    0.5,
+    2.9
+   ]
+  },
+  {
+   "nume": "ceas (tic)",
+   "t": 2.4,
+   "banda_hz": [
+    2000,
+    6000
+   ],
+   "durata_s": 0.06
+  },
+  {
+   "nume": "ceas (în pauză)",
+   "t": 64.4,
+   "banda_hz": [
+    2000,
+    6000
+   ],
+   "durata_s": 0.06
+  },
+  {
+   "nume": "ușița sobei (scârțâit)",
+   "t": 3.12,
+   "banda_hz": [
+    800,
+    3000
+   ],
+   "durata_s": 0.8
+  },
+  {
+   "nume": "ușița se închide",
+   "t": 11.5,
+   "banda_hz": [
+    250,
+    1600
+   ],
+   "durata_s": 0.3
+  },
+  {
+   "nume": "chibritul",
+   "t": 4.6,
+   "banda_hz": [
+    1500,
+    8000
+   ],
+   "durata_s": 0.5
+  },
+  {
+   "nume": "apa turnată în ceaun",
+   "t": 15.0,
+   "banda_hz": [
+    300,
+    2500
+   ],
+   "durata_s": 6.5
+  },
+  {
+   "nume": "ceaunul fierbe încet",
+   "t": 93.0,
+   "banda_hz": [
+    200,
+    900
+   ],
+   "durata_s": 5.0,
+   "referinta_s": [
+    28.0,
+    29.4
+   ]
+  },
+  {
+   "nume": "cuțitul: felii de ceapă",
+   "t": 24.0,
+   "banda_hz": [
+    1500,
+    9000
+   ],
+   "durata_s": 4.0
+  },
+  {
+   "nume": "cuțitul: tocat mărunt (tocătorul)",
+   "t": 29.5,
+   "banda_hz": [
+    150,
+    1000
+   ],
+   "durata_s": 4.8
+  },
+  {
+   "nume": "lingura de lemn (amestecat)",
+   "t": 40.0,
+   "banda_hz": [
+    300,
+    3000
+   ],
+   "durata_s": 7.9
+  },
+  {
+   "nume": "lingura bate de două ori în castron",
+   "t": 48.3,
+   "banda_hz": [
+    1000,
+    3000
+   ],
+   "durata_s": 0.5
+  },
+  {
+   "nume": "frunză de varză desfăcută",
+   "t": 51.0,
+   "banda_hz": [
+    1500,
+    9000
+   ],
+   "durata_s": 1.0
+  },
+  {
+   "nume": "frunză de varză desfăcută",
+   "t": 53.4,
+   "banda_hz": [
+    1500,
+    9000
+   ],
+   "durata_s": 1.0
+  },
+  {
+   "nume": "frunză de varză desfăcută",
+   "t": 55.9,
+   "banda_hz": [
+    1500,
+    9000
+   ],
+   "durata_s": 1.0
+  },
+  {
+   "nume": "frunză de varză desfăcută",
+   "t": 58.3,
+   "banda_hz": [
+    1500,
+    9000
+   ],
+   "durata_s": 1.0
+  },
+  {
+   "nume": "frunză de varză desfăcută",
+   "t": 60.8,
+   "banda_hz": [
+    1500,
+    9000
+   ],
+   "durata_s": 1.0
+  },
+  {
+   "nume": "oala de ceramică pe plită",
+   "t": 68.35,
+   "banda_hz": [
+    300,
+    2000
+   ],
+   "durata_s": 0.4
+  },
+  {
+   "nume": "capacul oalei",
+   "t": 69.3,
+   "banda_hz": [
+    2000,
+    6000
+   ],
+   "durata_s": 0.35
+  },
+  {
+   "nume": "clopotul, departe",
+   "t": 73.0,
+   "banda_hz": [
+    490,
+    560
+   ],
+   "durata_s": 1.5
+  },
+  {
+   "nume": "cana pe masă",
+   "t": 86.55,
+   "banda_hz": [
+    1500,
+    4500
+   ],
+   "durata_s": 0.25
+  }
+ ]
+}

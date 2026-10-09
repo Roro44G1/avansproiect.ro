@@ -1,0 +1,412 @@
+# -*- coding: utf-8 -*-
+"""D15 – Mărginimea Sibiului: satele și ocupațiile păstorești.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md („Mărginimea Sibiului”, „Râul Cibin”, „Munții Cindrel și Păltiniș”).
+Harta: coordonatele comune ale regiunii din /home/claude/expo/c4/AGENT_COMMON.md (schematic, poziții aproximative).
+Transhumanța: doar direcții orientative, fără hartă a Europei."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c4/06_date/D15_marginimea_sibiului.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+RIVER = "#3FB0BA"
+MOUNT = "#2B3C4C"
+MOUNT_L = "#3A4F63"
+GREEN_D = "#2F4B3E"
+BROWN = "#6B4E2E"
+WOOD = "#7A5232"
+DISC = "#132029"
+TIGLA_L = "#D8775A"
+FACE = "#7A6656"
+
+s = frame_head("DATE · D15", BLUE, "Mărginimea Sibiului: satele și ocupațiile păstorești",
+               "infografic AI · păstorit, transhumanță, brânzeturi, meșteșuguri", title_size=60)
+
+
+def pill(x, y, lab, col, txt=BG):
+    w = measure(lab, 15, "sans", 700, letter_spacing=1.5) + 28
+    o = f'<rect x="{x}" y="{y}" width="{w:.1f}" height="30" rx="15" fill="{col}"/>\n'
+    o += text(x + w / 2, y + 20, lab, 15, txt, "sans", 700, anchor="middle", extra='letter-spacing="1.5"')
+    return o, w
+
+
+def head(x, y, w, lab, col, sub=None, txt=BG):
+    o, pw = pill(x + 22, y + 20, lab, col, txt)
+    if sub:
+        assert x + 22 + pw + 12 + measure(sub, 14, "sans", 400, True) <= x + w - 16, sub
+        o += text(x + 22 + pw + 12, y + 40, sub, 14, MUTED, "sans", 400, True)
+    return o
+
+
+# ------------------------------------------------------------------ pictograme comune
+def sheep(cx, cy, sc=1.0, face=FACE, wool=VAR):
+    o = f'<g transform="translate({cx:.1f},{cy:.1f}) scale({sc})">'
+    o += f'<rect x="-9" y="6" width="3.5" height="9" fill="{face}"/><rect x="5" y="6" width="3.5" height="9" fill="{face}"/>'
+    for dx, dy, r in [(-8, 0, 7), (0, -4, 8), (8, 0, 7), (0, 4, 7), (-4, 2, 6), (5, 3, 6)]:
+        o += f'<circle cx="{dx}" cy="{dy}" r="{r}" fill="{wool}"/>'
+    o += f'<ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="{face}" transform="rotate(-15 14 -3)"/>'
+    o += f'<ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="{face}" transform="rotate(-30 11 -7)"/>'
+    return o + "</g>\n"
+
+
+def arrow_v(x, y0, y1, col=OCRU):
+    up = y1 < y0
+    o = f'<line x1="{x}" y1="{y0}" x2="{x}" y2="{y1 + (6 if up else -6)}" stroke="{col}" stroke-width="3"/>'
+    o += poly([(x - 5, y1 + (7 if up else -7)), (x, y1), (x + 5, y1 + (7 if up else -7))], fill=col)
+    return o
+
+
+def ic_sheep_up(cx, cy):
+    o = poly([(cx - 22, cy + 18), (cx + 2, cy - 18), (cx + 24, cy + 18)], fill=GREEN_D)
+    o += poly([(cx + 2, cy - 18), (cx - 4, cy - 9), (cx + 8, cy - 9)], fill=VAR, opacity="0.85")
+    o += sheep(cx - 6, cy + 8, 0.72)
+    o += arrow_v(cx + 15, cy + 12, cy - 10)
+    return o
+
+
+def ic_sheep_down(cx, cy):
+    o = f'<path d="M{cx-22},{cy+18} L{cx+22},{cy+18}" stroke="#3E8E5A" stroke-width="3"/>'
+    o += f'<rect x="{cx-21}" y="{cy-6}" width="13" height="10" fill="#E3D9C6"/>'
+    o += poly([(cx - 23, cy - 6), (cx - 14.5, cy - 13), (cx - 6, cy - 6)], fill=TIGLA)
+    o += sheep(cx + 2, cy + 6, 0.72)
+    o += arrow_v(cx + 16, cy - 16, cy + 6)
+    return o
+
+
+def ic_jina(cx, cy):
+    o = poly([(cx - 24, cy + 16), (cx - 6, cy - 16), (cx + 8, cy + 2), (cx + 14, cy - 6), (cx + 24, cy + 16)], fill=GREEN_D)
+    o += poly([(cx - 6, cy - 16), (cx - 11, cy - 7), (cx - 1, cy - 7)], fill=VAR, opacity="0.85")
+    o += sheep(cx + 2, cy + 8, 0.6) + sheep(cx - 13, cy + 11, 0.5)
+    return o
+
+
+def ic_crook(cx, cy):
+    o = sheep(cx - 4, cy + 6, 0.78)
+    o += (f'<path d="M{cx+16},{cy+20} L{cx+16},{cy-12} Q{cx+16},{cy-20} {cx+9},{cy-20} Q{cx+3},{cy-20} {cx+3},{cy-14}" '
+          f'stroke="{OCRU}" stroke-width="3.5" fill="none" stroke-linecap="round"/>')
+    return o + "\n"
+
+
+def ic_festival(cx, cy):
+    o = f'<ellipse cx="{cx-4}" cy="{cy+10}" rx="16" ry="6" fill="#B8862C"/>'
+    o += f'<rect x="{cx-20}" y="{cy-2}" width="32" height="12" fill="#D9A23A"/>'
+    o += f'<ellipse cx="{cx-4}" cy="{cy-2}" rx="16" ry="6" fill="#F2D27A"/>'
+    o += poly([(cx - 4, cy - 2), (cx + 12, cy - 2), (cx + 8, cy + 2.5)], fill=DISC)
+    o += f'<rect x="{cx+13}" y="{cy-14}" width="9" height="26" rx="3" fill="#CFE3E6" opacity="0.85"/>'
+    o += f'<rect x="{cx+15}" y="{cy-20}" width="5" height="7" fill="#CFE3E6" opacity="0.85"/>'
+    o += f'<rect x="{cx+13}" y="{cy-2}" width="9" height="14" rx="2" fill="#E9D9A6" opacity="0.9"/>\n'
+    return o
+
+
+# ================================================================== HARTA
+MX, MY, MW, MH = 80, 228, 1020, 736
+s += card(MX, MY, MW, MH)
+s += head(MX, MY, MW, "HARTA SATELOR", PETROL, "Hartă schematică, poziții aproximative – nu la scară", VAR)
+
+SC = 520
+XS0, YS0 = 887, 452          # Sibiu (0, 0) pe ecran
+
+
+def P(x, y):
+    return XS0 + x * SC, YS0 + y * SC
+
+
+C = {  # coordonatele comune ale regiunii (AGENT_COMMON.md)
+    "Sibiu": (0, 0), "Cristian": (-0.3, -0.02), "Șelimbăr": (0.15, 0.1), "Rășinari": (-0.22, 0.32),
+    "Poplaca": (-0.33, 0.22), "Gura Râului": (-0.55, 0.14), "Orlat": (-0.66, 0.0), "Fântânele": (-0.8, -0.04),
+    "Sibiel": (-0.88, 0.03), "Săliște": (-0.98, -0.08), "Galeș": (-1.04, 0.0), "Tilișca": (-1.1, -0.04),
+    "Rod": (-1.13, 0.1), "Poiana Sibiului": (-1.3, 0.05), "Jina": (-1.42, -0.04), "Sadu": (-0.1, 0.68),
+    "Râu Sadului": (-0.2, 0.85), "Tălmaciu": (0.1, 0.75), "Tălmăcel": (0.0, 0.82), "Boița": (0.15, 0.95),
+    "Podu Olt": (0.2, 0.84), "Veștem": (0.22, 0.48), "Cheile Cibinului": (-0.7, 0.4), "Vf. Cindrel": (-0.95, 0.75),
+}
+VILLAGES = ["Boița", "Tălmaciu", "Tălmăcel", "Sadu", "Râu Sadului", "Rășinari", "Poplaca", "Gura Râului", "Orlat",
+            "Fântânele", "Sibiel", "Săliște", "Galeș", "Tilișca", "Rod", "Poiana Sibiului", "Jina"]
+assert len(VILLAGES) == 17
+
+# munții Cindrel (decor)
+for mx_, my_, h in [(-1.12, 0.8, 70), (-0.98, 0.74, 92), (-0.82, 0.8, 66), (-0.66, 0.86, 54), (-1.26, 0.86, 50),
+                    (-0.5, 0.92, 44)]:
+    px, py = P(mx_, my_)
+    s += poly([(px - h * 0.75, py + h * 0.35), (px, py - h * 0.65), (px + h * 0.75, py + h * 0.35)], fill=MOUNT)
+    s += poly([(px, py - h * 0.65), (px - h * 0.2, py - h * 0.38), (px - h * 0.05, py - h * 0.45), (px + h * 0.12, py - h * 0.36),
+               (px + h * 0.2, py - h * 0.39)], fill=MOUNT_L)
+cx_, cy_ = P(*C["Vf. Cindrel"])
+s += poly([(cx_ - 6, cy_ - 52), (cx_, cy_ - 62), (cx_ + 6, cy_ - 52)], fill=CEATA)
+s += text(cx_ - 130, cy_ + 62, "MUNȚII CINDREL", 14, CEATA, "sans", 700, extra='letter-spacing="3"')
+s += text(cx_ - 12, cy_ - 56, "Vf. Cindrel, 2.244 m", 13, CEATA, "sans", 500, True, anchor="end")
+
+# râuri (schematic)
+cib = [P(*C[k]) for k in ["Vf. Cindrel", "Cheile Cibinului", "Gura Râului", "Orlat", "Cristian", "Sibiu", "Șelimbăr",
+                          "Veștem", "Tălmaciu", "Podu Olt"]]
+cib[0] = (cib[0][0] + 4, cib[0][1] - 40)
+s += f'<path d="{smooth_path(cib, closed=False, tension=0.6)}" fill="none" stroke="{RIVER}" stroke-width="4" opacity="0.85"/>\n'
+sad = [P(-0.48, 0.97), P(*C["Râu Sadului"]), P(-0.12, 0.76), P(*C["Sadu"]), P(0.02, 0.72), P(*C["Tălmaciu"])]
+s += f'<path d="{smooth_path(sad, closed=False, tension=0.6)}" fill="none" stroke="{RIVER}" stroke-width="3" opacity="0.7"/>\n'
+gx, gy = P(*C["Gura Râului"])
+s += f'<ellipse cx="{gx-20}" cy="{gy+30}" rx="18" ry="8" fill="{RIVER}" opacity="0.8" transform="rotate(-50 {gx-20} {gy+30})"/>\n'
+lx_, ly_ = P(-0.15, -0.035)
+s += text(lx_, ly_, "Cibin", 15, RIVER, "serif", 700, True, anchor="middle")
+lx_, ly_ = P(-0.36, 0.95)
+s += text(lx_ + 6, ly_ + 2, "Sadu", 14, RIVER, "serif", 700, True)
+px, py = P(*C["Podu Olt"])
+s += f'<circle cx="{px}" cy="{py}" r="4" fill="{RIVER}"/>\n'
+s += text(px + 10, py + 5, "→ Olt", 14, RIVER, "serif", 700, True)
+
+# Sibiu (oraș – reper)
+sx, sy = P(0, 0)
+s += f'<rect x="{sx-9}" y="{sy-9}" width="18" height="18" rx="3" fill="{VAR}" stroke="{BG}" stroke-width="2"/>\n'
+s += text(sx + 14, sy - 12, "Sibiu", 18, VAR, "serif", 700)
+s += text(sx + 20 + measure("Sibiu", 18, "serif", 700), sy - 12, "oraș – reper", 13, MUTED, "sans", 400, True)
+
+# sate
+LAB = {  # (dx, dy, anchor) pentru eticheta de lângă punct; None = numele e în casetă
+    "Poiana Sibiului": (0, 26, "middle"), "Galeș": (0, 26, "middle"), "Fântânele": (0, 26, "middle"),
+    "Gura Râului": (12, 22, "start"), "Poplaca": (12, 5, "start"), "Râu Sadului": (-12, 5, "end"),
+    "Tălmăcel": (0, 26, "middle"), "Tălmaciu": (12, 5, "start"), "Boița": (12, 5, "start"),
+    "Jina": None, "Tilișca": None, "Săliște": None, "Orlat": None, "Rod": None, "Sibiel": None,
+    "Rășinari": None, "Sadu": None,
+}
+for v in VILLAGES:
+    x, y = P(*C[v])
+    s += f'<circle cx="{x:.1f}" cy="{y:.1f}" r="7" fill="{OCRU}" stroke="{BG}" stroke-width="2.5"/>\n'
+    lab = LAB[v]
+    if lab:
+        dx, dy, an = lab
+        s += text(x + dx, y + dy, v, 15, VAR, "sans", 600, anchor=an)
+
+
+# casete-reper (callout)
+def callout(v, bx, by, bw, title, body, col=OCRU, attach="bottom"):
+    vx, vy = P(*C[v])
+    lines = wrap(body, bw - 24, 14) if body else []
+    bh = 34 + 18 * len(lines) + (6 if lines else 0)
+    if attach == "bottom":
+        ax, ay = min(max(vx, bx + 16), bx + bw - 16), by + bh
+    elif attach == "top":
+        ax, ay = min(max(vx, bx + 16), bx + bw - 16), by
+    elif attach == "left":
+        ax, ay = bx, by + bh / 2
+    else:
+        ax, ay = bx + bw, by + bh / 2
+    o = f'<line x1="{vx:.1f}" y1="{vy:.1f}" x2="{ax:.1f}" y2="{ay:.1f}" stroke="{col}" stroke-width="1.6" opacity="0.8"/>\n'
+    o += f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="10" fill="{BG}" stroke="{col}" stroke-width="1.5" opacity="0.96"/>\n'
+    o += text(bx + 12, by + 24, title, 16, col, "sans", 700)
+    assert measure(title, 16, "sans", 700) <= bw - 20, title
+    yy = by + 44
+    for ln in lines:
+        o += text(bx + 12, yy, ln, 14, CEATA)
+        yy += 18
+    o += f'<circle cx="{vx:.1f}" cy="{vy:.1f}" r="7" fill="{col}" stroke="{BG}" stroke-width="2.5"/>\n'
+    return o, (bx, by, bw, bh)
+
+
+boxes = []
+for args in [
+    ("Jina", 100, 296, 160, "Jina · 900 m", "cel mai înalt sat din Mărginime"),
+    ("Tilișca", 270, 296, 170, "Tilișca", "ruinele unei cetăți dacice pe dealul Cățânaș"),
+    ("Săliște", 450, 296, 190, "Săliște", "sat de meșteșugari; 28 decembrie – „Adunarea feciorilor”"),
+    ("Orlat", 650, 296, 250, "Orlat", "atestat „Cibiniensis” (1319); regiment de graniță în secolul al XVIII-lea"),
+    ("Rod", 100, 560, 150, "Rod · 815 m", "", OCRU, "top"),
+]:
+    o, b = callout(*args)
+    s += o; boxes.append(b)
+    assert args[2] >= 400 or b[1] + b[3] <= 398, (args[0], b)
+o, b = callout("Sibiel", 300, 580, 180, "Sibiel", "muzeu de icoane pe sticlă", OCRU, "top"); s += o; boxes.append(b)
+o, b = callout("Rășinari", 836, 560, 236, "Rășinari", "locul natal al filosofului Emil Cioran și al poetului Octavian Goga",
+               OCRU, "left"); s += o; boxes.append(b)
+o, b = callout("Sadu", 560, 740, 190, "Sadu", "pe râul Sadu – cea mai veche hidrocentrală din zonă, din 1896",
+               OCRU, "right"); s += o; boxes.append(b)
+
+
+def overlap(a, b):
+    return not (a[0] + a[2] <= b[0] or b[0] + b[2] <= a[0] or a[1] + a[3] <= b[1] or b[1] + b[3] <= a[1])
+
+
+for i in range(len(boxes)):
+    for j in range(i + 1, len(boxes)):
+        assert not overlap(boxes[i], boxes[j]), (boxes[i], boxes[j])
+    assert boxes[i][0] + boxes[i][2] <= MX + MW - 16 and boxes[i][1] + boxes[i][3] <= MY + MH - 12, boxes[i]
+
+# caseta „18 localități”
+qx, qy, qw, QH = 100, 612, 184, 146
+s += f'<rect x="{qx}" y="{qy}" width="{qw}" height="{QH}" rx="12" fill="{CARD}" stroke="{PETROL}" stroke-width="1.5"/>\n'
+s += text(qx + 14, qy + 46, "18", 44, OCRU, "serif", 700)
+s += text(qx + 14 + measure("18", 44, "serif", 700) + 8, qy + 44, "localități", 17, VAR, "sans", 600)
+o, ny = para(qx + 14, qy + 70, "după surse – listele diferă; pe hartă: 17 numite", 13, qw - 24, CEATA, italic=True, lh=17)
+s += o
+s += text(qx + 14, ny + 8, "peste 200 km²", 14, VAR, "sans", 600)
+assert ny + 14 < qy + QH, ny
+boxes.append((qx, qy, qw, QH))
+for i in range(len(boxes) - 1):
+    assert not overlap(boxes[i], boxes[-1])
+
+# legendă
+lgx, lgy = MX + 590, MY + 40
+s += f'<circle cx="{lgx+7}" cy="{lgy-5}" r="7" fill="{OCRU}"/>\n'
+s += text(lgx + 20, lgy, "sat din Mărginime", 14, CEATA)
+lgx += 20 + measure("sat din Mărginime", 14) + 22
+s += f'<rect x="{lgx}" y="{lgy-13}" width="15" height="15" rx="3" fill="{VAR}"/>\n'
+s += text(lgx + 22, lgy, "Sibiu", 14, CEATA)
+lgx += 22 + measure("Sibiu", 14) + 22
+s += f'<line x1="{lgx}" y1="{lgy-5}" x2="{lgx+26}" y2="{lgy-5}" stroke="{RIVER}" stroke-width="4"/>\n'
+s += text(lgx + 34, lgy, "râu", 14, CEATA)
+
+# ================================================================== COLOANA DREAPTĂ
+RX, RW = 1116, 724
+
+# ---------- transhumanța
+TY, TH = 228, 292
+s += card(RX, TY, RW, TH)
+s += head(RX, TY, RW, "TRANSHUMANȚA", OCRU, "direcții orientative, nu o hartă – sibiu-turism.ro")
+rcx, rcy = RX + 250, TY + 184
+DIRS = [("Polonia", -100), ("sudul Ucrainei", -22), ("Crimeea", 4), ("Constantinopol", 58),
+        ("Marea Adriatică", 162), ("Pannonia", 202)]
+s += f'<circle cx="{rcx}" cy="{rcy}" r="84" fill="none" stroke="{LINE}" stroke-width="1.5" stroke-dasharray="4 6"/>\n'
+for lab, ang in DIRS:
+    a = math.radians(ang)
+    x0, y0 = rcx + 38 * math.cos(a), rcy + 38 * math.sin(a)
+    x1, y1 = rcx + 86 * math.cos(a), rcy + 86 * math.sin(a)
+    s += f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{OCRU}" stroke-width="4" stroke-linecap="round"/>\n'
+    hx, hy = rcx + 98 * math.cos(a), rcy + 98 * math.sin(a)
+    px_, py_ = -math.sin(a), math.cos(a)
+    s += poly([(hx, hy), (x1 - 2 * math.cos(a) + 8 * px_, y1 - 2 * math.sin(a) + 8 * py_),
+               (x1 - 2 * math.cos(a) - 8 * px_, y1 - 2 * math.sin(a) - 8 * py_)], fill=OCRU)
+    lx, ly = rcx + 110 * math.cos(a), rcy + 110 * math.sin(a) + 6
+    an = "start" if math.cos(a) > 0.3 else ("end" if math.cos(a) < -0.3 else "middle")
+    if ang == -100:
+        ly -= 4
+    s += text(lx, ly, lab, 16, VAR, "sans", 600, anchor=an)
+s += f'<circle cx="{rcx}" cy="{rcy}" r="32" fill="{DISC}" stroke="{OCRU}" stroke-width="2.5"/>\n'
+s += sheep(rcx - 4, rcy + 2, 1.15)
+s += text(rcx + 40, TY + 84, "N ↑", 13, MUTED, "sans", 700)
+tx = RX + 494
+o, ty = para(tx, TY + 92, "Vara, oile urcau la munte; iarna coborau în sat sau spre zone mai calde.", 15, RW - 494 - 20,
+             VAR, lh=20)
+s += o
+o, ty = para(tx, ty + 10, "În secolele XVIII–XIX, păstorii ajungeau până în Crimeea.", 15, RW - 494 - 20, CEATA, lh=20)
+s += o
+o, ty = para(tx, ty + 10, "Azi, unii s-au stabilit în Banat și în Dobrogea.", 15, RW - 494 - 20, CEATA, lh=20)
+s += o
+assert ty - 20 <= TY + TH - 12, ty
+
+# ---------- calendarul păstoresc
+KY, KH = 536, 200
+s += card(RX, KY, RW, KH)
+s += head(RX, KY, RW, "CALENDARUL PĂSTORESC", PETROL, "sibiu-turism.ro", VAR)
+EV = [(ic_sheep_up, "mai", "urcarea oilor la munte"),
+      (ic_jina, "30 iulie", "„Sus pe muntele din Jina”"),
+      (ic_crook, "15 august", "Sărbătoarea oierilor, la Tilișca"),
+      (ic_festival, "31 august", "Festivalul brânzei și al țuicii, la Rășinari"),
+      (ic_sheep_down, "septembrie", "coborârea oilor în sate")]
+colw = (RW - 24) / 5
+iy = KY + 88
+s += f'<line x1="{RX+12+colw/2:.1f}" y1="{iy}" x2="{RX+12+colw*4.5:.1f}" y2="{iy}" stroke="{OCRU}" stroke-width="3" opacity="0.55"/>\n'
+for k, (ic, d, lab) in enumerate(EV):
+    cx = RX + 12 + colw * (k + 0.5)
+    s += f'<circle cx="{cx:.1f}" cy="{iy}" r="27" fill="{DISC}" stroke="{OCRU}" stroke-width="2.5"/>\n'
+    s += ic(cx, iy)
+    s += text(cx, iy + 54, d, 19, OCRU, "serif", 700, anchor="middle")
+    yy = iy + 76
+    lines = wrap(lab, colw - 10, 14)
+    assert len(lines) <= 3, lab
+    for ln in lines:
+        s += text(cx, yy, ln, 14, CEATA, anchor="middle")
+        yy += 18
+    assert yy - 18 <= KY + KH - 8, (lab, yy)
+
+# ---------- brânzeturi
+BY_, BH_ = 752, 212
+BW_ = (RW - 16) / 2
+s += card(RX, BY_, BW_, BH_)
+s += head(RX, BY_, BW_, "BRÂNZETURI", OCRU, "„Drumul brânzei”")
+
+
+def ch_telemea(cx, cy):
+    o = f'<rect x="{cx-18}" y="{cy-2}" width="36" height="16" rx="3" fill="{RIVER}" opacity="0.45"/>'
+    o += f'<rect x="{cx-14}" y="{cy-12}" width="28" height="20" rx="3" fill="#F4F0E6"/>'
+    o += f'<path d="M{cx-14},{cy-12} l6,-5 h28 l-6,5 Z" fill="#FFFFFF"/>'
+    for dx, dy in [(-7, -5), (2, -2), (8, -7), (-2, 3)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="1.6" fill="#D9CFBC"/>'
+    return o
+
+
+def ch_burduf(cx, cy):
+    o = f'<path d="M{cx-12},{cy+16} q-8,-18 4,-26 l2,-4 h4 l2,4 q14,8 4,26 Z" fill="#C9A26B"/>'
+    o += f'<path d="M{cx-2},{cy-14} h8" stroke="{BROWN}" stroke-width="3"/>'
+    o += f'<path d="M{cx-8},{cy+2} q8,4 16,0" stroke="{BROWN}" stroke-width="1.5" fill="none" opacity="0.7"/>'
+    return o
+
+
+def ch_framantata(cx, cy):
+    o = f'<path d="M{cx-20},{cy} q20,22 40,0 Z" fill="{TIGLA}"/>'
+    for dx, dy, r in [(-10, -3, 6), (0, -6, 7), (10, -3, 6), (-4, -11, 5), (5, -11, 5)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="{r}" fill="#F4F0E6"/>'
+    return o
+
+
+def ch_urda(cx, cy):
+    o = f'<path d="M{cx-20},{cy+10} L{cx-12},{cy-2} L{cx+12},{cy-2} L{cx+20},{cy+10} Z" fill="#E3D9C6" opacity="0.6"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy}" rx="14" ry="11" fill="#FFFFFF"/>'
+    o += f'<ellipse cx="{cx-4}" cy="{cy-4}" rx="5" ry="3" fill="#F0EBDF"/>'
+    return o
+
+
+cheeses = [(ch_telemea, "telemea"), (ch_burduf, "brânză de burduf"), (ch_framantata, "brânză frământată"),
+           (ch_urda, "urdă")]
+for k, (ic, lab) in enumerate(cheeses):
+    r, c = divmod(k, 2)
+    x = RX + 20 + c * (BW_ - 30) / 2
+    y = BY_ + 70 + r * 64
+    s += f'<circle cx="{x+26:.1f}" cy="{y+24}" r="25" fill="{DISC}" stroke="{OCRU}" stroke-width="2"/>\n'
+    s += ic(x + 26, y + 24)
+    lines = wrap(lab, (BW_ - 30) / 2 - 64, 15)
+    assert len(lines) <= 2, lab
+    yy = y + 29 - (len(lines) - 1) * 9
+    for ln in lines:
+        s += text(x + 60, yy, ln, 15, VAR, "sans", 600)
+        yy += 18
+s += text(RX + 22, BY_ + BH_ - 16, "și lapte acru", 14, CEATA, "sans", 400, True)
+
+# ---------- Săliște: meșteșugari + port
+X2 = RX + BW_ + 16
+s += card(X2, BY_, BW_, BH_)
+s += head(X2, BY_, BW_, "MEȘTEȘUGARI DIN SĂLIȘTE", VIOLET, None, VAR)
+crafts = ["curelari", "dogari", "pălărieri", "țesători", "pictori de icoane pe sticlă"]
+yy = BY_ + 80
+for k, c in enumerate(crafts):
+    s += f'<rect x="{X2+24}" y="{yy-11}" width="10" height="10" rx="2" fill="{VIOLET}"/>\n'
+    s += text(X2 + 44, yy, c, 15, VAR, "sans", 500)
+    assert X2 + 44 + measure(c, 15, "sans", 500) < X2 + BW_ - 92, c
+    yy += 25
+assert yy - 25 <= BY_ + BH_ - 12
+
+
+def costume(cx, by):
+    """Port alb-negru, schematic: cămașă albă, vestă/brâu negru, pălărie rotundă fără boruri."""
+    o = f'<rect x="{cx-12}" y="{by-46}" width="10" height="46" fill="{VAR}"/><rect x="{cx+2}" y="{by-46}" width="10" height="46" fill="{VAR}"/>\n'
+    o += f'<rect x="{cx-13}" y="{by-6}" width="12" height="6" rx="2" fill="#11161C"/><rect x="{cx+1}" y="{by-6}" width="12" height="6" rx="2" fill="#11161C"/>\n'
+    o += f'<path d="M{cx-22},{by-44} L{cx-18},{by-96} Q{cx},{by-104} {cx+18},{by-96} L{cx+22},{by-44} Z" fill="{VAR}"/>\n'
+    o += f'<path d="M{cx-17},{by-94} L{cx-14},{by-56} L{cx-4},{by-56} L{cx-4},{by-98} Z" fill="#11161C"/>\n'
+    o += f'<path d="M{cx+17},{by-94} L{cx+14},{by-56} L{cx+4},{by-56} L{cx+4},{by-98} Z" fill="#11161C"/>\n'
+    o += f'<rect x="{cx-21}" y="{by-58}" width="42" height="8" fill="#11161C"/>\n'
+    o += f'<path d="M{cx-18},{by-96} L{cx-26},{by-58} L{cx-20},{by-56} L{cx-12},{by-90} Z" fill="{VAR}"/>\n'
+    o += f'<path d="M{cx+18},{by-96} L{cx+26},{by-58} L{cx+20},{by-56} L{cx+12},{by-90} Z" fill="{VAR}"/>\n'
+    o += f'<circle cx="{cx}" cy="{by-112}" r="10" fill="#E8C9A6"/>\n'
+    o += f'<path d="M{cx-11},{by-114} Q{cx-11},{by-132} {cx},{by-132} Q{cx+11},{by-132} {cx+11},{by-114} Z" fill="#11161C" stroke="#56657A" stroke-width="1"/>\n'
+    return o
+
+
+fx = X2 + BW_ - 46
+s += costume(fx, BY_ + BH_ - 30)
+s += text(X2 + BW_ - 14, BY_ + BH_ - 12, "port alb-negru", 12, CEATA, "sans", 600, True, anchor="end")
+
+# ================================================================== surse
+src = ("Surse: sibiu-turism.ro (Mărginimea Sibiului; „Drumul brânzei”; calendarul păstoresc); en.wikipedia (Mărginimea Sibiului, Cibin, "
+       "Cindrel Mountains). Portul popular: alb-negru, cu pălărie rotundă fără boruri la bărbați, la sărbători (en.wikipedia).")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

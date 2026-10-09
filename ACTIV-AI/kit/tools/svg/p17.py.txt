@@ -1,0 +1,294 @@
+# -*- coding: utf-8 -*-
+"""P17 – Meseria mea de vis ca breaslă medievală – blazon AI.
+Elevă fictivă („Eleva B.”), meserie de vis: inginer de energie solară. Blazon inventat, statut parodic-serios
+inspirat din regulile reale ale breslelor sibiene (fapte_verificate.md, limbaromana.org, mnir.ro);
+culorile heraldice și regula culorilor: en.wikipedia, „Tincture (heraldry)” (vezi _fapte_noi_P17_P18.md)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math
+
+OUT = "/home/claude/expo/c5/08_identitate/P17_meseria_de_vis_blazon.svg"
+ORANGE = "#F76B15"
+MUTED = "#7E8A96"
+TITLE = "Meseria mea de vis ca breaslă medievală"
+s = frame_head("IDENTITATE · P17", ORANGE, TITLE, "elevă fictivă · blazon inventat, nu reproduce însemne reale")
+s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— blazon AI", 30, CEATA, "serif", 400, True)
+
+# culori heraldice (redare pe ecran)
+AZ = "#2357A3"; AZ_D = "#173E7A"; AZ_L = "#3A72C2"
+AU = "#E8B13A"; AU_D = "#B9831C"; AU_L = "#F6D57E"
+AR = "#EEF1F4"; AR_D = "#BAC4CE"
+RO = "#B7372C"; VE = "#2F7A3E"; NE = "#1A1A1A"; PU = "#6E3A86"
+OUTL = "#0B1219"
+INK = "#2B2622"; INK2 = "#6A5F52"; PARCH_D = "#E4D9C3"
+
+s += ('<defs>'
+      f'<linearGradient id="az17" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="{AZ_L}"/><stop offset="0.6" stop-color="{AZ}"/><stop offset="1" stop-color="{AZ_D}"/></linearGradient>'
+      f'<linearGradient id="au17" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{AU_L}"/><stop offset="0.5" stop-color="{AU}"/><stop offset="1" stop-color="{AU_D}"/></linearGradient>'
+      f'<linearGradient id="ar17" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.6" stop-color="{AR}"/><stop offset="1" stop-color="{AR_D}"/></linearGradient>'
+      '<linearGradient id="gloss17" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>'
+      '<stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.18"/></linearGradient>'
+      f'<linearGradient id="scroll17" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF6EA"/><stop offset="1" stop-color="{PARCH_D}"/></linearGradient>'
+      '</defs>\n')
+
+
+def P(pts):
+    return " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+
+
+def shield_d(W, H):
+    """Scut „în formă de fier de călcat” (heater), centrat pe x=0, sus la y=0."""
+    w = W / 2
+    return (f"M{-w},0 L{w},0 L{w},{0.5*H:.1f} C{w},{0.80*H:.1f} {0.20*W:.1f},{0.93*H:.1f} 0,{H} "
+            f"C{-0.20*W:.1f},{0.93*H:.1f} {-w},{0.80*H:.1f} {-w},{0.5*H:.1f} Z")
+
+
+def sun(cx, cy, r, n=16):
+    o = ""
+    for i in range(n):
+        a = 2 * math.pi * i / n - math.pi / 2
+        L = r * (1.85 if i % 2 == 0 else 1.5)
+        hw = math.radians(7.5 if i % 2 == 0 else 6)
+        p1 = (cx + r * 0.92 * math.cos(a - hw * 1.6), cy + r * 0.92 * math.sin(a - hw * 1.6))
+        p2 = (cx + L * math.cos(a), cy + L * math.sin(a))
+        p3 = (cx + r * 0.92 * math.cos(a + hw * 1.6), cy + r * 0.92 * math.sin(a + hw * 1.6))
+        o += f'<polygon points="{P([p1, p2, p3])}" fill="url(#au17)" stroke="{OUTL}" stroke-width="2.2" stroke-linejoin="round"/>'
+    o += f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#au17)" stroke="{OUTL}" stroke-width="2.6"/>'
+    o += f'<circle cx="{cx}" cy="{cy}" r="{r*0.68:.1f}" fill="none" stroke="{AU_D}" stroke-width="2"/>'
+    return o + "\n"
+
+
+def bolt(cx, cy, h, flip=False):
+    sg = -1 if flip else 1
+    pts = [(0.10, -0.5), (-0.26, 0.04), (-0.02, 0.04), (-0.12, 0.5), (0.26, -0.08), (0.02, -0.08), (0.14, -0.5)]
+    pts = [(cx + sg * x * h, cy + y * h) for x, y in pts]
+    return f'<polygon points="{P(pts)}" fill="url(#au17)" stroke="{OUTL}" stroke-width="2.4" stroke-linejoin="round"/>\n'
+
+
+def wrench(cx, cy, L):
+    """Cheie fixă verticală, de argint: cap deschis sus, inel jos. (cx,cy) = centrul."""
+    hw = L * 0.075
+    top = cy - L / 2; bot = cy + L / 2
+    o = f'<g stroke="{OUTL}" stroke-width="2.6" stroke-linejoin="round">'
+    # mânerul
+    o += f'<rect x="{cx-hw:.1f}" y="{top+L*0.16:.1f}" width="{2*hw:.1f}" height="{L*0.66:.1f}" rx="{hw*0.6:.1f}" fill="url(#ar17)"/>'
+    # capul deschis (sus) – cerc cu o fantă
+    R = L * 0.17
+    hy = top + R
+    gap = R * 0.5
+    a0 = math.asin(gap / R)
+    x1 = cx - gap; x2 = cx + gap
+    yj = hy - R * math.cos(a0)
+    d = (f"M{x1:.1f},{yj:.1f} L{x1:.1f},{hy+R*0.12:.1f} L{x2:.1f},{hy+R*0.12:.1f} L{x2:.1f},{yj:.1f} "
+         f"A{R:.1f},{R:.1f} 0 1 1 {x1:.1f},{yj:.1f} Z")
+    o += f'<path d="{d}" fill="url(#ar17)"/>'
+    # inelul (jos) cu gaură hexagonală
+    R2 = L * 0.14
+    ry = bot - R2
+    o += f'<circle cx="{cx:.1f}" cy="{ry:.1f}" r="{R2:.1f}" fill="url(#ar17)"/>'
+    hexr = R2 * 0.52
+    hexp = [(cx + hexr * math.cos(math.pi / 6 + k * math.pi / 3), ry + hexr * math.sin(math.pi / 6 + k * math.pi / 3)) for k in range(6)]
+    o += f'<polygon points="{P(hexp)}" fill="{AZ_D}"/>'
+    o += '</g>'
+    # o linie de lumină pe mâner
+    o += f'<line x1="{cx-hw*0.35:.1f}" y1="{top+L*0.26:.1f}" x2="{cx-hw*0.35:.1f}" y2="{top+L*0.72:.1f}" stroke="#FFFFFF" stroke-width="2" opacity="0.7"/>'
+    return o + "\n"
+
+
+def chevron_panel(W, H, apex_y, foot_y, d, clip_id):
+    """Căprior de argint, împărțit în celule albastre (panou solar pe acoperiș)."""
+    o = ""
+    w = W / 2 + 30
+    for sg in (-1, 1):
+        ex, ey = sg * w, foot_y          # capătul brațului
+        L = math.hypot(ex, ey - apex_y) + 60
+        ang = math.degrees(math.atan2(ey - apex_y, ex))
+        cid = f"{clip_id}{'L' if sg < 0 else 'R'}"
+        half = f"M0,-10 L{sg*(W/2+60)},-10 L{sg*(W/2+60)},{H+10} L0,{H+10} Z"
+        o += f'<clipPath id="{cid}"><path d="{half}"/></clipPath>'
+        o += f'<g clip-path="url(#{cid})"><g transform="translate(0,{apex_y}) rotate({ang:.3f})">'
+        # banda (grosimea măsurată perpendicular pe braț)
+        t = d * math.cos(math.radians(abs(ang) if abs(ang) < 90 else 180 - abs(ang)))
+        x0 = -40
+        yb = 0 if sg > 0 else -t          # banda stă sub linia care trece prin vârf, pe ambele brațe
+        o += f'<rect x="{x0}" y="{yb:.1f}" width="{L+40:.1f}" height="{t:.1f}" fill="url(#ar17)"/>'
+        # celulele
+        rows, cw = 2, t / 2 * 1.25
+        gap = 3.2
+        ncols = int((L + 40) / cw) + 2
+        for r_ in range(rows):
+            for c in range(ncols):
+                cx0 = x0 + c * cw
+                o += (f'<rect x="{cx0+gap:.1f}" y="{yb+r_*t/2+gap:.1f}" width="{cw-2*gap:.1f}" height="{t/2-2*gap:.1f}" '
+                      f'fill="{AZ_D}" stroke="{AZ_L}" stroke-width="0.8"/>')
+                o += (f'<line x1="{cx0+gap+3:.1f}" y1="{yb+r_*t/2+gap+3:.1f}" x2="{cx0+cw*0.55:.1f}" y2="{yb+r_*t/2+gap+3:.1f}" '
+                      f'stroke="#9CC0EE" stroke-width="1.4" opacity="0.65"/>')
+        o += f'<line x1="{x0}" y1="{yb:.1f}" x2="{L:.1f}" y2="{yb:.1f}" stroke="{OUTL}" stroke-width="3"/>'
+        o += f'<line x1="{x0}" y1="{yb+t:.1f}" x2="{L:.1f}" y2="{yb+t:.1f}" stroke="{OUTL}" stroke-width="3"/>'
+        o += '</g></g>\n'
+    return o
+
+
+def blazon(W, H, uid, pins=False):
+    """Blazonul complet, cu originea în mijlocul marginii de sus a scutului."""
+    o = f'<clipPath id="sc{uid}"><path d="{shield_d(W, H)}"/></clipPath>\n'
+    o += f'<g clip-path="url(#sc{uid})">'
+    o += f'<rect x="{-W/2-5}" y="-5" width="{W+10}" height="{H+10}" fill="url(#az17)"/>\n'
+    apex_y = 0.36 * H; foot_y = 0.84 * H; d = 0.15 * H
+    o += chevron_panel(W, H, apex_y, foot_y, d, f"cv{uid}")
+    o += sun(0, 0.175 * H, 0.085 * W)
+    o += bolt(-0.33 * W, 0.24 * H, 0.21 * H)
+    o += bolt(0.33 * W, 0.24 * H, 0.21 * H, flip=True)
+    o += wrench(0, 0.77 * H, 0.31 * H)
+    o += f'<rect x="{-W/2-5}" y="-5" width="{W+10}" height="{H+10}" fill="url(#gloss17)"/>'
+    o += '</g>\n'
+    o += f'<path d="{shield_d(W, H)}" fill="none" stroke="{OUTL}" stroke-width="{max(2.5, W*0.014):.1f}"/>\n'
+    return o
+
+
+# =================================================================== STÂNGA – blazonul
+LX0, LX1, Y0, Y1 = 80, 660, 236, 1000
+LW = LX1 - LX0; LCX = (LX0 + LX1) / 2
+s += f'<g filter="url(#sh)">{card(LX0, Y0, LW, Y1 - Y0, fill="#16212C")}</g>'
+s += f'<rect x="{LX0}" y="{Y0}" width="{LW}" height="8" rx="4" fill="{ORANGE}"/>\n'
+s += text(LCX, Y0 + 50, "BREASLA MEȘTERILOR SOARELUI", 19, OCRU, "sans", 700, anchor="middle", extra='letter-spacing="4"')
+s += text(LCX, Y0 + 80, "visul Elevei B. (personaj fictiv): inginer de energie solară", 17, "#C9D3DC", "sans", 400, True, anchor="middle")
+
+SW, SH = 420, 494
+SX, SY = LCX, Y0 + 108
+s += f'<g transform="translate({SX},{SY})" filter="url(#sh)">' + blazon(SW, SH, "M") + '</g>\n'
+
+# deviza pe banderolă
+MOTTO = "Prindem lumina, o dăm mai departe"
+MY = SY + SH + 34
+MS = 24
+while measure(MOTTO, MS, "serif", 700, True) > LW - 150:
+    MS -= 0.5
+mw = measure(MOTTO, MS, "serif", 700, True) + 48
+bx0, bx1 = SX - mw / 2, SX + mw / 2
+E = 34
+s += f'<polygon points="{P([(bx0-E, MY+8), (bx0+4, MY+8), (bx0+4, MY+60), (bx0-E, MY+60), (bx0-E+16, MY+34)])}" fill="#CDBF9F" stroke="{OUTL}" stroke-width="2"/>'
+s += f'<polygon points="{P([(bx1+E, MY+8), (bx1-4, MY+8), (bx1-4, MY+60), (bx1+E, MY+60), (bx1+E-16, MY+34)])}" fill="#CDBF9F" stroke="{OUTL}" stroke-width="2"/>'
+s += f'<polygon points="{P([(bx0+4, MY+60), (bx0+20, MY+52), (bx0+20, MY+60)])}" fill="#8E7F60"/>'
+s += f'<polygon points="{P([(bx1-4, MY+60), (bx1-20, MY+52), (bx1-20, MY+60)])}" fill="#8E7F60"/>'
+s += f'<rect x="{bx0+10:.1f}" y="{MY}" width="{mw-20:.1f}" height="52" rx="3" fill="url(#scroll17)" stroke="{OUTL}" stroke-width="2"/>\n'
+s += text(SX, MY + 34, MOTTO, MS, "#3A2A12", "serif", 700, True, anchor="middle")
+s += text(LCX, Y1 - 24, "deviza breslei · scut în formă clasică, desenat în cod SVG", 14, MUTED, "sans", 400, True, anchor="middle")
+print("motto size", MS, "band", bx0 - E, bx1 + E, "card", LX0, LX1)
+
+# repere numerotate pe blazon
+def num(x, y, n):
+    return (f'<g filter="url(#shs)"><circle cx="{x:.1f}" cy="{y:.1f}" r="16" fill="{BG}" stroke="{ORANGE}" stroke-width="3"/></g>'
+            + text(x, y + 6.5, str(n), 17, VAR, "sans", 700, anchor="middle"))
+pins = [(SX - SW / 2 + 40, SY + 34, 1),                 # câmpul albastru
+        (SX + 62, SY + 0.175 * SH - 46, 2),             # soarele
+        (SX - 0.36 * SW, SY + 0.737 * SH, 3),           # căpriorul
+        (SX + 0.33 * SW + 46, SY + 0.24 * SH + 34, 4),  # fulgerul
+        (SX + 54, SY + 0.77 * SH + 14, 5),             # cheia fixă
+        (bx0 + 14, MY - 2, 6)]                          # deviza
+for x, y, n in pins:
+    s += num(x, y, n)
+s += "\n"
+
+# =================================================================== MIJLOC – statutul breslei (pergament)
+MX0, MX1 = 684, 1292
+MW = MX1 - MX0
+s += f'<g filter="url(#sh)"><rect x="{MX0}" y="{Y0}" width="{MW}" height="{Y1-Y0}" rx="18" fill="{PARCH}"/></g>\n'
+s += f'<rect x="{MX0+12}" y="{Y0+12}" width="{MW-24}" height="{Y1-Y0-24}" rx="12" fill="none" stroke="#B9A57E" stroke-width="1.4" stroke-dasharray="7 5"/>\n'
+s += text(MX0 + 36, Y0 + 52, "STATUTUL BRESLEI", 17, TIGLA, "sans", 700, extra='letter-spacing="4"')
+s += text(MX0 + 36, Y0 + 90, "Cinci articole pentru meșterii soarelui", 27, INK, "serif", 700)
+s += text(MX0 + 36, Y0 + 116, "parodic-serios · după regulile reale ale breslelor sibiene (sec. XIV–XIX)", 15, INK2, "sans", 400, True)
+arts = [("Ucenicul",
+         "După o probă de câteva săptămâni, învață 2–4 ani lângă un meșter: întâi cablurile, apoi acoperișurile.",
+         "probă de 2–6 săptămâni, apoi 2–4 ani de ucenicie, cu certificat"),
+        ("Calfa",
+         "Plătește taxa și dă o masă breslei (la noi: plăcinte pentru toată echipa), apoi primește salariu.",
+         "după o taxă și o masă pentru breaslă, calfa primea salariu"),
+        ("Călătoria",
+         "Pleacă 2–4 ani să vadă cum se prinde soarele în alte orașe și se prezintă la „părintele calfelor”.",
+         "2–4 ani, obligatorie din 1512; calfa mergea la „părintele calfelor”"),
+        ("Capodopera",
+         "În două săptămâni, ca la cositorari: un acoperiș cu panouri care alimentează luminile unei săli de clasă.",
+         "cositorarii: castron, cană, ploscă și vas de spălat, în două săptămâni"),
+        ("Starostele",
+         "Starostele ales merge la sfatul orașului. Vechile bresle aveau în grijă turnuri; noi – acoperișurile școlilor.",
+         "starostele conducea breasla și participa la sfatul orașului")]
+ay = Y0 + 156
+ART_END = []
+for i, (lab, body, real) in enumerate(arts, 1):
+    s += f'<rect x="{MX0+36}" y="{ay-22}" width="78" height="30" rx="6" fill="{TIGLA}"/>'
+    s += text(MX0 + 75, ay - 1, f"Art. {i}", 16, "#FFF8EC", "sans", 700, anchor="middle")
+    s += text(MX0 + 128, ay, lab, 22, INK, "serif", 700)
+    p, y2 = para(MX0 + 36, ay + 28, body, 16, MW - 72, INK, "sans", 400, lh=21)
+    s += p
+    p, y3 = para(MX0 + 36, y2 + 1, "regula veche: " + real, 13.5, MW - 72, INK2, "sans", 400, True, lh=17)
+    s += p
+    ART_END.append(y3)
+    ay = y3 + 26
+s += text(MX0 + 36, Y1 - 30, "Regulile vechi: limbaromana.org, „Din istoria breslelor sibiene, sec. XIV–XIX”", 13, INK2, "sans", 400, True)
+
+# =================================================================== DREAPTA – citirea blazonului + însemnele reale
+RX0, RX1 = 1316, 1840
+RW = RX1 - RX0
+CH = 486
+s += card(RX0, Y0, RW, CH)
+s += f'<rect x="{RX0}" y="{Y0}" width="{RW}" height="8" rx="4" fill="{ORANGE}"/>\n'
+s += text(RX0 + 28, Y0 + 46, "CITIREA BLAZONULUI", 16, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(RX1 - 26, Y0 + 46, "sensuri alese de elevă", 14, MUTED, "sans", 400, True, anchor="end")
+legend = [("Câmpul albastru", "cerul senin"),
+          ("Soarele de aur", "sursa de energie"),
+          ("Căpriorul de argint", "acoperișul cu panouri solare"),
+          ("Două fulgere de aur", "curentul produs"),
+          ("Cheia fixă de argint", "montajul și întreținerea"),
+          ("Deviza", "ce face breasla: prinde lumina și o împarte")]
+ly = Y0 + 88
+LEG_W = []
+for i, (a, b) in enumerate(legend, 1):
+    s += f'<circle cx="{RX0+42}" cy="{ly-6}" r="13" fill="{BG}" stroke="{ORANGE}" stroke-width="2.5"/>' + text(RX0 + 42, ly - 0.5, str(i), 14, VAR, "sans", 700, anchor="middle")
+    s += text(RX0 + 66, ly, a, 17, VAR, "sans", 700)
+    aw = measure(a, 17, "sans", 700)
+    s += text(RX0 + 66 + aw + 8, ly, "– " + b, 16, CEATA, "sans", 400)
+    LEG_W.append(RX0 + 66 + aw + 8 + measure("– " + b, 16))
+    ly += 36
+LEG_END = ly
+# regula culorilor
+ty = ly + 4
+s += f'<line x1="{RX0+28}" y1="{ty-14}" x2="{RX1-28}" y2="{ty-14}" stroke="#2A3845" stroke-width="1.5"/>'
+s += text(RX0 + 28, ty + 16, "Regula culorilor heraldice", 19, OCRU, "serif", 700)
+SWS = 18
+def swatch(x, y, col, lab):
+    return (f'<rect x="{x:.1f}" y="{y}" width="{SWS}" height="{SWS}" rx="4" fill="{col}" stroke="#55626F" stroke-width="1"/>'
+            + text(x + SWS + 7, y + 14, lab, 14.5, VAR, "sans", 400))
+for row, (lab0, items) in enumerate((("metale:", ((AU, "aur"), (AR, "argint"))),
+                                     ("culori:", ((RO, "roșu"), (AZ, "albastru"), (VE, "verde"), (NE, "negru"), (PU, "purpuriu"))))):
+    yy = ty + 38 + row * 30
+    s += text(RX0 + 28, yy + 14, lab0, 14.5, MUTED, "sans", 600, True)
+    xx = RX0 + 92
+    for col, lab in items:
+        s += swatch(xx, yy, col, lab); xx += SWS + 7 + measure(lab, 14.5) + 14
+    LEG_W.append(xx)
+p, RULE_END = para(RX0 + 28, ty + 124, "Metal pe culoare, culoare pe metal – pentru contrast. Aici: aur și argint pe albastru.", 15, RW - 56, CEATA, "sans", 400, True, lh=19)
+s += p
+s += text(RX1 - 26, Y0 + CH - 14, "en.wikipedia, „Tincture (heraldry)”", 12.5, MUTED, "sans", 400, True, anchor="end")
+
+# ---- însemnele reale
+IY0 = Y0 + CH + 18
+IH = Y1 - IY0
+s += f'<rect x="{RX0}" y="{IY0}" width="{RW}" height="{IH}" rx="18" fill="#141E28" stroke="{ORANGE}" stroke-width="1.8"/>\n'
+s += text(RX0 + 26, IY0 + 40, "Cum arătau însemnele reale", 22, VAR, "serif", 700)
+real = ("Fiecare breaslă avea sigiliu și însemn propriu, cu valoare heraldică, puse la sediul breslei, pe steaguri "
+        "și pe lăzile de valori. Exemple din Sibiu: însemnul breslei dulgherilor (1450) și al croitorilor (1695). "
+        "Lăzile, semnele, steagurile și sigiliile breslelor desființate sunt păstrate la Muzeul Brukenthal.")
+p, REAL_END = para(RX0 + 26, IY0 + 70, real, 15, RW - 52, CEATA, "sans", 400, lh=19)
+s += p
+s += text(RX0 + 26, REAL_END + 2, "Surse: mnir.ro, „Însemne de breaslă din Transilvania”; limbaromana.org", 12.5, MUTED, "sans", 400, True)
+NOTE_Y = REAL_END + 12
+p, NOTE_END = para(RX0 + 26, NOTE_Y + 16, "Blazonul Elevei B. e inventat: nu copiază stema Sibiului și nici însemne reale de breaslă.", 15, RW - 52, OCRU, "sans", 600, lh=19)
+s += p
+
+s += frame_foot()
+write(OUT, s)
+print("reals", [round(measure("regula veche: " + r, 13.5, "sans", 400, True)) for _, _, r in arts], "/", MW - 72)
+print("legw", max(LEG_W), "/", RX1 - 20)
+print(OUT, "art_end", ART_END, "/", Y1 - 50, "leg_end", LEG_END, "rule_end", RULE_END, "/", Y0 + CH - 34,
+      "real_end", REAL_END, "note_end", NOTE_END, "/", Y1 - 12)

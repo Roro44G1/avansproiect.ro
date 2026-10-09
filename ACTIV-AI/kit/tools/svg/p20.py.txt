@@ -1,0 +1,269 @@
+# -*- coding: utf-8 -*-
+"""P20 – Ex-libris personal – marcă de carte desenată AI.
+Posesoare fictivă: „Ilinca T.”; deviza „Cu ochii în cărți” – inventată. Desen original, simplificat:
+lucarnele „ochii Sibiului”, Turnul Sfatului, Podul Minciunilor (nu reproduce stema Sibiului).
+Arătat în trei variante: mare (color), mică (lipită în carte), alb-negru (pentru ștampilă).
+Fapte: fapte_verificate.md (Biblioteca Județeană ASTRA – colecție de ex-libris; 1869; monumente);
+ce este un ex-libris: en.wikipedia, „Bookplate” (vezi /home/claude/expo/c6/08_identitate/_fapte_noi_P19_P21.md)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+from p19 import eye_dormer, house, council_tower, lies_bridge, P, fit, ORANGE, MUTED
+import math
+
+OUT = "/home/claude/expo/c6/08_identitate/P20_ex_libris.svg"
+OWNER = "ILINCA T."
+MOTTO = "Cu ochii în cărți"
+
+COLOR = dict(paper="#F7F1E3", ink="#2B2622", sky="#EADFC4", sun="#E2A62B", wall="#F3EFE6", roof="#B9583A",
+             eye="#2B2622", win="#5E5145", stone="#D9C7A2", troof="#8E3F2A", tdark="#3A3128", iron="#2B2622",
+             abut="#B8A98C", cover="#0E7C86", page="#FBF8F0", ribbon="#F3E7C9", ribbon_d="#C9B68C",
+             frame="#0E7C86", motto="#6E1D18", name="#2B2622", ex="#B9583A")
+MONO = dict(paper="#FFFFFF", ink="#121212", sky="#FFFFFF", sun=None, wall="#FFFFFF", roof="#121212",
+            eye="#FFFFFF", win="#121212", stone="#FFFFFF", troof="#121212", tdark="#121212", iron="#121212",
+            abut="#FFFFFF", cover="#121212", page="#FFFFFF", ribbon="#FFFFFF", ribbon_d="#121212",
+            frame="#121212", motto="#121212", name="#121212", ex="#121212")
+
+
+def open_book(cx, top, w, h, C, sw):
+    """Carte deschisă văzută din față (pagini curbate), cu rânduri de text schițate."""
+    o = ""
+    # coperta
+    o += (f'<path d="M{cx-w/2-5:.1f},{top+8:.1f} L{cx-w/2-5:.1f},{top+h+6:.1f} Q{cx-w/4:.1f},{top+h-2:.1f} {cx:.1f},{top+h+8:.1f} '
+          f'Q{cx+w/4:.1f},{top+h-2:.1f} {cx+w/2+5:.1f},{top+h+6:.1f} L{cx+w/2+5:.1f},{top+8:.1f} Z" fill="{C["cover"]}" stroke="{C["ink"]}" stroke-width="{sw:.1f}" stroke-linejoin="round"/>')
+    for sg in (-1, 1):
+        d = (f"M{cx:.1f},{top+6:.1f} Q{cx+sg*w*0.22:.1f},{top-6:.1f} {cx+sg*w/2:.1f},{top+2:.1f} L{cx+sg*w/2:.1f},{top+h:.1f} "
+             f"Q{cx+sg*w*0.22:.1f},{top+h-8:.1f} {cx:.1f},{top+h+4:.1f} Z")
+        o += f'<path d="{d}" fill="{C["page"]}" stroke="{C["ink"]}" stroke-width="{sw:.1f}" stroke-linejoin="round"/>'
+        # rânduri
+        for j in range(1, 4):
+            t = j / 4.2
+            y1 = top + 6 + (h - 4) * t
+            o += (f'<path d="M{cx+sg*w*0.08:.1f},{y1+1:.1f} Q{cx+sg*w*0.25:.1f},{y1-7:.1f} {cx+sg*w*0.42:.1f},{y1-3:.1f}" fill="none" '
+                  f'stroke="{C["ink"]}" stroke-width="{sw*0.7:.1f}" stroke-linecap="round" opacity="0.8"/>')
+    o += f'<line x1="{cx:.1f}" y1="{top+6:.1f}" x2="{cx:.1f}" y2="{top+h+4:.1f}" stroke="{C["ink"]}" stroke-width="{sw:.1f}"/>'
+    return o
+
+
+def diamond(x, y, r, fill):
+    return f'<polygon points="{P([(x, y-r), (x+r, y), (x, y+r), (x-r, y)])}" fill="{fill}"/>'
+
+
+def exlibris(uid, C, mono=False):
+    """Ex-librisul în coordonate locale 300 × 400 (origine sus-stânga)."""
+    sw = 1.9 if mono else 1.5
+    INK = C["ink"]
+    o = ""
+    # hârtia și chenarul dublu
+    o += f'<rect x="0" y="0" width="300" height="400" fill="{C["paper"]}"/>'
+    o += f'<rect x="8" y="8" width="284" height="384" fill="none" stroke="{C["frame"]}" stroke-width="{4 if mono else 3.2}"/>'
+    o += f'<rect x="14" y="14" width="272" height="372" fill="none" stroke="{C["frame"]}" stroke-width="{1.4 if mono else 1.1}"/>'
+    # colțuri: mici „ochi”
+    for (x_, y_) in ((26, 27), (274, 27)):
+        o += eye_dormer(x_, y_ + 4, 18, 6, C["roof"], INK, C["eye"], 1.0)
+    # EX LIBRIS
+    o += (f'<text x="152.5" y="55" font-family="{SERIF}" font-weight="700" font-size="27" letter-spacing="5" '
+          f'fill="{C["ex"]}" text-anchor="middle">EX LIBRIS</text>')
+    o += diamond(47, 46, 4, C["ex"]) + diamond(253, 46, 4, C["ex"])
+    # fereastra în arc
+    AX0, AX1, AT, AB = 30, 270, 72, 292
+    R = (AX1 - AX0) / 2
+    arch = f"M{AX0},{AB} V{AT+R} A{R},{R} 0 0 1 {AX1},{AT+R} V{AB} Z"
+    o += f'<clipPath id="win{uid}"><path d="{arch}"/></clipPath>'
+    o += f'<g clip-path="url(#win{uid})">'
+    o += f'<rect x="{AX0}" y="{AT}" width="{AX1-AX0}" height="{AB-AT}" fill="{C["sky"]}"/>'
+    # soarele (sau razele, la varianta alb-negru)
+    scx, scy = 150, 150
+    for kk in range(16):
+        a = 2 * math.pi * kk / 16
+        r1, r2 = 62, (112 if kk % 2 == 0 else 92)
+        o += (f'<line x1="{scx+r1*math.cos(a):.1f}" y1="{scy+r1*math.sin(a):.1f}" x2="{scx+r2*math.cos(a):.1f}" y2="{scy+r2*math.sin(a):.1f}" '
+              f'stroke="{INK if mono else C["sun"]}" stroke-width="{1.4 if mono else 2.2}" stroke-linecap="round" opacity="{1 if mono else 0.75}"/>')
+    if C["sun"]:
+        o += f'<circle cx="{scx}" cy="{scy}" r="54" fill="{C["sun"]}" opacity="0.9"/>'
+    else:
+        o += f'<circle cx="{scx}" cy="{scy}" r="54" fill="none" stroke="{INK}" stroke-width="1.6"/>'
+    # casele, cu „ochi” mari (desenați separat, ca să se vadă și la 6 cm)
+    E_ = dict(lid=C["roof"], line=INK, opening=C["eye"], sw=sw)
+    o += house(AX0 - 6, 244, 60, 42, 70, C["wall"], C["roof"], INK, eyes=0, win=C["win"], sw=sw, tiles=not mono)
+    o += house(AX1 - 54, 244, 60, 42, 74, C["wall"], C["roof"], INK, eyes=0, win=C["win"], sw=sw, tiles=not mono)
+    o += house(AX0 + 56, 246, 46, 30, 50, C["wall"], C["roof"], INK, eyes=0, win=C["win"], sw=sw, gable=True, tiles=not mono, wins=1)
+    o += house(AX1 - 102, 246, 46, 30, 52, C["wall"], C["roof"], INK, eyes=0, win=C["win"], sw=sw, gable=True, tiles=not mono, wins=1)
+    for hx, top_, rh in ((AX0 - 6, 202, 70), (AX1 - 54, 202, 74)):
+        o += eye_dormer(hx + 17, top_ - rh * 0.30, 24, 8.5, **E_)
+        o += eye_dormer(hx + 43, top_ - rh * 0.30, 24, 8.5, **E_)
+        o += eye_dormer(hx + 30, top_ - rh * 0.68, 18, 6.5, **E_)
+    for hx, top_, rh in ((AX0 + 56, 216, 50), (AX1 - 102, 216, 52)):
+        o += eye_dormer(hx + 23, top_ - rh * 0.34, 20, 7, **E_)
+    # Turnul Sfatului
+    o += council_tower(150, 246, 36, 96, C["stone"], C["troof"], INK, dark=C["tdark"], sw=sw)
+    # Podul Minciunilor, peste cotorul cărții
+    o += lies_bridge(72, 228, 228, 22, C["iron"], INK, 12, sw=sw, stone=C["abut"], stone_h=26, detail=True)
+    # cartea deschisă, în prim-plan: orașul „crește” din ea
+    o += open_book(150, 250, 226, 34, C, sw)
+    o += '</g>'
+    o += f'<path d="{arch}" fill="none" stroke="{INK}" stroke-width="{sw*1.6:.1f}"/>'
+    # panglica cu deviza
+    ms = fit(MOTTO, 200, 19, "serif", 700, True)
+    mw = measure(MOTTO, ms, "serif", 700, True) + 36
+    bx0, bx1 = 150 - mw / 2, 150 + mw / 2
+    MY = 280
+    E = 22
+    for sg, xb in ((-1, bx0), (1, bx1)):
+        o += f'<polygon points="{P([(xb - sg*E, MY+6), (xb + sg*2, MY+6), (xb + sg*2, MY+34), (xb - sg*E, MY+34), (xb - sg*E + sg*10, MY+20)])}" fill="{C["ribbon_d"] if not mono else C["ribbon"]}" stroke="{INK}" stroke-width="{sw:.1f}" stroke-linejoin="round"/>'
+    o += f'<rect x="{bx0+6:.1f}" y="{MY}" width="{mw-12:.1f}" height="30" fill="{C["ribbon"]}" stroke="{INK}" stroke-width="{sw:.1f}"/>'
+    o += (f'<text x="150" y="{MY+21}" font-family="{SERIF}" font-weight="700" font-style="italic" font-size="{ms}" '
+          f'fill="{C["motto"]}" text-anchor="middle">{esc(MOTTO)}</text>')
+    # numele
+    ns = fit(OWNER, 230, 38, "serif", 700)
+    o += (f'<text x="150" y="358" font-family="{SERIF}" font-weight="700" font-size="{ns}" letter-spacing="3" '
+          f'fill="{C["name"]}" text-anchor="middle">{esc(OWNER)}</text>')
+    o += f'<line x1="70" y1="372" x2="130" y2="372" stroke="{C["frame"]}" stroke-width="1.2"/><line x1="170" y1="372" x2="230" y2="372" stroke="{C["frame"]}" stroke-width="1.2"/>'
+    o += diamond(150, 372, 3.5, C["frame"])
+    return o
+
+
+def main():
+    TITLE = "Ex-libris personal"
+    s = frame_head("IDENTITATE · P20", ORANGE, TITLE, "posesoare fictivă · desen original, nu reproduce stema Sibiului")
+    s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— marcă de carte desenată AI", 30, CEATA, "serif", 400, True)
+    s += ('<defs>'
+          '<filter id="ink20" x="-3%" y="-3%" width="106%" height="106%">'
+          '<feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed="11" result="n"/>'
+          '<feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/></filter>'
+          '<linearGradient id="endp20" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D8E7E4"/><stop offset="1" stop-color="#B9D3CF"/></linearGradient>'
+          '<linearGradient id="pg20" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E9E2D2"/><stop offset="0.12" stop-color="#FBF8F0"/><stop offset="1" stop-color="#F6F1E4"/></linearGradient>'
+          '<linearGradient id="gut20" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.22"/></linearGradient>'
+          '</defs>\n')
+
+    COLS = [330, 960, 1590]
+    LAB_Y = 262
+    labels = ["1 · VARIANTA MARE, COLOR", "2 · VARIANTA MICĂ, LIPITĂ ÎN CARTE", "3 · ALB-NEGRU, PENTRU ȘTAMPILĂ"]
+    for cx_, lab in zip(COLS, labels):
+        s += text(cx_, LAB_Y, lab, 17, OCRU, "sans", 700, anchor="middle", extra='letter-spacing="2.5"')
+
+    # ------------------------------------------------ 1. varianta mare
+    sc1 = 0.9
+    x1 = COLS[0] - 150 * sc1; y1 = 286
+    s += f'<g filter="url(#sh)"><rect x="{x1:.1f}" y="{y1}" width="{300*sc1:.1f}" height="{400*sc1:.1f}" fill="{COLOR["paper"]}"/></g>'
+    s += f'<g transform="translate({x1:.1f},{y1}) scale({sc1})">' + exlibris("A", COLOR) + '</g>\n'
+    BIG_END = y1 + 400 * sc1
+
+    # ------------------------------------------------ 2. lipit în carte
+    BW, BH = 540, 340
+    bx = COLS[1] - BW / 2; by = 296
+    s += f'<g filter="url(#sh)"><rect x="{bx-10}" y="{by-10}" width="{BW+20}" height="{BH+20}" rx="10" fill="#5A2E22"/></g>'   # coperta tare
+    s += f'<rect x="{bx}" y="{by}" width="{BW/2}" height="{BH}" fill="url(#endp20)"/>'                                       # forzațul
+    # model discret de forzaț (romburi)
+    for i in range(1, 12):
+        for j in range(1, 16):
+            px_ = bx + i * (BW / 2) / 12; py_ = by + j * BH / 16
+            if (i + j) % 2 == 0:
+                s += f'<circle cx="{px_:.1f}" cy="{py_:.1f}" r="1.6" fill="#8FB7B1" opacity="0.7"/>'
+    s += f'<rect x="{bx+BW/2}" y="{by}" width="{BW/2}" height="{BH}" fill="url(#pg20)"/>'                                    # prima pagină
+    s += f'<rect x="{bx+BW/2-34}" y="{by}" width="34" height="{BH}" fill="url(#gut20)"/>'
+    # textul paginii din dreapta (schițat)
+    s += text(bx + BW * 0.75, by + 64, "Capitolul 1", 20, "#5E5145", "serif", 700, anchor="middle")
+    for j in range(9):
+        ly = by + 102 + j * 23
+        lw = BW / 2 - 80 - (60 if j == 8 else 0)
+        s += f'<line x1="{bx+BW/2+40}" y1="{ly}" x2="{bx+BW/2+40+lw}" y2="{ly}" stroke="#CFC6B3" stroke-width="5" stroke-linecap="round"/>'
+    # ex-librisul mic, lipit
+    sc2 = 0.40
+    ew, eh = 300 * sc2, 400 * sc2
+    ex_ = bx + BW / 4 - ew / 2; ey_ = by + (BH - eh) / 2 - 6
+    s += f'<g transform="rotate(-2 {ex_+ew/2:.1f} {ey_+eh/2:.1f})">'
+    s += f'<rect x="{ex_+3:.1f}" y="{ey_+4:.1f}" width="{ew:.1f}" height="{eh:.1f}" fill="#000" opacity="0.18"/>'
+    s += f'<g transform="translate({ex_:.1f},{ey_:.1f}) scale({sc2})">' + exlibris("B", COLOR) + '</g></g>\n'
+    # cote: 6 × 8 cm (propunere)
+    cy_ = ey_ + eh + 22
+    s += f'<line x1="{ex_:.1f}" y1="{cy_:.1f}" x2="{ex_+ew:.1f}" y2="{cy_:.1f}" stroke="#2B2622" stroke-width="1.4"/>'
+    for xx in (ex_, ex_ + ew):
+        s += f'<line x1="{xx:.1f}" y1="{cy_-6:.1f}" x2="{xx:.1f}" y2="{cy_+6:.1f}" stroke="#2B2622" stroke-width="1.4"/>'
+    s += text(ex_ + ew / 2, cy_ + 20, "circa 6 × 8 cm", 13, "#2B2622", "sans", 600, anchor="middle")
+    BOOK_END = by + BH + 10
+
+    # ------------------------------------------------ 3. alb-negru (ștampilă)
+    sc3 = 0.84
+    x3 = COLS[2] - 150 * sc3; y3 = 300
+    s += f'<g filter="url(#sh)"><rect x="{x3-18:.1f}" y="{y3-14}" width="{300*sc3+36:.1f}" height="{400*sc3+28:.1f}" rx="6" fill="#FFFFFF"/></g>'
+    s += f'<g transform="translate({x3:.1f},{y3}) scale({sc3})" filter="url(#ink20)">' + exlibris("C", MONO, mono=True) + '</g>\n'
+    MONO_END = y3 + 400 * sc3 + 14
+
+    caps = ["Culori calde pe hârtie crem: petrol, ocru, țiglă și cerneală.",
+            "Pe interiorul copertei din față (forzaț); mărimea e o propunere.",
+            "O singură culoare, forme pline: se poate grava ca ștampilă."]
+    CAP_Y = 680
+    for cx_, cap in zip(COLS, caps):
+        s += text(cx_, CAP_Y, cap, 16, CEATA, "sans", 400, True, anchor="middle")
+
+    # ------------------------------------------------ carduri jos
+    CY0, CY1 = 704, 1004
+    CW = (1760 - 40) / 3
+    ENDS = {}
+
+    def head(x, title, sub=None, fill=CARD, stroke="#2A3845", bar=ORANGE):
+        o = f'<rect x="{x:.1f}" y="{CY0}" width="{CW:.1f}" height="{CY1-CY0}" rx="22" fill="{fill}" stroke="{stroke}" stroke-width="1.6"/>'
+        o += f'<rect x="{x:.1f}" y="{CY0}" width="{CW:.1f}" height="7" rx="3.5" fill="{bar}"/>'
+        o += text(x + 26, CY0 + 42, title, 22, VAR, "serif", 700)
+        if sub:
+            o += text(x + CW - 24, CY0 + 42, sub, 13, MUTED, "sans", 400, True, anchor="end")
+        return o
+
+    def bullets(x, items, y, size=16, lh=21, col=VAR, gap=8):
+        o = ""
+        for f_ in items:
+            o += f'<circle cx="{x+32:.1f}" cy="{y-5:.1f}" r="3.5" fill="{OCRU}"/>'
+            p, y = para(x + 46, y, f_, size, CW - 72, col, "sans", 400, lh=lh)
+            o += p
+            y += gap
+        return o, y
+
+    xa = 80
+    s += head(xa, "Ce este un ex-libris")
+    items = ["O etichetă tipărită sau decorată, lipită de obicei pe forzațul din față, care arată cui îi aparține cartea.",
+             "„Ex libris” înseamnă în latină „din cărțile”; urmează numele posesorului.",
+             "Poartă un motiv legat de posesor: un blazon, o deviză sau un desen comandat unui artist.",
+             "Cele mai vechi ex-librisuri tipărite cunoscute sunt germane, din secolul al XV-lea; studiul și colecționarea lor încep pe la 1860."]
+    p, ENDS["A"] = bullets(xa, items, CY0 + 76)
+    s += p
+    s += text(xa + 26, CY1 - 16, "Sursa: en.wikipedia, „Bookplate”", 12.5, MUTED, "sans", 400, True)
+
+    xb = 80 + CW + 20
+    s += head(xb, "La Sibiu: biblioteca ASTRA")
+    items = ["Biblioteca Județeană ASTRA are și o colecție de ex-libris, alături de manuscrise, carte rară, carte românească veche și hărți.",
+             "1869 – prima bibliotecă publică românească din Transilvania: biblioteca Asociațiunii ASTRA (asociație fondată la Sibiu în 1861).",
+             "Azi: 813.551 de documente; cea mai veche carte e din 1511.",
+             "Cea mai veche carte românească din colecție: „Sbornicul slavonesc”, tipărit de Coresi la Sebeș în 1580."]
+    p, ENDS["B"] = bullets(xb, items, CY0 + 76)
+    s += p
+    s += text(xb + 26, CY1 - 16, "Fapte: fișa proiectului (musikland.sonoro.org; patrimoniu.sibiu.ro; en.wikipedia)", 12.5, MUTED, "sans", 400, True)
+
+    xc = 80 + 2 * (CW + 20)
+    s += head(xc, "Cum a fost desenat", "Ilinca T. – personaj fictiv", fill="#0D3A40", stroke=PETROL, bar=PETROL)
+    legend = [("Lucarnele", "„ochii Sibiului” ventilează podurile; de la ei vine deviza „Cu ochii în cărți”."),
+              ("Turnul Sfatului", "între Piața Mare și Piața Mică; cândva, punct de observație pentru incendii."),
+              ("Podul Minciunilor", "terminat în 1859, trece peste o carte deschisă – un pod spre povești."),
+              ("Contur gros", "desenul se citește și la 6 cm, și ca ștampilă.")]
+    yy = CY0 + 76
+    for a_, b_ in legend:
+        aw = measure(a_ + ": ", 16, "sans", 700)
+        lines = wrap(b_, CW - 72 - aw, 16)
+        first = lines[0]; rest = b_[len(first):].strip()
+        s += f'<circle cx="{xc+32:.1f}" cy="{yy-5:.1f}" r="3.5" fill="{OCRU}"/>'
+        s += text(xc + 46, yy, a_ + ":", 16, VAR, "sans", 700)
+        s += text(xc + 46 + aw, yy, first, 16, "#D6E6E8", "sans", 400)
+        yy += 21
+        if rest:
+            p, yy = para(xc + 46, yy, rest, 16, CW - 72, "#D6E6E8", "sans", 400, lh=21)
+            s += p
+        yy += 8
+    ENDS["C"] = yy
+    s += text(xc + 26, CY1 - 16, "Desen simplificat, nu la scară; nu reproduce stema Sibiului.", 13, OCRU, "sans", 600, True)
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT, "big_end", BIG_END, "book_end", BOOK_END, "mono_end", MONO_END, "/", CAP_Y - 22, "ends", ENDS, "/", CY1 - 36)
+
+
+if __name__ == "__main__":
+    main()

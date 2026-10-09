@@ -1,0 +1,50 @@
+[
+ {
+  "cod": "V26",
+  "categorie": "Vizual",
+  "titlu": "Cibinul de la izvor la Olt — panoramă ilustrată AI",
+  "fisiere": [
+   "01_vizual/V26_card_canva.png",
+   "01_vizual/canva_miniaturi/V26_cibin_panorama.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Panoramă în acuarelă a unui râu de munte, citită de la stânga la dreapta: izvorul sub un vârf alpin, cheile de șist, lacul de acumulare cu baraj, satele păstorilor, orașul medieval cu acoperișuri roșii, câmpia și confluența cu un râu mare, lângă o mică gară.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXaMcTjB0",
+    "url": "https://www.canva.com/M/MAHXaMcTjB0",
+    "eticheta": "panoramă imaginată, de la stânga la dreapta: izvor → Olt"
+   }
+  ],
+  "nota": "Fapte verificate (en.wikipedia; muntii-nostri.ro): Cibinul izvorăște în Munții Cindrel, are 82 km și un bazin de 2.194 km², trece prin Cheile Cibinului, Gura Râului, Orlat și Sibiu și se varsă în Olt lângă Tălmaciu (stația Podu Olt). Imaginea e o compoziție liberă, nu o hartă: proporțiile și peisajele sunt imaginate. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ },
+ {
+  "cod": "V27",
+  "categorie": "Vizual",
+  "titlu": "Păltiniș în 1894 și în 2050 — prima stațiune montană din România, în două epoci (AI)",
+  "fisiere": [
+   "01_vizual/V27_card_canva.png",
+   "01_vizual/canva_miniaturi/V27a_paltinis_1894.jpg",
+   "01_vizual/canva_miniaturi/V27b_paltinis_2050.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Aceeași stațiune de munte în două epoci: în 1894, vile de lemn cu acoperiș de șindrilă într-o poiană cu molizi, drumeți în haine de epocă; în 2050, vilele vechi păstrate în centru, clădiri ecologice cu acoperiș verde, telecabină, poteci pentru biciclete.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXaEgMPq0",
+    "url": "https://www.canva.com/M/MAHXaEgMPq0",
+    "eticheta": "1894 – în stil de fotografie veche"
+   },
+   {
+    "media_id": "MAHXaLZvr1Q",
+    "url": "https://www.canva.com/M/MAHXaLZvr1Q",
+    "eticheta": "2050 – viziune imaginată"
+   }
+  ],
+  "nota": "Fapte verificate: Păltiniș, fondat în 1894 de Siebenbürgischer Karpatenverein (SKV); prima stațiune montană din România (patrimoniu.sibiu.ro); 1.440 m (en.wikipedia) sau 1.442 m (gandul.ro); Casa Turiștilor 1894, Casa Medicilor 1895, Sala Monaco 1898. Imaginea din 1894 nu reproduce o fotografie reală, iar cea din 2050 este o viziune, nu un proiect. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ }
+]

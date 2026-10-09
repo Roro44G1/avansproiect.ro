@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="245" height="44" fill="#F76B15"/>
+<text x="122.6" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">IDENTITATE · P15</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="60" fill="#F3EFE6">Angajamentul micului ecologist sibian</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">afiș-model · promisiuni propuse, de completat și semnat</text>
+<text x="1268.5" y="190.0" font-family="'Noto Serif', serif" font-size="30" font-weight="400" fill="#A9B4C0" text-anchor="start" font-style="italic">— afiș AI cu 7 promisiuni</text>
+<defs><linearGradient id="pg15" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8F3E9"/><stop offset="1" stop-color="#EFE6D3"/></linearGradient><pattern id="dots15" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="13" cy="13" r="1.2" fill="#C9B994" opacity="0.5"/></pattern></defs>
+<g filter="url(#sh)"><rect x="80" y="228" width="1760" height="776" rx="14" fill="url(#pg15)"/></g>
+<rect x="80" y="228" width="1760" height="776" rx="14" fill="url(#pg15)" filter="url(#paper)"/>
+<rect x="80" y="228" width="1760" height="776" rx="14" fill="url(#dots15)"/>
+<rect x="92" y="240" width="1736" height="752" rx="8" fill="none" stroke="#3D7A4A" stroke-width="1.6" stroke-dasharray="10 6" opacity="0.55"/>
+<circle cx="110" cy="260" r="9" fill="#000" opacity="0.18"/><circle cx="110" cy="258" r="9" fill="#F76B15"/><circle cx="107" cy="255" r="3" fill="#FFD2B0"/>
+<circle cx="1810" cy="260" r="9" fill="#000" opacity="0.18"/><circle cx="1810" cy="258" r="9" fill="#F76B15"/><circle cx="1807" cy="255" r="3" fill="#FFD2B0"/>
+<text x="136.0" y="280.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#8A5A2B" text-anchor="start" letter-spacing="3">EU, MICUL ECOLOGIST SIBIAN,</text>
+<text x="136.0" y="326.0" font-family="'Noto Serif', serif" font-size="40" font-weight="700" fill="#2B2622" text-anchor="start" font-style="italic">promit să am grijă de locurile mele:</text>
+<clipPath id="pan15"><rect x="1150" y="254" width="640" height="86" rx="12"/></clipPath>
+<g clip-path="url(#pan15)"><rect x="1150" y="254" width="640" height="86" fill="#DCE9E6"/><circle cx="1220" cy="280" r="13" fill="#E2A62B" opacity="0.85"/><path d="M1150,318 L1210,288 L1246,306 L1300,272 L1364,310 L1410,298 L1480,320 V340 H1150 Z" fill="#7D97A6"/><path d="M1292,280 L1300,272 L1310,280 L1304,284 Z" fill="#F3EFE6"/><polygon points="1154.0,332 1160.0,304.3 1166.0,332" fill="#2F5E46"/><polygon points="1171.0,332 1177.0,313.9 1183.0,332" fill="#2F5E46"/><polygon points="1188.0,332 1194.0,306.6 1200.0,332" fill="#2F5E46"/><polygon points="1205.0,332 1211.0,312.4 1217.0,332" fill="#2F5E46"/><polygon points="1222.0,332 1228.0,304.1 1234.0,332" fill="#2F5E46"/><polygon points="1239.0,332 1245.0,313.8 1251.0,332" fill="#2F5E46"/><polygon points="1256.0,332 1262.0,305.2 1268.0,332" fill="#2F5E46"/><polygon points="1273.0,332 1279.0,307.2 1285.0,332" fill="#2F5E46"/><polygon points="1290.0,332 1296.0,305.4 1302.0,332" fill="#2F5E46"/><polygon points="1307.0,332 1313.0,304.0 1319.0,332" fill="#2F5E46"/><polygon points="1324.0,332 1330.0,311.6 1336.0,332" fill="#2F5E46"/><polygon points="1341.0,332 1347.0,310.6 1353.0,332" fill="#2F5E46"/><polygon points="1358.0,332 1364.0,306.9 1370.0,332" fill="#2F5E46"/><polygon points="1375.0,332 1381.0,311.2 1387.0,332" fill="#2F5E46"/><polygon points="1392.0,332 1398.0,311.4 1404.0,332" fill="#2F5E46"/><polygon points="1409.0,332 1415.0,311.7 1421.0,332" fill="#2F5E46"/><circle cx="1450.0" cy="326.0" r="12.4" fill="#5E8C46"/><circle cx="1465.0" cy="326.0" r="12.5" fill="#5E8C46"/><circle cx="1480.0" cy="326.0" r="12.2" fill="#5E8C46"/><circle cx="1495.0" cy="326.0" r="9.9" fill="#5E8C46"/><circle cx="1510.0" cy="326.0" r="12.7" fill="#5E8C46"/><circle cx="1525.0" cy="326.0" r="11.0" fill="#5E8C46"/><circle cx="1540.0" cy="326.0" r="9.9" fill="#5E8C46"/><circle cx="1555.0" cy="326.0" r="10.8" fill="#5E8C46"/><circle cx="1570.0" cy="326.0" r="10.7" fill="#5E8C46"/><circle cx="1585.0" cy="326.0" r="9.3" fill="#5E8C46"/><rect x="1620" y="310" width="170" height="30" fill="#B9583A" opacity="0.9"/><polygon points="1620,310 1635.0,290 1650,310" fill="#9C4A30"/><polygon points="1654,310 1667.0,280 1680,310" fill="#9C4A30"/><polygon points="1684,310 1701.0,292 1718,310" fill="#9C4A30"/><polygon points="1722,310 1734.0,284 1746,310" fill="#9C4A30"/><polygon points="1750,310 1770.0,294 1790,310" fill="#9C4A30"/><rect x="1696" y="272" width="12" height="40" fill="#E9DFCB"/><polygon points="1692,272 1702,252 1712,272" fill="#9C4A30"/><path d="M1270,340 q60,-20 140,-6 t170,-4 t200,-6 t120,4" fill="none" stroke="#4E8FB0" stroke-width="7" stroke-linecap="round"/></g><rect x="1150" y="254" width="640" height="86" rx="12" fill="none" stroke="#C9B994" stroke-width="1.5"/>
+<text x="1790.0" y="360.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#5E554B" text-anchor="end" font-style="italic">panoramă stilizată, nu hartă</text>
+<rect x="120.0" y="368.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="120.0" y="382.0" width="5" height="113.0" rx="2.5" fill="#3D7A4A"/>
+<g filter="url(#shs)"><circle cx="198.0" cy="438.5" r="50" fill="#3D7A4A"/></g><g transform="translate(198.0,438.5)"><g fill="#FFFFFF"><rect x="-24.5" y="4" width="5" height="16"/><circle cx="-22" cy="-6" r="13"/><rect x="19.5" y="4" width="5" height="16"/><circle cx="22" cy="-6" r="13"/></g><path d="M-5,26 q4,-14 2,-30 M5,26 q-2,-16 2,-30" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-dasharray="4 3"/><g transform="translate(0,-26)"><circle r="3" fill="#E2A62B"/><ellipse cx="0" cy="-5" rx="2.6" ry="4" fill="#FFFFFF" transform="rotate(0)"/><ellipse cx="0" cy="-5" rx="2.6" ry="4" fill="#FFFFFF" transform="rotate(72)"/><ellipse cx="0" cy="-5" rx="2.6" ry="4" fill="#FFFFFF" transform="rotate(144)"/><ellipse cx="0" cy="-5" rx="2.6" ry="4" fill="#FFFFFF" transform="rotate(216)"/><ellipse cx="0" cy="-5" rx="2.6" ry="4" fill="#FFFFFF" transform="rotate(288)"/></g></g><circle cx="236.0" cy="400.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="236.0" y="407.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">1</text>
+
+<text x="278.0" y="398.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#3D7A4A" text-anchor="start" letter-spacing="2.2">PĂDUREA DUMBRAVA</text>
+<text x="278.0" y="429.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Rămân pe alei și nu culeg plante.</text>
+<text x="278.0" y="456.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Parc natural de 993 ha, la limita sud-vestică a Sibiului; aici cresc orhidee, brândușe și</text>
+<text x="278.0" y="476.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">opaița, o plantă endemică.</text>
+<text x="278.0" y="497.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: sibiul.ro; ecomagazin.ro</text>
+<rect x="972.0" y="368.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="972.0" y="382.0" width="5" height="113.0" rx="2.5" fill="#0E7C86"/>
+<g filter="url(#shs)"><circle cx="1050.0" cy="438.5" r="50" fill="#0E7C86"/></g><g transform="translate(1050.0,438.5)"><g fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><path d="M-30,12 q7.5,-7 15,0 t15,0 t15,0 t15,0"/><path d="M-30,22 q7.5,-7 15,0 t15,0 t15,0 t15,0"/></g><g fill="#FFFFFF"><rect x="-11" y="-22" width="22" height="26" rx="3"/><rect x="-14" y="-28" width="28" height="5" rx="2"/><rect x="-4" y="-32" width="8" height="4" rx="1.5"/></g><g stroke="#000" stroke-opacity="0.25" stroke-width="2"><line x1="-5" y1="-17" x2="-5" y2="-1"/><line x1="0" y1="-17" x2="0" y2="-1"/><line x1="5" y1="-17" x2="5" y2="-1"/></g></g><circle cx="1088.0" cy="400.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="1088.0" y="407.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">2</text>
+
+<text x="1130.0" y="398.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#0E7C86" text-anchor="start" letter-spacing="2.2">CIBINUL ȘI MALURILE LUI</text>
+<text x="1130.0" y="429.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Nu las gunoi pe malul râului.</text>
+<text x="1130.0" y="456.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Cibinul are 82 km: coboară din Munții Cindrel, trece prin Sibiu și se varsă în Olt, lângă</text>
+<text x="1130.0" y="476.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Tălmaciu. Ce ajunge în apă pleacă la vale.</text>
+<text x="1130.0" y="497.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: en.wikipedia</text>
+<rect x="120.0" y="523.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="120.0" y="537.0" width="5" height="113.0" rx="2.5" fill="#6E56CF"/>
+<g filter="url(#shs)"><circle cx="198.0" cy="593.5" r="50" fill="#6E56CF"/></g><g transform="translate(198.0,593.5)"><path d="M-24,-14 l12,-3 l2,6 Z" fill="#FFFFFF"/><ellipse cx="-2" cy="-14" rx="15" ry="10" fill="#FFFFFF"/><circle cx="13" cy="-23" r="8" fill="#FFFFFF"/><path d="M20,-25 l8,2 l-8,3 Z" fill="#E2A62B"/><circle cx="15" cy="-25" r="1.8" fill="#222"/><path d="M-12,-16 q8,-8 18,-2 q-8,6 -18,2 Z" fill="#000" opacity="0.18"/><ellipse cx="-8" cy="6" rx="6" ry="7.5" fill="#CFE6F3"/><ellipse cx="6" cy="5" rx="6" ry="7.5" fill="#CFE6F3"/><path d="M-30,6 h60 q-4,20 -30,20 q-26,0 -30,-20 Z" fill="#FFFFFF"/><g stroke="#000" stroke-opacity="0.22" stroke-width="1.6" fill="none"><path d="M-26,11 q26,8 52,0"/><path d="M-20,18 q20,6 40,0"/><path d="M-22,6 l6,6 M-8,6 l6,7 M6,6 l6,7 M18,6 l5,6"/></g></g><circle cx="236.0" cy="555.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="236.0" y="562.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">3</text>
+
+<text x="278.0" y="553.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#6E56CF" text-anchor="start" letter-spacing="2.2">PARCUL SUB ARINI</text>
+<text x="278.0" y="584.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Nu deranjez cuiburile și păsările.</text>
+<text x="278.0" y="611.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Parcul, înființat în 1856, are 95 de specii de păsări și arbori de peste 150 de ani – arin,</text>
+<text x="278.0" y="631.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">tei, castan, platan.</text>
+<text x="278.0" y="652.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: zilesinopti.ro</text>
+<rect x="972.0" y="523.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="972.0" y="537.0" width="5" height="113.0" rx="2.5" fill="#B9583A"/>
+<g filter="url(#shs)"><circle cx="1050.0" cy="593.5" r="50" fill="#B9583A"/></g><g transform="translate(1050.0,593.5)"><path d="M-32,22 L-10,-20 L2,-4 L12,-14 L32,22 Z" fill="#FFFFFF" opacity="0.95"/><path d="M-16,-8 L-10,-20 L-4,-8 L-8,-5 L-12,-8 Z" fill="#000" opacity="0.18"/><g transform="translate(6,8)"><path d="M-7,-10 q7,-9 14,0" fill="none" stroke="#2B2622" stroke-width="3"/><rect x="-12" y="-10" width="24" height="26" rx="7" fill="#2B2622"/><rect x="-7" y="3" width="14" height="8" rx="2.5" fill="#FFFFFF" opacity="0.9"/></g><path d="M-14,26 a11,11 0 0 1 0,-22 h4" fill="none" stroke="#2B2622" stroke-width="3" stroke-linecap="round"/><path d="M-11,-1 l9,5 l-9,5 Z" fill="#2B2622"/></g><circle cx="1088.0" cy="555.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="1088.0" y="562.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">4</text>
+
+<text x="1130.0" y="553.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#B9583A" text-anchor="start" letter-spacing="2.2">PE MUNTE, LA PĂLTINIȘ</text>
+<text x="1130.0" y="584.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Ce aduc pe munte, iau înapoi acasă.</text>
+<text x="1130.0" y="611.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Păltiniș (1894), cea mai veche stațiune montană din România, e înconjurat de pădure</text>
+<text x="1130.0" y="631.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">de conifere.</text>
+<text x="1130.0" y="652.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: turistintransilvania.com; en.wikipedia</text>
+<rect x="120.0" y="678.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="120.0" y="692.0" width="5" height="113.0" rx="2.5" fill="#3E63DD"/>
+<g filter="url(#shs)"><circle cx="198.0" cy="748.5" r="50" fill="#3E63DD"/></g><g transform="translate(198.0,748.5)"><g fill="#FFFFFF"><rect x="-26" y="-22" width="30" height="10" rx="3"/><rect x="-2" y="-22" width="10" height="20" rx="3"/><rect x="-16" y="-30" width="10" height="9" rx="2"/><rect x="-22" y="-34" width="22" height="5" rx="2.5"/></g><path d="M3,4 q-8,12 0,16 q8,-4 0,-16 Z" fill="#CFE6F3" stroke="#FFFFFF" stroke-width="2"/><path d="M14,10 a14,14 0 0 1 4,18" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/></g><circle cx="236.0" cy="710.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="236.0" y="717.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">5</text>
+
+<text x="278.0" y="708.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#3E63DD" text-anchor="start" letter-spacing="2.2">APA DE LA GURA RÂULUI</text>
+<text x="278.0" y="739.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Economisesc apa: închid robinetul.</text>
+<text x="278.0" y="766.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Barajul de lângă Gura Râului este cea mai mare sursă de apă potabilă pentru orașul</text>
+<text x="278.0" y="786.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Sibiu.</text>
+<text x="278.0" y="807.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: en.wikipedia</text>
+<rect x="972.0" y="678.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="972.0" y="692.0" width="5" height="113.0" rx="2.5" fill="#E2A62B"/>
+<g filter="url(#shs)"><circle cx="1050.0" cy="748.5" r="50" fill="#E2A62B"/></g><g transform="translate(1050.0,748.5)"><path d="M-28,24 q28,-18 56,0 Z" fill="#FFFFFF"/><path d="M0,16 V-6" stroke="#2B2622" stroke-width="3.4" stroke-linecap="round"/><path d="M0,-2 q-20,-4 -22,-22 q18,0 22,22 Z" fill="#2B2622"/><path d="M0,-6 q16,-6 18,-24 q-16,2 -18,24 Z" fill="#2B2622"/></g><circle cx="1088.0" cy="710.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="1088.0" y="717.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">6</text>
+
+<text x="1130.0" y="708.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#9A6B10" text-anchor="start" letter-spacing="2.2">UN COPAC NOU</text>
+<text x="1130.0" y="739.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Plantez un copac și am grijă de el.</text>
+<text x="1130.0" y="766.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">În 1754, pentru Dumbrava, Martin von Seeberg propunea ca fiecare tânăr de 10 ani să</text>
+<text x="1130.0" y="786.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">planteze doi puieți de stejar și să-i îngrijească.</text>
+<text x="1130.0" y="807.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: ecomagazin.ro</text>
+<rect x="120.0" y="833.0" width="828.0" height="141.0" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>
+<rect x="120.0" y="847.0" width="5" height="113.0" rx="2.5" fill="#F76B15"/>
+<g filter="url(#shs)"><circle cx="198.0" cy="903.5" r="50" fill="#F76B15"/></g><g transform="translate(198.0,903.5)"><g fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="-17" cy="10" r="12"/><circle cx="17" cy="10" r="12"/><path d="M-17,10 L-5,-10 L12,-10 L17,10 M-5,-10 L2,10 L12,-10 M-9,-16 h8 M12,-10 l-3,-8 h7"/></g><circle cx="2" cy="10" r="3" fill="#FFFFFF"/></g><circle cx="236.0" cy="865.5" r="17" fill="#2B2622" stroke="#FFFDF8" stroke-width="3"/><text x="236.0" y="872.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFDF8" text-anchor="middle">7</text>
+
+<text x="278.0" y="863.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#F76B15" text-anchor="start" letter-spacing="2.2">PROMENADA CIBINULUI</text>
+<text x="278.0" y="894.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start">Merg pe jos sau cu bicicleta când pot.</text>
+<text x="278.0" y="921.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">Promenada Cibinului din Sibiu are aproape 4 km de piste pentru biciclete, trotuare,</text>
+<text x="278.0" y="941.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#5E554B" text-anchor="start">pontoane și zone de relaxare.</text>
+<text x="278.0" y="962.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#8C8172" text-anchor="start" font-style="italic">sursa: zilesinopti.ro, 2024</text>
+<rect x="972.0" y="833.0" width="828.0" height="141.0" rx="14" fill="none" stroke="#8A5A2B" stroke-width="1.8" stroke-dasharray="8 6"/>
+<text x="1004.0" y="885.0" font-family="'Noto Serif', serif" font-size="24" font-weight="700" fill="#2B2622" text-anchor="start" font-style="italic">Semnătura mea:</text>
+<line x1="1224.0" y1="887.0" x2="1768.0" y2="887.0" stroke="#2B2622" stroke-width="1.6"/>
+<text x="1004.0" y="931.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#2B2622" text-anchor="start" font-style="italic">Data:</text>
+<line x1="1075.5" y1="933.0" x2="1295.5" y2="933.0" stroke="#2B2622" stroke-width="1.4"/>
+<text x="1325.5" y="921.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5E554B" text-anchor="start" font-style="italic">Afiș-model generat cu AI.</text>
+<text x="1325.5" y="941.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#5E554B" text-anchor="start" font-style="italic">Promisiunile sunt propuse – adaug-o și pe a ta.</text>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

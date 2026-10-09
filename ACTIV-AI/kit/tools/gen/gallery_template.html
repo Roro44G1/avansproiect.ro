@@ -135,7 +135,7 @@ footer{padding-block:28px 48px;color:var(--muted);font-size:13px;border-top:1px 
       <button class="btn primary" id="startKiosk" type="button">▶ Pornește modul ecran</button>
     </div>
   </header>
-  <p class="note"><b>Ce vedeți aici.</b> Piesele sunt exemple-model generate cu AI de echipa de proiect (texte, ilustrații, hărți, animații și muzică în cod; imagini fotorealiste generate cu Canva AI), ca punct de plecare pentru clase. Nu sunt lucrări ale elevilor. Personajele sunt fictive, iar faptele istorice provin din surse verificate, citate în fiecare piesă.</p>
+  <p class="note"><b>Ce vedeți aici.</b> Piesele sunt exemple-model generate cu AI de echipa de proiect (texte, ilustrații, hărți, animații și muzică în cod; imagini fotorealiste generate cu Canva AI), ca punct de plecare pentru clase. Nu sunt lucrări ale elevilor. Personajele sunt fictive, iar faptele istorice provin din surse verificate, citate în fiecare piesă. Fișa de fapte verificate și sursele pieselor sunt în <a href="https://claude.ai/artifact/7d5vJf554zU85hKjH1HAaA" target="_blank" rel="noopener">kitul de lucru</a>.</p>
   <nav class="filters" id="filters" aria-label="Categorii"></nav>
   <nav class="filters calupuri" id="calupuri" aria-label="Colecții"></nav>
   <main id="wall"></main>
@@ -183,7 +183,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const catOf = it => CATS.find(c => c[0] === it.categorie) || CATS[0];
 let filter = "Toate"; let calup = "toate";
-const CALUPURI = {0:"Expoziția inițială (73 de teme)",1:"Calupul 1 · Cetatea: ziduri, turnuri, porți",2:"Calupul 2 · Premierele Sibiului",3:"Calupul 3 · Cartierele Sibiului"};
+const CALUPURI = {0:"Expoziția inițială (73 de teme)",1:"Calupul 1 · Cetatea: ziduri, turnuri, porți",2:"Calupul 2 · Premierele Sibiului",3:"Calupul 3 · Cartierele Sibiului",4:"Calupul 4 · Natură și împrejurimi",5:"Calupul 5 · Meșteșuguri și gastronomie",6:"Calupul 6 · Cultură vie: teatru, muzică, cărți, muzee"};
 const inCalup = it => calup === "toate" || String(it.calup||0) === calup;
 
 function stats(){

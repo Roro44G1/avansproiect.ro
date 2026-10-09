@@ -1,0 +1,324 @@
+# -*- coding: utf-8 -*-
+"""P14 – Copacul meu – portret AI al arborelui care mă reprezintă (elev fictiv: „Elevul A.”; arbore: stejarul)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math, random
+
+OUT = "/home/claude/expo/c4/08_identitate/P14_copacul_meu.svg"
+ORANGE = "#F76B15"
+s = frame_head("IDENTITATE · P14", ORANGE, "Copacul meu",
+               "elev fictiv · simbolismul = interpretare personală, nu fapt botanic")
+s += text(80 + measure("Copacul meu", 60, "serif", 700) + 22, 190, "— portret AI al arborelui care mă reprezintă", 30, CEATA, "serif", 400, True)
+
+G1 = "#2F5E35"; G2 = "#3F7A3F"; G3 = "#5E9850"; G4 = "#8DBA6A"; GD = "#22472A"
+BARK = "#5B4330"; BARK_D = "#3E2D20"; BARK_L = "#7A5C40"
+SOIL1 = "#5A4231"; SOIL2 = "#3B2B20"
+ACORN = "#C98B2E"; CAP = "#6E5232"
+INK = "#2B2622"; INK2 = "#5E554B"
+MUTED = "#7E8A96"
+
+s += ('<defs>'
+      '<linearGradient id="sky14" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE0DC"/><stop offset="0.75" stop-color="#F3EEDF"/></linearGradient>'
+      f'<linearGradient id="soil14" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{SOIL1}"/><stop offset="1" stop-color="{SOIL2}"/></linearGradient>'
+      f'<linearGradient id="bark14" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{BARK_L}"/><stop offset="0.55" stop-color="{BARK}"/><stop offset="1" stop-color="{BARK_D}"/></linearGradient>'
+      '</defs>\n')
+
+
+def oak_leaf(L, fill, vein=None, n=4.5, base=0.45, p=0.25, fwd=0.05, W=0.27, N=300):
+    """Frunză de stejar stilizată (copiată din p13.py): tulpina în (0,0), vârful în sus."""
+    def env(t):
+        return W * L * (math.sin(math.pi * min(1.0, t ** 1.25)) ** 0.8)
+    left = []
+    for i in range(N + 1):
+        t = 0.06 + 0.94 * i / N
+        lob = abs(math.sin(math.pi * n * (t - 0.06) / 0.94)) ** p
+        h = env(t) * (base + (1 - base) * lob)
+        left.append((-h, -t * L - fwd * h * lob))
+    right = [(-x, y) for x, y in reversed(left)]
+    pts = [(0, -0.02 * L)] + left + right
+    d = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + " Z"
+    o = f'<path d="{d}" fill="{fill}" stroke="{fill}" stroke-width="{L*0.012:.1f}" stroke-linejoin="round"/>'
+    o += f'<line x1="0" y1="{0.05*L:.1f}" x2="0" y2="{-0.03*L:.1f}" stroke="{fill}" stroke-width="{L*0.045:.1f}" stroke-linecap="round"/>'
+    if vein:
+        o += f'<line x1="0" y1="{-0.02*L:.1f}" x2="0" y2="{-0.88*L:.1f}" stroke="{vein}" stroke-width="{L*0.02:.1f}" stroke-linecap="round"/>'
+        for k in range(1, 5):
+            t = 0.16 + k * 0.15
+            for sg in (-1, 1):
+                o += (f'<line x1="0" y1="{-t*L:.1f}" x2="{sg*0.16*L:.1f}" y2="{-(t+0.10)*L:.1f}" stroke="{vein}" '
+                      f'stroke-width="{L*0.012:.1f}" stroke-linecap="round" opacity="0.8"/>')
+    return o
+
+
+def acorn(x, y, sc=1.0, ang=0):
+    """O ghindă atârnând: (x,y) = punctul de prindere al cupei."""
+    o = f'<g transform="translate({x:.1f},{y:.1f}) rotate({ang}) scale({sc})">'
+    o += f'<ellipse cx="0" cy="13" rx="7.5" ry="11" fill="{ACORN}"/>'
+    o += f'<ellipse cx="-2.4" cy="10" rx="2.2" ry="5" fill="#E8B865" opacity="0.7"/>'
+    o += f'<path d="M-9,4 q9,-10 18,0 q-1,6 -9,6 q-8,0 -9,-6 Z" fill="{CAP}"/>'
+    o += f'<path d="M-6,2 h12 M-7,5 h14" stroke="#4E3A22" stroke-width="0.8"/>'
+    o += f'<circle cx="0" cy="24" r="1.4" fill="#7A5420"/>'
+    return o + '</g>'
+
+
+def acorn_stalk(x, y, length, n=2, sc=1.0, sway=6):
+    """Codiță lungă (peduncul) cu 2–3 ghinde la capăt – de aici „pedunculat”."""
+    ex, ey = x + sway, y + length
+    o = f'<path d="M{x:.1f},{y:.1f} q{sway*1.6:.1f},{length*0.5:.1f} {sway:.1f},{length:.1f}" fill="none" stroke="{BARK}" stroke-width="{2.2*sc:.1f}" stroke-linecap="round"/>'
+    offs = [(-9, -18), (10, -14), (0, 0)][:n] if n == 3 else [(-8, -6), (9, -2)]
+    for dx, da in offs:
+        o += f'<line x1="{ex:.1f}" y1="{ey:.1f}" x2="{ex+dx*sc:.1f}" y2="{ey+5*sc:.1f}" stroke="{BARK}" stroke-width="{1.6*sc:.1f}"/>'
+        o += acorn(ex + dx * sc, ey + 5 * sc, sc, da)
+    return o
+
+
+def limb(x1, y1, x2, y2, w1, w2, col="url(#bark14)"):
+    dx, dy = x2 - x1, y2 - y1
+    L = math.hypot(dx, dy); nx, ny = -dy / L, dx / L
+    pts = [(x1 + nx * w1 / 2, y1 + ny * w1 / 2), (x2 + nx * w2 / 2, y2 + ny * w2 / 2),
+           (x2 - nx * w2 / 2, y2 - ny * w2 / 2), (x1 - nx * w1 / 2, y1 - ny * w1 / 2)]
+    o = f'<polygon points="{" ".join(f"{a:.1f},{b:.1f}" for a, b in pts)}" fill="{col}"/>'
+    o += f'<circle cx="{x2:.1f}" cy="{y2:.1f}" r="{w2/2:.1f}" fill="{col}"/>'
+    return o + "\n"
+
+
+def cluster(cx, cy, r, seed, tone=0):
+    """Un nor de frunziș (cerculețe suprapuse, cu umbră și lumină)."""
+    rnd = random.Random(seed)
+    circ = []
+    for _ in range(9):
+        a = rnd.uniform(0, 2 * math.pi); d = rnd.uniform(0, r * 0.55)
+        circ.append((cx + d * math.cos(a), cy + d * math.sin(a) * 0.8, r * rnd.uniform(0.38, 0.56)))
+    cols = [(GD, G1, G2, G3), (G1, G2, G3, G4)][tone]
+    o = "".join(f'<circle cx="{x+r*0.10:.1f}" cy="{y+r*0.14:.1f}" r="{rr:.1f}" fill="{cols[0]}"/>' for x, y, rr in circ)
+    o += "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{rr:.1f}" fill="{cols[1]}"/>' for x, y, rr in circ)
+    o += "".join(f'<circle cx="{x-rr*0.18:.1f}" cy="{y-rr*0.22:.1f}" r="{rr*0.72:.1f}" fill="{cols[2]}"/>' for x, y, rr in circ)
+    o += "".join(f'<circle cx="{x-rr*0.34:.1f}" cy="{y-rr*0.40:.1f}" r="{rr*0.36:.1f}" fill="{cols[3]}" opacity="0.75"/>'
+                 for x, y, rr in circ[:5])
+    return o + "\n"
+
+
+# =================================================================== CENTRU: portretul
+PX0, PY0, PX1, PY1 = 610, 236, 1210, 812
+PW, PH = PX1 - PX0, PY1 - PY0
+GY = 640                       # linia solului
+TX = 910                       # axul trunchiului
+s += f'<g filter="url(#sh)"><rect x="{PX0-14}" y="{PY0-14}" width="{PW+28}" height="{PH+28}" rx="6" fill="#3A2C1C"/></g>\n'
+s += f'<rect x="{PX0-14}" y="{PY0-14}" width="{PW+28}" height="{PH+28}" rx="6" fill="none" stroke="{OCRU}" stroke-width="3"/>\n'
+s += f'<rect x="{PX0-6}" y="{PY0-6}" width="{PW+12}" height="{PH+12}" rx="3" fill="none" stroke="#C9963A" stroke-width="1.2" opacity="0.8"/>\n'
+s += f'<clipPath id="pc14"><rect x="{PX0}" y="{PY0}" width="{PW}" height="{PH}"/></clipPath>\n'
+s += f'<g clip-path="url(#pc14)">\n'
+s += f'<rect x="{PX0}" y="{PY0}" width="{PW}" height="{GY-PY0}" fill="url(#sky14)"/>\n'
+# dealuri îndepărtate + pădure în zare (silhuetă)
+s += f'<path d="M{PX0},{GY-70} q80,-46 170,-22 q90,-40 190,-8 q80,-30 160,2 q50,-10 80,6 V{GY} H{PX0} Z" fill="#B7C9B4"/>\n'
+rnd = random.Random(5)
+for k in range(34):
+    x = PX0 + k * 18 + rnd.uniform(-4, 4); r = rnd.uniform(9, 15)
+    s += f'<circle cx="{x:.1f}" cy="{GY-18-rnd.uniform(0,10):.1f}" r="{r:.1f}" fill="#9DB596"/>'
+s += f'\n<rect x="{PX0}" y="{GY-20}" width="{PW}" height="20" fill="#9DB596"/>\n'
+# sol (secțiune)
+s += f'<rect x="{PX0}" y="{GY}" width="{PW}" height="{PY1-GY}" fill="url(#soil14)"/>\n'
+for k in range(26):
+    x = PX0 + rnd.uniform(10, PW - 10); y = GY + rnd.uniform(30, PY1 - GY - 8)
+    s += f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{rnd.uniform(3,8):.1f}" ry="{rnd.uniform(2,4):.1f}" fill="#6E5644" opacity="0.7"/>'
+s += "\n"
+# rădăcini: una principală, verticală, și rădăcini laterale
+def root(pts, w0):
+    o = ""
+    for i in range(len(pts) - 1):
+        w1 = w0 * (1 - i / (len(pts) - 1)) + 1.2
+        w2 = w0 * (1 - (i + 1) / (len(pts) - 1)) + 1.0
+        o += limb(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], w1, w2, "#7A5C40")
+    return o
+s += root([(TX, GY), (TX + 4, GY + 50), (TX - 3, GY + 100), (TX + 2, GY + 150)], 34)
+for side in (-1, 1):
+    s += root([(TX + side * 20, GY + 6), (TX + side * 90, GY + 26), (TX + side * 170, GY + 40), (TX + side * 240, GY + 62)], 20)
+    s += root([(TX + side * 14, GY + 20), (TX + side * 60, GY + 70), (TX + side * 110, GY + 112)], 13)
+    s += root([(TX + side * 120, GY + 32), (TX + side * 150, GY + 78), (TX + side * 145, GY + 120)], 7)
+s += root([(TX - 2, GY + 96), (TX - 46, GY + 132), (TX - 70, GY + 158)], 7)
+s += root([(TX + 2, GY + 120), (TX + 40, GY + 148)], 6)
+# iarbă pe linia solului
+s += f'<rect x="{PX0}" y="{GY-6}" width="{PW}" height="12" fill="#6F9A52"/>\n'
+for k in range(70):
+    x = PX0 + k * 8.6 + rnd.uniform(-2, 2); h = rnd.uniform(6, 15)
+    s += f'<path d="M{x:.1f},{GY+2} l{rnd.uniform(-3,3):.1f},{-h:.1f} l3,{h:.1f} Z" fill="#5E8C46"/>'
+s += "\n"
+# trunchi și crengi (grupul copacului e scalat 0,9 față de baza trunchiului)
+SC = 0.9
+def sc(x, y):
+    return TX + (x - TX) * SC, GY + (y - GY) * SC
+s += f'<g transform="translate({TX},{GY}) scale({SC}) translate({-TX},{-GY})">\n'
+s += limb(TX, GY + 4, TX, 520, 92, 56)
+s += f'<path d="M{TX-60},{GY+6} q14,-10 22,-44 L{TX+38},{GY-38} q8,34 24,44 Z" fill="url(#bark14)"/>\n'
+branches = [((TX, 528), (TX - 150, 410), 40, 20), ((TX - 120, 432), (TX - 230, 392), 18, 10),
+            ((TX, 528), (TX + 140, 404), 40, 20), ((TX + 110, 430), (TX + 228, 396), 18, 10),
+            ((TX - 4, 524), (TX - 30, 330), 34, 16), ((TX + 4, 520), (TX + 60, 320), 26, 12),
+            ((TX - 150, 412), (TX - 170, 340), 16, 8), ((TX + 140, 406), (TX + 160, 336), 16, 8)]
+for (a, b, w1, w2) in branches:
+    s += limb(a[0], a[1], b[0], b[1], w1, w2)
+# scoarța: crăpături verticale
+for k, dx in enumerate((-30, -12, 8, 26)):
+    s += (f'<path d="M{TX+dx},{GY-8} q{4 if k%2 else -4},-40 0,-76 q{-3 if k%2 else 3},-24 {2 if k%2 else -2},-40" '
+          f'fill="none" stroke="{BARK_D}" stroke-width="2.2" opacity="0.65"/>')
+s += "\n"
+# coroana: nori de frunziș, din spate în față
+back = [(TX - 200, 372, 70), (TX + 200, 366, 72), (TX - 70, 300, 82), (TX + 80, 296, 84), (TX, 280, 70),
+        (TX - 250, 420, 52), (TX + 250, 416, 54)]
+front = [(TX - 150, 400, 74), (TX + 150, 396, 76), (TX - 20, 352, 86), (TX - 230, 446, 48), (TX + 236, 440, 50),
+         (TX - 92, 448, 58), (TX + 96, 446, 60), (TX + 40, 300, 60), (TX - 120, 320, 56)]
+for i, (x, y, r) in enumerate(back):
+    s += cluster(x, y, r, 100 + i, 0)
+# crengi care se văd printre frunze (în față)
+s += limb(TX - 40, 470, TX - 110, 452, 14, 6) + limb(TX + 40, 466, TX + 112, 450, 14, 6)
+for i, (x, y, r) in enumerate(front):
+    s += cluster(x, y, r, 200 + i, 1)
+# frunze de stejar pe marginea coroanei
+for (x, y, ang, L) in [(TX - 284, 424, -70, 30), (TX + 288, 416, 70, 30),
+                       (TX - 258, 478, -110, 26), (TX + 268, 472, 110, 26)]:
+    s += f'<g transform="translate({x},{y}) rotate({ang})">{oak_leaf(L, G2, G4)}</g>'
+s += "\n"
+# ghinde pe codițe lungi, sub coroană
+for (x, y, ln, n, sw) in [(TX - 190, 470, 30, 2, 5), (TX + 196, 466, 34, 3, -6), (TX - 60, 492, 26, 2, 4), (TX + 70, 494, 30, 2, -4)]:
+    s += acorn_stalk(x, y, ln, n, 0.9, sw)
+s += "\n</g>\n</g>\n"
+
+# etichete în portret (callout-uri)
+def callout(x, y, tx, ty, label, anchor="start"):
+    o = f'<line x1="{x}" y1="{y}" x2="{tx}" y2="{ty}" stroke="{INK}" stroke-width="1.3"/>'
+    o += f'<circle cx="{x}" cy="{y}" r="4" fill="{INK}"/>'
+    w = measure(label, 15, "sans", 600) + 20
+    bx = tx if anchor == "start" else tx - w
+    o += f'<rect x="{bx:.1f}" y="{ty-14}" width="{w:.1f}" height="28" rx="14" fill="#FBF7EE" stroke="{INK}" stroke-width="1.2"/>'
+    o += text(bx + 10, ty + 5, label, 15, INK, "sans", 600)
+    return o + "\n"
+a = sc(TX - 170, 400); s += callout(a[0], a[1], PX0 + 22, 262, "coroană largă, neregulată")
+a = sc(TX + 205, 505); s += callout(a[0], a[1], PX1 - 22, 566, "ghinde pe codițe lungi", "end")
+s += f'<line x1="{TX+4}" y1="{GY+118}" x2="{PX1-22}" y2="{GY+142}" stroke="#F3EBDA" stroke-width="1.3"/><circle cx="{TX+4}" cy="{GY+118}" r="4" fill="#F3EBDA"/>\n'
+w = measure("rădăcini: una principală + laterale", 15, "sans", 600) + 20
+s += f'<rect x="{PX1-22-w:.1f}" y="{GY+128}" width="{w:.1f}" height="28" rx="14" fill="#2C2018" stroke="#F3EBDA" stroke-width="1.2"/>'
+s += text(PX1 - 12 - w, GY + 147, "rădăcini: una principală + laterale", 15, "#F3EBDA", "sans", 600) + "\n"
+# plăcuța portretului
+pl = "Portretul stejarului · Quercus robur"
+plw = measure(pl, 17, "serif", 700, True) + 40
+s += f'<g filter="url(#shs)"><rect x="{(PX0+PX1)/2-plw/2:.1f}" y="{PY1-6}" width="{plw:.1f}" height="34" rx="4" fill="{OCRU}"/></g>\n'
+s += text((PX0 + PX1) / 2, PY1 + 17, pl, 17, "#2B1D08", "serif", 700, True, anchor="middle")
+
+# ---- două detalii sub portret: frunza și ghinda
+DY = 852; DH = 1000 - DY; DW = (PW - 20) / 2
+for i in range(2):
+    x = PX0 + i * (DW + 20)
+    s += card(x, DY, DW, DH, fill="#16212C")
+# frunza
+x = PX0
+s += f'<g transform="translate({x+62},{DY+DH-22}) rotate(-8)">{oak_leaf(108, G3, "#CFE3B5")}</g>\n'
+s += text(x + 122, DY + 36, "Frunza", 21, VAR, "serif", 700)
+p, _ = para(x + 122, DY + 66, "3–6 lobi rotunjiți; codiță foarte scurtă, de 2–3 mm", 16, DW - 140, CEATA, "sans", 400, lh=21)
+s += p
+# ghinda
+x = PX0 + DW + 20
+s += acorn_stalk(x + 60, DY + 26, 58, 3, 1.55, 6)
+s += text(x + 122, DY + 36, "Ghinda", 21, VAR, "serif", 700)
+p, _ = para(x + 122, DY + 66, "2–3 ghinde pe o codiță de 4–8 cm: de aici „pedunculat”", 16, DW - 140, CEATA, "sans", 400, lh=21)
+s += p
+
+# =================================================================== STÂNGA: fișa de identitate
+LX, LY, LW, LH = 80, 236, 500, 764
+s += card(LX, LY, LW, LH)
+s += f'<rect x="{LX}" y="{LY}" width="{LW}" height="8" rx="4" fill="{ORANGE}"/>\n'
+s += text(LX + 28, LY + 46, "FIȘA DE IDENTITATE", 16, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(LX + 28, LY + 96, "Stejarul", 42, VAR, "serif", 700)
+s += text(LX + 28 + measure("Stejarul", 42, "serif", 700) + 14, LY + 96, "(stejar pedunculat)", 19, CEATA, "serif", 400, True)
+s += f'<line x1="{LX+28}" y1="{LY+118}" x2="{LX+LW-28}" y2="{LY+118}" stroke="#2A3845" stroke-width="1.5"/>\n'
+fields = [("NUME ȘTIINȚIFIC", "Quercus robur · familia Fagaceae (a fagului și a stejarului)"),
+          ("ÎNĂLȚIME", "de regulă până la 20 m; uneori până la 40 m"),
+          ("FRUNZE", "cu 3–6 lobi rotunjiți și o codiță foarte scurtă"),
+          ("FLORI", "primăvara (orientativ), în amenți; polenizate de vânt"),
+          ("FRUCTE", "ghinde câte 2–3, pe o codiță lungă de 4–8 cm"),
+          ("VÂRSTĂ", "adesea peste 500 de ani; unele exemplare sunt considerate mai vechi de 1.000 de ani"),
+          ("ACASĂ", "cea mai mare parte a Europei și vestul Asiei"),
+          ("ÎN SIBIU", "Pădurea Dumbrava (993 ha): domină stejăretul; peste jumătate din arborete au peste 100 de ani")]
+fy = LY + 156
+for lab, val in fields:
+    s += text(LX + 28, fy, lab, 13, ORANGE, "sans", 700, extra='letter-spacing="2"')
+    it = lab == "NUME ȘTIINȚIFIC"
+    if it:
+        s += text(LX + 28, fy + 25, "Quercus robur", 18, VAR, "sans", 600, True)
+        p, y2 = para(LX + 28, fy + 48, "familia Fagaceae (a fagului și a stejarului)", 16, LW - 56, CEATA, "sans", 400, lh=21)
+    else:
+        p, y2 = para(LX + 28, fy + 25, val, 17, LW - 56, VAR, "sans", 400, lh=22)
+    s += p
+    fy = y2 + 10
+SRC_Y = fy
+p, _ = para(LX + 28, LY + LH - 66, "Surse: en.wikipedia (Quercus robur, Oak, Taproot); dssibiu.ro, sibiul.ro, ecomagazin.ro (Dumbrava, Martin von Seeberg); agerpres.ro, 2021 (stejarul de la Grădina Zoologică)", 13, LW - 56, MUTED, "sans", 400, True, lh=18)
+s += p
+
+# =================================================================== DREAPTA: de ce mă reprezintă
+RX, RY, RW, RH = 1240, 236, 600, 764
+s += card(RX, RY, RW, RH)
+s += f'<rect x="{RX}" y="{RY}" width="{RW}" height="8" rx="4" fill="{ORANGE}"/>\n'
+s += text(RX + 28, RY + 46, "DE CE MĂ REPREZINTĂ", 16, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(RX + RW - 28, RY + 46, "Elevul A. · personaj fictiv", 15, MUTED, "sans", 400, True, anchor="end")
+p, qy = para(RX + 28, RY + 84, "„În 1754, Martin von Seeberg propunea ca fiecare tânăr de 10 ani să planteze doi puieți de stejar. Eu l-aș fi plantat pe al meu în Dumbrava.”",
+             17, RW - 56, VAR, "serif", 400, True, lh=23)
+s += p
+
+
+def ic_root(cx, cy):
+    o = f'<g stroke="{VAR}" stroke-width="3" stroke-linecap="round" fill="none">'
+    o += f'<line x1="{cx-16}" y1="{cy-8}" x2="{cx+16}" y2="{cy-8}"/>'
+    o += f'<path d="M{cx},{cy-8} v22 M{cx},{cy} l-10,8 M{cx},{cy+4} l9,8 M{cx-6},{cy-8} q-4,8 -10,10 M{cx+6},{cy-8} q4,8 10,10"/>'
+    o += f'<path d="M{cx},{cy-8} v-10 M{cx},{cy-14} l-6,-5 M{cx},{cy-16} l6,-4"/>'
+    return o + '</g>'
+
+
+def ic_rings(cx, cy):
+    o = ""
+    for r in (17, 12, 7, 2.5):
+        o += f'<circle cx="{cx+(17-r)*0.08:.1f}" cy="{cy}" r="{r}" fill="none" stroke="{VAR}" stroke-width="2.4"/>'
+    return o
+
+
+def ic_acorn(cx, cy):
+    return acorn(cx, cy - 13, 1.15, 0).replace(ACORN, VAR).replace(CAP, "#C9BFAE").replace("#E8B865", VAR).replace("#4E3A22", "#8F857A").replace("#7A5420", "#8F857A")
+
+
+def ic_bird(cx, cy):
+    o = f'<path d="M{cx-16},{cy+12} q2,-20 18,-22 q12,0 14,10 l8,2 l-8,4 q-4,10 -18,10 Z" fill="{VAR}"/>'
+    o += f'<circle cx="{cx+8}" cy="{cy-5}" r="2" fill="{CARD}"/>'
+    o += f'<line x1="{cx-20}" y1="{cy+16}" x2="{cx+20}" y2="{cy+16}" stroke="{VAR}" stroke-width="3" stroke-linecap="round"/>'
+    return o
+
+
+traits = [(ic_root, "Rădăcina", "„Știu de unde pornesc.”",
+           "Majoritatea arborilor pornesc cu o rădăcină principală; la mulți stejari, în soluri adânci și bogate, ea crește vertical.",
+           "Oriunde aș pleca, rădăcinile mele rămân în Sibiu."),
+          (ic_rings, "Vârsta", "„Cresc încet, dar țin mult.”",
+           "Stejarul trăiește adesea peste 500 de ani. În Dumbrava, câteva zeci de stejari trec de 200 de ani; la intrarea Grădinii Zoologice e unul de peste 600.",
+           "Răbdarea e și ea o putere."),
+          (ic_acorn, "Ghinda", "„Împart ce am.”",
+           "Ghindele hrănesc mamifere mici și păsări; veverițele și gaițele – ambele în fauna Dumbravei – le și răspândesc.",
+           "Ce primesc, dau mai departe."),
+          (ic_bird, "Casa multora", "„Am loc pentru toți.”",
+           "În Marea Britanie, circa 2.300 de specii – insecte, mușchi, licheni, păsări, mamifere – sunt legate de acest stejar.",
+           "Îmi place o clasă în care fiecare își găsește locul.")]
+ty = qy + 10
+for ic, name, motto, fact, me in traits:
+    s += f'<line x1="{RX+28}" y1="{ty}" x2="{RX+RW-28}" y2="{ty}" stroke="#2A3845" stroke-width="1.2"/>\n'
+    ty += 14
+    s += f'<circle cx="{RX+56}" cy="{ty+26}" r="28" fill="{ORANGE}" opacity="0.18"/><circle cx="{RX+56}" cy="{ty+26}" r="28" fill="none" stroke="{ORANGE}" stroke-width="2"/>'
+    s += ic(RX + 56, ty + 26) + "\n"
+    tx = RX + 100; tw = RX + RW - 28 - tx
+    s += text(tx, ty + 20, name, 21, VAR, "serif", 700)
+    s += text(tx + measure(name, 21, "serif", 700) + 12, ty + 20, motto, 18, OCRU, "serif", 400, True)
+    p, y2 = para(tx, ty + 46, fact, 15, tw, CEATA, "sans", 400, lh=20)
+    s += p
+    p, y3 = para(tx, y2 + 2, "Pentru mine: " + me, 16, tw, VAR, "sans", 500, True, lh=21)
+    s += p
+    ty = y3 + 2
+TRAITS_END = ty
+NY = RY + RH - 62
+s += f'<rect x="{RX+28}" y="{NY}" width="{RW-56}" height="42" rx="10" fill="{BG}" stroke="{ORANGE}" stroke-width="1.6"/>\n'
+s += text(RX + 46, NY + 27, "Simbolurile sunt o interpretare personală, nu fapte botanice.", 16, VAR, "sans", 600)
+
+s += frame_foot()
+write(OUT, s)
+print(OUT, "fields end", SRC_Y, "traits end", TRAITS_END, "note", NY)

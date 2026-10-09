@@ -1,0 +1,417 @@
+# -*- coding: utf-8 -*-
+"""D18 – Sibiu, Capitală Culturală Europeană 2007 – ce înseamnă titlul, infografic AI.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md („Sibiu – Capitală Culturală Europeană 2007”,
+„Premierele Sibiului – lista completă”, FITS în „Teatru”) + informații generale despre program,
+verificate pe en.wikipedia („European Capital of Culture”) și în PDF-ul culturaltourism-network.eu,
+notate în /home/claude/expo/c6/06_date/_fapte_noi_D18_D20.md.
+- NU apar cifre de vizitatori și nici bugete (sursa nu le dă clar).
+- Grila de pătrățele e la scară: 1 pătrățel = 1 proiect sau 1 eveniment (337 și 2.062, aceeași unitate).
+- „Urmări”: sursa dă doar anul 2001 pentru hoteluri și niciun an pentru capacitatea de cazare – declarat.
+- Medalioanele cu orașe sunt ilustrații generice (fără monumente reale ale Luxemburgului)."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c6/06_date/D18_capitala_culturala_2007.svg"
+BLUE = "#3E63DD"
+BLUE_L = "#8DA4F2"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+DISC = "#132029"
+PETROL_T = "#3FB0BA"
+TIGLA_L = "#D8775A"
+VIOL_T = "#8F7BE0"
+SLATE = "#5B6B86"
+SLATE_D = "#43506A"
+WALL = "#E9DFC9"
+WALL_D = "#CDBF9F"
+
+s = frame_head("DATE · D18", BLUE, "Sibiu, Capitală Culturală Europeană 2007",
+               "infografic AI · ce înseamnă titlul european și ce a însemnat pentru oraș", title_size=60)
+s += ('<radialGradient id="gSky" cx="0.5" cy="0.25" r="0.9"><stop offset="0" stop-color="#2B4A78"/>'
+      '<stop offset="1" stop-color="#14243A"/></radialGradient>\n'
+      '<clipPath id="cSib"><circle cx="0" cy="0" r="58"/></clipPath>\n')
+
+
+def pill(x, y, lab, col, txt=BG, size=15):
+    w = measure(lab, size, "sans", 700, letter_spacing=1.5) + 28
+    o = f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="30" rx="15" fill="{col}"/>\n'
+    o += text(x + w / 2, y + 20, lab, size, txt, "sans", 700, anchor="middle", extra='letter-spacing="1.5"')
+    return o, w
+
+
+def head(x, y, w, lab, col, sub=None, txt=BG):
+    o, pw = pill(x + 22, y + 20, lab, col, txt)
+    if sub:
+        assert x + 22 + pw + 12 + measure(sub, 14, "sans", 400, True) <= x + w - 16, sub
+        o += text(x + 22 + pw + 12, y + 40, sub, 14, MUTED, "sans", 400, True)
+    return o
+
+
+def block(x, y, body, maxw, size=15, fill=CEATA, lh=19, weight=400, anchor="start", fam="sans", italic=False):
+    lines = wrap(body, maxw, size, fam, weight, italic)
+    o = ""
+    for k, ln in enumerate(lines):
+        o += text(x, y + k * lh, ln, size, fill, fam, weight, italic, anchor)
+    return o, y + (len(lines) - 1) * lh, len(lines)
+
+
+# ====================================================================== geometrie
+C1X, C1W = 80, 520
+C2X, C2W = C1X + C1W + 16, 620
+C3X = C2X + C2W + 16
+C3W = 1840 - C3X
+TOP, BOT = 228, 970
+C2SPLIT = 646            # coloana 2: sus / jos
+C3SPLIT = 640            # coloana 3: sus / jos
+
+# ====================================================================== 1. ce este programul
+s += card(C1X, TOP, C1W, BOT - TOP)
+s += head(C1X, TOP, C1W, "CE ESTE PROGRAMUL", OCRU, "după en.wikipedia")
+# definiția
+DY = TOP + 72
+defin = ("Un oraș desemnat de Uniunea Europeană pentru un an calendaristic, în care organizează o serie "
+         "de evenimente culturale cu o puternică dimensiune europeană.")
+lines = wrap(defin, C1W - 76, 21, "serif", 400, True)
+DH = 26 + len(lines) * 30 + 8
+s += f'<rect x="{C1X+22}" y="{DY}" width="{C1W-44}" height="{DH}" rx="14" fill="{DISC}"/>\n'
+s += f'<rect x="{C1X+22}" y="{DY}" width="6" height="{DH}" rx="3" fill="{OCRU}"/>\n'
+for k, ln in enumerate(lines):
+    s += text(C1X + 46, DY + 36 + k * 30, ln, 21, VAR, "serif", 400, True)
+
+
+def ic_cal(cx, cy, col):
+    o = f'<rect x="{cx-15}" y="{cy-12}" width="30" height="26" rx="4" fill="none" stroke="{col}" stroke-width="2.5"/>'
+    o += f'<rect x="{cx-15}" y="{cy-12}" width="30" height="8" rx="3" fill="{col}"/>'
+    o += f'<line x1="{cx-8}" y1="{cy-17}" x2="{cx-8}" y2="{cy-9}" stroke="{VAR}" stroke-width="2.5" stroke-linecap="round"/>'
+    o += f'<line x1="{cx+8}" y1="{cy-17}" x2="{cx+8}" y2="{cy-9}" stroke="{VAR}" stroke-width="2.5" stroke-linecap="round"/>'
+    for i in range(3):
+        for j in range(2):
+            o += f'<rect x="{cx-10+i*8}" y="{cy+0+j*6}" width="4" height="3.5" fill="{col}"/>'
+    return o + "\n"
+
+
+def ic_rename(cx, cy, col):
+    o = f'<rect x="{cx-17}" y="{cy-13}" width="20" height="11" rx="3" fill="none" stroke="{MUTED}" stroke-width="2"/>'
+    o += f'<rect x="{cx-3}" y="{cy+3}" width="20" height="11" rx="3" fill="{col}"/>'
+    o += f'<path d="M{cx-7},{cy-1} q0,9 7,9" fill="none" stroke="{VAR}" stroke-width="2"/>'
+    o += poly([(cx - 2, cy + 4), (cx + 3, cy + 8), (cx - 2, cy + 12)], fill=VAR)
+    return o + "\n"
+
+
+def ic_jury(cx, cy, col):
+    o = ""
+    for dx, r, c in ((-11, 5.5, MUTED), (11, 5.5, MUTED), (0, 6.5, col)):
+        o += f'<circle cx="{cx+dx}" cy="{cy-6 - (2 if dx == 0 else 0)}" r="{r}" fill="{c}"/>'
+        o += f'<path d="M{cx+dx-r-3},{cy+12} q{r+3},-{r*2+3} {2*r+6},0 Z" fill="{c}"/>'
+    o += f'<rect x="{cx-18}" y="{cy+11}" width="36" height="4" rx="2" fill="{VAR}"/>'
+    return o + "\n"
+
+
+def ic_cities(cx, cy, col):
+    o = ""
+    for dx, c in ((-11, col), (0, BLUE_L), (11, MUTED)):
+        o += (f'<path d="M{cx+dx},{cy+14} c-6,-8 -9,-12 -9,-17 a9,9 0 1 1 18,0 c0,5 -3,9 -9,17 Z" fill="{c}" '
+              f'stroke="{CARD}" stroke-width="1.5"/>')
+        o += f'<circle cx="{cx+dx}" cy="{cy-3}" r="3" fill="{CARD}"/>'
+    return o + "\n"
+
+
+def ic_spark(cx, cy, col):
+    o = ""
+    for k, h in enumerate((8, 14, 21)):
+        o += f'<rect x="{cx-15+k*11}" y="{cy+12-h}" width="8" height="{h}" rx="2" fill="{col}" opacity="{0.55+0.2*k}"/>'
+    o += poly([(cx + 13, cy - 18), (cx + 15, cy - 13), (cx + 20, cy - 13), (cx + 16, cy - 10), (cx + 18, cy - 5),
+               (cx + 13, cy - 8), (cx + 8, cy - 5), (cx + 10, cy - 10), (cx + 6, cy - 13), (cx + 11, cy - 13)], fill=VAR)
+    return o + "\n"
+
+
+ITEMS = [
+    (ic_cal, OCRU, "1985 · primul oraș: Atena",
+     "Programul pornește în vara lui 1985. Ideea apăruse în 1983, la ministrul culturii din Grecia, "
+     "Melina Mercouri, împreună cu omologul ei francez."),
+    (ic_rename, OCRU, "1999 · un nume nou",
+     "„Orașul european al culturii” devine „Capitala Europeană a Culturii”."),
+    (ic_jury, OCRU, "Cine alege",
+     "Un juriu internațional de experți evaluează candidaturile. Consiliul UE desemnează oficial orașele, "
+     "iar Comisia Europeană gestionează titlul."),
+    (ic_cities, OCRU, "Câte orașe pe an",
+     "Pot fi mai multe în același an. De regulă, două sunt din state membre ale UE; din 2021, o dată "
+     "la trei ani, se adaugă unul dintr-o țară candidată sau potențial candidată."),
+    (ic_spark, OCRU, "Ce poate aduce",
+     "Beneficii culturale, sociale și economice; poate ajuta la regenerarea orașului, la o nouă imagine "
+     "și la vizibilitate internațională."),
+]
+iy = DY + DH + 34
+TXW = C1W - 22 - 86 - 18
+for ic, col, ttl, body in ITEMS:
+    cx = C1X + 22 + 28
+    s += f'<circle cx="{cx}" cy="{iy+8}" r="27" fill="{DISC}" stroke="{col}" stroke-width="2"/>\n'
+    s += ic(cx, iy + 8, col)
+    tx = C1X + 22 + 74
+    s += text(tx, iy + 2, ttl, 18, VAR, "sans", 700)
+    o, ylast, n = block(tx, iy + 26, body, TXW, 15, CEATA, 19)
+    s += o
+    iy = ylast + 34
+assert iy - 34 + 6 < BOT - 12, iy
+
+# ====================================================================== 2a. Sibiu și Luxemburg
+s += card(C2X, TOP, C2W, C2SPLIT - TOP)
+s += head(C2X, TOP, C2W, "2007 · SIBIU ȘI LUXEMBURG", BLUE, "un titlu, două orașe", VAR)
+MCY = TOP + 136
+MR = 58
+SX, LX = C2X + 112, C2X + C2W - 112
+
+
+def medal_sibiu(cx, cy):
+    """Acoperișuri cu „ochi” și un turn – ilustrație generică."""
+    o = f'<g transform="translate({cx},{cy})"><g clip-path="url(#cSib)">'
+    o += f'<rect x="-70" y="-70" width="140" height="140" fill="url(#gSky)"/>'
+    o += f'<circle cx="34" cy="-30" r="9" fill="{OCRU}" opacity="0.9"/>'
+    # turn
+    o += f'<rect x="-14" y="-30" width="22" height="70" fill="{WALL_D}"/>'
+    o += poly([(-17, -30), (-3, -54), (11, -30)], fill=TIGLA)
+    o += f'<rect x="-7" y="-18" width="8" height="10" rx="4" fill="#3B2A20"/>'
+    # case cu acoperișuri și lucarne-ochi
+    for hx, hw, rh, base in ((-70, 64, 30, 22), (2, 72, 34, 18)):
+        o += f'<rect x="{hx}" y="{base}" width="{hw}" height="60" fill="{WALL}"/>'
+        o += poly([(hx - 4, base), (hx + hw / 2, base - rh), (hx + hw + 4, base)], fill=TIGLA)
+        ex, ey = hx + hw / 2, base - rh * 0.42
+        o += f'<path d="M{ex-11},{ey+4} q11,-12 22,0 Z" fill="#2B1A12"/>'
+        o += f'<path d="M{ex-11},{ey+4} q11,-12 22,0" fill="none" stroke="#7F3A26" stroke-width="2"/>'
+        for wx in range(int(hx + 8), int(hx + hw - 10), 18):
+            o += f'<rect x="{wx}" y="{base+12}" width="8" height="11" fill="#5C4632"/>'
+    o += '</g>'
+    o += f'<circle cx="0" cy="0" r="{MR}" fill="none" stroke="{OCRU}" stroke-width="4"/></g>\n'
+    return o
+
+
+def medal_lux(cx, cy):
+    """Case cu acoperișuri de ardezie – ilustrație generică, fără monumente reale."""
+    o = f'<g transform="translate({cx},{cy})"><g clip-path="url(#cSib)">'
+    o += f'<rect x="-70" y="-70" width="140" height="140" fill="url(#gSky)"/>'
+    o += f'<circle cx="-34" cy="-30" r="9" fill="{VAR}" opacity="0.85"/>'
+    for hx, hw, rh, base in ((-72, 50, 34, 10), (-22, 44, 44, 0), (22, 56, 30, 16)):
+        o += f'<rect x="{hx}" y="{base}" width="{hw}" height="70" fill="{WALL}"/>'
+        o += poly([(hx - 3, base), (hx + hw / 2, base - rh), (hx + hw + 3, base)], fill=SLATE)
+        o += poly([(hx + hw / 2, base - rh), (hx + hw + 3, base), (hx + hw / 2 + 4, base)], fill=SLATE_D)
+        for wy in (base + 12, base + 34):
+            for wx in range(int(hx + 8), int(hx + hw - 10), 16):
+                o += f'<rect x="{wx}" y="{wy}" width="7" height="10" fill="#4C5A70"/>'
+    o += f'<rect x="-70" y="54" width="140" height="20" fill="#2C4A3A"/>'
+    o += '</g>'
+    o += f'<circle cx="0" cy="0" r="{MR}" fill="none" stroke="{BLUE_L}" stroke-width="4"/></g>\n'
+    return o
+
+
+s += medal_sibiu(SX, MCY)
+s += medal_lux(LX, MCY)
+s += text(SX, MCY + MR + 30, "Sibiu", 24, VAR, "serif", 700, anchor="middle")
+s += text(SX, MCY + MR + 50, "România", 14, CEATA, anchor="middle")
+s += text(LX, MCY + MR + 30, "Luxemburg", 24, VAR, "serif", 700, anchor="middle")
+s += text(LX, MCY + MR + 50, "orașul Luxemburg", 14, CEATA, anchor="middle")
+# arcul legăturilor
+ax0, ax1 = SX + MR + 8, LX - MR - 8
+s += (f'<path d="M{ax0},{MCY-14} Q{(ax0+ax1)/2},{MCY-78} {ax1},{MCY-14}" fill="none" stroke="{OCRU}" '
+      f'stroke-width="2.5" stroke-dasharray="7 6"/>\n')
+s += f'<circle cx="{ax0}" cy="{MCY-14}" r="5" fill="{OCRU}"/><circle cx="{ax1}" cy="{MCY-14}" r="5" fill="{OCRU}"/>\n'
+mid = (ax0 + ax1) / 2
+cap = "legături istorice ale sașilor transilvăneni cu Luxemburgul"
+o, yl, n = block(mid, MCY - 2, cap, ax1 - ax0 - 20, 15, VAR, 19, 600, "middle")
+s += o
+assert n <= 3
+s += text(mid, yl + 22, "(en.wikipedia, „Sibiu”)", 13, MUTED, "sans", 400, True, anchor="middle")
+# faptele
+FACTS = [
+    (OCRU, "Primul oraș din România și din Europa de Est cu acest titlu."),
+    (BLUE_L, "Decizia Consiliului UE nr. 2004/654/CE: Luxemburg și Sibiu, în parteneriat."),
+    (BLUE_L, "Desemnarea „s-a datorat în mare măsură colaborării excelente cu Luxemburgul”."),
+    (MUTED, "Sibiul a fost întemeiat de coloniști sași (germani), aduși de regele Ungariei la mijlocul–sfârșitul "
+            "secolului al XII-lea."),
+]
+fy = MCY + MR + 86
+for col, body in FACTS:
+    s += f'<rect x="{C2X+24}" y="{fy-12}" width="10" height="10" rx="2" fill="{col}"/>\n'
+    o, yl, n = block(C2X + 46, fy, body, C2W - 46 - 22, 15, VAR, 19)
+    s += o
+    fy = yl + 26
+assert fy - 26 + 8 < C2SPLIT - 10, fy
+
+# ====================================================================== 2b. din program
+B2Y = C2SPLIT + 16
+s += card(C2X, B2Y, C2W, BOT - B2Y)
+s += head(C2X, B2Y, C2W, "DIN PROGRAMUL ANULUI", VIOLET, "exemple date de sursă", VAR)
+
+
+def ic_poem(cx, cy):
+    o = f'<path d="M{cx-18},{cy-10} q9,-5 18,0 v22 q-9,-5 -18,0 Z" fill="{VAR}"/>'
+    o += f'<path d="M{cx+18},{cy-10} q-9,-5 -18,0 v22 q9,-5 18,0 Z" fill="#DCD3C2"/>'
+    for k in range(3):
+        o += f'<line x1="{cx-14}" y1="{cy-3+k*5}" x2="{cx-4}" y2="{cy-5+k*5}" stroke="{MUTED}" stroke-width="1.3"/>'
+    o += f'<path d="M{cx+6},{cy+8} L{cx+20},{cy-16} q4,2 1,7 Z" fill="{VIOL_T}"/>'
+    return o + "\n"
+
+
+def ic_frame(cx, cy):
+    o = f'<rect x="{cx-17}" y="{cy-17}" width="34" height="34" rx="2" fill="#7A5232" stroke="{OCRU}" stroke-width="2"/>'
+    o += f'<rect x="{cx-11}" y="{cy-11}" width="22" height="22" fill="#2B3E52"/>'
+    o += f'<circle cx="{cx}" cy="{cy-3}" r="5" fill="{WALL}"/>'
+    o += f'<path d="M{cx-9},{cy+11} q9,-12 18,0 Z" fill="{WALL}"/>'
+    return o + "\n"
+
+
+def ic_people(cx, cy):
+    o = ""
+    for dx, c in ((-14, MUTED), (14, MUTED), (-6, CEATA), (6, CEATA)):
+        o += f'<circle cx="{cx+dx}" cy="{cy-6}" r="5" fill="{c}"/>'
+        o += f'<path d="M{cx+dx-7},{cy+12} q7,-17 14,0 Z" fill="{c}"/>'
+    o += f'<circle cx="{cx}" cy="{cy-9}" r="5.5" fill="{VAR}"/><path d="M{cx-8},{cy+12} q8,-19 16,0 Z" fill="{VAR}"/>'
+    return o + "\n"
+
+
+def ic_masks(cx, cy):
+    o = f'<path d="M{cx-19},{cy-14} h20 v10 q0,14 -10,16 q-10,-2 -10,-16 Z" fill="{VAR}"/>'
+    o += f'<circle cx="{cx-14}" cy="{cy-7}" r="2" fill="{BG}"/><circle cx="{cx-4}" cy="{cy-7}" r="2" fill="{BG}"/>'
+    o += f'<path d="M{cx-14},{cy+1} q5,5 10,0" stroke="{BG}" stroke-width="1.8" fill="none"/>'
+    o += f'<path d="M{cx-1},{cy-8} h20 v10 q0,14 -10,16 q-10,-2 -10,-16 Z" fill="{TIGLA_L}"/>'
+    o += f'<circle cx="{cx+4}" cy="{cy-1}" r="2" fill="{BG}"/><circle cx="{cx+14}" cy="{cy-1}" r="2" fill="{BG}"/>'
+    o += f'<path d="M{cx+4},{cy+10} q5,-5 10,0" stroke="{BG}" stroke-width="1.8" fill="none"/>'
+    return o + "\n"
+
+
+EX = [
+    (ic_poem, "Maratonul European de Poezie", "texte ale unor autori din mai multe țări europene"),
+    (ic_frame, "„Fețele Transilvaniei”", "expoziție la Cetatea Cisnădiei"),
+    (ic_people, "O amplă întâlnire", "a reprezentanților creștinilor din toată Europa"),
+]
+CW3 = (C2W - 44) / 3
+ICY2 = B2Y + 88
+ey = 0
+for k, (ic, ttl, body) in enumerate(EX):
+    cx = C2X + 22 + CW3 * (k + 0.5)
+    s += f'<circle cx="{cx:.1f}" cy="{ICY2}" r="26" fill="{DISC}" stroke="{VIOL_T}" stroke-width="2"/>\n'
+    s += ic(cx, ICY2)
+    o, yl, n = block(cx, ICY2 + 52, ttl, CW3 - 14, 16, VAR, 19, 700, "middle")
+    s += o
+    o, yl2, n2 = block(cx, yl + 21, body, CW3 - 14, 14, CEATA, 18, 400, "middle")
+    s += o
+    ey = max(ey, yl2)
+# citatul FITS
+QY = ey + 18
+QH = BOT - 14 - QY
+s += f'<rect x="{C2X+22}" y="{QY}" width="{C2W-44}" height="{QH}" rx="14" fill="{DISC}" stroke="{TIGLA}" stroke-width="1.5"/>\n'
+s += f'<circle cx="{C2X+60}" cy="{QY+QH/2}" r="26" fill="{CARD}" stroke="{TIGLA_L}" stroke-width="2"/>\n'
+s += ic_masks(C2X + 60, QY + QH / 2)
+q = "„FITS a avut un rol decisiv în obținerea titlului.”"
+s += text(C2X + 102, QY + QH / 2 - 6, q, 19, VAR, "serif", 700, True)
+assert C2X + 102 + measure(q, 19, "serif", 700, True) < C2X + C2W - 24
+s += text(C2X + 102, QY + QH / 2 + 18, "Festivalul Internațional de Teatru de la Sibiu, din 1993 · en.wikipedia",
+          14, CEATA, "sans", 400, True)
+assert C2X + 102 + measure("Festivalul Internațional de Teatru de la Sibiu, din 1993 · en.wikipedia", 14, "sans", 400, True) < C2X + C2W - 24
+assert QH >= 62, QH
+
+# ====================================================================== 3a. programul în cifre (la scară)
+s += card(C3X, TOP, C3W, C3SPLIT - TOP)
+s += head(C3X, TOP, C3W, "PROGRAMUL ÎN CIFRE", BLUE, "1 pătrățel = 1 proiect sau 1 eveniment", VAR)
+SQ, GAP = 4, 2
+PITCH = SQ + GAP
+NC = int((C3W - 44 + GAP) // PITCH)
+GX = C3X + 22 + ((C3W - 44) - (NC * PITCH - GAP)) / 2
+
+
+def grid(y, n, col):
+    o = ""
+    rows = -(-n // NC)
+    for k in range(n):
+        r, c = divmod(k, NC)
+        o += f'<rect x="{GX + c*PITCH:.1f}" y="{y + r*PITCH}" width="{SQ}" height="{SQ}" fill="{col}"/>'
+    return o + "\n", y + rows * PITCH - GAP
+
+
+y1 = TOP + 108
+s += text(C3X + 22, y1 - 14, "337", 40, OCRU, "serif", 700)
+s += text(C3X + 22 + measure("337", 40, "serif", 700) + 10, y1 - 16, "de proiecte", 18, VAR, "sans", 600)
+o, yend1 = grid(y1, 337, OCRU)
+s += o
+y2 = yend1 + 72
+s += text(C3X + 22, y2 - 14, "2.062", 40, BLUE_L, "serif", 700)
+s += text(C3X + 22 + measure("2.062", 40, "serif", 700) + 10, y2 - 16, "de evenimente", 18, VAR, "sans", 600)
+o, yend2 = grid(y2, 2062, BLUE)
+s += o
+avg = "În medie, circa 6 evenimente pe proiect (calcul propriu: 2.062 : 337 ≈ 6,1)."
+s += text(C3X + 22, yend2 + 28, avg, 15, VAR, "sans", 600)
+assert measure(avg, 15, "sans", 600) < C3W - 44
+srcl = "culturaltourism-network.eu („ECoC Sibiu 2007”) · aceeași scară pentru ambele grile"
+s += text(C3X + 22, yend2 + 50, srcl, 13, MUTED, "sans", 400, True)
+assert measure(srcl, 13, "sans", 400, True) < C3W - 44
+assert yend2 + 50 < C3SPLIT - 10, yend2
+
+# ====================================================================== 3b. urmări
+U = C3SPLIT + 16
+s += card(C3X, U, C3W, BOT - U)
+s += head(C3X, U, C3W, "URMĂRI", PETROL, "culturaltourism-network.eu", VAR)
+HALF = (C3W - 44 - 20) / 2
+# hoteluri – izotip
+hx0 = C3X + 22
+s += text(hx0, U + 86, "Numărul hotelurilor", 17, VAR, "sans", 700)
+s += text(hx0, U + 106, "„mai mult decât dublat” din 2001", 14, CEATA, "sans", 400, True)
+
+
+def hotel(x, y, col=WALL, op=1.0):
+    o = f'<g opacity="{op}"><rect x="{x}" y="{y}" width="46" height="62" rx="2" fill="{col}"/>'
+    o += f'<rect x="{x-3}" y="{y-6}" width="52" height="8" rx="2" fill="{TIGLA}"/>'
+    for r in range(4):
+        for c in range(3):
+            o += f'<rect x="{x+6+c*13}" y="{y+6+r*12}" width="8" height="7" fill="#3E5468"/>'
+    o += f'<rect x="{x+17}" y="{y+48}" width="12" height="14" fill="#5C4632"/></g>\n'
+    return o
+
+
+HY = U + 120
+s += hotel(hx0 + 6, HY)
+s += text(hx0 + 29, HY + 84, "2001", 15, VAR, "sans", 700, anchor="middle")
+ax = hx0 + 64
+s += f'<line x1="{ax}" y1="{HY+31}" x2="{ax+22}" y2="{HY+31}" stroke="{PETROL_T}" stroke-width="3"/>\n'
+s += poly([(ax + 20, HY + 25), (ax + 29, HY + 31), (ax + 20, HY + 37)], fill=PETROL_T)
+bx = ax + 42
+s += hotel(bx, HY)
+s += hotel(bx + 54, HY)
+s += text(bx + 118, HY + 42, "+", 34, PETROL_T, "sans", 700, anchor="middle")
+s += text(bx + 50, HY + 84, "mai târziu", 15, VAR, "sans", 700, anchor="middle")
+s += text(hx0, HY + 106, "1 clădire = numărul din 2001", 13, MUTED, "sans", 400, True)
+assert bx + 132 < hx0 + HALF, (bx + 132 - hx0, HALF)
+# capacitatea – bare la scară
+cx0 = C3X + 22 + HALF + 20
+s += text(cx0, U + 86, "Capacitatea de cazare", 17, VAR, "sans", 700)
+s += text(cx0, U + 106, "înregistrată: +40%", 14, CEATA, "sans", 400, True)
+LBW = 66
+SC = (HALF - LBW - 44) / 140
+by = U + 124
+for lab, v, col in (("înainte", 100, MUTED), ("după", 140, PETROL_T)):
+    s += text(cx0, by + 19, lab, 14, CEATA)
+    s += f'<rect x="{cx0+LBW}" y="{by}" width="{v*SC:.1f}" height="26" rx="4" fill="{col}"/>\n'
+    s += text(cx0 + LBW + v * SC + 8, by + 19, str(v), 15, VAR, "sans", 700)
+    by += 40
+s += text(cx0, by + 10, "înainte = 100 · aceeași scară", 13, MUTED, "sans", 400, True)
+s += text(cx0, by + 28, "sursa nu dă anii comparației", 13, MUTED, "sans", 400, True)
+assert cx0 + LBW + 140 * SC + 8 + measure("140", 15, "sans", 700) < C3X + C3W - 16
+# Sibiu Baroque Update
+BYY = BOT - 44
+s += f'<line x1="{C3X+22}" y1="{BYY-26}" x2="{C3X+C3W-22}" y2="{BYY-26}" stroke="{LINE}" stroke-width="1.5"/>\n'
+s += text(C3X + 22, BYY + 6, "2012", 26, OCRU, "serif", 700)
+o, yl, n = block(C3X + 22 + 78, BYY - 2, "„Sibiu Baroque Update” – un nou eveniment major, încurajat de autoritățile locale",
+                 C3W - 44 - 78, 15, VAR, 19)
+s += o
+assert n <= 2 and yl < BOT - 8
+assert by + 28 < BYY - 32, by
+assert HY + 106 < BYY - 32
+
+# ====================================================================== surse
+src = ("Surse: en.wikipedia („European Capital of Culture”, „Sibiu”, „Sibiu International Theatre Festival”); "
+       "culturaltourism-network.eu („ECoC Sibiu 2007”); patrimoniu.sibiu.ro. "
+       "Fără cifre de vizitatori sau bugete (nedate clar de surse). Medalioanele: ilustrații generice.")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

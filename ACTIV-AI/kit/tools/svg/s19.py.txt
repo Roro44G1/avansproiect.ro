@@ -1,0 +1,302 @@
+# -*- coding: utf-8 -*-
+"""S19 – Harta atelierelor imaginare ale breslelor pe străzile de azi (Calupul 5). Rulat din /home/claude/expo/_tools/svg.
+Geometria centrului istoric: sibiu_map.py. Două straturi: „documentat” (porți, turnuri, bastioane, piețe) și „atelier imaginat”."""
+import math
+from lib import *
+import sibiu_map as SM
+from s13 import Boxes, G, halo, rich, qbadge, INK, INK2, OCRU_D
+from s16 import place, L, hits, check, layout_block
+from s18 import TOOLS, para_prefix, C_SUS, C_JOS
+
+OUT = "/home/claude/expo/c5/05_spatial/S19_atelierele_breslelor.svg"
+
+VIO_D = "#4B3A99"; VIO_L = "#EDE8FB"; DOC = "#0E5C66"
+SKIN = "#E8C39E"
+
+
+def craftsman(x, y, apron=PETROL, sc=1.0, flip=False):
+    """meșter fictiv, siluetă simplă; picioarele în (x, y)"""
+    f = -1 if flip else 1
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc * f:.2f},{sc:.2f})">'
+    s += f'<path d="M-3,0 L-2,-10 M3,0 L2,-10" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>'
+    s += f'<path d="M-7,-9 Q-8,-22 0,-24 Q8,-22 7,-9 Z" fill="#5A4D38" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<path d="M-5,-9 L-4,-20 H4 L5,-9 Z" fill="{apron}" stroke="{INK}" stroke-width="1"/>'
+    s += f'<path d="M7,-19 L12,-12" stroke="#5A4D38" stroke-width="3" stroke-linecap="round"/>'
+    s += f'<circle cx="0" cy="-29" r="5.2" fill="{SKIN}" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<path d="M-6,-31 Q0,-39 6,-31 Z" fill="{VIO_D}" stroke="{INK}" stroke-width="1"/>'
+    return s + "</g>\n"
+
+
+def workshop(x, y, tool, apron=PETROL, flip=False):
+    """atelier imaginat: casă cu firmă desenată (fără text) și un meșter fictiv; (x,y) = mijlocul bazei casei.
+    Returnează (svg, bbox)."""
+    f = -1 if flip else 1
+    hw, hh = 22, 26
+    s = f'<g filter="url(#shs)">'
+    s += f'<ellipse cx="{x:.1f}" cy="{y+1:.1f}" rx="{hw+18}" ry="5" fill="{VIOLET}" opacity="0.18"/>'
+    s += (f'<rect x="{x-hw:.1f}" y="{y-hh:.1f}" width="{2*hw}" height="{hh}" fill="{VIO_L}" stroke="{VIOLET}" '
+          f'stroke-width="1.8"/>')
+    s += (f'<polygon points="{x-hw-4:.1f},{y-hh:.1f} {x:.1f},{y-hh-20:.1f} {x+hw+4:.1f},{y-hh:.1f}" fill="{VIOLET}" '
+          f'stroke="{VIO_D}" stroke-width="1.6" stroke-linejoin="round"/>')
+    s += f'<rect x="{x-5:.1f}" y="{y-14:.1f}" width="10" height="14" rx="1.5" fill="{VIO_D}"/>'
+    s += f'<rect x="{x-17:.1f}" y="{y-21:.1f}" width="8" height="8" fill="#FFF1C9" stroke="{VIO_D}" stroke-width="1"/>'
+    s += f'<rect x="{x+9:.1f}" y="{y-21:.1f}" width="8" height="8" fill="#FFF1C9" stroke="{VIO_D}" stroke-width="1"/>'
+    s += "</g>"
+    # suportul și firma (desen, fără text)
+    bx = x + f * hw
+    s += f'<path d="M{bx:.1f},{y-hh+3:.1f} h{f*24:.1f}" stroke="{INK}" stroke-width="2.2"/>'
+    s += f'<path d="M{bx:.1f},{y-hh+10:.1f} l{f*10:.1f},-7" stroke="{INK}" stroke-width="1.4"/>'
+    sx = bx + f * 19
+    s += f'<path d="M{sx-8:.1f},{y-hh+3:.1f} v4 M{sx+8:.1f},{y-hh+3:.1f} v4" stroke="{INK}" stroke-width="1.2"/>'
+    s += (f'<g filter="url(#shs)"><rect x="{sx-14:.1f}" y="{y-hh+7:.1f}" width="28" height="27" rx="3" fill="#FBF7EE" '
+          f'stroke="{VIOLET}" stroke-width="2"/></g>')
+    s += G(sx, y - hh + 20.5, 0.42, TOOLS[tool](), filt=False)
+    # meșterul, de partea cealaltă
+    mx = x - f * (hw + 10)
+    s += craftsman(mx, y, apron, 0.95, flip)
+    x0 = min(x - hw - 4, sx - 14, mx - 9); x1 = max(x + hw + 4, sx + 14, mx + 9)
+    return s, (x0, y - hh - 21, x1, y + 9)
+
+
+def main():
+    B = Boxes()
+    s = frame_head("SPAȚIAL · S19", PETROL, "Harta atelierelor imaginare ale breslelor",
+                   "pe străzile de azi · ce e documentat și ce e imaginat", title_size=58)
+
+    MX, MY, MW, MH = 80, 230, 1180, 770
+    BOUNDS = (MX + 8, MY + 8, MX + MW - 8, MY + MH - 8)
+    k = 1.0
+    ox, oy = MX - 8, MY - 26
+    P = SM.mk(ox, oy, k)
+    s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+    body = f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+    body += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.3"/>\n'
+    body += SM.river(P, w=24)
+    body += SM.wall(P, SM.IV, "#9C97C2", fill_op=0.08, w=8)
+    body += SM.wall(P, SM.III, "#6FA3A8", fill_op=0.10, w=8)
+    body += SM.ghost_wall(P, SM.II, color=TIGLA, w=2.5)
+    body += SM.ghost_wall(P, SM.I_, color="#C99A2E", w=2.5)
+
+    ctx = ""
+    ctx += SM.square(P, k, SM.P_MARE, "Piața Mare", size=19)
+    x0, y0, w0, h0 = SM.P_MARE
+    B.add("PMare:icon", *P(x0, y0), *P(x0 + w0, y0 + h0))
+    ctx += SM.church(P, k * 0.8, *SM.HUET)
+    hx, hy = P(*SM.HUET)
+    B.add("Huet:icon", hx - 18, hy - 52, hx + 18, hy + 22)
+    ctx += SM.council_tower(P, k * 0.9, *SM.T_SFAT)
+    tsx, tsy = P(*SM.T_SFAT)
+    B.add("Sfat:icon", tsx - 7, tsy - 40, tsx + 9, tsy + 21)
+
+    # ---------------- stratul „documentat” ----------------
+    doc = ""
+    # Piața Mică (hala măcelarilor) – pătrat cu contur plin, petrol
+    x1, y1, w1, h1 = SM.P_MICA
+    X1, Y1 = P(x1, y1)
+    doc += (f'<rect x="{X1:.1f}" y="{Y1:.1f}" width="{w1*k:.1f}" height="{h1*k:.1f}" rx="4" fill="#FBF7EE" '
+            f'stroke="{DOC}" stroke-width="3"/>')
+    B.add("PMica:icon", X1, Y1, X1 + w1 * k, Y1 + h1 * k)
+    # Piața Aurarilor (orientativ) + Pasajul Aurarilor
+    a0 = P(512, 276); a1 = P(456, 190)
+    ang = math.atan2(a1[1] - a0[1], a1[0] - a0[0]); nx_, ny_ = -math.sin(ang), math.cos(ang)
+    doc += f'<path d="M{a0[0]:.1f},{a0[1]:.1f} L{a1[0]:.1f},{a1[1]:.1f}" stroke="#D8C9A8" stroke-width="15" stroke-linecap="round"/>'
+    for i in range(11):
+        t = i / 10
+        px, py = a0[0] + (a1[0] - a0[0]) * t, a0[1] + (a1[1] - a0[1]) * t
+        doc += f'<line x1="{px-7*nx_:.1f}" y1="{py-7*ny_:.1f}" x2="{px+7*nx_:.1f}" y2="{py+7*ny_:.1f}" stroke="{INK2}" stroke-width="1.5"/>'
+    for i in range(25):
+        t = i / 24
+        px, py = a0[0] + (a1[0] - a0[0]) * t, a0[1] + (a1[1] - a0[1]) * t
+        B.add("pasaj:pt", px - 6, py - 6, px + 6, py + 6)
+    pa = P(398, 140); pw, ph = 60, 48
+    doc += (f'<rect x="{pa[0]:.1f}" y="{pa[1]:.1f}" width="{pw}" height="{ph}" rx="4" fill="#FBF7EE" stroke="{DOC}" '
+            f'stroke-width="3" stroke-dasharray="7 4"/>')
+    B.add("PAur:icon", pa[0], pa[1], pa[0] + pw, pa[1] + ph)
+
+    gates = {"Cisn": SM.G_CISN, "Turn": SM.G_TURN, "Ocna": SM.G_OCNA, "Elis": SM.G_ELIS}
+    for kk, (gx, gy) in gates.items():
+        X, Y = P(gx, gy)
+        doc += SM.gate_icon(X, Y)
+        doc += f'<circle cx="{X:.1f}" cy="{Y+1:.1f}" r="21" fill="none" stroke="{DOC}" stroke-width="2.4"/>'
+        B.add(kk + ":icon", X - 22, Y - 21, X + 22, Y + 23)
+    for kk, (bx, by) in {"Hall": SM.B_HALL, "Sold": SM.B_SOLD}.items():
+        X, Y = P(bx, by)
+        doc += SM.bastion_icon(X, Y)
+        doc += f'<circle cx="{X:.1f}" cy="{Y-1:.1f}" r="23" fill="none" stroke="{DOC}" stroke-width="2.4"/>'
+        B.add(kk + ":icon", X - 24, Y - 25, X + 24, Y + 23)
+    for kk, (tx, ty) in {"Arch": SM.T_ARCH, "Olar": SM.T_OLAR, "Dulg": SM.T_DULG}.items():
+        X, Y = P(tx, ty)
+        doc += SM.tower_icon(X, Y)
+        doc += f'<circle cx="{X:.1f}" cy="{Y-5:.1f}" r="23" fill="none" stroke="{DOC}" stroke-width="2.4"/>'
+        B.add(kk + ":icon", X - 24, Y - 29, X + 24, Y + 19)
+
+    # ---------------- stratul „atelier imaginat” ----------------
+    WS = [
+        # cheie, unealtă (firma), poziție locală, șorț, întoarcere, meserie
+        ("wMac", "macelar", (520, 606), TIGLA, False, "măcelar"),
+        ("wCro", "croitor", (250, 215), PETROL, False, "croitor"),
+        ("wCiz", "cizmar", (705, 188), "#6B4A2E", True, "cizmar"),
+        ("wCoj", "cojocar", (985, 246), "#C9A27E", True, "cojocar"),
+        ("wCos", "cositorar", (800, 410), "#8E979F", True, "cositorar"),
+        ("wTes", "tesator", (262, 470), "#3E7F6A", False, "țesător"),
+        ("wAur", "aurar", (565, 184), OCRU, False, "aurar"),
+        ("wPan", "panzar", (745, 548), "#5E9AA0", True, "pânzar"),
+    ]
+    ws_svg = ""
+    wpos = {}
+    for key, tool, (lx, ly), ap, fl, lab in WS:
+        X, Y = P(lx, ly)
+        svg, bb = workshop(X, Y, tool, ap, fl)
+        ws_svg += svg
+        B.add(key + ":icon", *bb)
+        wpos[key] = (X, Y, bb, lab)
+
+    # busolă
+    CX, CY = MX + MW - 64, MY + MH - 82
+    comp = SM.compass(CX, CY, r=26)
+    B.add("compass", CX - 48, CY - 50, CX + 48, CY + 50)
+    note = "Hartă schematică, poziții aproximative – nu la scară"
+    nt = text(MX + 22, MY + MH - 18, note, 17, INK2, "sans", 400, True)
+    B.text("note", MX + 22, MY + MH - 18, measure(note, 17, "sans", 400, True), 17)
+
+    # ---------------- etichete ----------------
+    labels = ""
+
+    def put(name, x, y, lines, cands, **kw):
+        nonlocal labels
+        svg, p_ = place(B, name, x, y, lines, cands, BOUNDS, **kw)
+        labels += svg
+        return p_
+
+    def NM(t):
+        return L(t, 16, INK, 700)
+
+    def GU(t):
+        return L(t, 14, DOC, 700)
+
+    def YR(t):
+        return L(t, 13, OCRU_D, 700, True)
+
+    X, Y = P(*SM.G_CISN)
+    put("Cisn", X, Y, [NM("Poarta Cisnădiei"), GU("măcelarii")], [(30, 0, "start"), (-30, 0, "end"), (0, 42, "middle")])
+    X, Y = P(*SM.G_TURN)
+    put("Turn", X, Y, [NM("Poarta Turnului"), GU("croitorii"), YR("Turnul Croitorilor: 1492, 1575")],
+        [(0, 44, "middle"), (28, 40, "start"), (28, -10, "start"), (-6, -40, "start")])
+    X, Y = P(*SM.G_OCNA)
+    put("Ocna", X, Y, [NM("Poarta Ocnei"), GU("cizmarii"), YR("bastionul porții: 1556")],
+        [(30, -6, "start"), (30, -12, "start"), (-30, -6, "end")])
+    X, Y = P(*SM.G_ELIS)
+    put("Elis", X, Y, [NM("Poarta Elisabeta"), GU("cojocarii"), YR("și pielarii, în 1457")],
+        [(0, 44, "middle"), (-10, 44, "middle"), (-30, 40, "end"), (0, -50, "middle")])
+    X, Y = P(*SM.B_HALL)
+    put("Hall", X, Y, [NM("Bastionul Haller"), GU("cositorarii și olarii · 1556")],
+        [(-32, 4, "end"), (-30, -8, "end"), (32, 4, "start")])
+    X, Y = P(*SM.B_SOLD)
+    put("Sold", X, Y, [NM("Bastionul Soldisch"), GU("țesătorii · 1556"), YR("bastionul: 1622–1629, altă sursă")],
+        [(0, 44, "middle"), (10, 46, "middle"), (-12, 44, "start"), (34, 4, "start")])
+    X, Y = P(*SM.T_DULG)
+    put("Dulg", X, Y, [NM("Turnul Dulgherilor"), GU("breasla: însemn din 1450")],
+        [(32, 2, "start"), (32, -8, "start"), (32, 12, "start")])
+    X, Y = P(*SM.T_OLAR)
+    put("Olar", X, Y, [NM("Turnul Olarilor"), GU("construit în sec. al XV-lea")],
+        [(32, 2, "start"), (32, 10, "start"), (32, -6, "start")])
+    X, Y = P(*SM.T_ARCH)
+    put("Arch", X, Y, [NM("Turnul Archebuzierilor"), GU("apoi „al Pânzarilor”"), YR("1357–1366")],
+        [(32, 2, "start"), (32, 12, "start"), (32, -10, "start"), (0, 46, "middle")])
+    put("PMica", X1 + w1 * k, Y1 + h1 * k / 2, [NM("Piața Mică"), GU("hala măcelarilor"), YR("1320 / 1370, după sursă")],
+        [(10, 46, "start"), (12, 52, "start"), (10, 60, "start"), (-w1 * k - 10, 50, "end")])
+    put("PAur", pa[0], pa[1] + ph / 2, [NM("Piața Aurarilor"), GU("aurarii · 1346"), YR("poziție orientativă")],
+        [(pw / 2, -64, "middle"), (-12, -6, "end"), (-12, 2, "end"), (pw + 12, 34, "start")])
+    put("pasajL", (a0[0] + a1[0]) / 2, (a0[1] + a1[1]) / 2, [L("Pasajul Aurarilor", 13, INK2, 600, True)],
+        [(-12, 6, "end"), (-14, 14, "end"), (12, -4, "start")], hw=4)
+    put("Huet", hx, hy, [L("Piața Huet", 13, INK2, 700)], [(0, 34, "middle"), (-24, 4, "end"), (24, 4, "start")], hw=4)
+    put("Sfat", tsx, tsy, [L("Turnul Sfatului", 12, INK2, 600, True)], [(0, 36, "middle"), (12, 26, "start"), (-12, 26, "end")], hw=4)
+    # Strada Cetății (de-a lungul zidului estic)
+    cx_, cy_ = P(985, 545)
+    put("Cetatii", cx_, cy_, [L("Strada Cetății", 15, DOC, 700, True, "serif")],
+        [(0, 0, "middle"), (10, 20, "middle"), (-20, 40, "middle"), (60, 60, "middle")])
+    # zone
+    put("ODS", *P(430, 520), [L("ORAȘUL DE SUS", 22, C_SUS, 700, False, "serif")],
+        [(0, 0, "middle"), (30, 20, "middle"), (-20, 40, "middle"), (60, 0, "middle")])
+    put("ODJ", *P(830, 150), [L("ORAȘUL DE JOS", 22, C_JOS, 700, False, "serif")],
+        [(0, 0, "middle"), (20, 16, "middle"), (40, 30, "middle"), (-30, 30, "middle")])
+    # etichetele atelierelor imaginate (scurte, violet)
+    for key, (X, Y, bb, lab) in wpos.items():
+        put(key, (bb[0] + bb[2]) / 2, Y, [L(lab, 14, VIO_D, 700, True)],
+            [(0, 22, "middle"), (0, 26, "middle"), (bb[2] - X + 8, -8, "start"), (bb[0] - X - 8, -8, "end"), (0, -52, "middle")], hw=4)
+
+    body += ctx + doc + ws_svg + labels + comp + nt
+    body += "</g>\n"
+    s += body
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+    # ---------------- coloana dreaptă ----------------
+    RX, RW = 1280, 560
+    col = ""
+    # Legendă: două straturi
+    LY = 230
+    LH = 214
+    col += card(RX, LY, RW, LH)
+    col += text(RX + 26, LY + 42, "Legendă: două straturi", 25, VAR, "serif", 700)
+    y = LY + 84
+    # documentat
+    col += SM.gate_icon(RX + 44, y - 4)
+    col += f'<circle cx="{RX+44}" cy="{y-3}" r="20" fill="none" stroke="#5FC3CB" stroke-width="2.4"/>'
+    col += text(RX + 90, y - 6, "documentat", 18, "#5FC3CB", "sans", 700)
+    col += text(RX + 90, y + 15, "poartă, turn, bastion sau piață legate de o breaslă", 15, CEATA)
+    y += 64
+    wsvg, _ = workshop(RX + 50, y + 10, "croitor", PETROL, False)
+    col += f'<g transform="translate({RX+46:.1f},{y+8:.1f}) scale(0.5) translate({-(RX+50):.1f},{-(y+10):.1f})">' + wsvg + "</g>"
+    col += text(RX + 90, y - 6, "atelier imaginat", 18, "#B9A7F5", "sans", 700)
+    col += text(RX + 90, y + 15, "casă, firmă desenată fără text și meșter – personaje fictive", 15, CEATA)
+    assert RX + 90 + measure("casă, firmă desenată fără text și meșter – personaje fictive", 15) <= RX + RW - 16
+    y += 52
+    col += text(RX + 26, y, "1320 / 1370", 16, OCRU, "sans", 700)
+    col += text(RX + 136, y, "surse diferite – arătăm ambele variante", 15, CEATA)
+    assert y + 10 <= LY + LH
+
+    # Ce spun sursele
+    SY = LY + LH + 14
+    SH = 420
+    col += card(RX, SY, RW, SH, fill="#1E2B38", stroke=PETROL)
+    col += text(RX + 26, SY + 40, "Ce spun sursele", 24, VAR, "serif", 700)
+    rows = [
+        ("Porțile", "măcelarii – Cisnădiei, croitorii – Turnului, cizmarii – Ocnei, cojocarii – Elisabeta", "limbaromana.org"),
+        ("1556", "Bastionul Haller – cositorarii și olarii; Bastionul Soldisch – țesătorii", "limbaromana.org; bastionul Soldisch e datat 1622–1629 de patrimoniu.sibiu.ro"),
+        ("Str. Cetății", "Turnul Archebuzierilor, numit apoi al Pânzarilor, după breasla care îl avea în îngrijire; "
+         "Turnul Olarilor și cel al Dulgherilor poartă nume de meserii – sursele nu spun cine le îngrijea",
+         "patrimoniu.sibiu.ro; însemnul dulgherilor (1450) – mnir.ro"),
+        ("1320 / 1370", "hala măcelarilor din Piața Mică", "inyourpocket.com / turnulsfatului.ro (2023)"),
+        ("1346", "aurarii sibieni sunt atestați; statutul aurarilor – 1494", "limbaromana.org"),
+    ]
+    y = SY + 76
+    for key, txt, src in rows:
+        col += text(RX + 26, y, key, 16, OCRU, "sans", 700)
+        p, yn = para(RX + 140, y, txt, 15, RW - 162, VAR, lh=19)
+        col += p
+        p2, yn2 = para(RX + 140, yn - 2, src, 13, RW - 162, CEATA, lh=17, italic=True)
+        col += p2
+        y = yn2 + 11
+    assert y - 11 <= SY + SH - 8, ("sources overflow", y, SY + SH)
+
+    # Atelierele sunt imaginate
+    IY = SY + SH + 14
+    IH = 1000 - IY
+    col += card(RX, IY, RW, IH, fill="#221D3A", stroke=VIOLET)
+    col += text(RX + 26, IY + 38, "Atelierele sunt imaginate", 22, VAR, "serif", 700)
+    msg = ("Sursele nu descriu ateliere anume pe aceste străzi. Casele, firmele și meșterii sunt "
+           "desenați de AI, lângă locurile reale ale breslelor.")
+    p, yn = para(RX + 26, IY + 66, msg, 15, RW - 52, CEATA, lh=20)
+    col += p
+    assert yn - 20 + 10 <= IY + IH, ("imag overflow", yn)
+    s += col
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    bad = check(B, BOUNDS)
+    print("overlaps:", len(bad))
+
+
+if __name__ == "__main__":
+    main()

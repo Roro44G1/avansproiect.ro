@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "S16",
+    "categorie": "Spațial",
+    "titlu": "Harta drumețiilor din jurul Sibiului — ilustrată AI, schematic",
+    "fisiere": [
+      "05_spatial/S16_harta_drumetiilor.svg",
+      "05_spatial/S16_harta_drumetiilor.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă ilustrată a împrejurimilor Sibiului, de la oraș până la Vf. Cindrel (2.244 m), cu Cibinul și lacul de la Gura Râului, și trei trasee marcate desenate cu simbolurile lor (cruce roșie, triunghi albastru, triunghi roșu), plus un detaliu mărit al zonei Păltiniș. Fișele din dreapta dau capetele, lungimea, durata, urcarea și dificultatea fiecărui traseu, iar caseta de siguranță amintește: verificați traseul și vremea, mergeți însoțiți, rămâneți pe marcaj, urgențe 112.",
+    "status": "realizat",
+    "nota": "Traseele (marcaj, lungime, durată, urcare, dificultate, repere) sunt preluate întocmai din fișele muntii-nostri.ro, prin fapte_verificate.md; Șaua Bătrâna 1.863 m, Cheile Cibinului circa 2 km, „Bradul Uriaș” peste 500 de ani și circa 40 m, barajul de la Gura Râului – cea mai mare sursă de apă potabilă a Sibiului. Păltiniș: fondat în 1894, prima stațiune montană din România; altitudinea afișată ca divergență („1.440 sau 1.442 m, după sursă”). Pozițiile localităților și ale vârfurilor urmează coordonatele comune (AGENT_COMMON.md); punctele intermediare (izvorul Dorul Clujului, Poiana Găujoara, Poiana Lupilor, Șanta, cantonul Niculești, „Bradul Uriaș”) sunt plasate orientativ, cu cerc punctat. Molizii, stâna și oile sunt ilustrații decorative, declarate în legendă. Hartă schematică, poziții aproximative – nu la scară."
+  },
+  {
+    "cod": "S17",
+    "categorie": "Spațial",
+    "titlu": "Harta verde a orașului — parcuri, păduri, maluri de râu",
+    "fisiere": [
+      "05_spatial/S17_harta_verde.svg",
+      "05_spatial/S17_harta_verde.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Hartă schematică a Sibiului, cu centrul istoric în mijloc, pe care fiecare spațiu verde documentat are simbolul tipului său (parc, pădure, mal de râu, lac) și un fapt verificat: Parcul Sub Arini (1856), Parcul Astra, Parcul Tineretului, parcul de lângă ziduri, Parcul Terezian, Lacul lui Binder, Parcul Belvedere, promenada Cibinului și Pădurea Dumbrava, cu Grădina Zoologică și Muzeul ASTRA. O casetă propune trei întrebări de explorat cu clasa.",
+    "status": "realizat",
+    "nota": "Fapte doar din fapte_verificate.md (zilesinopti.ro, sibiucityapp.ro, agerpres.ro 2020, dssibiu.ro, sibiul.ro, ecomagazin.ro, en.wikipedia): Sub Arini – noiembrie 1856, 68 de specii de plante, 95 de specii de păsări, arin, tei, castan, platan, ginkgo; Parcul Astra – reamenajat în 1926, nouă busturi, lângă Palatul Asociațiunii (1905); Parcul Tineretului – pe Bd. Corneliu Coposu, dincolo de Bastionul Haller; Parcul Terezian – fostul Târg al Vitelor; Lacul lui Binder – „singurul lac din municipiu” (2020); promenada Cibinului – circa 4 km de piste; Dumbrava – 993 ha (peste 990 ha după dssibiu.ro), stejăret de terasă; Grădina Zoologică – 1929, prima din România; Muzeul ASTRA – 96 ha. Coordonatele cartierelor sunt cele din Calupul 3; Sub Arini, Astra, Tineretului, parcul de lângă ziduri, Belvedere (locul exact nu e în surse), Grădina Zoologică și Muzeul ASTRA au contur punctat (poziție orientativă); Bastionul Haller e pus pe latura estică, ca în geometria comună sibiu_map.py. Forma frunzei de ginkgo din pictogramă e verificată pe en.wikipedia (vezi _fapte_noi.md). Întrebările pentru clasă nu conțin fapte noi. Hartă schematică, poziții aproximative – nu la scară."
+  }
+]

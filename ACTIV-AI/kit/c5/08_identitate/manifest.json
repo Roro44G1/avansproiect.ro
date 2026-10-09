@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "P17",
+    "categorie": "Identitate",
+    "titlu": "Meseria mea de vis ca breaslă medievală — blazon AI",
+    "fisiere": [
+      "08_identitate/P17_meseria_de_vis_blazon.svg",
+      "08_identitate/P17_meseria_de_vis_blazon.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Eleva B. (personaj fictiv) își imaginează meseria de vis – inginer de energie solară – ca breaslă medievală: blazon cu soare, căprior-panou solar, fulgere și cheie fixă, deviză, statut parodic în 5 articole și cum arătau însemnele reale.",
+    "status": "realizat",
+    "nota": "Elevă, breaslă, blazon, deviză și statut inventate; blazonul nu copiază stema Sibiului și nici însemne reale. Regulile vechi (ucenic, calfă, călătorie din 1512, proba cositorarilor, staroste) și însemnele (sigiliu și însemn cu valoare heraldică; dulgheri 1450, croitori 1695; Muzeul Brukenthal) – fapte_verificate.md (limbaromana.org, mnir.ro). Culorile heraldice și regula metal/culoare – en.wikipedia, „Tincture (heraldry)” (vezi _fapte_noi_P17_P18.md). Diferit de P08 (breasla clasei)."
+  },
+  {
+    "cod": "P18",
+    "categorie": "Identitate",
+    "titlu": "Sigiliul personal al meșterului — design AI inspirat din sigiliile breslelor",
+    "fisiere": [
+      "08_identitate/P18_sigiliul_mesterului.svg",
+      "08_identitate/P18_sigiliul_mesterului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Sigiliul imaginar al meșterului Ilie V., lăcătuș (personaj fictiv), arătat de trei ori: desenul vectorial, matricea gravată în oglindă și impresiunea în ceară, cu explicații despre sigiliile breslelor și 5 pași pentru propriul sigiliu.",
+    "status": "realizat",
+    "nota": "Sigiliu imaginar, nu reproduce un sigiliu real; meșterul, legenda, inițialele și anul MMXXIV sunt fictive; relieful din ceară e simulat. Fapte: sigiliu și însemn propriu al fiecărei bresle (mnir.ro); patronii pe sigilii din sec. XV–XVI, pe ladă/steag/unelte în XVII–XVIII, păstrare la Muzeul Brukenthal, turnul cositorarilor și lăcătușilor (1575) – limbaromana.org; rolul sigiliului, matricea în oglindă, legenda „Sigiliul lui …”, imaginea meseriei pe sigiliile orășenilor – en.wikipedia, „Seal (emblem)” (vezi _fapte_noi_P17_P18.md). Legenda e așezată literă cu literă, în sens orar."
+  }
+]

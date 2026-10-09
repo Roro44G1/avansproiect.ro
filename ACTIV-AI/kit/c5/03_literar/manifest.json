@@ -1,0 +1,47 @@
+[
+  {
+    "cod": "L26",
+    "categorie": "Literar",
+    "titlu": "Rețeta bunicii scrisă ca un poem (personaj fictiv)",
+    "titlu_creativ": "Cât ia mâna: sarmalele bunicii, dictate în versuri",
+    "fisiere": [
+      "03_literar/L26_reteta_bunicii_poem.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "O bunică inventată din Sibiu își dictează nepotului, în versuri, rețeta de sarmale în varianta transilvăneană, cu afumătură printre sarmale. Cantitățile sunt orientative: o versiune de familie imaginată, nu o rețetă documentată.",
+    "status": "realizat",
+    "nota": "Bunica (fără nume) și nepotul sunt personaje fictive; bucătăria, amintirile și „regula casei” sunt imaginate. Rețeta e declarată „versiune de familie, imaginată, nu rețetă documentată”: toate cantitățile și timpii dintre paranteze sunt orientativi, la fel detaliile de lucru care nu apar în surse (spălarea orezului, subțierea cotorului, așezarea în cerc). Din fapte_verificate.md („Preparate”, en.wikipedia – Romanian cuisine): frunze de varză umplute cu carne tocată, orez, ceapă și verdețuri, fierte câteva ore, tradițional în oale de ceramică; în Transilvania – picioare de porc afumate sau șorici printre sarmale. Verificate în plus pe en.wikipedia (Sarma (food), secțiunea despre România), cu citate în 03_literar/_fapte_noi_L26.md: varză murată (acră), carne de porc, ou, cimbru și mărar, oala căptușită cu varză tocată, servire cu mămăligă sau pâine și smântână, odihna de o zi-două. Fără alcool; reguli de siguranță integrate (un adult la cuțit și la aragaz, mâini spălate după carnea crudă, păstrare la rece). Corpul poemului: aproximativ 740 de cuvinte.",
+    "extras": "„Cam” e cel mai cinstit cuvânt din bucătărie.\nAburul e răbdarea care iese pe ușă.\nȘi dacă ies strâmbe, spunem că așa e rețeta."
+  },
+  {
+    "cod": "L27",
+    "categorie": "Literar",
+    "titlu": "Dialog între salamul de Sibiu și telemeaua de Sibiu — umor cu fapte reale (IGP)",
+    "titlu_creativ": "Cine e mai vechi pe platou? Salamul și telemeaua își arată actele",
+    "fisiere": [
+      "03_literar/L27_dialog_salam_telemea.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Pe un platou de duminică, salamul de Sibiu și telemeaua de Sibiu se ceartă cine e mai vechi și mai protejat, cu fapte reale: prima fabrică din 1845, IGP din 2016 și din 2019, maturare de 60 și de 21 de zile. Pâinea arbitrează.",
+    "status": "realizat",
+    "nota": "Salamul, telemeaua și pâinea sunt personaje fictive; masa, replicile și verdictul sunt imaginate. Fapte din fapte_verificate.md („Salamul de Sibiu”, „Telemeaua de Sibiu”, „Mărginimea Sibiului”, „Date generale”): 1845 – Michael Fonn, prima fabrică de salam din Sibiu; 16 producători în ultimul sfert al secolului al XIX-lea; 1863 – numele „salam de Sibiu” la București; 1864 – prima fabrică de salam cu abur din Transilvania (Strada Băii); Theil – Mediaș 1895 sau „începutul secolului XX”, Sibiu 1922; Dozzi – Poiana Țapului 1885 sau 1895, Sinaia 1910 (divergențele sunt spuse în dialog); IGP februarie 2016, al doilea după Magiunul de Topoloveni; maturare minimum 60 de zile cu Penicillium nalgiovense, primul strat după cel puțin zece zile; telemeaua – IGP 16 octombrie 2019, al șaptelea produs românesc, lapte de oaie crud, cheag, semitare, ușor acrișoară și sărată, minimum 21 de zile dacă e vândută maturată, asociație de zece producători; aria exactă nu e dată de sursă și nu e inventată; Mărginimea – păstorit, calendarul oilor, „Drumul brânzei” (sibiu-turism.ro); Regiune Gastronomică Europeană 2019 (coincidență de calendar, spusă ca atare). Numele de oameni și fabrici apar doar ca fapte istorice, fără reclamă; producătorii actuali nu sunt numiți. Vinul din maturarea salamului nu e pomenit. „Lapte crud” e explicat ca termen tehnic, cu precizarea că nu e un sfat de consum. Corpul textului: aproximativ 790 de cuvinte.",
+    "extras": "Deci te-ai născut la Sibiu și ai fost botezat la București.\nEu n-am un an de naștere în fișa de fapte. Și nu-mi inventez unul doar ca să te bat.\nE descrierea gustului meu, nu a caracterului."
+  },
+  {
+    "cod": "L28",
+    "categorie": "Literar",
+    "titlu": "Regulamentul imaginar al breslei programatorilor — parodie după statutele vechilor bresle",
+    "titlu_creativ": "Acolada pe sigiliu: statutul breslei programatorilor",
+    "fisiere": [
+      "03_literar/L28_regulamentul_breslei_programatorilor.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Un statut parodic în 19 articole, în stil de act vechi, pentru o breaslă imaginară a programatorilor. După fiecare capitol, o casetă arată regula adevărată a breslelor sibiene care l-a inspirat: ucenicia, călătoria calfelor, capodopera, taxele.",
+    "status": "realizat",
+    "nota": "Breasla programatorilor, cetatea, starostele, florinii, însemnul cu acolade și toate cele 19 articole sunt inventate (parodie, nu document istoric sau regulament al vreunei organizații reale). Cele 7 casete „Regula adevărată care ne-a inspirat” folosesc doar fapte_verificate.md („Bresle și meșteșuguri”, „Meșteșuguri și gastronomie – completări pentru Calupul 5”): ucenicia (probă 2–6 săptămâni, 2–4 ani, certificat); calfa (taxă, masă, salariu, tutela meșterului); călătoria calfelor (2–4 ani, obligatorie din 1512, „părintele calfelor”); capodopera pielarilor (12 piei de bou, 80 de blănuri) și a cositorarilor (castron, cană cu picior, ploscă, vas de spălat, în două săptămâni); masa și căsătoria noului meșter; taxele (10 florini măcelari; 6 brutari, fierari; 2 țesători, croitori); starostele; sigiliul, însemnul, steagul, lada (mnir.ro; Muzeul Brukenthal); porțile și bastionul Haller; statutul comun din 9 noiembrie 1376 (19 bresle, 25 de meserii – lista completă nu e dată și nu a fost completată); 26/34/40 de bresle, 52 de meserii în 1810; desființarea – 1872 sau 18 aprilie 1875 (divergență arătată). Articolele fără corespondent istoric sunt declarate. Corpul textului: aproximativ 890 de cuvinte.",
+    "extras": "Ucenicului îi este oprit să umble la serverul cel mare vinerea după-amiaza.\nDespre pizza cu ananas sfatul nu s-a pronunțat.\nCine își pune parola „1234” face o săptămână de strajă pe zidul de foc."
+  }
+]

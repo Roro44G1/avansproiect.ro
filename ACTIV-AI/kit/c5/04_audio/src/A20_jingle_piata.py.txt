@@ -1,0 +1,460 @@
+"""A20 – Jingle AI pentru o piață de producători imaginară: „Hai la Coșul cu Soare!” (~26 s + stinger de 10 s).
+
+„Coșul cu Soare” este o piață IMAGINARĂ (nume inventat pentru acest artefact; nu este numele
+vreunei piețe din Sibiu). Temă originală în stil de jingle radio: melodia, acordurile și versurile
+au fost compuse pentru expoziția ACTIV AI și nu se bazează pe nicio melodie existentă.
+Instrumentalul este un demo: melodia vocii este cântată de un instrument solo (un „clarinet”
+sintetizat), ca ghid; vocea NU este generată – versurile se cântă peste instrumental.
+
+Do major, 4/4, 124 de pătrimi pe minut – o măsură durează 1,94 s.
+Fișierul conține, unul după altul: jingle-ul (Intro 2 măsuri – versurile 1–2 (4) – versurile 3–4 (4)
+– încheiere cu versul 1 reluat (2) – acordul final), 1,4 s de liniște, apoi varianta scurtă de 10 s
+(„stinger”: o măsură de pornire – versul 1 (2 măsuri) – acordul final).
+
+Notație în cod: fiecare șir = o măsură de 4/4; token = „silabă|notă|durată în optimi”;
+„~” la sfârșitul silabei = cuvântul continuă; „/” = aici se termină versul (pentru afișare);
+nota „R” = pauză; silaba „·” = notă instrumentală (fără text). Acordurile: unul pe măsură („C”)
+sau două, câte unul pe jumătate de măsură („F G”).
+
+Sunete (toate sintetizate din formule, fără mostre): „clarinet” (sinteză aditivă) – ghidul pentru
+voce; glockenspiel (sinteză modală) – dublează melodia la octavă; chitară (coardă ciupită
+Karplus-Strong) – acorduri scurte pe contratimp; bas sintetic (pe timpi: fundamentala și cvinta,
+ca un „um-pa” de fanfară); tobe electronice (kick, toba mică, hi-hat, shaker); un clopoțel de mână
+(„semnătura” pieței); acord final de „alămuri” sintetice și un cinel.
+
+Folosește biblioteca comună audiolib.py din /home/claude/expo/04_audio/_src.
+
+Rulare:  python3 A20_jingle_piata.py             -> ../A20_jingle_piata.mp3 + A20_marcaje.json
+         python3 A20_jingle_piata.py --notatie   -> tipărește notația pentru fișa .md
+"""
+import json
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+
+from audiolib import (SR, add, additive, bp, clap, env_adsr, env_ar, env_exp, finalize, hat, hp,  # noqa: E402
+                      hz, kick, ks_pluck, lp, make_ir, match_lufs, modal, ns, report, reverb, rng_of,
+                      saw, shaker, stereo, t_axis)
+
+BPM = 124
+BEAT = 60.0 / BPM               # 0,484 s
+EIGHTH = BEAT / 2
+BAR = 4 * BEAT                  # 1,935 s
+OUT = os.path.join(HERE, "..", "A20_jingle_piata.mp3")
+
+# ------------------------------------------------------------------ melodia (înălțimi reale) și acordurile
+INTRO = ["·|E4|2 ·|G4|2 ·|C5|2 ·|B4|1 ·|A4|1", "·|A4|4 ·|G4|2 ·|R|2"]
+CH_INTRO = ["C", "F G"]
+VERS_12 = [
+    "Hai|E4|2 la|G4|2 Co~|C5|2 șul|B4|1 cu|A4|1",
+    "Soa~|A4|4 re,/|G4|2 ·|R|2",
+    "pia~|C5|2 ța|B4|1 din|A4|1 vis,|F4|2 în|E4|2",
+    "zori:/|D4|4 ·|R|2 te~|G4|1 le~|A4|1",
+]
+CH_12 = ["C", "F G", "Am F", "G"]
+VERS_34 = [
+    "mea|C5|2 de|C5|1 Si~|A4|1 biu,|C5|3 sa~|A4|1",
+    "lam|D5|2 de|D5|1 Si~|B4|1 biu,/|D5|4",
+    "ro~|E5|1 șii,|D5|1 mie~|C5|1 re,|A4|1 pâi~|G4|1 ne|A4|1 și|B4|2",
+    "flori!/|C5|6 ·|R|2",
+]
+CH_34 = ["F", "G", "F G", "C"]
+TAG = ["Hai|E4|2 la|G4|2 Co~|C5|2 șul|B4|1 cu|A4|1", "Soa~|D5|4 re!/|C5|4"]
+CH_TAG = ["C", "G C"]
+FINAL = ["·|R|8"]
+CH_FINAL = ["C"]
+PICKUP = ["·|R|8"]
+CH_PICKUP = ["G"]
+
+JINGLE = [  # (nume, măsuri, acorduri, cu text?)
+    ("Intro", INTRO, CH_INTRO, False),
+    ("Versurile 1–2", VERS_12, CH_12, True),
+    ("Versurile 3–4", VERS_34, CH_34, True),
+    ("Încheiere: versul 1, reluat", TAG, CH_TAG, True),
+    ("Acordul final", FINAL, CH_FINAL, False),
+]
+STINGER = [
+    ("Stinger: pornire", PICKUP, CH_PICKUP, False),
+    ("Stinger: versul 1", TAG, CH_TAG, True),
+    ("Stinger: acordul final", FINAL, CH_FINAL, False),
+]
+J_END = 12 * BAR + 2.35          # jingle-ul se stinge aici (acordul final începe la 12 măsuri)
+STINGER_T0 = J_END + 1.4         # după 1,4 s de liniște
+STINGER_RING = 2.3               # acordul final al stinger-ului răsună după ultima măsură
+TOTAL = STINGER_T0 + 4 * BAR + STINGER_RING
+
+VOICING = {  # chitara: acorduri sub registrul vocii (cel mult Do4)
+    "C": ["C3", "E3", "G3", "C4"], "F": ["F2", "C3", "F3", "A3"], "G": ["G2", "D3", "G3", "B3"],
+    "Am": ["A2", "E3", "A3", "C4"],
+}
+BASS = {"C": ("C2", "G2"), "F": ("F2", "C3"), "G": ("G1", "D2"), "Am": ("A1", "E2")}
+STAB_C = ["C3", "G3", "C4", "E4", "G4"]
+
+
+# ------------------------------------------------------------------ parsare, cronologie
+def parse_bar(s):
+    out = []
+    for tok in s.split():
+        syl, note, d = tok.split("|")
+        out.append((syl, None if note == "R" else note, int(d)))
+    tot = sum(d for *_, d in out)
+    assert tot == 8, f"măsura „{s}” are {tot} optimi, nu 8"
+    return out
+
+
+def timeline(sections, t0=0.0):
+    t, secs = t0, []
+    for name, bars, chords, lyr in sections:
+        assert len(bars) == len(chords), f"{name}: {len(bars)} măsuri de melodie, {len(chords)} de acorduri"
+        secs.append(dict(name=name, t0=t, bars=bars, chords=chords, lyrics=lyr))
+        t += len(bars) * BAR
+    return secs
+
+
+def all_sections():
+    return timeline(JINGLE, 0.0) + timeline(STINGER, STINGER_T0)
+
+
+def disp(syl):
+    return syl.replace("/", "").rstrip("~")
+
+
+def note_events():
+    """Notele solistului: (t0, durată_s, notă, silabă, secțiune)."""
+    ev = []
+    for s in all_sections():
+        for bi, b in enumerate(s["bars"]):
+            pos = s["t0"] + bi * BAR
+            for syl, nm, d in parse_bar(b):
+                if nm is not None:
+                    ev.append((pos, d * EIGHTH, nm, disp(syl) if s["lyrics"] else "", s["name"]))
+                pos += d * EIGHTH
+    return ev
+
+
+def chords_of_bar(ch):
+    parts = ch.split()
+    return [(k * 8 // len(parts), c) for k, c in enumerate(parts)]  # (poziție în optimi, acord)
+
+
+def chord_at(s, bi, beat):
+    cur = None
+    for pos, c in chords_of_bar(s["chords"][bi]):
+        if pos <= 2 * beat:
+            cur = c
+    return cur
+
+
+# ------------------------------------------------------------------ instrumente
+def lead_note(f, dur, rng, hold=0.0):
+    """„Clarinet” sintetizat: armonice impare mai puternice, vibrato discret pe notele lungi."""
+    L = max(0.1, dur * 0.92) + hold
+    n = ns(L + 0.07)
+    tt = t_axis(n)
+    fv = np.full(n, f)
+    if L > 0.45:
+        depth = 0.16 * np.clip((tt - 0.2) / 0.25, 0, 1)
+        fv = f * 2 ** (depth * np.sin(2 * np.pi * 5.5 * tt + rng.uniform(0, 6.28)) / 12)
+    x = additive(fv, [1, 0.22, 0.42, 0.12, 0.22, 0.06, 0.1, 0.04], phase0=rng.uniform())
+    env = env_adsr(n, 0.018, 0.08, 0.85, 0.07)
+    br = bp(rng.standard_normal(n), 1500, 6000) * 0.03
+    return lp(x, 7000) * env + br * env
+
+
+def glock_note(f, rng, dur=1.6):
+    x = modal([f, 2.76 * f, 5.40 * f, 8.93 * f], [1, 0.3, 0.1, 0.04], [1.4, 0.5, 0.18, 0.08], dur, rng=rng,
+              attack=0.0005)
+    n = len(x)
+    x += hp(rng.standard_normal(n), 4000) * env_exp(n, 0.002) * 0.15
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def guitar_chop(chord, rng, down=True):
+    notes = VOICING[chord] if down else VOICING[chord][::-1]
+    out = np.zeros(ns(0.45))
+    for k, nm in enumerate(notes):
+        x = ks_pluck(hz(nm), 0.4, t60=0.5, bright=0.55, pos=0.2, rng=rng)
+        x = x * env_exp(len(x), 0.22)
+        i0 = ns(0.009 * k)
+        m = min(len(x), len(out) - i0)
+        out[i0:i0 + m] += x[:m] * (0.8 + 0.2 * k / 3)
+    return out
+
+
+def bass_note(nm, dur):
+    n = ns(dur)
+    f = hz(nm)
+    x = 0.6 * lp(saw(f, n), 650) + 0.8 * np.sin(2 * np.pi * f * t_axis(n))
+    return x * env_adsr(n, 0.004, 0.09, 0.55, 0.05)
+
+
+def bass_final(nm, dur=2.3):
+    """Nota de bas a acordului final: se stinge lent (fără tăietură bruscă)."""
+    n = ns(dur)
+    f = hz(nm)
+    x = 0.6 * lp(saw(f, n), 650) + 0.8 * np.sin(2 * np.pi * f * t_axis(n))
+    e = env_ar(n, 0.004, 1.6)
+    e[-ns(0.15):] *= np.linspace(1, 0, ns(0.15))
+    return x * e
+
+
+def snare(rng):
+    n = ns(0.25)
+    tt = t_axis(n)
+    body = np.sin(2 * np.pi * 190 * tt) * np.exp(-tt / 0.03)
+    nz = bp(rng.standard_normal(n), 1200, 7000) * np.exp(-tt / 0.06)
+    c = clap(rng=rng)[:n]
+    x = 0.5 * body + 0.6 * nz
+    x[:len(c)] += 0.5 * c
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def crash(rng, dur=2.2):
+    n = ns(dur)
+    x = hp(rng.standard_normal(n), 4500) * env_ar(n, 0.002, 1.8)
+    x += modal([3200, 4700, 6100, 7900], [0.2, 0.15, 0.1, 0.08], [1.2, 1.0, 0.8, 0.6], dur, rng=rng, beat_hz=3)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def stab(notes, rng, dur=0.9, t60=0.7):
+    n = ns(dur)
+    x = np.zeros(n)
+    for nm in notes:
+        for det in (-0.07, 0.07):
+            x += saw(hz(nm) * 2 ** (det / 12), n, phase0=rng.uniform())
+    return lp(x, 3500, order=2) * env_ar(n, 0.006, t60)
+
+
+def pad(notes, dur, rng):
+    n = ns(dur)
+    x = np.zeros(n)
+    for nm in notes:
+        for det in (-0.06, 0.06):
+            x += additive(hz(nm) * 2 ** (det / 12), [1, 0.4, 0.2, 0.1, 0.05], n, phase0=rng.uniform())
+    return lp(x, 2500) * env_adsr(n, 0.05, 0.4, 0.6, dur * 0.6)
+
+
+def hand_bell(rng, f=1046.5):
+    x = modal([f * r for r in (1.0, 2.0, 2.4, 3.0, 4.2, 5.4)], [1, 0.5, 0.4, 0.25, 0.15, 0.08],
+              [1.4, 0.9, 0.7, 0.5, 0.3, 0.2], 1.8, rng=rng, attack=0.0005, beat_hz=2.0)
+    n = len(x)
+    x += hp(rng.standard_normal(n), 3000) * env_exp(n, 0.003) * 0.2
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+# ------------------------------------------------------------------ randare
+def render(seed=2016):
+    rng = rng_of(seed)
+    names = ["lead", "glock", "guitar", "bass", "kick", "snare", "hats", "shaker", "stab", "bell", "crash"]
+    S = {k: stereo(TOTAL) for k in names}
+    secs = all_sections()
+
+    # --- solistul (ghidul pentru voce) și glockenspielul (la octavă)
+    ev = note_events()
+    glock_secs = {"Intro": 0.9, "Versurile 3–4": 0.45, "Încheiere: versul 1, reluat": 0.8, "Stinger: versul 1": 0.8}
+    for i, (t0, d, nm, syl, sec) in enumerate(ev):
+        nxt = ev[i + 1][0] if i + 1 < len(ev) else TOTAL
+        last_of_part = sec in ("Încheiere: versul 1, reluat", "Stinger: versul 1") and nxt - (t0 + d) > 0.1
+        add(S["lead"], lead_note(hz(nm), d, rng, hold=0.55 if last_of_part else 0.0), t0, gain=1.0)
+        if sec in glock_secs:
+            add(S["glock"], glock_note(hz(nm, 12), rng), t0, gain=glock_secs[sec], pan=0.35)
+
+    # --- acompaniament, măsură cu măsură
+    for s in secs:
+        name = s["name"]
+        final = name in ("Acordul final", "Stinger: acordul final")
+        pickup = name == "Stinger: pornire"
+        for bi in range(len(s["bars"])):
+            tb = s["t0"] + bi * BAR
+            last_bar_of_sec = bi == len(s["bars"]) - 1
+            if final:
+                add(S["kick"], kick(rng=rng), tb, gain=1.0)
+                add(S["crash"], crash(rng), tb, gain=1.0, pan=0.2)
+                add(S["stab"], stab(STAB_C, rng), tb, gain=1.0)
+                add(S["stab"], pad(STAB_C, 2.6 if name.startswith("Stinger") else 1.9, rng), tb, gain=0.35)
+                add(S["bass"], bass_final("C2"), tb, gain=1.0)
+                add(S["bell"], hand_bell(rng), tb, gain=0.9, pan=0.2)
+                for k, nm in enumerate(["C6", "E6", "G6", "C7"]):
+                    add(S["glock"], glock_note(hz(nm), rng), tb + 0.08 + k * EIGHTH / 2, gain=0.55, pan=0.35)
+                continue
+            if pickup:
+                add(S["bell"], hand_bell(rng), tb, gain=1.0, pan=0.2)
+                add(S["bell"], hand_bell(rng), tb + 0.24, gain=0.8, pan=0.2)
+                add(S["kick"], kick(rng=rng), tb, gain=0.9)
+                add(S["bass"], bass_note("G1", 1.2 * BEAT), tb, gain=1.0)
+                add(S["guitar"], guitar_chop("G", rng), tb, gain=0.9, pan=-0.35)
+                for k, nm in enumerate(["G5", "B5", "D6"]):
+                    add(S["glock"], glock_note(hz(nm), rng), tb + k * EIGHTH, gain=0.6, pan=0.35)
+                for k in range(8):  # rulou pe toba mică, tot mai tare
+                    add(S["snare"], snare(rng), tb + 2 * BEAT + k * BEAT / 4, gain=0.25 + 0.09 * k)
+                continue
+            for beat in range(4):
+                t = tb + beat * BEAT
+                ch = chord_at(s, bi, beat)
+                # tobe
+                if beat in (0, 2):
+                    add(S["kick"], kick(rng=rng), t, gain=1.0 if beat == 0 else 0.9)
+                if beat == 2 and name != "Intro":
+                    add(S["kick"], kick(rng=rng), t + BEAT / 2, gain=0.45)
+                if beat in (1, 3):
+                    add(S["snare"], snare(rng), t, gain=0.9 * rng.uniform(0.93, 1.0))
+                add(S["hats"], hat(rng=rng), t, gain=0.45, pan=0.3)
+                add(S["hats"], hat(rng=rng), t + BEAT / 2, gain=0.85, pan=0.3)
+                if name in ("Versurile 3–4", "Încheiere: versul 1, reluat", "Stinger: versul 1"):
+                    for s16 in range(4):
+                        add(S["shaker"], shaker(rng=rng), t + s16 * BEAT / 4,
+                            gain=(0.9 if s16 % 2 else 0.5) * rng.uniform(0.8, 1.0), pan=-0.25)
+                # chitara pe contratimp, basul pe timpi (fundamentala, apoi cvinta)
+                add(S["guitar"], guitar_chop(ch, rng, down=beat % 2 == 0), t + BEAT / 2,
+                    gain=rng.uniform(0.8, 0.95), pan=-0.35)
+                root, fifth = BASS[ch]
+                add(S["bass"], bass_note(root if beat in (0, 2) else fifth, 0.8 * BEAT), t, gain=1.0)
+            # mici „umpluturi” de tobă la capăt de secțiune
+            if last_bar_of_sec and name in ("Versurile 1–2", "Versurile 3–4"):
+                for k in range(4):
+                    add(S["snare"], snare(rng), tb + 3 * BEAT + k * BEAT / 4, gain=0.35 + 0.15 * k)
+        if name == "Intro":  # clopoțelul pieței: „ding-ding” la început
+            add(S["bell"], hand_bell(rng), s["t0"], gain=1.0, pan=0.2)
+            add(S["bell"], hand_bell(rng), s["t0"] + 0.24, gain=0.8, pan=0.2)
+
+    # --- mix
+    ir = make_ir(t60=1.2, predelay=0.015, seed=21, hf_ratio=0.5)
+    targets = {"lead": (-17.0, 0.15), "glock": (-25.0, 0.25), "guitar": (-24.0, 0.12), "bass": (-21.0, 0.0),
+               "kick": (-21.0, 0.03), "snare": (-24.0, 0.15), "hats": (-29.0, 0.06), "shaker": (-32.0, 0.06),
+               "stab": (-23.0, 0.2), "bell": (-24.0, 0.25), "crash": (-28.0, 0.15)}
+    mix = stereo(TOTAL)
+    for k in names:
+        tgt, wet = targets[k]
+        x = match_lufs(S[k], tgt)
+        report(x, k)
+        mix += reverb(x, ir, wet=wet, dry=1.0)
+    # liniștea dintre jingle și stinger: coada jingle-ului se stinge până la J_END
+    t = t_axis(mix.shape[1])
+    g = np.ones_like(t)
+    f0 = J_END - 0.9
+    m = (t >= f0) & (t < J_END)
+    g[m] = np.cos(0.5 * np.pi * (t[m] - f0) / 0.9) ** 2
+    g[(t >= J_END) & (t < STINGER_T0 - 0.005)] = 0.0
+    return mix * g
+
+
+# ------------------------------------------------------------------ notația pentru fișa .md
+DUR_NAME = {1: "o", 2: "p", 3: "p.", 4: "d", 6: "d.", 8: "n"}
+
+
+def fmt_t(t):
+    s = f"{t % 60:04.1f}".replace(".", ",")
+    return f"{int(t // 60)}:{s}"
+
+
+def flat_syllables(s):
+    out, pos = [], 0
+    for b in s["bars"]:
+        for syl, nm, d in parse_bar(b):
+            if nm is not None:
+                out.append((syl, pos))
+            pos += d
+    return out
+
+
+def chord_sheet(sections):
+    """Versuri cu acorduri; silabele de anacruză („te-le-” din măsura 6) trec la versul următor."""
+    out = []
+    carry = []
+    for s in sections:
+        if not s["lyrics"]:
+            continue
+        out.append(f"[{s['name']}]")
+        syls = flat_syllables(s)
+        lines, cur = [], [(syl, -1) for syl, _ in carry]
+        for syl, pos in syls:
+            cur.append((syl, pos))
+            if syl.endswith("/"):
+                lines.append(cur)
+                cur = []
+        carry = [(syl, pos) for syl, pos in cur]
+        at = {}
+        for bi, ch in enumerate(s["chords"]):
+            for p, c in chords_of_bar(ch):
+                first = next((q for _, q in syls if q >= 8 * bi + p), None)
+                if first is not None and first < 8 * (bi + 1):
+                    at[first] = c
+        for ln in lines:
+            txt, row = "", ""
+            for syl, pos in ln:
+                if pos in at:
+                    row = row.ljust(len(txt)) + at[pos] + " "
+                txt += disp(syl)
+                if not syl.rstrip("/").endswith("~"):
+                    txt += " "
+            out.append(row.rstrip())
+            out.append(txt.rstrip())
+        out.append("")
+    return "\n".join(out)
+
+
+def syl_join(syls):
+    out = ""
+    for k, syl in enumerate(syls):
+        if k and syls[k - 1].rstrip("/").endswith("~"):
+            out += "-"
+        elif k:
+            out += " "
+        out += disp(syl)
+    return out
+
+
+def notation_tables(sections, bar0=0):
+    out = []
+    bar_no = bar0
+    for s in sections:
+        out.append(f"### {s['name']} ({fmt_t(s['t0'])}–{fmt_t(s['t0'] + len(s['bars']) * BAR)})\n")
+        out.append("| Măs. | Timp | Acord | Silabe | Note (durată) |")
+        out.append("|---|---|---|---|---|")
+        for bi, b in enumerate(s["bars"]):
+            bar_no += 1
+            notes = parse_bar(b)
+            syls = [syl for syl, nm, d in notes if nm is not None]
+            if s["lyrics"]:
+                syl_txt = syl_join(syls) + ("-" if syls[-1].rstrip("/").endswith("~") else "")
+            else:
+                syl_txt = "(instrumental)"
+            nt = " · ".join(("pauză" if nm is None else nm) + f" {DUR_NAME[d]}" for _, nm, d in notes)
+            out.append(f"| {bar_no} | {fmt_t(s['t0'] + bi * BAR)} | {s['chords'][bi].replace(' ', ' – ')} | "
+                       f"{syl_txt} | {nt} |")
+        out.append("")
+    return "\n".join(out)
+
+
+def marks():
+    m = {s["name"]: round(s["t0"], 2) for s in all_sections()}
+    m["Liniște (între jingle și stinger)"] = round(J_END, 2)
+    return dict(sorted(m.items(), key=lambda kv: kv[1]))
+
+
+if __name__ == "__main__":
+    if "--notatie" in sys.argv:
+        print(chord_sheet(timeline(JINGLE)))
+        print(notation_tables(timeline(JINGLE)))
+        print(notation_tables(timeline(STINGER, STINGER_T0), bar0=0))
+        sys.exit(0)
+    mix = render()
+    out = finalize(mix, OUT, "A20 Hai la Coșul cu Soare! – jingle AI pentru o piață de producători imaginară "
+                             "(instrumental demo + stinger)",
+                   "Temă originală în stil de jingle radio; piață imaginară; melodia vocii cântată de un instrument "
+                   "sintetizat ca ghid; vocea nu e generată – sinteză procedurală, ACTIV AI, calupul Meșteșuguri și "
+                   "gastronomie",
+                   target_lufs=-14.0, fin=0.01, fout=1.5)
+    report(out, "A20 final")
+    mk = marks()
+    print("marcaje:", json.dumps(mk, ensure_ascii=False), f"· total {TOTAL:.2f} s")
+    with open(os.path.join(HERE, "A20_marcaje.json"), "w", encoding="utf-8") as fh:
+        json.dump({"bpm": BPM, "masura_s": round(BAR, 4), "durata_s": round(TOTAL, 2),
+                   "jingle_s": [0.0, round(J_END, 2)], "stinger_s": [round(STINGER_T0, 2), round(TOTAL, 2)],
+                   "marcaje_s": mk,
+                   "note": [dict(t=round(t0, 3), d=round(d, 3), nota=nm, silaba=syl, sectiune=sec)
+                            for t0, d, nm, syl, sec in note_events()]}, fh, ensure_ascii=False, indent=1)

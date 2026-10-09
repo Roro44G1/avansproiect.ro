@@ -1,0 +1,242 @@
+# -*- coding: utf-8 -*-
+"""D20 – Cât citește clasa mea – infografic AI cu date fictive, declarate.
+TOATE cifrele sunt INVENTATE: clasa a X-a F (26 de elevi) e o clasă imaginară, sondajul nu a avut loc.
+Banda „DATE FICTIVE – exemplu de lucru, nu un sondaj real” e vizibilă sus; fiecare card are „date fictive”.
+Nicio comparație cu statistici reale. Autori: doar clasici morți de mult (opere în domeniul public)
+și „basme populare (autor anonim)”; anii lor – en.wikipedia (vezi _fapte_noi_D18_D20.md).
+Toate graficele sunt la scară (o singură scară pe fiecare grafic; 1 pătrat / 1 siluetă = 1 elev)."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c6/06_date/D20_cat_citeste_clasa_mea.svg"
+BLUE = "#3E63DD"
+BLUE_L = "#8DA4F2"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+AXIS = "#4A5B6C"
+DISC = "#132029"
+PETROL_T = "#3FB0BA"
+TIGLA_L = "#D8775A"
+VIOL_T = "#9B86EA"
+
+N = 26
+# ------------------------------------------------------------------ datele INVENTATE
+BOOKS = [(0, 5), (1, 9), (2, 6), (3, 3), (4, 2), (5, 1)]          # (cărți, elevi)
+GENRES = [("aventură", 7), ("fantastic și SF", 6), ("polițist", 4), ("benzi desenate", 4),
+          ("istorie și știință", 3), ("poezie", 2)]
+PLACES = [("acasă", 13), ("în autobuz", 5), ("la bibliotecă", 4), ("în parc", 2), ("în pauze, la școală", 2)]
+FORMAT = [("hârtie", 15, OCRU), ("ambele", 4, VIOL_T), ("ecran", 7, PETROL_T)]
+AUTHORS = [("Ion Creangă", "1837–1889", 6), ("Jules Verne", "1828–1905", 4), ("Mark Twain", "1835–1910", 3),
+           ("basme populare", "autor anonim", 2)]
+assert sum(n for _, n in BOOKS) == N
+assert sum(n for _, n in GENRES) == N
+assert sum(n for _, n in PLACES) == N
+assert sum(n for _, n, _ in FORMAT) == N
+TOTAL = sum(b * n for b, n in BOOKS)
+READERS = N - dict(BOOKS)[0]
+assert sum(n for *_, n in AUTHORS) <= READERS
+AVG = TOTAL / N
+assert TOTAL == 43 and round(AVG, 1) == 1.7
+
+s = frame_head("DATE · D20", BLUE, "Cât citește clasa mea",
+               "infografic AI · clasa a X-a F, 26 de elevi – clasă imaginară · sondaj inventat", title_size=60)
+s += ('<pattern id="warn" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
+      f'<rect width="28" height="28" fill="{OCRU}"/><rect width="13" height="28" fill="#1A1A14"/></pattern>\n')
+
+
+def pill(x, y, lab, col, txt=BG, size=15):
+    w = measure(lab, size, "sans", 700, letter_spacing=1.5) + 28
+    o = f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="30" rx="15" fill="{col}"/>\n'
+    o += text(x + w / 2, y + 20, lab, size, txt, "sans", 700, anchor="middle", extra='letter-spacing="1.5"')
+    return o, w
+
+
+def head(x, y, w, lab, col, sub="date fictive", txt=BG):
+    o, pw = pill(x + 22, y + 20, lab, col, txt)
+    if sub:
+        assert x + 22 + pw + 12 + measure(sub, 14, "sans", 600, True) <= x + w - 16, sub
+        o += text(x + 22 + pw + 12, y + 40, sub, 14, TIGLA_L, "sans", 600, True)
+    return o
+
+
+# ------------------------------------------------------------------ banda de avertizare
+BY0, BH0 = 218, 46
+s += f'<rect x="80" y="{BY0}" width="1760" height="{BH0}" rx="10" fill="url(#warn)"/>\n'
+msg = "DATE FICTIVE – exemplu de lucru, nu un sondaj real"
+mw = measure(msg, 22, "sans", 700, letter_spacing=1) + 48
+s += f'<rect x="{960-mw/2:.1f}" y="{BY0+5}" width="{mw:.1f}" height="{BH0-10}" rx="8" fill="{BG}"/>\n'
+s += text(960, BY0 + 31, msg, 22, OCRU, "sans", 700, anchor="middle", extra='letter-spacing="1"')
+
+R1, R1H = 280, 340
+R2 = R1 + R1H + 16
+R2H = 970 - R2
+
+# ------------------------------------------------------------------ A. cărți citite (histogramă)
+AX_, AW_ = 80, 760
+s += card(AX_, R1, AW_, R1H)
+s += head(AX_, R1, AW_, "CĂRȚI CITITE LUNA TRECUTĂ", OCRU)
+s += text(AX_ + 22, R1 + 84, "Câți elevi au citit 0, 1, 2… cărți", 15, CEATA)
+UNIT = 18                        # px pentru 1 elev
+BASE = R1 + R1H - 52
+CX0 = AX_ + 60
+BW, BG_ = 44, 18
+# grilă la scară
+for v in (0, 3, 6, 9):
+    y = BASE - v * UNIT
+    s += f'<line x1="{CX0-10}" y1="{y}" x2="{CX0 + 6*(BW+BG_) - BG_ + 10}" y2="{y}" stroke="{LINE}" stroke-width="{2 if v == 0 else 1}"/>\n'
+    s += text(CX0 - 18, y + 5, str(v), 13, MUTED, anchor="end")
+s += text(CX0 - 40, BASE - 9 * UNIT - 14, "elevi", 13, MUTED, "sans", 400, True)
+for k, (b, n) in enumerate(BOOKS):
+    x = CX0 + k * (BW + BG_)
+    h = n * UNIT
+    col = MUTED if b == 0 else OCRU
+    s += f'<rect x="{x}" y="{BASE-h}" width="{BW}" height="{h}" rx="4" fill="{col}"/>\n'
+    s += text(x + BW / 2, BASE - h - 8, str(n), 17, VAR, "sans", 700, anchor="middle")
+    s += text(x + BW / 2, BASE + 22, str(b), 16, VAR, "sans", 700, anchor="middle")
+s += text(CX0 + (6 * (BW + BG_) - BG_) / 2, BASE + 42, "cărți citite într-o lună", 13, MUTED, "sans", 400, True,
+          anchor="middle")
+assert BASE - 9 * UNIT - 30 > R1 + 92
+# indicatori
+KX = CX0 + 6 * (BW + BG_) + 36
+KW = AX_ + AW_ - 22 - KX
+assert KW >= 220, KW
+KPI = [("43", "de cărți, în total"), ("≈ 1,7", "cărți pe elev, în medie"), ("1 carte", "cel mai des răspuns"),
+       ("5 elevi", "n-au citit nicio carte")]
+ky = R1 + 104
+for big, small in KPI:
+    s += f'<rect x="{KX}" y="{ky-28}" width="{KW}" height="52" rx="10" fill="{DISC}"/>\n'
+    s += text(KX + 14, ky + 6, big, 24, OCRU, "serif", 700)
+    s += text(KX + 14 + measure(big, 24, "serif", 700) + 10, ky + 3, small, 14, VAR)
+    assert KX + 14 + measure(big, 24, "serif", 700) + 10 + measure(small, 14) < KX + KW - 8, small
+    ky += 58
+assert ky - 58 + 24 < R1 + R1H - 10
+
+# ------------------------------------------------------------------ B. genul preferat
+BX_, BW_ = AX_ + AW_ + 16, 480
+s += card(BX_, R1, BW_, R1H)
+s += head(BX_, R1, BW_, "GENUL PREFERAT", VIOLET, txt=VAR)
+s += text(BX_ + 22, R1 + 84, "un singur răspuns de elev", 15, CEATA)
+GUNIT = 30
+LBW = 170
+gy = R1 + 108
+for lab, n in GENRES:
+    s += text(BX_ + 22, gy + 18, lab, 16, VAR, "sans", 600)
+    s += f'<rect x="{BX_+22+LBW}" y="{gy}" width="{n*GUNIT}" height="26" rx="4" fill="{VIOL_T}"/>\n'
+    s += text(BX_ + 22 + LBW + n * GUNIT + 8, gy + 19, str(n), 16, VAR, "sans", 700)
+    assert measure(lab, 16, "sans", 600) < LBW - 8
+    gy += 33
+assert BX_ + 22 + LBW + 7 * GUNIT + 30 < BX_ + BW_ - 10
+assert gy - 33 + 26 < R1 + R1H - 38, gy
+s += text(BX_ + 22, R1 + R1H - 16, "aceeași scară pentru toate barele · total: 26 de elevi", 13, MUTED, "sans", 400, True)
+
+# ------------------------------------------------------------------ C. hârtie sau ecran (1 pătrat = 1 elev)
+CX_ = BX_ + BW_ + 16
+CW_ = 1840 - CX_
+s += card(CX_, R1, CW_, R1H)
+s += head(CX_, R1, CW_, "HÂRTIE SAU ECRAN?", PETROL, txt=VAR)
+s += text(CX_ + 22, R1 + 84, "pe ce citesc cel mai des · 1 pătrat = 1 elev", 15, CEATA)
+SQ, SG = 28, 6
+PER = 13
+WX0 = CX_ + 22 + ((CW_ - 44) - (PER * (SQ + SG) - SG)) / 2
+WY0 = R1 + 112
+k = 0
+for lab, n, col in FORMAT:
+    for _ in range(n):
+        r, c = divmod(k, PER)
+        s += f'<rect x="{WX0 + c*(SQ+SG):.1f}" y="{WY0 + r*(SQ+SG)}" width="{SQ}" height="{SQ}" rx="5" fill="{col}"/>\n'
+        k += 1
+assert k == N
+ly = WY0 + 2 * (SQ + SG) + 36
+lx = CX_ + 22
+for lab, n, col in FORMAT:
+    s += f'<rect x="{lx}" y="{ly-15}" width="18" height="18" rx="4" fill="{col}"/>\n'
+    t = f"{lab}: {n}"
+    s += text(lx + 26, ly, t, 17, VAR, "sans", 700)
+    lx += 26 + measure(t, 17, "sans", 700) + 30
+assert lx - 30 < CX_ + CW_ - 16
+o, ny = para(CX_ + 22, ly + 42, "Mai mult de jumătate din clasă (15 din 26) citește mai des pe hârtie.",
+             16, CW_ - 44, VAR, weight=600, lh=21)
+s += o
+o, ny = para(CX_ + 22, ny + 8, "„Ambele” = elevii care au spus că citesc la fel de des pe hârtie și pe ecran.",
+             14, CW_ - 44, CEATA, lh=18)
+s += o
+assert ny - 18 < R1 + R1H - 10, ny
+
+
+# ------------------------------------------------------------------ D. unde citesc (izotip)
+def person(x, y, col):
+    o = f'<circle cx="{x+8}" cy="{y+5}" r="5" fill="{col}"/>'
+    o += f'<path d="M{x},{y+26} v-8 q0,-7 8,-7 q8,0 8,7 v8 Z" fill="{col}"/>'
+    return o
+
+
+DX_, DW_ = 80, 600
+s += card(DX_, R2, DW_, R2H)
+s += head(DX_, R2, DW_, "UNDE CITESC CEL MAI DES", OCRU)
+s += text(DX_ + 22, R2 + 84, "1 siluetă = 1 elev", 15, CEATA)
+PL = 200
+py = R2 + 110
+COLS = [OCRU, PETROL_T, VIOL_T, "#5DAA74", TIGLA_L]
+for (lab, n), col in zip(PLACES, COLS):
+    s += text(DX_ + 22, py + 20, lab, 16, VAR, "sans", 600)
+    for j in range(n):
+        s += person(DX_ + 22 + PL + j * 24, py, col)
+    s += text(DX_ + 22 + PL + n * 24 + 6, py + 21, str(n), 16, VAR, "sans", 700)
+    assert measure(lab, 16, "sans", 600) < PL - 8
+    py += 38
+assert DX_ + 22 + PL + 13 * 24 + 30 < DX_ + DW_ - 10
+assert py - 38 + 26 < R2 + R2H - 10, py
+
+# ------------------------------------------------------------------ E. autorii citiți
+EX_, EW_ = DX_ + DW_ + 16, 500
+s += card(EX_, R2, EW_, R2H)
+s += head(EX_, R2, EW_, "AUTORII CEI MAI CITIȚI", VIOLET, txt=VAR)
+s += text(EX_ + 22, R2 + 84, "câți elevi au citit ceva de fiecare, luna trecută", 15, CEATA)
+AUNIT = 30
+ALW = 196
+ay = R2 + 108
+for name, yrs, n in AUTHORS:
+    s += text(EX_ + 22, ay + 14, name, 16, VAR, "sans", 700)
+    s += text(EX_ + 22, ay + 33, yrs, 13, MUTED, "sans", 400, True)
+    s += f'<rect x="{EX_+22+ALW}" y="{ay+2}" width="{n*AUNIT}" height="28" rx="4" fill="{VIOL_T if n != 6 else OCRU}"/>\n'
+    s += text(EX_ + 22 + ALW + n * AUNIT + 8, ay + 23, str(n), 16, VAR, "sans", 700)
+    assert measure(name, 16, "sans", 700) < ALW - 8
+    ay += 46
+assert EX_ + 22 + ALW + 6 * AUNIT + 30 < EX_ + EW_ - 10
+o, ny = para(EX_ + 22, ay + 12, "Pe piesă apar doar autori clasici, morți de peste 100 de ani, cu opere în domeniul public.",
+             13, EW_ - 44, MUTED, italic=True, lh=17)
+s += o
+assert ny - 17 < R2 + R2H - 8, ny
+
+# ------------------------------------------------------------------ F. cum faceți sondajul
+FX_ = EX_ + EW_ + 16
+FW_ = 1840 - FX_
+s += f'<rect x="{FX_}" y="{R2}" width="{FW_}" height="{R2H}" rx="22" fill="{DISC}" stroke="{PETROL}" stroke-width="2"/>\n'
+s += head(FX_, R2, FW_, "CUM FACEȚI SONDAJUL ÎN CLASA VOASTRĂ", PETROL, None, VAR)
+STEPS = [
+    ("Alegeți întrebările", "4–5 întrebări scurte, ex.: „Câte cărți ai citit luna trecută?”"),
+    ("Păstrați anonimatul", "fără nume pe bilețele; cine nu vrea să răspundă, nu răspunde."),
+    ("Strângeți răspunsurile", "bilețele într-o cutie sau un formular, toți în aceeași zi."),
+    ("Numărați și verificați", "la fiecare întrebare, totalul = numărul celor care au răspuns."),
+    ("Desenați la scară", "o singură scară pe grafic; scrieți pe el câți au răspuns și când."),
+]
+sy = R2 + 84
+for k, (ttl, body) in enumerate(STEPS):
+    cx = FX_ + 38
+    s += f'<circle cx="{cx}" cy="{sy+4}" r="16" fill="{PETROL}"/>\n'
+    s += text(cx, sy + 10, str(k + 1), 17, VAR, "sans", 700, anchor="middle")
+    s += text(FX_ + 66, sy + 2, ttl, 16, VAR, "sans", 700)
+    assert measure(body, 15) < FW_ - 66 - 18, body
+    s += text(FX_ + 66, sy + 23, body, 15, CEATA)
+    sy += 52
+assert sy - 52 + 23 < R2 + R2H - 8, sy
+
+# ------------------------------------------------------------------ notă
+src = ("Toate cifrele sunt inventate pentru exemplu: clasa, elevii și răspunsurile nu există. Nu le comparați cu statistici reale. "
+       "Anii autorilor: en.wikipedia.")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

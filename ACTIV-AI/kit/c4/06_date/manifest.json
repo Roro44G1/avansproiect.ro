@@ -1,0 +1,44 @@
+[
+  {
+    "cod": "D13",
+    "categorie": "Date",
+    "titlu": "Calendarul naturii în Sibiu — ce înflorește și ce se vede în fiecare lună, infografic AI",
+    "fisiere": [
+      "06_date/D13_calendarul_naturii.svg",
+      "06_date/D13_calendarul_naturii.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Un an în 12 cartonașe, unul pe lună. Fiecare arată ce înflorește sau se coace în jurul Sibiului (brândușe, porumbar, cireș pădureț, păducel, castan, măceș, tei, ghinde, porumbe) și ce se întâmplă la stână și la sat. Două benzi continue trec peste luni: zăpada de la Păltiniș și vara oilor la munte.",
+    "status": "realizat",
+    "nota": "Perioadele de înflorire și de coacere sunt verificate pe en.wikipedia, pe paginile speciilor; citatele și sursele sunt în 06_date/_fapte_noi.md. Lunile sunt deduse de autori din anotimpurile date de surse („early spring”, „late spring” etc.) și sunt declarate pe piesă ca orientative: „Perioade orientative pentru zona Sibiului – variază de la an la an; datele sărbătorilor după sibiu-turism.ro”. Pentru castan, sursa spune doar „primăvara”, așa că plasarea în mai e orientativă. Restul vine din fapte_verificate.md: zăpada de la Păltiniș (circa 120 de zile pe an, schi de regulă din decembrie până în aprilie), calendarul păstoresc și obiceiurile din 7 ianuarie și 28 decembrie (sibiu-turism.ro), plantele din listele pentru Pădurea Dumbrava și castanul din Parcul Sub Arini. Pictogramele sunt desenate în SVG și sunt schematice, nu ilustrații botanice exacte."
+  },
+  {
+    "cod": "D14",
+    "categorie": "Date",
+    "titlu": "Muzeul în aer liber ASTRA (96 ha) — infografic AI despre satul-muzeu",
+    "fisiere": [
+      "06_date/D14_muzeul_astra.svg",
+      "06_date/D14_muzeul_astra.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "Satul-muzeu din Dumbrava în cifre. Un grafic din 96 de pătrate (1 pătrat = 1 hectar) arată cât ocupă expoziția permanentă. Piesa mai cuprinde aleile, lacurile, obiectele și construcțiile, o cronologie din 1963 până în 1990, cele șase grupe tematice, inventarul monumentelor de utilitate publică, casa de pe bancnota de 10 lei și muzeele complexului ASTRA.",
+    "status": "realizat",
+    "nota": "Surse: en.wikipedia (ASTRA National Museum Complex), bursa.ro, exarc.net și sibiu-turism.ro, preluate din fapte_verificate.md. Anul 1971 („încep să fie aduse case țărănești și ateliere”) a fost verificat suplimentar în bursa.ro și e notat în 06_date/_fapte_noi.md; en.wikipedia formulează altfel același an („orientare spre civilizația populară”). Divergențele apar explicit pe piesă: peste 300 de construcții (en.wikipedia) sau peste 400 (bursa.ro, exarc.net); deschiderea în 1967 (bursa.ro, en.wikipedia în corpul articolului), 1964 (introducerea en.wikipedia) sau 1963 (exarc.net). Casa de pe bancnota de 10 lei e „Casa de pomicultori”, achiziționată în 2006, după bursa.ro. Ilustrațiile (moara de apă, casa, biserica de lemn, lacurile, aleile, bancnota și pictogramele) sunt schematice și nu reproduc clădiri anume sau designul real al bancnotei. „Restul suprafeței” din graficul cu pătrate nu e detaliat, pentru că sursele nu spun ce cuprinde."
+  },
+  {
+    "cod": "D15",
+    "categorie": "Date",
+    "titlu": "Mărginimea Sibiului — satele și ocupațiile păstorești, infografic AI",
+    "fisiere": [
+      "06_date/D15_marginimea_sibiului.svg",
+      "06_date/D15_marginimea_sibiului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "O hartă schematică cu cele 17 sate ale Mărginimii numite de surse, cu Cibinul, Sadul și Munții Cindrel, și cu repere: Jina (900 m), Rod (815 m), cetatea dacică de la Tilișca, Orlat (1319), Rășinari, Sibiel și hidrocentrala de la Sadu (1896). Alături: direcțiile transhumanței, calendarul păstoresc, brânzeturile, meșteșugarii din Săliște și portul alb-negru.",
+    "status": "realizat",
+    "nota": "Surse: sibiu-turism.ro (Mărginimea Sibiului, „Drumul brânzei”, calendarul păstoresc) și en.wikipedia (Mărginimea Sibiului, Cibin, Cindrel Mountains), preluate din fapte_verificate.md. Harta e schematică, cu pozițiile aproximative din coordonatele comune ale regiunii, și e declarată pe piesă „nu la scară”. Pe piesă scrie că sunt „18 localități după surse – listele diferă”; pe hartă apar cele 17 numite de surse, fără o listă oficială. Drumurile transhumanței (Constantinopol, Marea Adriatică, Pannonia, Polonia, sudul Ucrainei, Crimeea) sunt doar săgeți de direcție orientative, fără hartă a Europei și fără distanțe. Portul popular, brânzeturile și pictogramele sunt desenate schematic."
+  }
+]

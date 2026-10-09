@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "M17",
+  "categorie": "Video",
+  "titlu": "Un an în Dumbrava Sibiului — time-lapse animat AI al pădurii de stejar",
+  "fisiere": [
+   "02_video/M17_un_an_in_dumbrava.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "Aceeași poiană din stejăret trece prin 12 luni: brândușe, porumbar și cireș în floare, vara deasă, toamna ruginie, zăpada. Animalele din pădure apar discret, iar titluri scurte spun fapte despre Dumbrava.",
+  "status": "realizat",
+  "durata_s": 58.0,
+  "nota": "Fapte: fișa de fapte, secțiunea „Pădurea / Parcul natural Dumbrava Sibiului” (dssibiu.ro; sibiul.ro; ecomagazin.ro): 993 ha, stejăret de terasă cu gorun, carpen, ulm, cireș pădureț, jugastru, tei; peste jumătate din pădure cu arbori de peste 100 de ani; promenadă din secolul al XVII-lea; 1754 – propunerea lui Martin von Seeberg; arbuștii, brândușele și animalele din listă. Perioadele de înflorire, frunzele și marcescența sunt informații generale verificate pe en.wikipedia (Prunus spinosa, Crataegus monogyna, Prunus avium, Crocus, Quercus robur, Quercus petraea, Tilia cordata, Marcescence) și notate în 02_video/_fapte_noi.md; pe ecran apar ca „de regulă”, iar lunile sunt orientative. Pădure imaginată, desen schematic: poiana, copacii, culorile de toamnă, animalele și puieții îngrădiți (ilustrație pentru 1754) sunt desenate și nu reproduc un loc anume; lunile în care apar animalele sunt alese pentru poveste. Muzica: temă originală, sintetizată în cod (celestă, pad, flaut), 60 BPM, o măsură pe lună; corbul, pițigoiul, mierla, ciocănitoarea, gaița și bufnița din sunet sunt aproximări sintetizate, nu înregistrări (script: 02_video/_audio/M17_tema_dumbrava.py; MP3 −14 LUFS). Sursă HTML: _tools/video/M17_un_an_in_dumbrava.html."
+ },
+ {
+  "cod": "M18",
+  "categorie": "Video",
+  "titlu": "Drumul apei: Cibinul în 60 de secunde — animație AI",
+  "fisiere": [
+   "02_video/M18_drumul_apei_cibinul.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "O picătură desenată coboară pe Cibin, de sub Vf. Cindrel prin chei, lacul de la Gura Râului, Orlat, Sibiu, Veștem și Tălmaciu, până la vărsarea în Olt, cu un contor de kilometri până la 82.",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "Fapte: fișa de fapte, secțiunea „Râul Cibin” – en.wikipedia (Cibin; Sadu; Cindrel Mountains): izvorul lângă Vf. Cindrel (2.244 m), 82 km, bazin 2.194 km², barajul de la Gura Râului (electricitate; cea mai mare sursă de apă potabilă a Sibiului), afluenții Săliște (lângă Orlat), Hârtibaciu (lângă Veștem) și Sadu (la Tălmaciu, circa 60 km), hidrocentrala de pe Sadu din 1896, vărsarea în Olt lângă stația CFR Podu Olt; muntii-nostri.ro: Cheile Cibinului (circa 2 km de pereți de șist cristalin) și „Bradul Uriaș”; zilesinopti.ro (2024): promenada de aproape 4 km; 1191 (Cibinium) din „Date generale”. Hartă schematică, poziții aproximative – nu la scară (coordonatele comune ale calupului; poziția hidrocentralei este orientativă). Contorul de kilometri este orientativ: valorile intermediare sunt proporționale cu cursul desenat, doar totalul de 82 km vine din surse (spus pe ecran). Picăturile sunt personaje imaginate; satele, barajul, promenada, stația și hidrocentrala sunt scheme imaginate. Muzica: temă originală, sintetizată în cod (harpă, flaut, celestă, clopoței, pad; la fiecare afluent intră o voce nouă); apa este o aproximare sintetizată, nu înregistrare (script: 02_video/_audio/M18_tema_cibinul.py; MP3 −14 LUFS). Sursă HTML: _tools/video/M18_drumul_apei_cibinul.html."
+ },
+ {
+  "cod": "M19",
+  "categorie": "Video",
+  "titlu": "Prima grădină zoologică din România (1929) — animație AI cu animale stilizate",
+  "fisiere": [
+   "02_video/M19_prima_gradina_zoologica.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "Povestea grădinii din Pădurea Dumbrava, cu animale desenate în cod: vulpile de la barajul de la Sadu, deschiderea din 1929, primele animale donate, puiul de urs din 1930, stejarul de la intrare și cifrele de azi.",
+  "status": "realizat",
+  "durata_s": 62.4,
+  "nota": "Fapte: fișa de fapte – „Premiere” (patrimoniu.sibiu.ro: 1929, prima grădină zoologică din România) și „Natură și împrejurimi – completări pentru Calupul 4”, subsecțiunea „Grădina Zoologică (1929)”: inițiativa Întreprinderii de electricitate, la propunerea inginerului Székely (scris „Szekely” în sursă), după ce a găsit niște vulpi în timpul reparațiilor la barajul de la Sadu (wzd.cz; sibiucityapp.ro); primele animale donate – pisica sălbatică, lupoaica (de la Obert von Spiess, în numele regelui), lupul (de la asociația „Șoimii”), vulturul, cerbul carpatin (de la vânătorii din Tălmăcel), mistreții (wzd.cz; sibiucityapp.ro); primul pui de urs în 1930 (sibiucityapp.ro; wzd.cz: „primul urs”); stejarul „de peste 600 de ani” de la intrare (agerpres.ro, 2021; sibiucityapp.ro: circa 600 de ani). Divergența cifrelor de azi este arătată ca atare, pe două carduri: 20 ha, peste 300 de animale din 70 de specii (sibiucityapp.ro) vs. 15 ha, 187 de animale și păsări din 47 de specii (wzd.cz, text din 2011). Sursele nu dau anul întâlnirii cu vulpile și nici anul donațiilor: scena de la Sadu poartă insigna „Sadu”, iar cea cu animalele „la început”; 1929 apare doar la înființarea grădinii. Pentru pisica sălbatică, vultur și mistreți sursele nu numesc donatorul – pe ecran: „donator nemenționat în surse”. Imaginat/stilizat: inginerul (siluetă, nu portret), barajul (schemă, nu la scară), vulpile, gândul cu becul, poarta, fanioanele, vizitatorii, cerbul și lacul văzute prin poartă, puiul de urs care face cu mâna, fluturele, forma stejarului, indicatorul de secole și parada de animale; animalele sunt forme geometrice simple, fără a copia personaje sau mascote existente, și nu sunt ilustrații științifice. Muzica: temă originală, sintetizată în cod (Fa major, 100 BPM; marimbă, celestă, clopoței, bas ciupit, percuție ușoară; −14 LUFS), sincronizată cu scenele; scriptul și MP3-ul: 02_video/_audio/M19_tema_gradina_zoologica.py și .mp3. Text pe ecran, fără voce. Sursă HTML: _tools/video/M19_prima_gradina_zoologica.html."
+ }
+]

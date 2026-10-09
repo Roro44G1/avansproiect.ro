@@ -1,0 +1,75 @@
+import json, base64, subprocess, html, os
+from PIL import Image
+ROOT='/home/claude/expo'; V=f'{ROOT}/c6/01_vizual'
+FOLDER='https://www.canva.com/folder/FAHXN57WmTs'
+ITEMS = [
+ ('V31','Afiș AI pentru un festival imaginar de teatru pe acoperișurile din Piața Mare',
+  [('V31_festival_acoperisuri.jpg','MAHXcDNdEB8','interpretare liberă, nu o redare fidelă a Pieței Mari')],
+  'Afiș ilustrat, fără text, pentru un festival imaginar: noaptea, deasupra unei piețe medievale cu acoperișuri roșii și lucarne ca niște ochi pe jumătate deschiși; pe acoperișuri, scene mici de lemn cu balustrade, actori-siluete, o cortină, o lună de recuzită, reflectoare; publicul stă jos, în piață.',
+  'Festivalul este imaginar – nu e FITS și nici alt festival real. Fapte (fișa de fapte): „ochii Sibiului” sunt lucarne în formă de pleoapă, care ventilează podurile; Turnul Sfatului stă între Piața Mare și Piața Mică; FITS a fost fondat în 1993. Scenele de pe acoperișuri sunt imaginate – pe acoperișuri nu se urcă.'),
+ ('V32','Biblioteca viselor — interior AI inspirat de prima bibliotecă publică românească din Transilvania (1869)',
+  [('V32_biblioteca_viselor.jpg','MAHXcNoX-O4','interior imaginat, inspirat de anul 1869')],
+  'Sala de lectură a unei biblioteci publice din jurul anului 1870, ca într-un vis: rafturi înalte de lemn cu scări, mese lungi cu lămpi verzi, o galerie cu balustradă de fier forjat, o fereastră arcuită spre acoperișuri cu lucarne; câteva cărți plutesc, iar paginile se fac păsări. Fără oameni, fără text.',
+  'Fapte (patrimoniu.sibiu.ro; musikland.sonoro.org; en.wikipedia): 1869 – prima bibliotecă publică românească din Transilvania, a Asociațiunii ASTRA (fondată în 1861 la Sibiu); azi Biblioteca Județeană ASTRA are 813.551 de documente, iar cea mai veche carte e din 1511. Interiorul e imaginat: sursele nu descriu sala din 1869.'),
+]
+def b64(p): return 'data:image/jpeg;base64,'+base64.b64encode(open(p,'rb').read()).decode()
+def esc(s): return html.escape(s, quote=True)
+def wrap(s, n):
+    out=[]; line=''
+    for w in s.split():
+        if len(line)+len(w)+1>n and line: out.append(line); line=w
+        else: line=(line+' '+w).strip()
+    if line: out.append(line)
+    return out
+man=[]
+for cod,titlu,imgs,desc,nota in ITEMS:
+    assert len(desc)<=330, (cod,len(desc))
+    tl=wrap(titlu, 50); fs=54 if len(tl)==1 else 46; lh=58
+    title_svg=''.join(f'<text x="80" y="{180+i*lh}" font-family="Noto Serif" font-weight="700" font-size="{fs}" fill="#F3EFE6">{esc(l)}</text>' for i,l in enumerate(tl))
+    top=180+(len(tl)-1)*lh+50
+    parts=[]; n=len(imgs)
+    if n==1:
+        p=f'{V}/canva_miniaturi/{imgs[0][0]}'; w,h=Image.open(p).size
+        boxW,boxH=1080,1000-top-60; s=min(boxW/w,boxH/h); dw,dh=w*s,h*s; x=80+(boxW-dw)/2; y=top+(boxH-dh)/2
+        parts.append(f'<image x="{x:.0f}" y="{y:.0f}" width="{dw:.0f}" height="{dh:.0f}" href="{b64(p)}" preserveAspectRatio="xMidYMid meet"/>')
+        parts.append(f'<text x="{80+boxW/2:.0f}" y="{y+dh+34:.0f}" text-anchor="middle" font-family="Inter" font-size="22" fill="#A9B4C0">{esc(imgs[0][2])}</text>')
+    else:
+        cols=3 if n>2 else n; gap=22; boxW=(1080-(cols-1)*gap)/cols
+        for i,(f,mid,cap) in enumerate(imgs):
+            p=f'{V}/canva_miniaturi/{f}'; w,h=Image.open(p).size; dh=h*boxW/w
+            r,c=divmod(i,cols); x=80+c*(boxW+gap); y=top+(10 if n>3 else 150)+r*(dh+70)
+            parts.append(f'<rect x="{x-3:.0f}" y="{y-3:.0f}" width="{boxW+6:.0f}" height="{dh+6:.0f}" rx="6" fill="#1B2733"/>')
+            parts.append(f'<image x="{x:.0f}" y="{y:.0f}" width="{boxW:.0f}" height="{dh:.0f}" href="{b64(p)}"/>')
+            parts.append(f'<text x="{x+boxW/2:.0f}" y="{y+dh+38:.0f}" text-anchor="middle" font-family="Inter" font-weight="600" font-size="26" fill="#F3EFE6">{esc(cap)}</text>')
+    py=top
+    dl=wrap(desc, 38)
+    desc_svg=''.join(f'<text x="1250" y="{py+110+i*40}" font-family="Inter" font-size="27" fill="#F3EFE6">{esc(l)}</text>' for i,l in enumerate(dl))
+    yy=py+110+len(dl)*40+30
+    foot=['Generat cu: Canva AI (generator de imagini).','Previzualizare redusă; rezoluția completă','în folderul Canva „ACTIV AI – Expoziție”.']
+    foot_svg=''.join(f'<text x="1250" y="{yy+i*32}" font-family="Inter" font-size="22" fill="#A9B4C0">{esc(l)}</text>' for i,l in enumerate(foot))
+    ph=min(1000-py, yy+3*32+10-py)
+    svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect width="1920" height="1080" fill="#0F1720"/>
+<rect x="80" y="62" rx="22" width="190" height="44" fill="#E2A62B"/><text x="175" y="92" text-anchor="middle" font-family="Inter" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">VIZUAL · {cod}</text>
+{title_svg}
+<rect x="1210" y="{py}" width="630" height="{ph}" rx="24" fill="#1B2733"/>
+<text x="1250" y="{py+60}" font-family="Inter" font-weight="700" font-size="21" letter-spacing="2" fill="#E2A62B">CE A PRIMIT GENERATORUL AI</text>
+{desc_svg}
+{foot_svg}
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80" y="1056" font-family="Inter" font-size="22" fill="#A9B4C0">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840" y="1056" text-anchor="end" font-family="Inter" font-weight="600" font-size="22" fill="#E2A62B">#SibiulMeu</text>
+{''.join(parts)}
+</svg>'''
+    out=f'{V}/{cod}_card_canva'
+    open(out+'.svg','w').write(svg)
+    subprocess.run(['rsvg-convert','-w','1920','-h','1080',out+'.svg','-o',out+'.png'],check=True)
+    os.remove(out+'.svg')
+    man.append({'cod':cod,'categorie':'Vizual','titlu':titlu,
+        'fisiere':[f'01_vizual/{cod}_card_canva.png']+[f'01_vizual/canva_miniaturi/{f}' for f,_,_ in imgs],
+        'tip':'imagine','instrument':'Canva AI (generator de imagini), prompt scris cu Claude',
+        'descriere':desc,'status':'realizat',
+        'canva':[{'media_id':mid,'url':f'https://www.canva.com/M/{mid}','eticheta':cap} for _,mid,cap in imgs],
+        'nota':nota+' Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: '+FOLDER+'. Local există doar miniaturi (~200 px).'})
+json.dump(man, open(f'{V}/_manifest.json','w'), ensure_ascii=False, indent=1)
+print(len(man))

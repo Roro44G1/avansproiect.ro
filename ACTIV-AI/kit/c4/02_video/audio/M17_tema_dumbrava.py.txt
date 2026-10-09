@@ -1,0 +1,291 @@
+"""M17 – fundal sonor pentru „Un an în Dumbrava Sibiului” (temă originală, sintetizată în cod, 58 s).
+
+Temă originală (nu e o melodie populară și nu imită o piesă cunoscută): celestă sintetizată
+(sinteză modală), pad cald, bas moale și, vara, un flaut sintetizat (sinus + respirație).
+Tempo 60 BPM, măsură de 4/4 = 4 s = o lună din animație:
+  măsura 0 = intro (0–4 s), măsurile 1–12 = ianuarie…decembrie (4–52 s), măsura 13 = cartela finală.
+Acorduri: Bm(add9) – Bm – G – D – A – D – G – Em – A – Bm – G – Em – Em/F# – Bm(add9).
+
+Sunete de natură – APROXIMĂRI SINTETIZATE, nu înregistrări:
+vânt (zgomot filtrat) iarna; croncănit de corb (februarie), chemarea pițigoiului (martie),
+cântec de tip mierlă (aprilie), ciocănit de ciocănitoare (iunie), țipăt de gaiță (septembrie),
+foșnet de frunze (octombrie–noiembrie), „hu-hu” de bufniță (noiembrie) – sincronizate cu
+momentele în care animalele apar în animație.
+
+Folosește biblioteca comună /home/claude/expo/04_audio/_src/audiolib.py (prin sys.path).
+Rulare: python3 M17_tema_dumbrava.py  -> M17_tema_dumbrava.mp3 (în același folder)
+"""
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+from audiolib import (SR, add, additive, bp, colored_noise, env_adsr, env_ar, env_exp, finalize, hp, hz,
+                      lp, lufs, make_ir, match_lufs, modal, ns, peaking, report, reverb, rng_of,
+                      smooth_random, stereo, t_axis)
+
+DUR = 58.0
+BAR = 4.0
+E8 = 0.5  # optime la 60 BPM
+OUT = os.path.join(HERE, "M17_tema_dumbrava.mp3")
+
+CH = ["Bm9", "Bm", "G", "D", "A", "D", "G", "Em", "A", "Bm", "G", "Em", ("Em", "F#"), "Bm9"]
+PAD = {"Bm": ["B3", "D4", "F#4"], "Bm9": ["B3", "C#4", "D4", "F#4"], "G": ["B3", "D4", "G4"],
+       "D": ["A3", "D4", "F#4"], "A": ["A3", "C#4", "E4"], "Em": ["B3", "E4", "G4"],
+       "F#": ["A#3", "C#4", "F#4"]}
+ROOT = {"Bm": "B2", "Bm9": "B2", "G": "G2", "D": "D3", "A": "A2", "Em": "E2", "F#": "F#2"}
+
+# melodia celestei: 8 optimi pe măsură (None = pauză; nota ține până la următoarea notă/pauză)
+MEL = [
+    ["F#5", None, None, None, "C#6", "B5", None, None],
+    ["D6", None, "C#6", "B5", "F#5", None, None, None],
+    ["B5", None, "A5", "G5", "D5", None, "E5", "F#5"],
+    ["A5", None, "F#5", "A5", "D6", None, "C#6", "A5"],
+    ["E6", None, "C#6", "E6", "A5", "B5", "C#6", None],
+    ["D6", "F#6", "E6", "D6", "A5", None, "F#5", "A5"],
+    ["B5", "D6", "G6", "F#6", "E6", "D6", "B5", None],
+    ["G5", "B5", "E6", "D6", "B5", None, "G5", "A5"],
+    ["C#6", "E6", "A5", "B5", "C#6", None, "E6", None],
+    ["D6", None, "C#6", "B5", "F#5", None, "B5", None],
+    ["B5", "A5", "G5", "F#5", "E5", None, "D5", None],
+    ["G5", None, "F#5", "E5", "B4", None, None, None],
+    ["E5", None, "G5", "B5", "A#5", None, "C#6", None],
+    ["B5", None, None, "F#6", "D6", None, None, None],
+]
+# flautul (vara): (măsura, timp de start în pătrimi, notă, durată în pătrimi)
+FLUTE = [(5, 0, "F#5", 2), (5, 2, "A5", 2), (6, 0, "G5", 2), (6, 2, "B5", 1), (6, 3, "A5", 1),
+         (7, 0, "E5", 2), (7, 2, "G5", 2), (8, 0, "E5", 2), (8, 2, "C#5", 2), (9, 0, "D5", 3.5)]
+
+
+def chords_timeline():
+    ev = []
+    for b, c in enumerate(CH):
+        if isinstance(c, tuple):
+            ev.append((b * BAR, BAR / 2, c[0]))
+            ev.append((b * BAR + BAR / 2, BAR / 2, c[1]))
+        else:
+            ev.append((b * BAR, BAR, c))
+    return ev
+
+
+# ------------------------------------------------------------------ instrumente
+def celesta(f, dur, rng, vel=1.0):
+    x = modal([f, 2.0 * f, 3.98 * f, 9.85 * f], [1.0, 0.12, 0.22, 0.05], [2.4, 1.3, 0.7, 0.22], dur, rng=rng,
+              attack=0.0015)
+    n = len(x)
+    x += bp(rng.standard_normal(n), 2500, 9000) * env_exp(n, 0.01) * 0.05
+    return x * vel
+
+
+def celesta_layer(rng):
+    buf = stereo(DUR)
+    for b, bar in enumerate(MEL):
+        for i, nm in enumerate(bar):
+            if nm is None:
+                continue
+            t0 = b * BAR + i * E8 + rng.uniform(-0.006, 0.006)
+            vel = 1.0 if i % 2 == 0 else 0.8
+            if b in (0, 13):
+                vel *= 0.85
+            add(buf, celesta(hz(nm), 3.0, rng, vel), t0, gain=1.0, pan=rng.uniform(-0.25, 0.25))
+            # ecou discret, o octavă mai sus, iarna (sclipiri de zăpadă)
+            if b in (0, 1, 2, 12, 13) and i % 4 == 0:
+                add(buf, celesta(hz(nm) * 2, 2.0, rng, 0.25), t0 + 0.75, gain=1.0, pan=rng.uniform(-0.6, 0.6))
+    return buf
+
+
+def pad_layer(rng):
+    buf = stereo(DUR)
+    for t0, d, c in chords_timeline():
+        dd = d + 1.6
+        n = ns(dd)
+        for k, nm in enumerate(PAD[c]):
+            f = hz(nm)
+            for det, pan in ((-0.0025, -0.5), (0.0025, 0.5)):
+                fv = f * (1 + det) * (1 + 0.0015 * np.sin(2 * np.pi * 0.25 * t_axis(n) + k))
+                x = additive(fv, [1.0, 0.45, 0.22, 0.12, 0.06, 0.03], phase0=rng.uniform())
+                x = lp(x, 1400) * env_adsr(n, 0.9, 0.5, 0.85, 1.4)
+                add(buf, x, t0 - 0.3, gain=0.5, pan=pan)
+    return buf
+
+
+def bass_layer(rng):
+    buf = stereo(DUR)
+    for t0, d, c in chords_timeline():
+        if t0 < BAR:  # fără bas în intro
+            continue
+        n = ns(d + 0.8)
+        f = hz(ROOT[c])
+        x = additive(f, [1.0, 0.25, 0.08], n=n, phase0=rng.uniform()) * env_adsr(n, 0.25, 0.6, 0.7, 0.8)
+        add(buf, lp(x, 400), t0, gain=1.0, pan=0.0)
+    return buf
+
+
+def flute_layer(rng):
+    buf = stereo(DUR)
+    for b, beat, nm, d in FLUTE:
+        t0 = b * BAR + beat * 1.0
+        dur = d * 1.0 + 0.25
+        n = ns(dur)
+        tt = t_axis(n)
+        f = hz(nm) * 2 ** (0.18 * np.clip((tt - 0.25) / 0.3, 0, 1) * np.sin(2 * np.pi * 5.2 * tt) / 12)
+        ph = 2 * np.pi * np.cumsum(f) / SR
+        tone = np.sin(ph) + 0.12 * np.sin(2 * ph) + 0.04 * np.sin(3 * ph)
+        breath = bp(rng.standard_normal(n), 1800, 7000) * 0.06
+        x = lp(tone + breath, 7000) * env_adsr(n, 0.12, 0.2, 0.85, 0.3)
+        add(buf, x, t0, gain=1.0 if b < 9 else 0.7, pan=0.15)
+    return buf
+
+
+# ------------------------------------------------------------------ natură (aproximări sintetizate)
+def wind_layer(rng):
+    n = ns(DUR)
+    t = t_axis(n)
+    buf = stereo(DUR)
+    # iarna: 0–12 s și 46–58 s
+    amt = np.clip(1 - (t - 9) / 3.5, 0, 1) + np.clip((t - 45) / 3, 0, 1)
+    amt = np.clip(amt, 0, 1) * (0.25 + 0.15 * np.clip(1 - np.abs(t - 3) / 3, 0, 1))
+    for ch, seed in ((0, 501), (1, 502)):
+        nz = colored_noise(n, rng_of(seed), 1.6)
+        sw = smooth_random(n, rng, 0.35, 0.3, 1.0)
+        buf[ch] = bp(nz, 180, 1100) * sw * amt
+    return buf
+
+
+def raven(rng):
+    d = 0.42
+    n = ns(d)
+    t = t_axis(n)
+    f = 330 + 40 * np.sin(np.pi * t / d) - 60 * t
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    src = np.sign(np.sin(ph)) * 0.6 + rng.standard_normal(n) * 0.5
+    x = bp(src, 500, 1800) + 0.6 * bp(src, 1900, 2600)
+    am = 1 + 0.6 * np.sin(2 * np.pi * 42 * t)
+    return x * am * np.sin(np.pi * np.clip(t / d, 0, 1)) ** 0.6
+
+
+def tit_call(rng):
+    """„ti-tu” – două note înalte, repetate (aproximare)."""
+    out = np.zeros(ns(0.36))
+    for k, (f, off) in enumerate(((5200, 0.0), (3900, 0.17))):
+        n = ns(0.11)
+        t = t_axis(n)
+        fv = f * (1 - 0.05 * t / 0.11)
+        x = np.sin(2 * np.pi * np.cumsum(fv) / SR) * np.sin(np.pi * t / 0.11) ** 0.8
+        i0 = ns(off)
+        out[i0:i0 + n] += x
+    return out
+
+
+def warble(rng, dur=1.6):
+    """Frază flautată cu glisări (aproximare de cântec de tip mierlă)."""
+    n = ns(dur)
+    out = np.zeros(n)
+    t = 0.0
+    while t < dur - 0.2:
+        d = rng.uniform(0.09, 0.22)
+        m = ns(d)
+        tt = t_axis(m)
+        f0, f1 = rng.uniform(1500, 2600), rng.uniform(1400, 3000)
+        fv = f0 + (f1 - f0) * (tt / d) + 120 * np.sin(2 * np.pi * rng.uniform(20, 35) * tt)
+        x = (np.sin(2 * np.pi * np.cumsum(fv) / SR) + 0.15 * np.sin(4 * np.pi * np.cumsum(fv) / SR))
+        x *= np.sin(np.pi * tt / d) ** 0.7
+        i0 = ns(t)
+        out[i0:i0 + m] += x[: n - i0]
+        t += d + rng.uniform(0.02, 0.08)
+    return out
+
+
+def drum_roll(rng, rate=16.0, dur=0.9):
+    n = ns(dur)
+    out = np.zeros(n)
+    k = int(rate * dur)
+    for i in range(k):
+        t0 = i / rate
+        m = ns(0.03)
+        f0 = rng.uniform(900, 1200)
+        hit = modal([f0, f0 * 2.3, f0 * 3.7], [1.0, 0.5, 0.25], [0.04, 0.025, 0.015], 0.03, rng=rng)
+        hit += hp(rng.standard_normal(m), 1500) * env_exp(m, 0.006) * 0.4
+        i0 = ns(t0)
+        out[i0:i0 + m] += hit[: n - i0] * (1 - 0.5 * i / k)
+    return out
+
+
+def jay(rng):
+    d = 0.5
+    n = ns(d)
+    t = t_axis(n)
+    x = bp(rng.standard_normal(n), 1400, 4200) * (1 + 0.8 * np.sin(2 * np.pi * 55 * t))
+    return x * np.sin(np.pi * t / d) ** 0.5 * env_exp(n, 0.9)
+
+
+def owl_hoot(rng, d=0.5, f=390):
+    n = ns(d)
+    t = t_axis(n)
+    fv = f * (1 + 0.04 * np.sin(np.pi * t / d)) * (1 - 0.03 * t / d)
+    x = np.sin(2 * np.pi * np.cumsum(fv) / SR) + 0.05 * rng.standard_normal(n)
+    return lp(x, 900) * np.sin(np.pi * t / d) ** 1.2
+
+
+def nature_layer(rng):
+    buf = stereo(DUR)
+    for t0 in (9.3, 9.85, 11.1):  # corb – februarie
+        add(buf, raven(rng), t0, gain=0.55, pan=0.45)
+    for t0 in np.arange(12.8, 15.6, 0.9):  # pițigoi – martie
+        add(buf, tit_call(rng), t0 + rng.uniform(-0.05, 0.05), gain=0.32, pan=-0.35)
+    for t0 in (16.8, 18.5):  # cântec de tip mierlă – aprilie
+        add(buf, warble(rng, 1.4), t0, gain=0.3, pan=0.3)
+    for t0 in (20.6, 22.9, 29.5, 31.8):  # ciripit difuz, primăvara–vara
+        add(buf, warble(rng, 0.8), t0, gain=0.14, pan=rng.uniform(-0.7, 0.7))
+    for t0 in (25.0, 26.9):  # ciocănitoare – iunie
+        add(buf, drum_roll(rng), t0, gain=0.42, pan=-0.45)
+    for t0 in (37.0, 38.7):  # gaiță – septembrie
+        add(buf, jay(rng), t0, gain=0.22, pan=0.25)
+    for t0, d in ((45.0, 0.7), (46.2, 0.35), (46.65, 0.55)):  # bufniță – noiembrie
+        add(buf, owl_hoot(rng, d), t0, gain=0.5, pan=-0.4)
+    return buf
+
+
+def rustle_layer(rng):
+    n = ns(DUR)
+    t = t_axis(n)
+    amt = np.clip((t - 39.5) / 2, 0, 1) * np.clip((48.5 - t) / 2, 0, 1)
+    buf = stereo(DUR)
+    for ch, seed in ((0, 611), (1, 612)):
+        nz = bp(colored_noise(n, rng_of(seed), 0.5), 2000, 7500)
+        gr = smooth_random(n, rng, 9.0, 0.0, 1.0) ** 3
+        buf[ch] = nz * gr * amt
+    return buf
+
+
+def render(seed=1754):
+    rng = rng_of(seed)
+    ir = make_ir(t60=2.6, predelay=0.02, seed=71, hf_ratio=0.45)
+    ir_far = make_ir(t60=1.8, predelay=0.04, seed=72, hf_ratio=0.3)
+    layers = {
+        "pad": (pad_layer(rng), -25.0, ir, 0.3),
+        "bas": (bass_layer(rng), -29.0, ir, 0.1),
+        "celesta": (celesta_layer(rng), -20.0, ir, 0.35),
+        "flaut": (flute_layer(rng), -26.0, ir, 0.3),
+        "vant": (wind_layer(rng), -31.0, ir_far, 0.2),
+        "natura": (nature_layer(rng), -30.0, ir_far, 0.4),
+        "fosnet": (rustle_layer(rng), -36.0, ir_far, 0.2),
+    }
+    mix = stereo(DUR)
+    for name, (x, target, irx, wet) in layers.items():
+        x = match_lufs(x, target)
+        report(x, name)
+        mix += reverb(x, irx, wet=wet, dry=1.0)
+    mix = peaking(mix, 250, -1.0, 0.8)
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "M17 – temă originală, sintetizată în cod",
+                   "Fundal sonor original pentru M17 „Un an în Dumbrava Sibiului”; păsările sunt aproximări sintetizate, nu înregistrări – ACTIV AI",
+                   target_lufs=-14.0, fin=0.8, fout=2.5)
+    report(out, "M17 final")
+    print("scris:", OUT)

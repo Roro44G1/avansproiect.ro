@@ -1,0 +1,394 @@
+"""A17 – Cântec de leagăn AI pentru râul Cibin: „Optzeci și doi de kilometri” (instrumental demo, ~84 s).
+
+Temă originală în stil de cântec de leagăn: melodia, acordurile și versurile au fost compuse
+pentru expoziția ACTIV AI și nu se bazează pe nicio melodie existentă și pe nicio formulă
+tradițională de leagăn. Instrumentalul este un demo pentru clasă: melodia vocii este cântată
+de un instrument solo (celestă sintetizată), ca ghid; vocea NU este generată – versurile se
+cântă peste instrumental.
+
+Fa major, 6/8, optimea = 162 pe minut (pătrimea cu punct = 54) – o măsură durează 2,22 s.
+Forma: Intro (2 măsuri) – Strofa 1 (8) – Refren (8) – Strofa 2 (8) – Refren (8) – Coda (2)
++ acordul final.
+
+Notație în cod: fiecare șir = o măsură de 6/8; token = „silabă|notă|durată în optimi”;
+„~” la sfârșitul silabei = cuvântul continuă; „/” = aici se termină versul (pentru afișare);
+nota „R” = pauză; silaba „·” = notă instrumentală (fără text).
+
+Sunete (toate sintetizate din formule, fără mostre): celestă (sinteză modală, cu amortizor la
+sfârșitul notei) – ghidul pentru voce; cutie muzicală (sinteză modală a lamelei) – dublează
+melodia la octavă în intro, refrene și coda; harpă (coardă ciupită Karplus-Strong) – arpegii
+legănate în 6/8; pad cald (armonice ușor dezacordate, filtrate); bas moale (sinusoidă);
+murmur discret de apă (bule sintetizate și zgomot filtrat).
+
+Folosește biblioteca comună audiolib.py din /home/claude/expo/04_audio/_src.
+
+Rulare:  python3 A17_cantec_de_leagan_cibin.py             -> ../A17_cantec_de_leagan_cibin.mp3
+         python3 A17_cantec_de_leagan_cibin.py --notatie   -> tipărește notația pentru fișa .md
+"""
+import json
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+
+from audiolib import (SR, add, additive, bp, colored_noise, env_adsr, env_exp, finalize, hp, hz,
+                      ks_pluck, lp, make_ir, match_lufs, modal, ns, peaking, report, reverb,
+                      rng_of, smooth_random, stereo, t_axis)
+
+EIGHTH_BPM = 162
+EIGHTH = 60.0 / EIGHTH_BPM      # 0,370 s
+BAR = 6 * EIGHTH                 # 2,222 s
+OUT = os.path.join(HERE, "..", "A17_cantec_de_leagan_cibin.mp3")
+TAIL = 4.0                       # acordul final răsună după ultima măsură
+FERMATA = 2.2                    # ultima notă a celestei se ține peste acordul final
+
+# ------------------------------------------------------------------ melodia (înălțimi reale)
+STROFA_1 = [
+    "Lân~|F4|2 gă|G4|1 vâr~|A4|2 ful|Bb4|1",
+    "din|C5|2 Cin~|D5|1 drel,/|C5|3",
+    "ai|D5|2 por~|C5|1 nit,|Bb4|2 un|A4|1",
+    "fi~|G4|2 ri~|A4|1 cel;/|G4|3",
+    "în~|A4|2 tre|G4|1 stânci,|F4|2 prin|A4|1",
+    "Chei,|Bb4|2 u~|A4|1 șor,/|G4|3",
+    "ai|G4|2 tre~|A4|1 cut|Bb4|2 cân~|G4|1",
+    "tând|A4|2 în|G4|1 zbor./|F4|3",
+]
+STROFA_2 = [
+    "Stai|F4|2 în|G4|1 lac|A4|2 la|Bb4|1",
+    "Gu~|C5|2 ra|D5|1 Râ~|C5|1 u~|Bb4|1 lui,/|A4|1",
+    "a~|D5|2 pă|C5|1 dai|Bb4|2 o~|A4|1",
+    "ra~|G4|2 șu~|A4|1 lui;/|G4|3",
+    "treci,|A4|2 cu|G4|1 noap~|F4|2 tea,|A4|1",
+    "prin|Bb4|2 Si~|A4|1 biu,/|G4|3",
+    "cu|G4|2 un|A4|1 mur~|Bb4|2 mur|G4|1",
+    "ar~|A4|2 gin~|G4|1 tiu./|F4|3",
+]
+REFREN = [
+    "Lin,|C5|2 Ci~|A4|1 bi~|D5|2 ne,|C5|1",
+    "curgi|C5|2 a~|Bb4|1 ga~|G4|1 le,/|A4|1 opt~|Bb4|1",
+    "zeci|C5|2 și|A4|1 doi|F4|2 de|A4|1",
+    "ki~|G4|2 lo~|A4|1 me~|G4|2 tri;/|E4|1",
+    "lân~|F4|1 gă|G4|1 Tăl~|A4|1 ma~|D5|1 ciu,|C5|1 la|A4|1",
+    "va~|Bb4|3 le,/|G4|3",
+    "Ol~|G4|1 tul|A4|1 îți|Bb4|1 ie~|C5|2 se-n|Bb4|1",
+    "ca~|A4|3 le./|F4|3",
+]
+INTRO = ["·|C5|2 ·|A4|1 ·|D5|2 ·|C5|1", "·|Bb4|2 ·|A4|1 ·|G4|3"]
+CODA = ["·|G4|1 ·|A4|1 ·|Bb4|1 ·|C5|2 ·|Bb4|1", "·|A4|3 ·|F4|3"]
+
+CH_INTRO = ["F", "C7"]
+CH_STROFA = ["F", "F", "Bb", "C", "F", "Gm", "C7", "F"]
+CH_REFREN = ["F", "C7", "F", "C", "Dm", "Gm", "C7", "F"]
+CH_CODA = ["C7", "F"]
+
+SECTIONS = [  # (nume, măsuri, acorduri, cu text?)
+    ("Intro", INTRO, CH_INTRO, False),
+    ("Strofa 1", STROFA_1, CH_STROFA, True),
+    ("Refren", REFREN, CH_REFREN, True),
+    ("Strofa 2", STROFA_2, CH_STROFA, True),
+    ("Refren, reluare", REFREN, CH_REFREN, True),
+    ("Coda", CODA, CH_CODA, False),
+]
+
+# arpegiul harpei pe cele șase optimi ale măsurii (registru grav, sub vocea cântată)
+ARP = {
+    "F": ["F2", "C3", "F3", "A3", "F3", "C3"],
+    "Bb": ["Bb1", "F2", "Bb2", "D3", "Bb2", "F2"],
+    "C": ["C2", "G2", "C3", "E3", "C3", "G2"],
+    "C7": ["C2", "G2", "Bb2", "E3", "Bb2", "G2"],
+    "Dm": ["D2", "A2", "D3", "F3", "D3", "A2"],
+    "Gm": ["G2", "D3", "G3", "Bb3", "G3", "D3"],
+}
+# padul stă sub registrul vocii (cel mult La3), ca melodia-ghid să rămână limpede
+PAD = {"F": ["C3", "F3", "A3"], "Bb": ["D3", "F3", "Bb3"], "C": ["C3", "E3", "G3"],
+       "C7": ["C3", "E3", "Bb3"], "Dm": ["D3", "F3", "A3"], "Gm": ["D3", "G3", "Bb3"]}
+ROOT = {"F": "F2", "Bb": "Bb1", "C": "C2", "C7": "C2", "Dm": "D2", "Gm": "G2"}
+# nota acordului cântată de cutia muzicală pe timpul 1 în strofa a doua (ca o jucărie care se învârte)
+TWINKLE = {"F": "A5", "Bb": "D6", "C": "G5", "C7": "Bb5", "Dm": "F5", "Gm": "D6"}
+
+
+# ------------------------------------------------------------------ parsare, cronologie
+def parse_bar(s):
+    out = []
+    for tok in s.split():
+        syl, note, d = tok.split("|")
+        out.append((syl, None if note == "R" else note, int(d)))
+    tot = sum(d for *_, d in out)
+    assert tot == 6, f"măsura „{s}” are {tot} optimi, nu 6"
+    return out
+
+
+def timeline():
+    t, secs = 0.0, []
+    for name, bars, chords, lyr in SECTIONS:
+        assert len(bars) == len(chords), f"{name}: {len(bars)} măsuri de melodie, {len(chords)} de acorduri"
+        secs.append(dict(name=name, t0=t, bars=bars, chords=chords, lyrics=lyr))
+        t += len(bars) * BAR
+    return secs, t
+
+
+def note_events():
+    """Toate notele solistului: (t0, durată_s, notă, silabă, secțiune)."""
+    secs, _ = timeline()
+    ev = []
+    for s in secs:
+        for bi, b in enumerate(s["bars"]):
+            pos = s["t0"] + bi * BAR
+            for syl, nm, d in parse_bar(b):
+                if nm is not None:
+                    ev.append((pos, d * EIGHTH, nm, disp(syl) if s["lyrics"] else "", s["name"]))
+                pos += d * EIGHTH
+    return ev
+
+
+def disp(syl):
+    return syl.replace("/", "").rstrip("~")
+
+
+# ------------------------------------------------------------------ instrumente
+def celesta_note(f, dur, rng, hold=0.0):
+    """Celestă: lamă metalică lovită de un ciocănel moale, cu rezonator; amortizor la sfârșitul notei."""
+    L = dur + hold
+    n = ns(L + 0.16)
+    ring = 2.8 * (440.0 / f) ** 0.3
+    x = modal([f, f * 2.005, f * 3.0, f * 5.4], [1.0, 0.13, 0.05, 0.025], [ring, ring * 0.4, ring * 0.2, 0.25],
+              L + 0.16, rng=rng, attack=0.0025)
+    x += lp(rng.standard_normal(n), 2400) * env_exp(n, 0.006) * 0.05
+    k = ns(L)
+    r = n - k
+    x[k:] *= np.cos(np.linspace(0, np.pi / 2, r)) ** 2  # amortizorul
+    return x
+
+
+def musicbox_note(f, rng, dur=1.6):
+    """Lamela unei cutii muzicale (moduri ale unei bare încastrate) + clic de ciupire."""
+    x = modal([f, f * 6.27, f * 17.55], [1.0, 0.18, 0.04], [1.5, 0.35, 0.1], dur, rng=rng, attack=0.0008)
+    n = len(x)
+    x += hp(rng.standard_normal(n), 4000) * env_exp(n, 0.002) * 0.12
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def harp_note(nm, dur, rng):
+    f = hz(nm)
+    x = ks_pluck(f, dur, t60=2.4 if f < 150 else 1.8, bright=0.32, pos=0.27, rng=rng)
+    x[-ns(0.05):] *= np.linspace(1, 0, ns(0.05))
+    return x
+
+
+def pad_chord(chord, dur, rng):
+    n = ns(dur)
+    x = np.zeros(n)
+    for nm in PAD[chord]:
+        for det in (-0.06, 0.06):
+            x += additive(hz(nm) * 2 ** (det / 12), [1, 0.3, 0.12, 0.05], n, phase0=rng.uniform())
+    return lp(x, 1400) * env_adsr(n, 0.7, 0.4, 0.85, 0.8)
+
+
+def bass_note(nm, dur, rng):
+    n = ns(dur)
+    f = hz(nm)
+    t = t_axis(n)
+    x = np.sin(2 * np.pi * f * t + rng.uniform(0, 6.28)) + 0.15 * np.sin(4 * np.pi * f * t)
+    return x * env_adsr(n, 0.06, 0.5, 0.6, 0.5)
+
+
+def water_layer(total, rng):
+    """Murmur discret de apă: bule mici ale unui curs de apă + zgomot jos, cu valuri lente."""
+    n = ns(total)
+    buf = stereo(total)
+    for ch in range(2):
+        nz = colored_noise(n, rng_of(4100 + ch), 1.2)
+        buf[ch] += lp(bp(nz, 150, 900, order=2), 700) * (0.3 + smooth_random(n, rng_of(4200 + ch), 0.3, 0.0, 0.7))
+    t = 0.0
+    while t < total - 0.1:
+        f0 = np.exp(rng.uniform(np.log(300), np.log(1400)))
+        d = rng.uniform(0.012, 0.035)
+        m = ns(d)
+        tt = t_axis(m)
+        f = f0 * (1 + rng.uniform(8, 22) * tt)
+        x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt / (d / 3)) * (1 - np.exp(-tt / 0.0015))
+        add(buf, x, t, gain=rng.uniform(0.1, 0.45), pan=rng.uniform(-0.8, 0.8))
+        t += rng.exponential(1 / 14.0)
+    return hp(lp(buf, 3000, order=2), 100, order=2)
+
+
+# ------------------------------------------------------------------ randare
+def render(seed=82):
+    rng = rng_of(seed)
+    secs, end_t = timeline()
+    total = end_t + TAIL
+    names = ["lead", "musicbox", "harp", "pad", "bass", "water"]
+    S = {k: stereo(total) for k in names}
+
+    # --- solistul (ghidul pentru voce) și cutia muzicală (la octavă în intro, refrene, coda)
+    ev = note_events()
+    for i, (t0, d, nm, syl, sec) in enumerate(ev):
+        last = i == len(ev) - 1
+        add(S["lead"], celesta_note(hz(nm), d, rng, hold=FERMATA if last else 0.0), t0, gain=1.0, pan=0.0)
+        if sec in ("Intro", "Refren", "Refren, reluare", "Coda"):
+            g = 0.85 if sec != "Refren" else 0.7
+            add(S["musicbox"], musicbox_note(hz(nm, 12), rng), t0, gain=g, pan=0.3)
+
+    # --- acompaniament, măsură cu măsură
+    for s in secs:
+        name = s["name"]
+        for bi, ch in enumerate(s["chords"]):
+            tb = s["t0"] + bi * BAR
+            # harpa: arpegiu legănat pe optimi; în strofa 1 doar pe cei doi timpi
+            arp = ARP[ch]
+            if name == "Strofa 1":
+                add(S["harp"], harp_note(arp[0], 3 * EIGHTH + 0.6, rng), tb, gain=1.0, pan=-0.25)
+                for nm in (arp[2], arp[3]):
+                    add(S["harp"], harp_note(nm, 3 * EIGHTH + 0.6, rng), tb + 3 * EIGHTH + 0.012, gain=0.65, pan=-0.2)
+            else:
+                g = {"Intro": 0.8, "Strofa 2": 0.8, "Coda": 0.85}.get(name, 1.0)
+                for k in range(6):
+                    acc = 1.0 if k == 0 else (0.75 if k == 3 else 0.55)
+                    add(S["harp"], harp_note(arp[k], 2 * EIGHTH + 0.5, rng), tb + k * EIGHTH,
+                        gain=g * acc, pan=-0.3 + 0.06 * k)
+            # pad cald
+            gp = {"Intro": 0.6, "Strofa 1": 0.5, "Strofa 2": 0.8, "Coda": 0.8}.get(name, 1.0)
+            for pan in (-0.45, 0.45):
+                add(S["pad"], pad_chord(ch, BAR + 0.6, rng), tb, gain=gp, pan=pan)
+            # bas moale pe timpul 1
+            add(S["bass"], bass_note(ROOT[ch], BAR * 0.95, rng), tb, gain=0.9 if name != "Strofa 1" else 0.7)
+            # cutia muzicală în strofa a doua: o notă a acordului, sus, pe timpul 1
+            if name == "Strofa 2":
+                add(S["musicbox"], musicbox_note(hz(TWINKLE[ch]), rng), tb + 0.02, gain=0.45, pan=0.45)
+
+    # --- acordul final (Fa major): harpă rulată, cutie muzicală în arpegiu, pad, bas
+    tf = end_t
+    for k, nm in enumerate(["F2", "C3", "F3", "A3", "C4", "F4"]):
+        add(S["harp"], harp_note(nm, TAIL - 0.1 - 0.07 * k, rng), tf + 0.07 * k, gain=0.9, pan=-0.3 + 0.1 * k)
+    for k, nm in enumerate(["F5", "A5", "C6", "F6"]):
+        add(S["musicbox"], musicbox_note(hz(nm), rng, dur=TAIL - 0.3), tf + 0.25 + 0.18 * k, gain=0.6, pan=0.3)
+    for pan in (-0.45, 0.45):
+        add(S["pad"], pad_chord("F", TAIL, rng), tf, gain=0.9, pan=pan)
+    add(S["bass"], bass_note("F2", TAIL - 0.2, rng), tf, gain=0.9)
+    S["water"] = water_layer(total, rng)
+
+    # --- mix
+    ir = make_ir(t60=2.3, predelay=0.025, seed=17, hf_ratio=0.4)
+    targets = {"lead": (-17.0, 0.25), "musicbox": (-27.0, 0.35), "harp": (-21.5, 0.22),
+               "pad": (-27.5, 0.3), "bass": (-27.0, 0.05), "water": (-32.0, 0.1)}
+    mix = stereo(total)
+    for k in names:
+        tgt, wet = targets[k]
+        x = match_lufs(S[k], tgt)
+        report(x, k)
+        mix += reverb(x, ir, wet=wet, dry=1.0)
+    mix = peaking(mix, 250, -1.0, 0.8)
+    return mix, secs, end_t
+
+
+# ------------------------------------------------------------------ notația pentru fișa .md
+DUR_NAME = {1: "o", 2: "p", 3: "p.", 4: "d", 6: "d."}
+
+
+def fmt_t(t):
+    s = f"{t % 60:04.1f}".replace(".", ",")
+    return f"{int(t // 60)}:{s}"
+
+
+def flat_syllables(s):
+    """Silabele unei secțiuni cu poziția (în optimi de la începutul secțiunii)."""
+    out, pos = [], 0
+    for b in s["bars"]:
+        for syl, nm, d in parse_bar(b):
+            if nm is not None:
+                out.append((syl, pos))
+            pos += d
+    return out
+
+
+def chord_sheet():
+    secs, _ = timeline()
+    out = []
+    for s in secs:
+        if not s["lyrics"]:
+            continue
+        out.append(f"[{s['name']}]")
+        syls = flat_syllables(s)
+        lines, cur = [], []
+        for syl, pos in syls:
+            cur.append((syl, pos))
+            if syl.endswith("/"):
+                lines.append(cur)
+                cur = []
+        if cur:
+            lines.append(cur)
+        # acordul fiecărei măsuri se scrie deasupra primei silabe care începe la sau după timpul 1
+        chord_at = {}
+        for bi, ch in enumerate(s["chords"]):
+            first = next(p for _, p in syls if p >= 6 * bi)
+            chord_at[first] = ch
+        for ln in lines:
+            txt, row = "", ""
+            for syl, pos in ln:
+                if pos in chord_at:
+                    row = row.ljust(len(txt)) + chord_at[pos] + " "
+                piece = disp(syl)
+                txt += piece
+                if not syl.rstrip("/").endswith("~"):
+                    txt += " "
+            out.append(row.rstrip())
+            out.append(txt.rstrip())
+        out.append("")
+    return "\n".join(out)
+
+
+def syl_join(syls):
+    out = ""
+    for k, syl in enumerate(syls):
+        piece = disp(syl)
+        if k and syls[k - 1].rstrip("/").endswith("~"):
+            out += "-"
+        elif k:
+            out += " "
+        out += piece
+    return out
+
+
+def notation_tables():
+    secs, _ = timeline()
+    out = []
+    bar_no = 0
+    for s in secs:
+        out.append(f"### {s['name']} ({fmt_t(s['t0'])}–{fmt_t(s['t0'] + len(s['bars']) * BAR)})\n")
+        out.append("| Măs. | Timp | Acord | Silabe | Note (durată) |")
+        out.append("|---|---|---|---|---|")
+        for bi, b in enumerate(s["bars"]):
+            bar_no += 1
+            notes = parse_bar(b)
+            syls = [syl for syl, nm, d in notes if nm is not None]
+            if s["lyrics"]:
+                syl_txt = syl_join(syls) + ("-" if syls[-1].rstrip("/").endswith("~") else "")
+            else:
+                syl_txt = "(instrumental)"
+            nt = " · ".join(("pauză" if nm is None else nm) + f" {DUR_NAME[d]}" for _, nm, d in notes)
+            out.append(f"| {bar_no} | {fmt_t(s['t0'] + bi * BAR)} | {s['chords'][bi]} | {syl_txt} | {nt} |")
+        out.append("")
+    return "\n".join(out)
+
+
+if __name__ == "__main__":
+    if "--notatie" in sys.argv:
+        print(chord_sheet())
+        print(notation_tables())
+        sys.exit(0)
+    mix, secs, end_t = render()
+    out = finalize(mix, OUT, "A17 Optzeci și doi de kilometri (cântec de leagăn AI pentru râul Cibin) – instrumental demo",
+                   "Temă originală în stil de cântec de leagăn; melodia vocii cântată de o celestă sintetizată "
+                   "ca ghid; vocea nu e generată – sinteză procedurală, ACTIV AI, calupul Natură și împrejurimi",
+                   target_lufs=-14.0, fin=0.3, fout=2.5)
+    report(out, "A17 final")
+    marks = {s["name"]: round(s["t0"], 2) for s in secs}
+    marks["Acord final"] = round(end_t, 2)
+    print("marcaje:", json.dumps(marks, ensure_ascii=False))
+    with open(os.path.join(HERE, "A17_marcaje.json"), "w", encoding="utf-8") as fh:
+        json.dump({"optimi_pe_minut": EIGHTH_BPM, "masura_s": round(BAR, 4), "marcaje_s": marks,
+                   "note": [dict(t=round(t0, 3), d=round(d, 3), nota=nm, silaba=syl, sectiune=sec)
+                            for t0, d, nm, syl, sec in note_events()]}, fh, ensure_ascii=False, indent=1)

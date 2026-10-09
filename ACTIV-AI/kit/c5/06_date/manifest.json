@@ -1,0 +1,30 @@
+[
+  {
+    "cod": "D16",
+    "categorie": "Date",
+    "titlu": "De la 19 bresle (1376) la 52 de meserii (1810) — infografic AI",
+    "fisiere": [
+      "06_date/D16_de_la_19_bresle_la_52_meserii.svg",
+      "06_date/D16_de_la_19_bresle_la_52_meserii.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "O axă a timpului arată câte bresle avea Sibiul în 1376, 1719, 1724 și 1780 și câte meserii avea în 1810, cu repere din 1346 până la desființare. Alături: drumul de la ucenic la meșter, taxele de intrare și cele 19 bresle din 1376.",
+    "status": "realizat",
+    "nota": "Surse: limbaromana.org, mnir.ro, magazines.ulbsibiu.ro, capitalcultural.ro și patrimoniu.sibiu.ro, preluate din fapte_verificate.md. Coloana din 1810 numără meserii, nu bresle. E hașurată și marcată „unitate diferită”. Lângă cele 19 bresle din 1376 apar cele 25 de meserii (mnir.ro), ca termen de comparație. Desființarea e arătată ca DIVERGENȚĂ: decretul din 1872 (limbaromana.org) sau 18 aprilie 1875. Anul 1810 și data de 18 aprilie 1875 sunt atribuite pe piesă „documentării inițiale a proiectului”, pentru că fișa nu le dă altă sursă. Lista celor 19 bresle din 1376 nu e inventată. Pe piesă scrie: „Sursele noastre nu dau lista celor 19 bresle din 1376; numesc doar brutarii, pielarii, cuțitarii și fierarii.” Restul scuturilor poartă „?”, iar așezarea în scuturi e declarată ilustrativă. Axa nu e la scară: reperele sunt puse doar în ordine, iar saltul 1568–1719 e marcat. Pictogramele sunt generice și nu reproduc însemne sau sigilii reale."
+  },
+  {
+    "cod": "D17",
+    "categorie": "Date",
+    "titlu": "Anatomia unui salam de Sibiu — infografic AI (prima fabrică în 1845, IGP din 2016)",
+    "fisiere": [
+      "06_date/D17_anatomia_salamului.svg",
+      "06_date/D17_anatomia_salamului.png"
+    ],
+    "tip": "imagine",
+    "instrument": "Claude (Anthropic) – cod SVG",
+    "descriere": "O secțiune desenată printr-un salam de Sibiu arată straturile lui: umplutura, membrana și floarea albă de mucegai nobil. Alături: cifrele rețetei IGP, procesul în cinci pași și o cronologie de la prima fabrică (1845) până la IGP (2016).",
+    "status": "realizat",
+    "nota": "Surse: patrimoniu.sibiu.ro, turnulsfatului.ro (2016; 2023, după doi profesori ULBS), mediafax.ro (documentația IGP), euronews.ro, sibiu100.ro și en.wikipedia, preluate din fapte_verificate.md. Pașii generali (tocare, umplere, uscare lentă la rece, rolul mucegaiului alb) au fost verificați pe en.wikipedia (Salami) și sunt notați în 06_date/_fapte_noi_D16_D17.md. Ordinea pașilor e simplificată. Pe piesă scrie că, în rețeta IGP, maturarea și uscarea sunt o singură etapă. Proporția 70% / 30% e „circa”, după ULBS. Divergențele apar explicit: Dozzi la Poiana Țapului în 1885 sau 1895; Theil la Mediaș în 1895 sau la „începutul secolului XX”. Pentru Scandia Română, piesa scrie „1940–1941”, ca în fișa de fapte, nu doar 1941. Salamul e desenat schematic, nu la scară. Nu apar sigle, mărci sau ambalaje, iar numele firmelor apar doar în cronologie, ca fapte istorice. Vinul din maturare nu e menționat."
+  }
+]

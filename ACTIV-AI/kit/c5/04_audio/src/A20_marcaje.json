@@ -1,0 +1,397 @@
+{
+ "bpm": 124,
+ "masura_s": 1.9355,
+ "durata_s": 37.02,
+ "jingle_s": [
+  0.0,
+  25.58
+ ],
+ "stinger_s": [
+  26.98,
+  37.02
+ ],
+ "marcaje_s": {
+  "Intro": 0.0,
+  "Versurile 1–2": 3.87,
+  "Versurile 3–4": 11.61,
+  "Încheiere: versul 1, reluat": 19.35,
+  "Acordul final": 23.23,
+  "Liniște (între jingle și stinger)": 25.58,
+  "Stinger: pornire": 26.98,
+  "Stinger: versul 1": 28.91,
+  "Stinger: acordul final": 32.78
+ },
+ "note": [
+  {
+   "t": 0.0,
+   "d": 0.484,
+   "nota": "E4",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 0.484,
+   "d": 0.484,
+   "nota": "G4",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 0.968,
+   "d": 0.484,
+   "nota": "C5",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 1.452,
+   "d": 0.242,
+   "nota": "B4",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 1.694,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 1.935,
+   "d": 0.968,
+   "nota": "A4",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 2.903,
+   "d": 0.484,
+   "nota": "G4",
+   "silaba": "",
+   "sectiune": "Intro"
+  },
+  {
+   "t": 3.871,
+   "d": 0.484,
+   "nota": "E4",
+   "silaba": "Hai",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 4.355,
+   "d": 0.484,
+   "nota": "G4",
+   "silaba": "la",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 4.839,
+   "d": 0.484,
+   "nota": "C5",
+   "silaba": "Co",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 5.323,
+   "d": 0.242,
+   "nota": "B4",
+   "silaba": "șul",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 5.565,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "cu",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 5.806,
+   "d": 0.968,
+   "nota": "A4",
+   "silaba": "Soa",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 6.774,
+   "d": 0.484,
+   "nota": "G4",
+   "silaba": "re,",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 7.742,
+   "d": 0.484,
+   "nota": "C5",
+   "silaba": "pia",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 8.226,
+   "d": 0.242,
+   "nota": "B4",
+   "silaba": "ța",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 8.468,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "din",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 8.71,
+   "d": 0.484,
+   "nota": "F4",
+   "silaba": "vis,",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 9.194,
+   "d": 0.484,
+   "nota": "E4",
+   "silaba": "în",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 9.677,
+   "d": 0.968,
+   "nota": "D4",
+   "silaba": "zori:",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 11.129,
+   "d": 0.242,
+   "nota": "G4",
+   "silaba": "te",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 11.371,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "le",
+   "sectiune": "Versurile 1–2"
+  },
+  {
+   "t": 11.613,
+   "d": 0.484,
+   "nota": "C5",
+   "silaba": "mea",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 12.097,
+   "d": 0.242,
+   "nota": "C5",
+   "silaba": "de",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 12.339,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "Si",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 12.581,
+   "d": 0.726,
+   "nota": "C5",
+   "silaba": "biu,",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 13.306,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "sa",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 13.548,
+   "d": 0.484,
+   "nota": "D5",
+   "silaba": "lam",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 14.032,
+   "d": 0.242,
+   "nota": "D5",
+   "silaba": "de",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 14.274,
+   "d": 0.242,
+   "nota": "B4",
+   "silaba": "Si",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 14.516,
+   "d": 0.968,
+   "nota": "D5",
+   "silaba": "biu,",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 15.484,
+   "d": 0.242,
+   "nota": "E5",
+   "silaba": "ro",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 15.726,
+   "d": 0.242,
+   "nota": "D5",
+   "silaba": "șii,",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 15.968,
+   "d": 0.242,
+   "nota": "C5",
+   "silaba": "mie",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 16.21,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "re,",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 16.452,
+   "d": 0.242,
+   "nota": "G4",
+   "silaba": "pâi",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 16.694,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "ne",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 16.935,
+   "d": 0.484,
+   "nota": "B4",
+   "silaba": "și",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 17.419,
+   "d": 1.452,
+   "nota": "C5",
+   "silaba": "flori!",
+   "sectiune": "Versurile 3–4"
+  },
+  {
+   "t": 19.355,
+   "d": 0.484,
+   "nota": "E4",
+   "silaba": "Hai",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 19.839,
+   "d": 0.484,
+   "nota": "G4",
+   "silaba": "la",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 20.323,
+   "d": 0.484,
+   "nota": "C5",
+   "silaba": "Co",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 20.806,
+   "d": 0.242,
+   "nota": "B4",
+   "silaba": "șul",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 21.048,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "cu",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 21.29,
+   "d": 0.968,
+   "nota": "D5",
+   "silaba": "Soa",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 22.258,
+   "d": 0.968,
+   "nota": "C5",
+   "silaba": "re!",
+   "sectiune": "Încheiere: versul 1, reluat"
+  },
+  {
+   "t": 28.911,
+   "d": 0.484,
+   "nota": "E4",
+   "silaba": "Hai",
+   "sectiune": "Stinger: versul 1"
+  },
+  {
+   "t": 29.395,
+   "d": 0.484,
+   "nota": "G4",
+   "silaba": "la",
+   "sectiune": "Stinger: versul 1"
+  },
+  {
+   "t": 29.879,
+   "d": 0.484,
+   "nota": "C5",
+   "silaba": "Co",
+   "sectiune": "Stinger: versul 1"
+  },
+  {
+   "t": 30.363,
+   "d": 0.242,
+   "nota": "B4",
+   "silaba": "șul",
+   "sectiune": "Stinger: versul 1"
+  },
+  {
+   "t": 30.605,
+   "d": 0.242,
+   "nota": "A4",
+   "silaba": "cu",
+   "sectiune": "Stinger: versul 1"
+  },
+  {
+   "t": 30.847,
+   "d": 0.968,
+   "nota": "D5",
+   "silaba": "Soa",
+   "sectiune": "Stinger: versul 1"
+  },
+  {
+   "t": 31.815,
+   "d": 0.968,
+   "nota": "C5",
+   "silaba": "re!",
+   "sectiune": "Stinger: versul 1"
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+[
+ {
+  "cod": "V28",
+  "categorie": "Vizual",
+  "titlu": "Atelierul unui aurar din Piața Aurarilor — reconstituire AI",
+  "fisiere": [
+   "01_vizual/V28_card_canva.png",
+   "01_vizual/canva_miniaturi/V28_atelier_aurar.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Atelier de aurar într-un oraș săsesc din Transilvania, spre 1700: încăpere boltită cu fereastră spre o piață cu trepte de piatră, bancă de lucru din stejar, forjă mică cu foale, creuzet, ciocănele, dălți, filiere, un potir și o monstranță în lucru, balanță, lada breslei. Doar mâinile meșterului.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXbCTnG3U",
+    "url": "https://www.canva.com/M/MAHXbCTnG3U",
+    "eticheta": "reconstituire liberă, sfârșitul secolului al XVII-lea"
+   }
+  ],
+  "nota": "Fapte verificate (limbaromana.org; inyourpocket.com): aurarii sibieni sunt atestați din 1346 (monstranța aurarului Kunz), au statut în 1494 și uniune a breslelor de aurari în 1559; aurarul Sebastian Hann revigorează meșteșugul spre 1675. Pasajul Aurarilor coboară în trepte din Piața Mică în Piața Aurarilor. Atelierul din imagine e imaginat, nu un loc documentat. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ },
+ {
+  "cod": "V29",
+  "categorie": "Vizual",
+  "titlu": "Natură statică AI: masa sibiană de duminică (telemea de Sibiu, salam de Sibiu, pâine de casă)",
+  "fisiere": [
+   "01_vizual/V29_card_canva.png",
+   "01_vizual/canva_miniaturi/V29_masa_de_duminica.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Natură statică în maniera maeștrilor olandezi, pe o masă rustică cu ștergar alb brodat: o pâine de casă rotundă, un salam crud-uscat cu floarea albă a mucegaiului nobil, felii subțiri, o bucată de brânză albă de oaie, ceapă verde și ridichi, o cană de lut, o farfurie pictată.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXbStqa7o",
+    "url": "https://www.canva.com/M/MAHXbStqa7o",
+    "eticheta": "natură statică în maniera maeștrilor olandezi"
+   }
+  ],
+  "nota": "Fapte verificate: Salamul de Sibiu – IGP din februarie 2016, maturat minimum 60 de zile cu Penicillium nalgiovense (mediafax.ro; euronews.ro); Telemeaua de Sibiu – IGP din 16 octombrie 2019, din lapte de oaie (economica.net). Imaginea nu arată produse sau mărci reale; alimentele sunt generice. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ },
+ {
+  "cod": "V30",
+  "categorie": "Vizual",
+  "titlu": "Mâinile meșterilor — serie macro AI: olar, tâmplar, croitor",
+  "fisiere": [
+   "01_vizual/V30_card_canva.png",
+   "01_vizual/canva_miniaturi/V30a_olar.jpg",
+   "01_vizual/canva_miniaturi/V30b_tamplar.jpg",
+   "01_vizual/canva_miniaturi/V30c_croitor.jpg"
+  ],
+  "tip": "imagine",
+  "instrument": "Canva AI (generator de imagini), prompt scris cu Claude",
+  "descriere": "Trei fotografii macro imaginate: mâinile unui olar care ridică un bol pe roata olarului, mâinile unui tâmplar care împinge un rindea pe o scândură de stejar, printre talaș, și mâinile unui croitor care trage acul prin postav gros, cu degetarul de alamă pe deget.",
+  "status": "realizat",
+  "canva": [
+   {
+    "media_id": "MAHXbUOCKW4",
+    "url": "https://www.canva.com/M/MAHXbUOCKW4",
+    "eticheta": "olar"
+   },
+   {
+    "media_id": "MAHXbag2-ow",
+    "url": "https://www.canva.com/M/MAHXbag2-ow",
+    "eticheta": "tâmplar"
+   },
+   {
+    "media_id": "MAHXbcScjnI",
+    "url": "https://www.canva.com/M/MAHXbcScjnI",
+    "eticheta": "croitor"
+   }
+  ],
+  "nota": "Fapte verificate (limbaromana.org; mnir.ro): olarii aveau în grijă, împreună cu cositorarii, bastionul Haller (1556); croitorii – Poarta Turnului și Turnul Croitorilor; la Sibiu se păstrează un însemn al breslei croitorilor din 1695 și unul al dulgherilor din 1450. Mâinile sunt generate, nu ale unor meșteri reali. Imaginile la rezoluție completă sunt în contul Canva, folderul „ACTIV AI – Expoziție – imagini AI (artefacte-model)”: https://www.canva.com/folder/FAHXN57WmTs. Local există doar miniaturi (~200 px)."
+ }
+]

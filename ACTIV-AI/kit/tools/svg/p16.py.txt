@@ -1,0 +1,342 @@
+# -*- coding: utf-8 -*-
+"""P16 – Animalul-totem al clasei, din fauna Carpaților – ilustrat AI (clasă fictivă, vot imaginar; totem: râsul)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math, random
+
+OUT = "/home/claude/expo/c4/08_identitate/P16_animalul_totem.svg"
+ORANGE = "#F76B15"
+TITLE = "Animalul-totem al clasei"
+s = frame_head("IDENTITATE · P16", ORANGE, TITLE, "clasă fictivă · vot imaginar · ilustrație stilizată, originală")
+s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— din fauna Carpaților, ilustrat AI", 30, CEATA, "serif", 400, True)
+MUTED = "#7E8A96"
+
+# culorile râsului
+COAT = "#C98A4B"; COAT_D = "#B07438"; COAT_L = "#D9A466"; CREAM = "#EEDFC3"; CREAM2 = "#E3C79C"
+DARK = "#2E2117"; SPOT = "#4A2F1D"; IRIS = "#CDB23C"; NOSE = "#B5665A"
+
+s += ('<defs>'
+      '<linearGradient id="sky16" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E2231"/><stop offset="0.55" stop-color="#1F3B52"/>'
+      '<stop offset="1" stop-color="#4B4F7E"/></linearGradient>'
+      '<radialGradient id="moon16"><stop offset="0" stop-color="#F7EBC4" stop-opacity="0.55"/><stop offset="1" stop-color="#F7EBC4" stop-opacity="0"/></radialGradient>'
+      '<linearGradient id="rock16" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E7A88"/><stop offset="1" stop-color="#3A434F"/></linearGradient>'
+      '</defs>\n')
+
+
+def mirror(pts):
+    """Puncte pentru jumătatea stângă (x<=0), de sus în jos -> contur închis simetric."""
+    right = [(-x, y) for x, y in reversed(pts)]
+    return pts + right
+
+
+def P(pts):
+    return " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+
+
+def lynx(cx, by, k):
+    """Râs eurasiatic stilizat, așezat, văzut din față. (cx, by) = mijlocul labelor pe stâncă."""
+    o = f'<g transform="translate({cx},{by}) scale({k})">\n'
+    # coada scurtă, cu vârful negru (în dreapta, pe stâncă)
+    o += f'<g transform="rotate(8 178 -22)"><ellipse cx="172" cy="-22" rx="40" ry="16" fill="{COAT_D}"/><ellipse cx="204" cy="-20" rx="14" ry="14" fill="{DARK}"/></g>\n'
+    # coapsele (picioarele din spate, așezat)
+    for sg in (-1, 1):
+        o += f'<ellipse cx="{sg*110}" cy="-82" rx="74" ry="86" fill="{COAT_D}"/>'
+        o += f'<ellipse cx="{sg*104}" cy="-96" rx="56" ry="62" fill="{COAT}" opacity="0.55"/>'
+    o += "\n"
+    # corpul
+    body_l = [(-62, -350), (-98, -300), (-118, -230), (-122, -150), (-110, -70), (-92, -14)]
+    o += f'<path d="{smooth_path(mirror(body_l), True, 0.6)}" fill="{COAT}"/>\n'
+    # pete pe corp și coapse
+    rnd = random.Random(16)
+    spots = []
+    for _ in range(46):
+        x = rnd.uniform(-176, -40); y = rnd.uniform(-300, -20)
+        if x > -84 and y < -140:      # nu pe pieptul deschis la culoare
+            continue
+        if ((x + 110) / 74) ** 2 + ((y + 82) / 86) ** 2 > 0.9 and not (-120 < x < -40 and -300 < y < -20):
+            continue
+        spots.append((x, y, rnd.uniform(4.5, 8.5), rnd.uniform(3.5, 6.5), rnd.uniform(-30, 30)))
+    for x, y, rx, ry, a in spots:
+        for sg in (-1, 1):
+            jx = 1 if sg < 0 else rnd.uniform(0.94, 1.06)
+            o += f'<ellipse cx="{sg*x*jx:.1f}" cy="{y:.1f}" rx="{rx:.1f}" ry="{ry:.1f}" transform="rotate({a*sg:.0f} {sg*x*jx:.1f} {y:.1f})" fill="{SPOT}" opacity="0.72"/>'
+    o += "\n"
+    # pieptul deschis (cu margine „pufoasă”)
+    bib = [(0, -350)]
+    n = 10
+    for i in range(1, n + 1):
+        t = i / n
+        y = -350 + t * 210
+        w = 64 * math.sin(math.pi * min(1, t * 1.15)) ** 0.7 + 4
+        bib.append((-(w + (7 if i % 2 else 0)), y))
+    bib.append((0, -130))
+    left = bib[1:-1]
+    pts = [bib[0]] + left + [bib[-1]] + [(-x, y) for x, y in reversed(left)]
+    o += f'<polygon points="{P(pts)}" fill="{CREAM}" stroke="{CREAM}" stroke-width="6" stroke-linejoin="round"/>\n'
+    # picioarele din față
+    for sg in (-1, 1):
+        d = (f"M{sg*80},-236 C{sg*86},-160 {sg*84},-90 {sg*86},-22 L{sg*16},-22 C{sg*18},-90 {sg*20},-160 {sg*18},-236 Z")
+        o += f'<path d="{d}" fill="{COAT_L}"/>'
+        o += f'<path d="M{sg*22},-200 C{sg*22},-140 {sg*20},-80 {sg*20},-30" fill="none" stroke="{CREAM2}" stroke-width="7" opacity="0.7"/>'
+        for (x, y, r) in ((62, -178, 6), (48, -146, 5), (66, -118, 5.5), (44, -96, 4.5), (60, -70, 5), (50, -46, 4)):
+            o += f'<ellipse cx="{sg*x}" cy="{y}" rx="{r}" ry="{r*0.8:.1f}" fill="{SPOT}" opacity="0.7"/>'
+        # labe mari, ca niște rachete de zăpadă
+        o += f'<ellipse cx="{sg*52}" cy="-16" rx="46" ry="24" fill="{CREAM2}"/>'
+        o += f'<ellipse cx="{sg*52}" cy="-22" rx="40" ry="14" fill="{CREAM}" opacity="0.6"/>'
+        for dx in (-17, 0, 17):
+            o += f'<line x1="{sg*52+dx}" y1="-24" x2="{sg*52+dx}" y2="-6" stroke="#8A6038" stroke-width="2.6" stroke-linecap="round"/>'
+    o += "\n"
+    # ---- capul
+    HY = -430
+    # urechile, cu smocurile negre
+    for sg in (-1, 1):
+        ear = [(sg * 22, HY - 64), (sg * 84, HY - 172), (sg * 114, HY - 36)]
+        o += f'<polygon points="{P(ear)}" fill="{COAT_D}" stroke="{DARK}" stroke-width="9" stroke-linejoin="round"/>'
+        inner = [(sg * 40, HY - 66), (sg * 82, HY - 146), (sg * 100, HY - 50)]
+        o += f'<polygon points="{P(inner)}" fill="{CREAM2}" stroke="{CREAM2}" stroke-width="4" stroke-linejoin="round"/>'
+        for k2 in range(4):
+            bx = sg * (52 + k2 * 12)
+            o += f'<line x1="{bx}" y1="{HY-64-k2*2}" x2="{sg*(76+k2*3)}" y2="{HY-120+k2*6}" stroke="#FAF3E4" stroke-width="2.2" opacity="0.85"/>'
+        tuft = [(sg * 79, HY - 168), (sg * 90, HY - 170), (sg * 98, HY - 236), (sg * 93, HY - 238)]
+        o += f'<polygon points="{P(tuft)}" fill="{DARK}" stroke="{DARK}" stroke-width="3" stroke-linejoin="round"/>'
+    o += "\n"
+    # coama de pe obraji (ruff), cu dungi închise
+    ruff = []
+    N = 26
+    for i in range(N + 1):
+        a = math.radians(6 + 168 * i / N)
+        r = 1.0 if i % 2 == 0 else 0.84
+        fy = 1.0 if math.sin(a) < 0.85 else 0.9
+        ruff.append((140 * r * math.cos(a), HY + 26 + 112 * r * math.sin(a) * fy))
+    o += f'<polygon points="{P(ruff)}" fill="{CREAM}" stroke="{CREAM}" stroke-width="5" stroke-linejoin="round"/>\n'
+    for sg in (-1, 1):
+        o += f'<path d="M{sg*86},{HY+6} q{sg*30},40 {sg*14},94" fill="none" stroke="{DARK}" stroke-width="9" stroke-linecap="round"/>'
+        o += f'<path d="M{sg*104},{HY+30} q{sg*14},30 {sg*2},62" fill="none" stroke="{DARK}" stroke-width="6" stroke-linecap="round" opacity="0.85"/>'
+    o += "\n"
+    # fața
+    o += f'<ellipse cx="0" cy="{HY}" rx="98" ry="88" fill="{COAT}"/>'
+    o += f'<ellipse cx="0" cy="{HY+46}" rx="76" ry="44" fill="{COAT_L}"/>'
+    # dungi pe frunte
+    for dx, h in ((-22, 26), (-8, 34), (8, 34), (22, 26)):
+        o += f'<path d="M{dx},{HY-84} q{dx*0.15:.1f},{h/2:.1f} 0,{h}" fill="none" stroke="{SPOT}" stroke-width="4" stroke-linecap="round" opacity="0.8"/>'
+    for sg in (-1, 1):
+        for (x, y, r) in ((60, -48, 4.5), (74, -26, 4), (50, -64, 3.5), (82, -4, 3.5)):
+            o += f'<circle cx="{sg*x}" cy="{HY+y}" r="{r}" fill="{SPOT}" opacity="0.75"/>'
+    # pete deschise deasupra ochilor
+    for sg in (-1, 1):
+        o += f'<ellipse cx="{sg*38}" cy="{HY-26}" rx="22" ry="9" fill="{CREAM}" opacity="0.9"/>'
+    # nasul (puntea)
+    o += f'<path d="M-12,{HY-34} L12,{HY-34} L9,{HY+22} L-9,{HY+22} Z" fill="{COAT_L}"/>'
+    # ochii
+    for sg in (-1, 1):
+        ex, ey = sg * 40, HY - 6
+        o += f'<path d="M{ex-25},{ey+2} q25,-24 50,-2 q-25,20 -50,2 Z" fill="{DARK}"/>'
+        o += f'<path d="M{ex-20},{ey+1} q20,-17 40,-1 q-20,15 -40,1 Z" fill="{IRIS}"/>'
+        o += f'<ellipse cx="{ex}" cy="{ey}" rx="4.5" ry="10.5" fill="{DARK}"/>'
+        o += f'<circle cx="{ex+6}" cy="{ey-5}" r="3" fill="#FFFFFF" opacity="0.9"/>'
+        # dungile „lacrimii”, de la colțul interior al ochiului
+        o += f'<path d="M{sg*16},{ey+8} q{sg*-2},16 {sg*-4},28" fill="none" stroke="{DARK}" stroke-width="3.2" stroke-linecap="round"/>'
+    # boticul
+    for sg in (-1, 1):
+        o += f'<ellipse cx="{sg*22}" cy="{HY+50}" rx="25" ry="17" fill="{CREAM}"/>'
+    o += f'<ellipse cx="0" cy="{HY+72}" rx="22" ry="12" fill="{CREAM}"/>'
+    o += f'<path d="M-15,{HY+28} h30 q-2,13 -15,19 q-13,-6 -15,-19 Z" fill="{NOSE}" stroke="{DARK}" stroke-width="2.5" stroke-linejoin="round"/>'
+    o += f'<path d="M0,{HY+47} v10 M0,{HY+57} q-9,9 -20,4 M0,{HY+57} q9,9 20,4" fill="none" stroke="{DARK}" stroke-width="2.6" stroke-linecap="round"/>'
+    for sg in (-1, 1):
+        for (x, y) in ((12, 44), (22, 52), (30, 44)):
+            o += f'<circle cx="{sg*x}" cy="{HY+y}" r="1.6" fill="{SPOT}"/>'
+        for (y1, x2, y2) in ((46, 120, 30), (52, 126, 52), (58, 118, 74)):
+            o += f'<path d="M{sg*36},{HY+y1} Q{sg*80},{HY+(y1+y2)/2-6:.0f} {sg*x2},{HY+y2}" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>'
+    o += "\n</g>\n"
+    return o
+
+
+# =================================================================== STÂNGA: totemul (ilustrația mare)
+CX0, CY0, CX1, CY1 = 80, 236, 740, 1000
+CW = CX1 - CX0; R = CW / 2; CXm = (CX0 + CX1) / 2
+arch = f"M{CX0},{CY1} V{CY0+R} A{R},{R} 0 0 1 {CX1},{CY0+R} V{CY1} Z"
+s += f'<g filter="url(#sh)"><path d="{arch}" fill="#16222E"/></g>\n'
+s += f'<clipPath id="arch16"><path d="{arch}"/></clipPath>\n'
+s += '<g clip-path="url(#arch16)">\n'
+s += f'<rect x="{CX0}" y="{CY0}" width="{CW}" height="{CY1-CY0}" fill="url(#sky16)"/>\n'
+rnd = random.Random(7)
+for _ in range(60):
+    x = rnd.uniform(CX0, CX1); y = rnd.uniform(CY0, CY0 + 420)
+    if y < CY0 + 100 and abs(x - CXm) < 150:
+        continue
+    s += f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{rnd.uniform(0.8,2.2):.1f}" fill="#F3EFE6" opacity="{rnd.uniform(0.35,0.9):.2f}"/>'
+s += "\n"
+MX, MY = CX0 + 488, CY0 + 196
+s += f'<circle cx="{MX}" cy="{MY}" r="110" fill="url(#moon16)"/><circle cx="{MX}" cy="{MY}" r="40" fill="#F4E7BF"/>'
+s += f'<circle cx="{MX-12}" cy="{MY-8}" r="7" fill="#E3D3A2" opacity="0.7"/><circle cx="{MX+14}" cy="{MY+12}" r="5" fill="#E3D3A2" opacity="0.7"/>\n'
+# munți (straturi), cu zăpadă pe crestele îndepărtate
+far = [(CX0, 640), (CX0+60, 560), (CX0+130, 600), (CX0+220, 500), (CX0+300, 580), (CX0+380, 520), (CX0+470, 590), (CX0+560, 530), (CX1, 600), (CX1, CY1), (CX0, CY1)]
+s += f'<polygon points="{P(far)}" fill="#33506A"/>\n'
+for (px, py) in ((CX0+220, 500), (CX0+380, 520), (CX0+560, 530), (CX0+60, 560)):
+    s += f'<polygon points="{px-26},{py+30} {px},{py} {px+24},{py+28} {px+10},{py+22} {px},{py+32} {px-12},{py+24}" fill="#D9E2EA" opacity="0.85"/>'
+mid = [(CX0, 700), (CX0+90, 640), (CX0+170, 690), (CX0+260, 620), (CX0+360, 680), (CX0+450, 630), (CX0+560, 690), (CX1, 650), (CX1, CY1), (CX0, CY1)]
+s += f'\n<polygon points="{P(mid)}" fill="#26405A"/>\n'
+# molizi (etajul subalpin, stilizat)
+def fir(x, yb, h, col):
+    w = h * 0.34
+    o = f'<rect x="{x-2.5:.1f}" y="{yb-h*0.12:.1f}" width="5" height="{h*0.14:.1f}" fill="#1A2633"/>'
+    for t in range(3):
+        y0 = yb - h * 0.1 - t * h * 0.27; ww = w * (1 - t * 0.25)
+        o += f'<polygon points="{x-ww:.1f},{y0:.1f} {x:.1f},{y0-h*0.42:.1f} {x+ww:.1f},{y0:.1f}" fill="{col}"/>'
+    return o
+for k in range(24):
+    x = CX0 + 10 + k * 28 + rnd.uniform(-6, 6)
+    yb = 742 + rnd.uniform(-12, 10)
+    s += fir(x, yb, rnd.uniform(60, 96), "#1D3446")
+s += f'\n<rect x="{CX0}" y="740" width="{CW}" height="{CY1-740}" fill="#1D3446"/>\n'
+for k in range(14):
+    x = CX0 + 20 + k * 50 + rnd.uniform(-8, 8)
+    s += fir(x, 800 + rnd.uniform(-6, 8), rnd.uniform(80, 120), "#15283A")
+s += f'\n<rect x="{CX0}" y="798" width="{CW}" height="{CY1-798}" fill="#15283A"/>\n'
+# stânca
+BY = 878
+rock = f"M{CXm-250},{CY1} C{CXm-260},{BY+30} {CXm-200},{BY-6} {CXm-90},{BY-4} C{CXm-20},{BY-10} {CXm+60},{BY-14} {CXm+150},{BY-2} C{CXm+230},{BY+8} {CXm+270},{BY+40} {CXm+262},{CY1} Z"
+s += f'<path d="{rock}" fill="url(#rock16)"/>\n'
+s += f'<path d="M{CXm-200},{BY+8} C{CXm-120},{BY-6} {CXm+40},{BY-12} {CXm+180},{BY+6}" fill="none" stroke="#9AA6B2" stroke-width="3" opacity="0.6"/>\n'
+s += f'<path d="M{CXm-120},{BY+50} l40,-10 l30,18 M{CXm+90},{BY+44} l34,6" fill="none" stroke="#2C343E" stroke-width="2.5" opacity="0.7"/>\n'
+s += f'<ellipse cx="{CXm+8}" cy="{BY+4}" rx="190" ry="12" fill="#000" opacity="0.35"/>\n'
+s += lynx(CXm, BY + 2, 0.80)
+s += '</g>\n'
+s += f'<path d="{arch}" fill="none" stroke="{ORANGE}" stroke-width="3"/>\n'
+s += f'<path d="M{CX0+10},{CY1-10} V{CY0+R} A{R-10},{R-10} 0 0 1 {CX1-10},{CY0+R} V{CY1-10} Z" fill="none" stroke="{OCRU}" stroke-width="1.2" opacity="0.5"/>\n'
+# textul de sus, în arcadă
+s += text(CXm, CY0 + 56, "TOTEMUL CLASEI", 17, OCRU, "sans", 700, anchor="middle", extra='letter-spacing="4"')
+s += text(CXm, CY0 + 82, "clasa a IX-a · clasă fictivă", 16, "#C9D3DC", "sans", 400, True, anchor="middle")
+# plăcuța
+pl = "Râsul · Lynx lynx"
+plw = measure(pl, 24, "serif", 700, True) + 56
+s += f'<g filter="url(#shs)"><rect x="{CXm-plw/2:.1f}" y="{CY1-66}" width="{plw:.1f}" height="44" rx="6" fill="{OCRU}"/></g>\n'
+s += text(CXm, CY1 - 36, pl, 24, "#2B1D08", "serif", 700, True, anchor="middle")
+
+# =================================================================== DREAPTA
+RX0, RX1 = 780, 1840
+RW = RX1 - RX0
+# ---- banda cu faptul din fișă
+BY0, BH = 236, 66
+s += f'<rect x="{RX0}" y="{BY0}" width="{RW}" height="{BH}" rx="16" fill="#0D3A40" stroke="{PETROL}" stroke-width="1.6"/>\n'
+mx, my = RX0 + 46, BY0 + BH / 2 + 4
+s += f'<path d="M{mx-26},{my+14} L{mx-8},{my-16} L{mx},{my-4} L{mx+8},{my-14} L{mx+26},{my+14} Z" fill="{VAR}"/>'
+s += f'<path d="M{mx-13},{my-6} L{mx-8},{my-16} L{mx-3},{my-6} Z" fill="{PETROL}"/>\n'
+s += text(RX0 + 92, BY0 + 28, "Carpații au cele mai mari populații europene de urși bruni, lupi, capre negre și râși,", 18, VAR, "sans", 600)
+s += text(RX0 + 92, BY0 + 51, "cu cea mai mare concentrare în România.", 18, VAR, "sans", 600)
+s += text(RX1 - 22, BY0 + 51, "en.wikipedia, „Carpathian Mountains”", 14, "#9CC9CD", "sans", 400, True, anchor="end")
+
+# ---- fișa animalului
+FY0 = BY0 + BH + 14; FY1 = 778
+FW = (RW - 20) / 2
+FX0 = RX0
+s += card(FX0, FY0, FW, FY1 - FY0)
+s += f'<rect x="{FX0}" y="{FY0}" width="{FW}" height="8" rx="4" fill="{ORANGE}"/>\n'
+s += text(FX0 + 28, FY0 + 42, "FIȘA ANIMALULUI", 16, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(FX0 + 28, FY0 + 82, "Râsul eurasiatic", 32, VAR, "serif", 700)
+s += text(FX0 + 28 + measure("Râsul eurasiatic", 32, "serif", 700) + 12, FY0 + 82, "Lynx lynx", 19, CEATA, "serif", 400, True)
+fields = [("ASPECT", "blană roșiatică sau maronie, cu pete negre; smocuri negre pe urechi; coadă scurtă, cu vârful negru"),
+          ("MĂRIME (ORIENTATIV)", "corpul 73–106 cm, 55–75 cm la umăr; 7–32 kg, după regiune"),
+          ("HRANĂ", "mai ales căpriori, unde sunt mulți; local, capre negre sau iepuri"),
+          ("HABITAT", "ținuturi accidentate, cu multe ascunzișuri și locuri de pândă"),
+          ("COMPORTAMENT", "adult, trăiește singur; vânează la pândă; e activ mai ales noaptea și în amurg")]
+fy = FY0 + 116
+for lab, val in fields:
+    s += text(FX0 + 28, fy, lab, 13, ORANGE, "sans", 700, extra='letter-spacing="2"')
+    p, y2 = para(FX0 + 28, fy + 22, val, 16, FW - 56, VAR, "sans", 400, lh=20)
+    s += p
+    fy = y2 + 6
+FIELDS_END = fy
+s += text(FX0 + 28, FY1 - 18, "Sursa: en.wikipedia, „Eurasian lynx”", 13, MUTED, "sans", 400, True)
+
+# ---- valorile clasei
+VX0 = RX0 + FW + 20
+s += card(VX0, FY0, FW, FY1 - FY0)
+s += f'<rect x="{VX0}" y="{FY0}" width="{FW}" height="8" rx="4" fill="{ORANGE}"/>\n'
+s += text(VX0 + 28, FY0 + 42, "VALORILE CLASEI", 16, OCRU, "sans", 700, extra='letter-spacing="3"')
+s += text(VX0 + FW - 28, FY0 + 42, "simbolism declarat", 15, MUTED, "sans", 400, True, anchor="end")
+vals = [("Răbdare", "„Așteptăm momentul potrivit.”", "Râsul vânează la pândă sau se furișează spre pradă."),
+        ("Atenție", "„Privim și ascultăm.”", "Când vânează, folosește și văzul, și auzul."),
+        ("Rezistență", "„Nu ne oprim la prima zăpadă.”", "Labe mari, cu blană, ca niște rachete de zăpadă; iarna, blana e mult mai deasă."),
+        ("Discreție", "„Nu facem zgomot ca să contăm.”", "Iese mai ales noaptea și în amurg; ziua stă ascuns în desișuri.")]
+vy = FY0 + 82
+for i, (name, motto, trait) in enumerate(vals, 1):
+    s += f'<circle cx="{VX0+44}" cy="{vy-7}" r="15" fill="{ORANGE}"/>' + text(VX0 + 44, vy - 1, str(i), 16, BG, "sans", 700, anchor="middle")
+    s += text(VX0 + 70, vy, name, 21, VAR, "serif", 700)
+    nw = measure(name, 21, "serif", 700)
+    if VX0 + 70 + nw + 12 + measure(motto, 17, "serif", 400, True) < VX0 + FW - 24:
+        s += text(VX0 + 70 + nw + 12, vy, motto, 17, OCRU, "serif", 400, True)
+        p, y2 = para(VX0 + 70, vy + 26, trait, 15.5, FW - 98, CEATA, "sans", 400, lh=20)
+    else:
+        s += text(VX0 + 70, vy + 24, motto, 17, OCRU, "serif", 400, True)
+        p, y2 = para(VX0 + 70, vy + 48, trait, 15.5, FW - 98, CEATA, "sans", 400, lh=20)
+    s += p
+    vy = y2 + 18
+VALS_END = vy
+NY = FY1 - 68
+s += f'<rect x="{VX0+24}" y="{NY}" width="{FW-48}" height="50" rx="10" fill="{BG}" stroke="{ORANGE}" stroke-width="1.5"/>\n'
+p, _ = para(VX0 + 40, NY + 21, "Valori alese de o clasă fictivă – interpretare simbolică, nu trăsături „morale” ale animalului.", 14, FW - 80, VAR, "sans", 500, lh=18)
+s += p
+
+# ---- ceilalți candidați
+TY = FY1 + 30
+s += text(RX0, TY, "Ceilalți candidați", 24, VAR, "serif", 700)
+s += text(RX0 + measure("Ceilalți candidați", 24, "serif", 700) + 14, TY, "vot imaginar · motive cu umor, fapte reale", 16, MUTED, "sans", 400, True)
+KY0 = TY + 14; KH = 1000 - KY0; KW = (RW - 40) / 3
+
+
+def head_bear(cx, cy):
+    o = f'<circle cx="{cx-24}" cy="{cy-24}" r="13" fill="#6E4A2C"/><circle cx="{cx+24}" cy="{cy-24}" r="13" fill="#6E4A2C"/>'
+    o += f'<circle cx="{cx-24}" cy="{cy-24}" r="6" fill="#B08860"/><circle cx="{cx+24}" cy="{cy-24}" r="6" fill="#B08860"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy}" rx="34" ry="31" fill="#7A5230"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy+12}" rx="16" ry="12" fill="#C2A07A"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy+6}" rx="6" ry="4.5" fill="{DARK}"/>'
+    o += f'<circle cx="{cx-13}" cy="{cy-6}" r="3.4" fill="{DARK}"/><circle cx="{cx+13}" cy="{cy-6}" r="3.4" fill="{DARK}"/>'
+    o += f'<path d="M{cx},{cy+11} v5 M{cx},{cy+16} q-5,4 -9,1 M{cx},{cy+16} q5,4 9,1" fill="none" stroke="{DARK}" stroke-width="1.8" stroke-linecap="round"/>'
+    return o
+
+
+def head_chamois(cx, cy):
+    o = ""
+    for sg in (-1, 1):  # coarnele scurte, întoarse înapoi la vârf
+        o += f'<path d="M{cx+sg*8},{cy-22} C{cx+sg*9},{cy-44} {cx+sg*12},{cy-54} {cx+sg*22},{cy-50}" fill="none" stroke="{DARK}" stroke-width="5" stroke-linecap="round"/>'
+        o += f'<ellipse cx="{cx+sg*26}" cy="{cy-18}" rx="12" ry="6" transform="rotate({sg*-25} {cx+sg*26} {cy-18})" fill="#8C6A48"/>'
+    o += f'<path d="M{cx-20},{cy-24} q20,-10 40,0 q4,26 -8,46 q-12,10 -24,0 q-12,-20 -8,-46 Z" fill="#E9DFCF"/>'
+    for sg in (-1, 1):  # dungile închise ale feței (desen stilizat)
+        o += f'<path d="M{cx+sg*13},{cy-20} q{sg*2},22 {sg*-3},38" fill="none" stroke="#5A4330" stroke-width="7" stroke-linecap="round"/>'
+        o += f'<circle cx="{cx+sg*12}" cy="{cy-10}" r="3" fill="{DARK}"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy+20}" rx="6" ry="4" fill="{DARK}"/>'
+    return o
+
+
+def head_wolf(cx, cy):
+    o = ""
+    for sg in (-1, 1):
+        o += f'<polygon points="{cx+sg*8},{cy-20} {cx+sg*26},{cy-48} {cx+sg*34},{cy-12}" fill="#6F777F"/>'
+        o += f'<polygon points="{cx+sg*15},{cy-20} {cx+sg*26},{cy-38} {cx+sg*29},{cy-16}" fill="#C9CED3"/>'
+    o += f'<path d="M{cx-34},{cy-14} q34,-20 68,0 q4,18 -10,30 l-12,16 q-12,8 -24,0 l-12,-16 q-14,-12 -10,-30 Z" fill="#8E959C"/>'
+    o += f'<path d="M{cx-30},{cy+2} q12,8 18,22 l12,10 l12,-10 q6,-14 18,-22 q-6,20 -18,30 q-12,8 -24,0 q-12,-10 -18,-30 Z" fill="#DCDFE2"/>'
+    o += f'<path d="M{cx-9},{cy-14} h18 l-3,26 h-12 Z" fill="#B7BCC1"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy+14}" rx="7" ry="5" fill="{DARK}"/>'
+    for sg in (-1, 1):
+        o += f'<path d="M{cx+sg*20},{cy-6} q{sg*-6},-6 {sg*-12},0 q{sg*6},4 {sg*12},0 Z" fill="#E2A62B" stroke="{DARK}" stroke-width="1.5"/>'
+    return o
+
+
+cands = [(head_bear, "Ursul brun", "„Iarna se retrage în bârlog. Clasa voia un totem care vine și în ianuarie la ore.”"),
+         (head_chamois, "Capra neagră", "„Vara stă pe pajiștile alpine, deasupra limitei pădurii. Clasa e la etajul 1 – prea jos pentru ea.”"),
+         (head_wolf, "Lupul", "„În Europa, o haită are în medie 5,5 lupi. A cerut să voteze cu toată familia – n-a fost acceptat.”")]
+CAND_END = []
+for i, (hd, name, why) in enumerate(cands):
+    x = RX0 + i * (KW + 20)
+    s += card(x, KY0, KW, KH, fill="#16212C")
+    s += f'<circle cx="{x+54}" cy="{KY0+52}" r="38" fill="#22303D"/>' + hd(x + 54, KY0 + 56)
+    s += text(x + 106, KY0 + 46, name, 21, VAR, "serif", 700)
+    s += text(x + 106, KY0 + 70, "nu a câștigat votul", 14, MUTED, "sans", 400, True)
+    p, y2 = para(x + 20, KY0 + 112, why, 15, KW - 40, CEATA, "sans", 400, True, lh=19)
+    s += p
+    CAND_END.append(y2)
+
+s += frame_foot()
+write(OUT, s)
+print(OUT, "fields end", FIELDS_END, "/", FY1 - 34, "vals end", VALS_END, "/", NY, "cands", CAND_END, "/", 1000)

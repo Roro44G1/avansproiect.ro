@@ -1,0 +1,244 @@
+# -*- coding: utf-8 -*-
+"""P21 – Playlistul meu sibian – copertă de album AI și 10 piese imaginare.
+Personaj fictiv: „Daria M., 17 ani”. Albumul „Hartă pentru căști”, titlurile, stilurile și duratele – inventate
+(titluri care nu sunt piese reale și nu sună a cântece populare). Fiecare piesă e legată de un loc din Sibiu,
+cu un fapt scurt din fapte_verificate.md. Coperta: desen original (fără logo-uri sau coperți reale).
+Banda obligatorie: „Piese imaginare – nu există înregistrări”."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+from p19 import eye_dormer, house, council_tower, P, fit, ORANGE, MUTED
+import math, random
+
+OUT = "/home/claude/expo/c6/08_identitate/P21_playlistul_meu_sibian.svg"
+ALBUM = "Hartă pentru căști"
+
+TRACKS = [
+    ("Acoperișuri cu gene", "synth-pop", "3:12", "Acoperișurile centrului istoric",
+     "lucarnele „ochii Sibiului” ventilează podurile; cele mai multe sunt din secolul al XIX-lea."),
+    ("Văd tot de sus", "indie-rock", "2:47", "Turnul Sfatului",
+     "între Piața Mare și Piața Mică; a fost depozit de grâne și punct de observație pentru incendii."),
+    ("Jur pe pod", "pop acustic", "3:05", "Podul Minciunilor",
+     "primul pod din fontă din România (1859); legenda spune că se prăbușește dacă minți pe el."),
+    ("Scara dintre orașe", "lo-fi", "2:58", "Pasajul Scărilor",
+     "leagă Orașul de Sus de Orașul de Jos, lângă Turnul Scărilor, refăcut în 1542."),
+    ("Locul 483", "cvartet de coarde", "3:33", "Sala Thalia",
+     "482 de locuri; prima clădire de teatru din țară (1787–1788); din 2004, sediul Filarmonicii."),
+    ("Raft cu raft", "jazz", "4:01", "Biblioteca ASTRA",
+     "din 1869, prima bibliotecă publică românească din Transilvania; azi, 813.551 de documente."),
+    ("Ramă aurie", "dream-pop", "3:26", "Muzeul Brukenthal",
+     "deschis oficial în 1817, primul muzeu din România; galeria are circa 1.200 de lucrări."),
+    ("73 de metri și ceva", "orgă și beat electronic", "3:48", "Catedrala Evanghelică",
+     "turnul de 73,34 m e cel mai înalt din Transilvania; orga Sauer, montată în 1915."),
+    ("95 de păsări", "chillout", "2:39", "Parcul Sub Arini",
+     "înființat în 1856; 95 de specii de păsări și arbori de peste 150 de ani."),
+    ("Satul mutat în pădure", "electro-acustic", "4:15", "Muzeul ASTRA în aer liber",
+     "în Dumbrava, peste 300 de case și alte construcții (alte surse: peste 400)."),
+]
+
+
+def total_duration():
+    t = sum(int(d.split(":")[0]) * 60 + int(d.split(":")[1]) for _, _, d, _, _ in TRACKS)
+    return f"{t//60}:{t%60:02d}"
+
+
+def note(x, y, sz, fill, double=False):
+    """Notă muzicală simplă (cap eliptic + coadă + steguleț)."""
+    o = f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{sz*0.36:.1f}" ry="{sz*0.26:.1f}" transform="rotate(-20 {x:.1f} {y:.1f})" fill="{fill}"/>'
+    sx = x + sz * 0.31
+    o += f'<line x1="{sx:.1f}" y1="{y-sz*0.05:.1f}" x2="{sx:.1f}" y2="{y-sz*1.1:.1f}" stroke="{fill}" stroke-width="{sz*0.09:.1f}" stroke-linecap="round"/>'
+    if double:
+        x2 = x + sz * 0.95
+        o += f'<ellipse cx="{x2:.1f}" cy="{y-sz*0.18:.1f}" rx="{sz*0.36:.1f}" ry="{sz*0.26:.1f}" transform="rotate(-20 {x2:.1f} {y-sz*0.18:.1f})" fill="{fill}"/>'
+        o += f'<line x1="{x2+sz*0.31:.1f}" y1="{y-sz*0.23:.1f}" x2="{x2+sz*0.31:.1f}" y2="{y-sz*1.28:.1f}" stroke="{fill}" stroke-width="{sz*0.09:.1f}" stroke-linecap="round"/>'
+        o += f'<polygon points="{P([(sx-1, y-sz*1.1), (x2+sz*0.31+1, y-sz*1.28), (x2+sz*0.31+1, y-sz*1.06), (sx-1, y-sz*0.88)])}" fill="{fill}"/>'
+    else:
+        o += f'<path d="M{sx:.1f},{y-sz*1.1:.1f} q{sz*0.32:.1f},{sz*0.18:.1f} {sz*0.30:.1f},{sz*0.55:.1f} q{-sz*0.04:.1f},{-sz*0.24:.1f} {-sz*0.30:.1f},{-sz*0.32:.1f} Z" fill="{fill}"/>'
+    return o
+
+
+def cover(X, Y, S):
+    """Coperta albumului (desen original), pătrat S × S."""
+    o = ('<defs>'
+         '<linearGradient id="dusk21" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1F5C"/>'
+         '<stop offset="0.45" stop-color="#6E56CF"/><stop offset="0.78" stop-color="#C8708A"/><stop offset="1" stop-color="#E2A62B"/></linearGradient>'
+         '<linearGradient id="roof21" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9663F"/><stop offset="1" stop-color="#8E3F2A"/></linearGradient>'
+         '<linearGradient id="band21" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2B3440"/><stop offset="0.5" stop-color="#3B4654"/><stop offset="1" stop-color="#2B3440"/></linearGradient>'
+         '<radialGradient id="cup21" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#4A5666"/><stop offset="1" stop-color="#1B2733"/></radialGradient>'
+         '<radialGradient id="vinyl21" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#20262E"/><stop offset="0.6" stop-color="#11161B"/><stop offset="1" stop-color="#0A0D10"/></radialGradient>'
+         f'<clipPath id="cv21"><rect x="{X}" y="{Y}" width="{S}" height="{S}" rx="6"/></clipPath>'
+         '</defs>\n')
+    cx = X + S / 2
+    # ---- discul de vinil, ieșit din copertă
+    R = 190
+    dcx, dcy = X + S - 32, Y + S / 2
+    o += f'<g filter="url(#sh)"><circle cx="{dcx}" cy="{dcy}" r="{R:.1f}" fill="url(#vinyl21)"/></g>'
+    for k in range(14):
+        rr = R * (0.40 + 0.042 * k)
+        o += f'<circle cx="{dcx}" cy="{dcy}" r="{rr:.1f}" fill="none" stroke="#3A444F" stroke-width="0.8" opacity="{0.35 + 0.03*k:.2f}"/>'
+    o += f'<path d="M{dcx+R*0.35:.1f},{dcy-R*0.75:.1f} A{R*0.83:.1f},{R*0.83:.1f} 0 0 1 {dcx+R*0.80:.1f},{dcy-R*0.18:.1f}" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.10"/>'
+    o += f'<circle cx="{dcx}" cy="{dcy}" r="{R*0.32:.1f}" fill="#E2A62B"/>'
+    o += text(X + S + 15, dcy + 9, "A", 24, "#2A1F5C", "serif", 700, anchor="middle")
+    # ---- coperta
+    o += f'<g filter="url(#sh)"><rect x="{X}" y="{Y}" width="{S}" height="{S}" rx="6" fill="#2A1F5C"/></g>\n'
+    o += f'<g clip-path="url(#cv21)">'
+    o += f'<rect x="{X}" y="{Y}" width="{S}" height="{S}" fill="url(#dusk21)"/>'
+    rnd = random.Random(21)
+    for _ in range(34):
+        sx = rnd.uniform(X + 10, X + S - 10); sy = rnd.uniform(Y + 130, Y + S * 0.42)
+        o += f'<circle cx="{sx:.1f}" cy="{sy:.1f}" r="{rnd.uniform(0.8, 2.0):.1f}" fill="#F3EFE6" opacity="{rnd.uniform(0.3, 0.8):.2f}"/>'
+    # orizontul: siluete de acoperișuri, cu „ochi” aprinși
+    HZ = Y + S * 0.70
+    SIL = "#3B2C78"; SL = "#2A1F5C"
+    o += council_tower(X + 92, HZ, 30, 112, SIL, SIL, SL, dark="#F2C46B", sw=1.2, detail=False)
+    for hx, hw, wh, rh, gb in ((X - 10, 70, 40, 64, False), (X + 120, 64, 36, 70, True), (X + S - 186, 66, 40, 58, True),
+                               (X + S - 128, 76, 44, 78, False), (X + S - 50, 70, 38, 60, False)):
+        o += house(hx, HZ, hw, wh, rh, SIL, SIL, SL, eyes=1, eye_open="#F2C46B", win="#F2C46B", sw=1.2, tiles=False, gable=gb, wins=1)
+    # turla din dreapta (simplificată, fără detalii)
+    tx = X + S - 230
+    o += f'<rect x="{tx-13}" y="{HZ-120}" width="26" height="120" fill="{SIL}" stroke="{SL}" stroke-width="1.2"/>'
+    o += f'<polygon points="{P([(tx-17, HZ-120), (tx, HZ-196), (tx+17, HZ-120)])}" fill="{SIL}" stroke="{SL}" stroke-width="1.2"/>'
+    o += f'<rect x="{tx-4}" y="{HZ-104}" width="8" height="14" rx="4" fill="#F2C46B"/>'
+    # ---- acoperișul mare, cu ochi și căști
+    top = Y + S * 0.40
+    pts = [(X + 26, Y + S + 4), (X + 148, top), (X + S - 148, top), (X + S - 26, Y + S + 4)]
+    o += f'<polygon points="{P(pts)}" fill="url(#roof21)" stroke="#5A2216" stroke-width="2.5" stroke-linejoin="round"/>'
+    # rânduri de țigle (solzi)
+    rows = 9
+    for r_ in range(1, rows + 1):
+        t = r_ / (rows + 0.6)
+        yy = top + (Y + S + 4 - top) * t
+        xl = X + 148 - (148 - 26) * t; xr = X + S - 148 + (148 - 26) * t
+        n = int((xr - xl) / 26)
+        dx = (xr - xl) / n
+        d = f"M{xl:.1f},{yy:.1f}"
+        for j in range(n):
+            d += f" q{dx/2:.1f},{9:.1f} {dx:.1f},0"
+        o += f'<path d="{d}" fill="none" stroke="#6E2A1A" stroke-width="1.6" opacity="0.55"/>'
+    # ochii: lucarne cu albul ochiului și pupile care privesc în sus
+    ey = Y + S * 0.70
+    for sg in (-1, 1):
+        ex = cx + sg * 84
+        o += eye_dormer(ex, ey, 132, 44, "#B65536", "#5A2216", "#F3EFE6", 2.6)
+        o += f'<circle cx="{ex+10:.1f}" cy="{ey-15:.1f}" r="12" fill="#1B1420"/>'
+        o += f'<circle cx="{ex+14:.1f}" cy="{ey-19:.1f}" r="3.6" fill="#FFFFFF"/>'
+    # căștile
+    L, Rr = X + 104, X + S - 104
+    ycup = Y + S * 0.64
+    o += (f'<path d="M{L},{ycup-30:.1f} C{L+6},{Y+S*0.10:.1f} {Rr-6},{Y+S*0.10:.1f} {Rr},{ycup-30:.1f}" fill="none" '
+          f'stroke="#1B2733" stroke-width="20" stroke-linecap="round"/>')
+    o += (f'<path d="M{L},{ycup-30:.1f} C{L+6},{Y+S*0.10:.1f} {Rr-6},{Y+S*0.10:.1f} {Rr},{ycup-30:.1f}" fill="none" '
+          f'stroke="#55627A" stroke-width="5" stroke-linecap="round" opacity="0.8"/>')
+    for sg, xx in ((-1, L), (1, Rr)):
+        o += f'<rect x="{xx-26:.1f}" y="{ycup-56:.1f}" width="52" height="96" rx="24" fill="url(#cup21)" stroke="#0F1720" stroke-width="2.5"/>'
+        o += f'<rect x="{xx-sg*20-9:.1f}" y="{ycup-46:.1f}" width="18" height="76" rx="9" fill="#E2A62B" opacity="0.9"/>'
+        # unde sonore
+        for k in range(3):
+            rr = 34 + k * 16
+            a0, a1 = (150, 210) if sg < 0 else (-30, 30)
+            p1 = (xx + rr * math.cos(math.radians(a0)), ycup - 8 + rr * math.sin(math.radians(a0)))
+            p2 = (xx + rr * math.cos(math.radians(a1)), ycup - 8 + rr * math.sin(math.radians(a1)))
+            sweep = 1 if sg > 0 else 0
+            o += (f'<path d="M{p1[0]:.1f},{p1[1]:.1f} A{rr},{rr} 0 0 {sweep} {p2[0]:.1f},{p2[1]:.1f}" fill="none" stroke="#F3EFE6" '
+                  f'stroke-width="3" stroke-linecap="round" opacity="{0.75 - 0.2*k:.2f}"/>')
+    # note muzicale
+    o += note(X + 70, Y + S * 0.36, 30, "#F3EFE6", True)
+    o += note(X + S - 96, Y + S * 0.33, 34, "#E2A62B")
+    o += note(X + S - 52, Y + S * 0.47, 22, "#F3EFE6")
+    # ---- titlul albumului
+    ts = fit("HARTĂ PENTRU CĂȘTI", S - 90, 44, "serif", 700)
+    o += text(cx, Y + 72, "HARTĂ PENTRU CĂȘTI", ts, "#F3EFE6", "serif", 700, anchor="middle")
+    o += text(cx, Y + 104, "playlistul Dariei M. · zece locuri din Sibiu", 17, "#E9E1FF", "sans", 500, True, anchor="middle")
+    # ---- banda obligatorie
+    BY = Y + S - 54
+    o += f'<rect x="{X}" y="{BY}" width="{S}" height="40" fill="#E2A62B"/>'
+    o += text(cx, BY + 27, "PIESE IMAGINARE – NU EXISTĂ ÎNREGISTRĂRI", 16.5, "#0F1720", "sans", 800, anchor="middle", extra='letter-spacing="1.6"')
+    o += '</g>\n'
+    o += f'<rect x="{X}" y="{Y}" width="{S}" height="{S}" rx="6" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="1.5"/>\n'
+    return o
+
+
+def pin_icon(x, y, col):
+    return (f'<path d="M{x},{y+9} C{x-7},{y+1} {x-7},{y-6} {x},{y-7} C{x+7},{y-6} {x+7},{y+1} {x},{y+9} Z" fill="{col}"/>'
+            f'<circle cx="{x}" cy="{y-1.5}" r="2.4" fill="{BG}"/>')
+
+
+def main():
+    TITLE = "Playlistul meu sibian"
+    s = frame_head("IDENTITATE · P21", ORANGE, TITLE, "personaj fictiv · piese imaginare, nu există înregistrări")
+    s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— copertă de album AI și 10 piese imaginare", 30, CEATA, "serif", 400, True)
+
+    S = 520
+    CX0, CY0 = 92, 244
+    s += cover(CX0, CY0, S)
+    # sub copertă: personajul
+    py = CY0 + S + 38
+    s += text(CX0, py, "Daria M., 17 ani – personaj fictiv", 21, VAR, "serif", 700)
+    p, PY_END = para(CX0, py + 28, "Și-a imaginat zece piese despre locurile ei din Sibiu. Titlurile, stilurile, duratele și coperta (desen original) "
+                     "sunt inventate; faptele despre locuri sunt reale, din fișa proiectului.", 16, 670, CEATA, "sans", 400, lh=21)
+    s += p
+    # mini-ghid
+    GY0 = PY_END + 2
+    GX1 = 766
+    s += f'<rect x="{CX0}" y="{GY0}" width="{GX1-CX0}" height="{1004-GY0}" rx="16" fill="#0D3A40" stroke="{PETROL}" stroke-width="1.4"/>'
+    s += text(CX0 + 22, GY0 + 32, "Fă-ți și tu playlistul", 19, VAR, "serif", 700)
+    tips = ["Alege zece locuri din Sibiu și verifică un fapt despre fiecare.",
+            "Inventează titluri, apoi caută-le: să nu fie piese care există deja.",
+            "Desenează coperta tu sau cu AI – fără logo-uri și coperți reale."]
+    ty = GY0 + 58
+    for i, t_ in enumerate(tips, 1):
+        s += f'<circle cx="{CX0+32}" cy="{ty-5}" r="11" fill="{PETROL}"/>' + text(CX0 + 32, ty, str(i), 13, VAR, "sans", 700, anchor="middle")
+        s += text(CX0 + 52, ty, t_, 15.5, "#D6E6E8", "sans", 400)
+        ty += 25
+    TIPS_END = ty
+    TIPS_W = max(CX0 + 52 + measure(t_, 15.5) for t_ in tips)
+
+    # ------------------------------------------------ lista pieselor
+    TX0, TX1 = 800, 1840
+    TY0, TY1 = 236, 1004
+    TW = TX1 - TX0
+    s += card(TX0, TY0, TW, TY1 - TY0)
+    s += f'<rect x="{TX0}" y="{TY0}" width="{TW}" height="7" rx="3.5" fill="{ORANGE}"/>\n'
+    s += text(TX0 + 30, TY0 + 50, "Lista pieselor", 27, VAR, "serif", 700)
+    s += text(TX0 + 30 + measure("Lista pieselor", 27, "serif", 700) + 16, TY0 + 50, "„" + ALBUM + "”", 20, CEATA, "serif", 400, True)
+    s += text(TX1 - 30, TY0 + 50, f"durata totală: {total_duration()} (imaginară)", 16, MUTED, "sans", 500, True, anchor="end")
+    # antet de coloane
+    hy = TY0 + 84
+    s += text(TX0 + 30, hy, "NR.", 12.5, MUTED, "sans", 700, extra='letter-spacing="2"')
+    s += text(TX0 + 86, hy, "TITLUL INVENTAT · STIL IMAGINAT", 12.5, MUTED, "sans", 700, extra='letter-spacing="2"')
+    s += text(TX1 - 30, hy, "DURATĂ", 12.5, MUTED, "sans", 700, anchor="end", extra='letter-spacing="2"')
+    s += f'<line x1="{TX0+24}" y1="{hy+12}" x2="{TX1-24}" y2="{hy+12}" stroke="#34465A" stroke-width="1.5"/>\n'
+    RH = 62
+    y0 = hy + 46
+    MAXW = 0
+    for i, (tt, style, dur, place, fact) in enumerate(TRACKS, 1):
+        y = y0 + (i - 1) * RH
+        if i % 2 == 0:
+            s += f'<rect x="{TX0+12}" y="{y-30}" width="{TW-24}" height="{RH}" rx="10" fill="#203040" opacity="0.55"/>'
+        s += text(TX0 + 30, y, f"{i:02d}", 22, OCRU, "sans", 700)
+        s += text(TX0 + 86, y, "„" + tt + "”", 21, VAR, "serif", 700)
+        tw = measure("„" + tt + "”", 21, "serif", 700)
+        pw = measure(style, 13, "sans", 600) + 20
+        s += f'<rect x="{TX0+86+tw+14:.1f}" y="{y-18}" width="{pw:.1f}" height="24" rx="12" fill="none" stroke="#6E56CF" stroke-width="1.4"/>'
+        s += text(TX0 + 86 + tw + 14 + pw / 2, y - 1.5, style, 13, "#C9BEF5", "sans", 600, anchor="middle")
+        s += text(TX1 - 30, y, dur, 19, VAR, "sans", 600, anchor="end")
+        # locul + faptul
+        ly = y + 24
+        s += pin_icon(TX0 + 93, ly - 6, OCRU)
+        pl = place + " – "
+        s += text(TX0 + 108, ly, pl, 15.5, OCRU, "sans", 700)
+        fw = measure(pl, 15.5, "sans", 700)
+        fs = fit(fact, TX1 - 30 - (TX0 + 108 + fw), 15.5, "sans", 400, min_size=13)
+        s += text(TX0 + 108 + fw, ly, fact, fs, CEATA, "sans", 400)
+        MAXW = max(MAXW, TX0 + 108 + fw + measure(fact, fs))
+        if fs < 15.5:
+            print("fact shrunk", i, fs)
+    LAST = y0 + 9 * RH + 24
+    s += text(TX0 + 30, TY1 - 20, "Fapte: fișa proiectului (patrimoniu.sibiu.ro; en.wikipedia; zilesinopti.ro; musikland.sonoro.org; bursa.ro)", 13, MUTED, "sans", 400, True)
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT, "total", total_duration(), "maxw", round(MAXW), "/", TX1 - 30, "last", LAST, "/", TY1 - 44, "py_end", PY_END, "tips", TIPS_END, "/", 1000, "tips_w", round(TIPS_W), "/", 750)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,367 @@
+# -*- coding: utf-8 -*-
+"""D17 – Anatomia unui salam de Sibiu – infografic AI (prima fabrică în 1845, IGP din 2016).
+Fapte: /home/claude/expo/_brief/fapte_verificate.md („Gastronomie” și „Meșteșuguri și gastronomie –
+completări pentru Calupul 5 / Salamul de Sibiu”). Pașii generali (tocare, umplere, uscare lentă la rece,
+rolul mucegaiului alb) – en.wikipedia „Salami”, notați în /home/claude/expo/c5/06_date/_fapte_noi_D16_D17.md.
+Divergențe arătate: Dozzi la Poiana Țapului 1885/1895; Theil la Mediaș 1895/„începutul secolului XX”.
+Fără sigle sau mărci desenate; numele firmelor apar doar în cronologie, ca fapte istorice."""
+import sys, os, random
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c5/06_date/D17_anatomia_salamului.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+TIGLA_L = "#D8775A"
+DISC = "#132029"
+MEAT = "#B5403A"
+MEAT_D = "#8A2B27"
+FAT = "#F3E6D6"
+CASING = "#6B2A20"
+MOLD = "#F1EDE4"
+MOLD_D = "#CFC6B6"
+STRING = "#C9AE82"
+STEEL = "#A9B4C0"
+WOOD = "#7A5232"
+
+s = frame_head("DATE · D17", BLUE, "Anatomia unui salam de Sibiu",
+               "infografic AI · prima fabrică în 1845, IGP din 2016 · desen schematic, fără mărci", title_size=60)
+s += ('<linearGradient id="gMeat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9504A"/>'
+      '<stop offset="1" stop-color="#8E2C28"/></linearGradient>\n'
+      '<linearGradient id="gCas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E3F2E"/>'
+      '<stop offset="0.55" stop-color="#5E2419"/><stop offset="1" stop-color="#3E1712"/></linearGradient>\n'
+      '<linearGradient id="gMold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FAF7F1"/>'
+      '<stop offset="0.6" stop-color="#E6DFD2"/><stop offset="1" stop-color="#BDB3A2"/></linearGradient>\n')
+
+
+def pill(x, y, lab, col, txt=BG, size=15):
+    w = measure(lab, size, "sans", 700, letter_spacing=1.5) + 28
+    o = f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="30" rx="15" fill="{col}"/>\n'
+    o += text(x + w / 2, y + 20, lab, size, txt, "sans", 700, anchor="middle", extra='letter-spacing="1.5"')
+    return o, w
+
+
+def head(x, y, w, lab, col, sub=None, txt=BG):
+    o, pw = pill(x + 22, y + 20, lab, col, txt)
+    if sub:
+        assert x + 22 + pw + 12 + measure(sub, 14, "sans", 400, True) <= x + w - 16, sub
+        o += text(x + 22 + pw + 12, y + 40, sub, 14, MUTED, "sans", 400, True)
+    return o
+
+
+def block(x, y, body, maxw, size=14, fill=CEATA, lh=17, weight=400, anchor="middle", italic=False):
+    lines = wrap(body, maxw, size, "sans", weight, italic)
+    o = ""
+    for k, ln in enumerate(lines):
+        o += text(x, y + k * lh, ln, size, fill, "sans", weight, italic, anchor)
+    return o, y + (len(lines) - 1) * lh, len(lines)
+
+
+# ================================================================== L1. secțiunea prin salam
+L1X, L1Y, L1W, L1H = 80, 228, 1120, 392
+s += card(L1X, L1Y, L1W, L1H)
+s += head(L1X, L1Y, L1W, "SECȚIUNE PRIN SALAM", OCRU, "straturile, de la exterior spre interior")
+
+SY = 436                    # axa salamului
+CUT = 340                   # fața tăiată
+R_F, R_C, R_M = 40, 43, 46  # razele: umplutură, membrană, floare albă
+XF1, XC0, XC1, XM0, XM1 = 590, 575, 800, 790, 1128
+random.seed(17)
+
+
+def granules(x0, x1, y0, y1, n, rmin=1.6, rmax=3.6, op=1.0, pepper=True):
+    o = ""
+    for _ in range(n):
+        gx = random.uniform(x0, x1); gy = random.uniform(y0, y1)
+        rx = random.uniform(rmin, rmax); ry = rx * random.uniform(0.6, 1.0)
+        o += (f'<ellipse cx="{gx:.1f}" cy="{gy:.1f}" rx="{rx:.1f}" ry="{ry:.1f}" fill="{FAT}" opacity="{op}" '
+              f'transform="rotate({random.randint(0, 180)} {gx:.1f} {gy:.1f})"/>')
+    if pepper:
+        for _ in range(n // 6):
+            gx = random.uniform(x0, x1); gy = random.uniform(y0, y1)
+            o += f'<circle cx="{gx:.1f}" cy="{gy:.1f}" r="{random.uniform(0.9, 1.6):.1f}" fill="#1E1412" opacity="{op}"/>'
+    return o + "\n"
+
+
+# --- umplutura (expusă)
+s += f'<clipPath id="cF"><rect x="{CUT}" y="{SY-R_F}" width="{XF1-CUT}" height="{2*R_F}"/></clipPath>\n'
+s += f'<rect x="{CUT}" y="{SY-R_F}" width="{XF1-CUT}" height="{2*R_F}" fill="url(#gMeat)"/>\n'
+s += f'<g clip-path="url(#cF)">' + granules(CUT, XF1, SY - R_F, SY + R_F, 230) + '</g>\n'
+s += f'<rect x="{CUT}" y="{SY-R_F+5}" width="{XF1-CUT}" height="7" fill="#FFFFFF" opacity="0.10"/>\n'
+# --- membrana (expusă, translucidă)
+s += f'<clipPath id="cC"><rect x="{XC0}" y="{SY-R_C}" width="{XC1-XC0}" height="{2*R_C}"/></clipPath>\n'
+s += f'<rect x="{XC0}" y="{SY-R_C}" width="{XC1-XC0}" height="{2*R_C}" fill="url(#gCas)"/>\n'
+s += f'<g clip-path="url(#cC)">' + granules(XC0, XC1, SY - R_C, SY + R_C, 140, op=0.22, pepper=False) + '</g>\n'
+s += f'<rect x="{XC0}" y="{SY-R_C+6}" width="{XC1-XC0}" height="6" rx="3" fill="#FFFFFF" opacity="0.22"/>\n'
+s += f'<ellipse cx="{XC0}" cy="{SY}" rx="7" ry="{R_C}" fill="#7A3326"/>\n'
+# --- floarea albă (strat exterior)
+s += (f'<path d="M{XM0},{SY-R_M} H{XM1} Q{XM1+26},{SY-R_M} {XM1+26},{SY} Q{XM1+26},{SY+R_M} {XM1},{SY+R_M} '
+      f'H{XM0} Z" fill="url(#gMold)"/>\n')
+s += f'<clipPath id="cM"><path d="M{XM0},{SY-R_M} H{XM1} Q{XM1+26},{SY-R_M} {XM1+26},{SY} Q{XM1+26},{SY+R_M} {XM1},{SY+R_M} H{XM0} Z"/></clipPath>\n'
+mo = ""
+for _ in range(260):
+    gx = random.uniform(XM0, XM1 + 24); gy = random.uniform(SY - R_M, SY + R_M)
+    r = random.uniform(1.5, 5.5)
+    col = random.choice(["#FFFFFF", "#FFFFFF", "#D9D1C3", "#C7BDAA"])
+    mo += f'<circle cx="{gx:.1f}" cy="{gy:.1f}" r="{r:.1f}" fill="{col}" opacity="{random.uniform(0.35, 0.8):.2f}"/>'
+s += f'<g clip-path="url(#cM)">{mo}</g>\n'
+s += f'<ellipse cx="{XM0}" cy="{SY}" rx="9" ry="{R_M}" fill="#E9E3D7" stroke="#BDB3A2" stroke-width="1.2"/>\n'
+# capătul legat (decor generic)
+TX = XM1 + 24
+s += f'<rect x="{TX-3}" y="{SY-9}" width="9" height="18" rx="3" fill="{STRING}"/>\n'
+s += f'<path d="M{TX+5},{SY-2} q18,-4 24,-20 q4,-12 -8,-10 q-10,4 -14,22" fill="none" stroke="{STRING}" stroke-width="2.5"/>\n'
+# --- fața tăiată
+s += f'<clipPath id="cCut"><ellipse cx="{CUT}" cy="{SY}" rx="13" ry="{R_F}"/></clipPath>\n'
+s += f'<ellipse cx="{CUT}" cy="{SY}" rx="13" ry="{R_F}" fill="{MEAT}"/>\n'
+s += f'<g clip-path="url(#cCut)">' + granules(CUT - 13, CUT + 13, SY - R_F, SY + R_F, 30, 1.2, 2.4) + '</g>\n'
+s += f'<ellipse cx="{CUT}" cy="{SY}" rx="13" ry="{R_F}" fill="none" stroke="{CASING}" stroke-width="2.5"/>\n'
+
+# --- lupa: secțiune mărită
+MCX, MCY, MR = 200, SY, 86
+s += f'<line x1="{MCX+20}" y1="{MCY-MR+2}" x2="{CUT}" y2="{SY-R_F}" stroke="{STEEL}" stroke-width="1.5" stroke-dasharray="4 3"/>\n'
+s += f'<line x1="{MCX+20}" y1="{MCY+MR-2}" x2="{CUT}" y2="{SY+R_F}" stroke="{STEEL}" stroke-width="1.5" stroke-dasharray="4 3"/>\n'
+s += f'<clipPath id="cMag"><circle cx="{MCX}" cy="{MCY}" r="{MR-10}"/></clipPath>\n'
+s += f'<circle cx="{MCX}" cy="{MCY}" r="{MR}" fill="{MOLD}"/>\n'
+mo = ""
+for _ in range(70):
+    a = random.uniform(0, 6.283); rr = random.uniform(MR - 6, MR - 1)
+    gx = MCX + rr * math.cos(a); gy = MCY + rr * math.sin(a)
+    mo += f'<circle cx="{gx:.1f}" cy="{gy:.1f}" r="{random.uniform(1.2, 2.8):.1f}" fill="#C7BDAA" opacity="0.7"/>'
+s += mo + "\n"
+s += f'<circle cx="{MCX}" cy="{MCY}" r="{MR-6}" fill="{CASING}"/>\n'
+s += f'<circle cx="{MCX}" cy="{MCY}" r="{MR-10}" fill="url(#gMeat)"/>\n'
+s += f'<g clip-path="url(#cMag)">' + granules(MCX - MR, MCX + MR, MCY - MR, MCY + MR, 120, 3.0, 7.0) + '</g>\n'
+s += f'<circle cx="{MCX}" cy="{MCY}" r="{MR}" fill="none" stroke="{STEEL}" stroke-width="3"/>\n'
+s += text(MCX, MCY - MR - 12, "secțiune, mărită", 13, CEATA, "sans", 400, True, anchor="middle")
+
+# --- adnotări sus
+TOPT = 300
+
+
+def top_note(cx, w, title, body, tx, ty):
+    o = text(cx, TOPT, title, 16, VAR, "sans", 700, anchor="middle")
+    o2, ylast, n = block(cx, TOPT + 19, body, w, 14, CEATA, 18)
+    assert n <= 3, title
+    assert measure(title, 16, "sans", 700) <= w, title
+    o += o2
+    o += f'<line x1="{tx}" y1="{ylast+8}" x2="{tx}" y2="{ty}" stroke="{OCRU}" stroke-width="1.8"/>\n'
+    o += f'<circle cx="{tx}" cy="{ty}" r="4" fill="{OCRU}"/>\n'
+    return o, (cx - w / 2, cx + w / 2), ylast
+
+
+A = [
+    (458, 228, "Umplutura", "carne de porc de la porci maturi și slănină tare, cu sare, piper, condimente, usturoi, "
+     "nitrit/nitrat", 458, SY - 20),
+    (690, 192, "Membrana", "naturală și/sau colagenică; salamul se afumă cu lemn de esență tare", 690, SY - R_C + 6),
+    (966, 300, "Floarea albă", "Penicillium nalgiovense, mucegai nobil obligatoriu; în general, mucegaiul alb dă "
+     "aromă și ajută la uscare", 966, SY - R_M + 8),
+]
+rng_prev = None
+for cx, w, t_, b_, tx, ty in A:
+    o, rng, ylast = top_note(cx, w, t_, b_, tx, ty)
+    assert ylast + 8 < SY - R_M - 4, (t_, ylast)
+    if rng_prev:
+        assert rng_prev[1] + 12 <= rng[0], (t_, rng_prev, rng)
+    rng_prev = rng
+    s += o
+assert A[0][0] - A[0][1] / 2 > MCX + MR + 8
+assert A[-1][0] + A[-1][1] / 2 < L1X + L1W - 14
+
+# --- cifre jos
+BOTN = 566
+
+
+def num_note(x0, w, big, desc, src, tx, ty, col=OCRU, extra_svg=""):
+    o = text(x0, BOTN, big, 30, col, "serif", 700)
+    bw_ = measure(big, 30, "serif", 700)
+    o2, ylast, n = block(x0, BOTN + 20, desc, w, 14, VAR, 17, 500, "start")
+    assert n <= 1, desc
+    o += o2
+    o += text(x0, BOTN + 37, src, 13, MUTED, "sans", 400, True)
+    assert bw_ <= w and measure(desc, 14, "sans", 500) <= w, desc
+    if tx is not None:
+        o += f'<line x1="{tx}" y1="{BOTN-30}" x2="{tx}" y2="{ty}" stroke="{OCRU}" stroke-width="1.8"/>\n'
+        o += f'<circle cx="{tx}" cy="{ty}" r="4" fill="{OCRU}"/>\n'
+    return o + extra_svg
+
+
+# compoziția (bara 70/30) sub lupă
+CX0, CW_ = 108, 214
+s += text(CX0, BOTN - 2, "circa 70% / 30%", 22, OCRU, "serif", 700)
+s += f'<rect x="{CX0}" y="{BOTN+9}" width="{CW_*0.7:.1f}" height="13" rx="3" fill="{MEAT}"/>\n'
+s += f'<rect x="{CX0+CW_*0.7+2:.1f}" y="{BOTN+9}" width="{CW_*0.3-2:.1f}" height="13" rx="3" fill="{FAT}"/>\n'
+s += text(CX0, BOTN + 37, "carne roșie / grăsime · după ULBS", 13, CEATA)
+assert measure("carne roșie / grăsime · după ULBS", 13) <= CW_ + 30
+assert measure("circa 70% / 30%", 22, "serif", 700) <= CW_ + 30
+s += num_note(368, 220, "≤ 2,5 mm", "granulele de slănină", "euronews.ro", 470, SY + 16)
+s += num_note(618, 232, "≥ 10 zile", "până la primul strat de mucegai", "euronews.ro", 850, SY + R_M - 8)
+s += num_note(880, 300, "≥ 60 de zile", "maturare-uscare la rece", "rețeta IGP", 1040, SY + R_M - 8)
+assert BOTN + 36 < L1Y + L1H - 8
+
+# ================================================================== L2. procesul în 5 pași
+L2X, L2Y, L2W, L2H = 80, 636, 1120, 332
+s += card(L2X, L2Y, L2W, L2H)
+s += head(L2X, L2Y, L2W, "PROCESUL ÎN 5 PAȘI", PETROL, "pași generali, în ordine simplificată", VAR)
+
+
+def mini_salami(cx, cy, length, r, mold_frac=0.0, vertical=False):
+    """Salam mic, opțional parțial acoperit cu floare albă."""
+    if vertical:
+        o = f'<rect x="{cx-r}" y="{cy-length/2}" width="{2*r}" height="{length}" rx="{r}" fill="{MEAT_D}"/>'
+        if mold_frac > 0:
+            o += (f'<rect x="{cx-r}" y="{cy-length/2}" width="{2*r}" height="{length*mold_frac:.1f}" rx="{r}" '
+                  f'fill="{MOLD}"/>')
+        return o
+    o = f'<rect x="{cx-length/2}" y="{cy-r}" width="{length}" height="{2*r}" rx="{r}" fill="{MEAT_D}"/>'
+    if mold_frac > 0:
+        o += (f'<rect x="{cx-length/2 + length*(1-mold_frac):.1f}" y="{cy-r}" width="{length*mold_frac:.1f}" '
+              f'height="{2*r}" rx="{r}" fill="{MOLD}"/>')
+    return o
+
+
+def ic_mix(cx, cy):
+    o = f'<path d="M{cx-22},{cy-2} h44 q-2,20 -22,20 q-20,0 -22,-20 Z" fill="{STEEL}"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy-2}" rx="22" ry="6" fill="{MEAT}"/>'
+    for dx, dy in [(-12, -3), (-4, -1), (6, -4), (13, -1), (0, -5), (-8, -6), (9, 0)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="1.8" fill="{FAT}"/>'
+    o += f'<path d="M{cx+6},{cy-26} l16,14 l-4,4 l-16,-14 Z" fill="{STEEL}"/>'
+    o += f'<rect x="{cx-2}" y="{cy-32}" width="12" height="5" rx="2" fill="{WOOD}" transform="rotate(41 {cx+4} {cy-30})"/>'
+    return o + "\n"
+
+
+def ic_fill(cx, cy):
+    o = poly([(cx - 24, cy - 14), (cx - 6, cy - 5), (cx - 6, cy + 5), (cx - 24, cy + 14)], fill=STEEL)
+    o += f'<rect x="{cx-7}" y="{cy-4}" width="8" height="8" fill="#8A96A3"/>'
+    o += f'<rect x="{cx}" y="{cy-9}" width="26" height="18" rx="9" fill="{MEAT_D}"/>'
+    o += f'<rect x="{cx+2}" y="{cy-6}" width="22" height="3" rx="1.5" fill="#FFFFFF" opacity="0.25"/>'
+    return o + "\n"
+
+
+def ic_smoke(cx, cy):
+    o = f'<line x1="{cx-18}" y1="{cy-24}" x2="{cx+18}" y2="{cy-24}" stroke="{WOOD}" stroke-width="3"/>'
+    o += mini_salami(cx - 7, cy - 6, 30, 5, vertical=True) + mini_salami(cx + 7, cy - 6, 30, 5, vertical=True)
+    for dx in (-12, 0, 12):
+        o += f'<path d="M{cx+dx},{cy+20} q-5,-5 0,-10 q5,-5 0,-10" stroke="{STEEL}" stroke-width="1.8" fill="none" opacity="0.8"/>'
+    o += f'<rect x="{cx-16}" y="{cy+20}" width="32" height="5" rx="2.5" fill="{WOOD}"/>'
+    o += poly([(cx - 6, cy + 20), (cx, cy + 12), (cx + 6, cy + 20)], fill=OCRU)
+    return o + "\n"
+
+
+def ic_mold(cx, cy):
+    o = mini_salami(cx, cy + 4, 46, 9, 0.55)
+    for dx, dy in [(-14, -12), (-6, -18), (2, -12), (10, -19), (-20, -20), (16, -13)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="2" fill="{MOLD}" opacity="0.85"/>'
+    return o + "\n"
+
+
+def ic_dry(cx, cy):
+    o = f'<line x1="{cx-20}" y1="{cy-22}" x2="{cx+4}" y2="{cy-22}" stroke="{WOOD}" stroke-width="3"/>'
+    o += mini_salami(cx - 8, cy - 2, 36, 5.5, 1.0, vertical=True)
+    o += f'<rect x="{cx+2}" y="{cy-8}" width="22" height="22" rx="3" fill="{VAR}"/>'
+    o += f'<rect x="{cx+2}" y="{cy-8}" width="22" height="6" rx="2" fill="{TIGLA}"/>'
+    o += text(cx + 13, cy + 11, "60", 10, BG, "sans", 700, anchor="middle")
+    return o + "\n"
+
+
+STEPS = [
+    (ic_mix, "Tocare și amestec", "carnea și slănina, tocate mărunt, se amestecă cu sarea și condimentele"),
+    (ic_fill, "Umplere", "compoziția intră în membrane naturale și/sau colagenice"),
+    (ic_smoke, "Afumare", "cu fum de lemn de esență tare"),
+    (ic_mold, "Maturare", "la rece, cu mucegai nobil: primul strat apare după cel puțin zece zile"),
+    (ic_dry, "Uscare", "salamul se usucă încet, la rece; circa două luni până ajunge la consum"),
+]
+SX0 = L2X + 22
+SSTEP = (L2W - 44) / 5
+ICY = L2Y + 116
+for k, (ic, ttl, body) in enumerate(STEPS):
+    cx = SX0 + SSTEP * (k + 0.5)
+    s += f'<circle cx="{cx:.1f}" cy="{ICY}" r="34" fill="{DISC}" stroke="{PETROL}" stroke-width="2.5"/>\n'
+    s += ic(cx, ICY)
+    s += text(cx - 46, ICY - 26, str(k + 1), 15, PETROL, "sans", 700, anchor="middle")
+    s += text(cx, ICY + 62, ttl, 17, VAR, "sans", 700, anchor="middle")
+    o, ylast, n = block(cx, ICY + 84, body, SSTEP - 24, 14, CEATA, 18)
+    assert ylast + 4 < L2Y + L2H - 40, (ttl, ylast)
+    s += o
+    if k < 4:
+        ax0, ax1 = cx + 42, cx + SSTEP - 42
+        s += f'<line x1="{ax0:.1f}" y1="{ICY}" x2="{ax1-6:.1f}" y2="{ICY}" stroke="{PETROL}" stroke-width="3"/>\n'
+        s += poly([(ax1 - 9, ICY - 6), (ax1, ICY), (ax1 - 9, ICY + 6)], fill=PETROL)
+# acolada pentru pașii 4–5: o singură etapă în rețeta IGP
+bx0 = SX0 + SSTEP * 3.5 - 40
+bx1 = SX0 + SSTEP * 4.5 + 40
+byy = ICY - 50
+s += (f'<path d="M{bx0:.1f},{byy+8} v-8 H{bx1:.1f} v8" fill="none" stroke="{OCRU}" stroke-width="2"/>\n')
+blab = "maturare-uscare: minimum 60 de zile"
+s += f'<rect x="{(bx0+bx1)/2 - measure(blab, 14, "sans", 700)/2 - 10:.1f}" y="{byy-12}" width="{measure(blab, 14, "sans", 700)+20:.1f}" height="22" rx="11" fill="{CARD}"/>\n'
+s += text((bx0 + bx1) / 2, byy + 4, blab, 14, OCRU, "sans", 700, anchor="middle")
+# subheader-ul nu trebuie să atingă eticheta acoladei
+hdr_end = L2X + 22 + measure("PROCESUL ÎN 5 PAȘI", 15, "sans", 700, letter_spacing=1.5) + 28 + 12 + \
+    measure("pași generali, în ordine simplificată", 14, "sans", 400, True)
+assert hdr_end + 12 < (bx0 + bx1) / 2 - measure(blab, 14, "sans", 700) / 2 - 10, hdr_end
+note = ("În rețeta IGP, maturarea și uscarea sunt o singură etapă, la rece. Pașii generali: en.wikipedia (Salami); "
+        "detaliile: documentația IGP (mediafax.ro), euronews.ro.")
+o, ny, n = block(L2X + 22, L2Y + L2H - 30, note, L2W - 44, 13, MUTED, 17, 400, "start", True)
+assert n <= 2, n
+s += o
+
+# ================================================================== R. cronologie
+RX, RY, RW, RH = 1216, 228, 624, 740
+s += card(RX, RY, RW, RH)
+s += head(RX, RY, RW, "CRONOLOGIE", OCRU, "patrimoniu.sibiu.ro; turnulsfatului.ro; en.wikipedia")
+LX = RX + 34
+YC = RX + 56
+TC = RX + 196
+TW = RX + RW - 22 - TC
+CHR = [
+    (["1845"], "Michael Fonn deschide prima fabrică de salam din Sibiu, pe Schewisgasse nr. 5.", False),
+    (["1863"], "Numele „salam de Sibiu” apare prima dată, la București.", False),
+    (["1864"], "A. Wilh. Hartmann deschide, pe Strada Băii, prima fabrică de salam cu abur din Transilvania.", False),
+    (["ultimul sfert", "al sec. al XIX-lea"], "16 producători de salam în oraș.", False),
+    (["1885 sau 1895"], "Italianul Filippo Dozzi ajunge la Poiana Țapului (1885 după en.wikipedia, 1895 după "
+                        "turnulsfatului.ro).", True),
+    (["1895 sau", "începutul", "secolului XX"], "Josef Theil are o fabrică la Mediaș (1895 după turnulsfatului.ro; "
+                                        "„începutul secolului XX” după patrimoniu.sibiu.ro).", True),
+    (["1910"], "Dozzi cumpără o clădire la Sinaia și produce „salam de iarnă”, cunoscut apoi ca salam de Sibiu.", False),
+    (["1922"], "Theil mută fabrica la Sibiu, pe Strada Morilor.", False),
+    (["1940–1941"], "Fabrica devine „Scandia Română”.", False),
+    (["1948"], "Naționalizare.", False),
+    (["2014"], "Asociația producătorilor impune sporii de Penicillium nalgiovense.", False),
+]
+LH = 19
+cy = RY + 92
+s += f'<line x1="{LX}" y1="{cy-10}" x2="{LX}" y2="{RY+RH-150}" stroke="{LINE}" stroke-width="4"/>\n'
+for yrs, body, div in CHR:
+    col = TIGLA_L if div else OCRU
+    s += f'<circle cx="{LX}" cy="{cy-6}" r="8" fill="{BG}" stroke="{col}" stroke-width="3.5"/>\n'
+    for k, yl in enumerate(yrs):
+        big = k == 0 and any(ch.isdigit() for ch in yl) and measure(yl, 19, "serif", 700) <= TC - 10 - YC
+        s += text(YC, cy + k * LH, yl, 19 if big else 15, col, "serif" if big else "sans", 700)
+        assert YC + measure(yl, 19 if big else 15, "serif" if big else "sans", 700) <= TC - 10, yl
+    o, ylast, n = block(TC, cy, body, TW, 15, VAR if not div else CEATA, LH, 400, "start")
+    s += o
+    ycol = cy + (len(yrs) - 1) * LH
+    if div:
+        ycol += LH
+        s += text(YC, ycol, "DIVERGENȚĂ", 12, TIGLA_L, "sans", 700, extra='letter-spacing="1.5"')
+    yend = max(ylast, ycol)
+    cy = yend + 32
+# IGP – evidențiat
+IY = RY + RH - 132
+assert cy - 32 + 8 < IY - 12, (cy, IY)
+s += f'<rect x="{RX+18}" y="{IY}" width="{RW-36}" height="114" rx="16" fill="{DISC}" stroke="{OCRU}" stroke-width="2"/>\n'
+s += f'<circle cx="{LX}" cy="{IY+30}" r="9" fill="{OCRU}"/>\n'
+s += text(YC, IY + 37, "februarie 2016", 22, OCRU, "serif", 700)
+s += text(YC, IY + 66, "Indicație geografică protejată (IGP) în UE: al doilea produs", 15, VAR, "sans", 600)
+s += text(YC, IY + 86, "românesc recunoscut, după Magiunul de Topoloveni.", 15, VAR, "sans", 600)
+assert measure("Indicație geografică protejată (IGP) în UE: al doilea produs", 15, "sans", 600) <= RX + RW - 36 - YC
+s += text(YC, IY + 105, "euronews.ro; turnulsfatului.ro, 2016", 13, MUTED, "sans", 400, True)
+
+# ================================================================== surse
+src = ("Surse: patrimoniu.sibiu.ro (istoria industriei); turnulsfatului.ro (2016; 30 iulie 2023, după doi profesori ULBS); "
+       "mediafax.ro (19 februarie 2016); euronews.ro; sibiu100.ro; en.wikipedia (Sibiu Salami; Salami). Numele firmelor – doar ca fapte istorice.")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

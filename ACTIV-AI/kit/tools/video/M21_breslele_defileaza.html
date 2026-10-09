@@ -1,0 +1,449 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M21</title></head><body>
+<script src="lib.js"></script>
+<script>
+// M21 – Breslele defilează: paradă animată (imaginată) a celor 19 bresle din 1376.
+// Siluete simple, fără fețe; steaguri cu unelte desenate în cod (nu însemne reale).
+// Regula de onestitate: sursele nu dau lista completă a celor 19 bresle – doar 4 steaguri au nume.
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const FOOT = 790;           // linia pașilor
+const L = '#F3EFE6';
+const TEND = 64;            // durata totală (s); muzica: 120 BPM, 4/4, o măsură = 2 s
+
+// ---------------------------------------------------------------- date
+const MUTED = ['#4A5663', '#56606C', '#4E5866', '#5A6470'];
+const PASS1 = [
+  { k: 'paine', c: '#B9583A', t: 'brutari', a: 'numită în 1376', b: 'mnir.ro' },
+  { k: 'piele', c: '#0E7C86', t: 'pielari', a: 'numită în 1376', b: 'mnir.ro' },
+  { k: 'cutit', c: '#6E56CF', t: 'cuțitari', a: 'numită în 1376', b: 'mnir.ro' },
+  { k: 'ciocan', c: '#3E63DD', t: 'fierari', a: '„Fabrorum fraternitatis”', b: 'numită în 1376 · ULBS' },
+];
+for (let i = 4; i < 19; i++) PASS1.push({ k: 'q', c: MUTED[i % 4], t: 'breaslă din 1376', a: 'nu știm sigur care', b: null, q: true });
+const PASS2 = [
+  { k: 'pocal', c: '#9A6A1F', t: 'aurari · 1346', a: 'monstranța aurarului Kunz', b: 'limbaromana.org' },
+  { k: 'tabacar', c: '#7A4A2E', t: 'tăbăcari · 1367', a: 'prima mențiune în documente', b: 'limbaromana.org' },
+  { k: 'topor', c: '#2F6B4F', t: 'dulgheri · 1450', a: 'însemn al breslei', b: 'mnir.ro' },
+  { k: 'cizma', c: '#8C3B4A', t: 'cizmari · 1455', a: 'statut propriu', b: 'limbaromana.org' },
+  { k: 'cana', c: '#3E63DD', t: 'cositorari · 1556', a: 'apărau bastionul Haller', b: 'limbaromana.org' },
+  { k: 'oala', c: '#B9583A', t: 'olari · 1556', a: 'apărau bastionul Haller', b: 'limbaromana.org' },
+  { k: 'suveica', c: '#6E56CF', t: 'țesători · 1556', a: 'apărau bastionul Soldisch *', b: 'limbaromana.org' },
+  { k: 'foarfeca', c: '#0E7C86', t: 'croitori', a: 'Poarta Turnului · însemn 1695', b: 'limbaromana.org · mnir.ro' },
+  { k: 'satar', c: '#A0412F', t: 'măcelari', a: 'apărau Poarta Cisnădiei', b: 'limbaromana.org' },
+];
+const TUNICS = ['#5B3A2E', '#2F4858', '#4A3B5C', '#3F5A3A', '#6B2F2F', '#33415C', '#5A4A2A'];
+const HATS = '#2A2420';
+
+// ---------------------------------------------------------------- deplasarea paradei (integrare numerică a vitezei)
+const DT = 0.01, NS = Math.round(TEND / DT) + 2;
+const S1 = new Float32Array(NS), S2 = new Float32Array(NS);
+function v1(t) { if (t < 3.6) return 0; return lerp(270, 400, smooth(15.5, 17.0, t)); }
+function v2(t) { return t < 31 ? 0 : 300; }
+for (let i = 1; i < NS; i++) { const t = i * DT; S1[i] = S1[i - 1] + v1(t) * DT; S2[i] = S2[i - 1] + v2(t) * DT; }
+function sAt(arr, t) { const f = clamp(t / DT, 0, NS - 1.001), i = Math.floor(f); return lerp(arr[i], arr[i + 1], f - i); }
+const X0 = 2000;
+const OFF1 = PASS1.map((_, i) => 450 + i * 340);   // fluierașul la 0, toboșarul la 150
+const OFF2 = PASS2.map((_, i) => i * 400);
+
+// ---------------------------------------------------------------- fundal (pre-randat o singură dată)
+const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+(function drawBg() {
+  const b = bg.getContext('2d');
+  sky(b, W, H, 0.42, 2);
+  mountains(b, W, 340, '#A3B3C0', 4, 60);
+  mountains(b, W, 380, '#8EA0AE', 9, 50);
+  // case (fațada străzii) – doar în stânga; zidul cetății în dreapta
+  b.save(); b.beginPath(); b.rect(0, 0, 1180, H); b.clip();
+  houses(b, { y0: 640, W: 1180, x0: -30, seed: 21, wallH: 165, walls: ['#E9DCC3', '#D9C2A0', '#C9D3C4', '#E3C7B4', '#D7CBB5', '#C8B79E'], roofs: ['#8A4A32', '#9B5638', '#7A3F2C', '#A0603E'], winC: 'rgba(40,36,34,.55)' });
+  b.restore();
+  // zidul cetății
+  const wx0 = 1120, wTop = 430;
+  b.fillStyle = '#CDBFA4'; b.fillRect(wx0, wTop, W - wx0, 640 - wTop);
+  b.fillStyle = 'rgba(0,0,0,.10)'; for (let y = wTop + 22; y < 640; y += 26) b.fillRect(wx0, y, W - wx0, 2);
+  const r = rng(77); b.fillStyle = 'rgba(0,0,0,.07)';
+  for (let y = wTop + 2; y < 640; y += 26) for (let x = wx0 + (y % 52 ? 0 : 30); x < W; x += 60 + r() * 20) b.fillRect(x, y, 2, 22);
+  for (let x = wx0; x < W; x += 74) { b.fillStyle = '#CDBFA4'; b.fillRect(x, wTop - 36, 44, 38); b.fillStyle = 'rgba(0,0,0,.12)'; b.fillRect(x + 34, wTop - 36, 10, 38); }
+  b.fillStyle = 'rgba(0,0,0,.12)'; b.fillRect(wx0, wTop, W - wx0, 8);
+  // guri de tragere în formă de gaură de cheie
+  b.fillStyle = '#2B2622';
+  for (let x = wx0 + 60; x < W - 20; x += 120) { b.beginPath(); b.arc(x, 500, 8, 0, 7); b.fill(); b.fillRect(x - 4, 500, 8, 26); }
+  b.fillStyle = 'rgba(0,0,0,.18)'; b.fillRect(wx0, wTop - 36, 10, 640 - wTop + 36);
+  // turnul (siluetă generică)
+  tower(b, 1600, 640, 160, 420, { wall: '#E2D6BF', roof: '#6E3F2C', roofH: 190 });
+  // ghirlandă de fanioane peste stradă
+  b.strokeStyle = 'rgba(60,50,40,.7)'; b.lineWidth = 2; b.beginPath();
+  const gx0 = -20, gx1 = 1150, gy0 = 236, gy1 = 250, sag = 46;
+  const gy = x => { const u = (x - gx0) / (gx1 - gx0); return lerp(gy0, gy1, u) + sag * 4 * u * (1 - u); };
+  for (let x = gx0; x <= gx1; x += 10) b.lineTo(x, gy(x)); b.stroke();
+  const pc = ['#E2A62B', '#B9583A', '#0E7C86', '#F3EFE6', '#6E56CF'];
+  let k = 0; for (let x = gx0 + 20; x < gx1 - 10; x += 42) { b.fillStyle = pc[k++ % pc.length]; const y = gy(x); b.beginPath(); b.moveTo(x - 13, y); b.lineTo(x + 13, gy(x + 26) - (gy(x + 26) - y)); b.lineTo(x, y + 30); b.closePath(); b.fill(); }
+  // pavajul
+  const g = b.createLinearGradient(0, 640, 0, H); g.addColorStop(0, '#9A9086'); g.addColorStop(1, '#5E5750');
+  b.fillStyle = g; b.fillRect(0, 640, W, H - 640);
+  b.fillStyle = '#B7AC9E'; b.fillRect(0, 640, W, 12); b.fillStyle = 'rgba(0,0,0,.25)'; b.fillRect(0, 652, W, 3);
+  const rr = rng(5);
+  for (let y = 662, row = 0; y < H; row++) {
+    const sh = 12 + row * 2.4, sw = 26 + row * 5;
+    for (let x = -rr() * sw; x < W; x += sw + 4) {
+      b.fillStyle = mix('#8E857B', '#6A625A', rr()); roundRect(b, x, y, sw, sh, Math.min(8, sh / 2)); b.fill();
+      b.fillStyle = 'rgba(255,255,255,.06)'; b.fillRect(x + 3, y + 2, sw - 6, 2);
+    }
+    y += sh + 4;
+  }
+  // vignetă
+  const vg = b.createRadialGradient(W / 2, H * .45, 500, W / 2, H * .45, 1250); vg.addColorStop(0, 'rgba(15,23,32,0)'); vg.addColorStop(1, 'rgba(15,23,32,.45)');
+  b.fillStyle = vg; b.fillRect(0, 0, W, H);
+})();
+
+// ---------------------------------------------------------------- simboluri pe steaguri (unelte desenate în cod)
+function hide(c, s) {
+  const P = [[0, -62], [22, -50], [40, -58], [46, -34], [38, -10], [50, 20], [40, 50], [18, 46], [0, 62], [-18, 46], [-40, 50], [-50, 20], [-38, -10], [-46, -34], [-40, -58], [-22, -50]];
+  c.beginPath(); P.forEach(([x, y], i) => i ? c.lineTo(x * s, y * s) : c.moveTo(x * s, y * s)); c.closePath();
+}
+function symbol(kind, cx, cy, s, col) {
+  const c = ctx, d = mix(col, '#000000', .35);
+  c.save(); c.translate(cx, cy); c.scale(s, s);
+  c.fillStyle = L; c.strokeStyle = L; c.lineCap = 'round'; c.lineJoin = 'round';
+  if (kind === 'q') {
+    c.font = '700 150px "Noto Serif"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('?', 0, 6);
+  } else if (kind === 'paine') {
+    for (const sx of [-1, 1]) {
+      c.save(); c.translate(sx * 34, -6); c.rotate(sx * 0.35);
+      c.lineWidth = 4; c.beginPath(); c.moveTo(0, 22); c.lineTo(0, -62); c.stroke();
+      for (let j = 0; j < 5; j++) for (const sd of [-1, 1]) { c.beginPath(); c.ellipse(sd * 7, -54 + j * 12, 5, 9, sd * 0.5, 0, 7); c.fill(); }
+      c.restore();
+    }
+    c.beginPath(); c.ellipse(0, 30, 52, 30, 0, 0, 7); c.fill();
+    c.strokeStyle = d; c.lineWidth = 5;
+    for (let j = -1; j <= 1; j++) { c.beginPath(); c.moveTo(j * 22 - 9, 42); c.lineTo(j * 22 + 9, 18); c.stroke(); }
+  } else if (kind === 'piele') {
+    hide(c, 1.05); c.fill();
+    c.strokeStyle = d; c.lineWidth = 3; c.setLineDash([7, 6]); hide(c, 0.78); c.stroke(); c.setLineDash([]);
+  } else if (kind === 'cutit') {
+    c.rotate(-0.6); c.scale(1.12, 1.12);
+    c.beginPath(); c.moveTo(-14, -11); c.lineTo(58, -11); c.quadraticCurveTo(78, -9, 84, 4); c.lineTo(-14, 10); c.closePath(); c.fill();
+    c.strokeStyle = d; c.lineWidth = 2.5; c.beginPath(); c.moveTo(-8, -4); c.lineTo(56, -4); c.stroke();
+    c.fillStyle = mix(L, col, .45); roundRect(c, -72, -12, 58, 24, 9); c.fill();
+    c.fillStyle = d; for (const x of [-60, -43, -26]) { c.beginPath(); c.arc(x, 0, 3.5, 0, 7); c.fill(); }
+  } else if (kind === 'ciocan') {
+    c.beginPath(); c.moveTo(-78, 12); c.quadraticCurveTo(-60, 30, -40, 30); c.lineTo(50, 30); c.lineTo(50, 12); c.closePath(); c.fill();
+    c.fillRect(-22, 30, 44, 20);
+    c.beginPath(); c.moveTo(-30, 50); c.lineTo(30, 50); c.lineTo(46, 66); c.lineTo(-46, 66); c.closePath(); c.fill();
+    c.save(); c.translate(14, -26); c.rotate(-0.6);
+    c.fillStyle = mix(L, col, .35); roundRect(c, -5, -6, 11, 74, 5); c.fill();
+    c.fillStyle = L; roundRect(c, -30, -28, 60, 24, 4); c.fill(); c.restore();
+  } else if (kind === 'pocal') {
+    c.beginPath(); c.moveTo(-40, -52); c.lineTo(40, -52); c.quadraticCurveTo(40, 0, 0, 6); c.quadraticCurveTo(-40, 0, -40, -52); c.closePath(); c.fill();
+    c.fillStyle = d; c.fillRect(-40, -44, 80, 5);
+    c.fillStyle = L; c.fillRect(-6, 4, 12, 38); c.beginPath(); c.ellipse(0, 22, 13, 7, 0, 0, 7); c.fill();
+    c.beginPath(); c.ellipse(0, 48, 36, 10, 0, 0, 7); c.fill();
+    for (const [x, y, r] of [[52, -60, 9], [-54, -18, 7]]) { c.beginPath(); c.moveTo(x, y - r); c.lineTo(x + r * .3, y - r * .3); c.lineTo(x + r, y); c.lineTo(x + r * .3, y + r * .3); c.lineTo(x, y + r); c.lineTo(x - r * .3, y + r * .3); c.lineTo(x - r, y); c.lineTo(x - r * .3, y - r * .3); c.closePath(); c.fill(); }
+  } else if (kind === 'tabacar') {
+    c.lineWidth = 7; c.strokeRect(-58, -64, 116, 128);
+    hide(c, 0.72); c.fill();
+    c.lineWidth = 2.5; c.strokeStyle = mix(L, col, .3);
+    for (const [x0, y0, x1, y1] of [[0, -45, 0, -64], [0, 45, 0, 64], [-36, 14, -58, 14], [36, 14, 58, 14], [-29, -40, -58, -52], [29, -40, 58, -52], [-29, 36, -58, 50], [29, 36, 58, 50]]) { c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke(); }
+  } else if (kind === 'cizma') {
+    c.beginPath(); c.moveTo(-4, -64); c.lineTo(32, -64); c.lineTo(34, 40); c.lineTo(38, 60); c.lineTo(-50, 60);
+    c.quadraticCurveTo(-68, 58, -62, 44); c.quadraticCurveTo(-56, 30, -30, 26); c.quadraticCurveTo(-8, 22, -6, 0); c.closePath(); c.fill();
+    c.fillStyle = d; c.fillRect(-5, -64, 38, 10);
+    c.strokeStyle = d; c.lineWidth = 4; c.beginPath(); c.moveTo(-58, 52); c.lineTo(36, 52); c.stroke();
+  } else if (kind === 'foarfeca') {
+    for (const sd of [-1, 1]) {
+      c.save(); c.rotate(sd * 0.34);
+      c.beginPath(); c.moveTo(-7, 0); c.lineTo(0, -74); c.lineTo(8, 0); c.closePath(); c.fill();
+      c.lineWidth = 7; c.beginPath(); c.moveTo(0, 0); c.lineTo(0, 20); c.stroke();
+      c.beginPath(); c.arc(0, 36, 16, 0, 7); c.stroke();
+      c.restore();
+    }
+    c.fillStyle = d; c.beginPath(); c.arc(0, -2, 5, 0, 7); c.fill();
+  } else if (kind === 'topor') {
+    c.save(); c.rotate(0.45); c.fillStyle = mix(L, col, .3);
+    c.fillRect(22, -62, 13, 112); c.fillRect(-44, 37, 79, 13); c.restore();
+    c.save(); c.rotate(-0.5);
+    c.lineWidth = 9; c.beginPath(); c.moveTo(0, 62); c.lineTo(0, -60); c.stroke();
+    c.beginPath(); c.moveTo(-4, -58); c.lineTo(-40, -72); c.quadraticCurveTo(-52, -46, -40, -20); c.lineTo(-4, -34); c.closePath(); c.fill();
+    c.restore();
+  } else if (kind === 'cana') {
+    c.lineWidth = 8; c.beginPath(); c.moveTo(30, -28); c.bezierCurveTo(66, -26, 66, 26, 32, 30); c.stroke();
+    c.beginPath(); c.moveTo(-30, -40); c.lineTo(30, -40); c.quadraticCurveTo(44, 10, 36, 58); c.lineTo(-36, 58); c.quadraticCurveTo(-44, 10, -30, -40); c.closePath(); c.fill();
+    c.beginPath(); c.ellipse(0, -46, 35, 10, 0, 0, 7); c.fill(); c.beginPath(); c.arc(0, -58, 7, 0, 7); c.fill();
+    c.strokeStyle = d; c.lineWidth = 4; for (const y of [-22, 44]) { c.beginPath(); c.moveTo(-36, y); c.lineTo(36, y); c.stroke(); }
+  } else if (kind === 'suveica') {
+    c.globalAlpha *= .55; c.lineWidth = 3; for (let x = -48; x <= 48; x += 16) { c.beginPath(); c.moveTo(x, -62); c.lineTo(x, 62); c.stroke(); }
+    for (let y = -50; y <= 50; y += 20) if (Math.abs(y) > 15) { c.beginPath(); c.moveTo(-52, y); c.lineTo(52, y); c.stroke(); }
+    c.globalAlpha /= .55;
+    c.beginPath(); c.moveTo(-70, 0); c.quadraticCurveTo(0, -34, 70, 0); c.quadraticCurveTo(0, 34, -70, 0); c.closePath(); c.fill();
+    c.fillStyle = d; roundRect(c, -24, -7, 48, 14, 6); c.fill();
+    c.lineWidth = 3; c.beginPath(); c.moveTo(20, 2); c.quadraticCurveTo(40, 40, 70, 46); c.stroke();
+  } else if (kind === 'oala') {
+    c.beginPath(); c.moveTo(-24, -46); c.lineTo(24, -46); c.quadraticCurveTo(22, -32, 40, -14); c.quadraticCurveTo(60, 22, 30, 54); c.lineTo(-30, 54);
+    c.quadraticCurveTo(-60, 22, -40, -14); c.quadraticCurveTo(-22, -32, -24, -46); c.closePath(); c.fill();
+    c.fillRect(-32, -56, 64, 11);
+    c.lineWidth = 7; for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(sd * 24, -40); c.quadraticCurveTo(sd * 60, -40, sd * 46, -6); c.stroke(); }
+    c.strokeStyle = d; c.lineWidth = 4; c.beginPath(); for (let x = -40; x <= 40; x += 2) c.lineTo(x, 12 + Math.sin(x / 7) * 6); c.stroke();
+  } else if (kind === 'satar') {
+    c.rotate(-0.35);
+    c.fillStyle = mix(L, col, .4); roundRect(c, 26, -12, 54, 20, 8); c.fill();
+    c.fillStyle = L; roundRect(c, -60, -42, 88, 66, 6); c.fill();
+    c.fillStyle = d; c.beginPath(); c.arc(-44, -27, 6, 0, 7); c.fill();
+    c.strokeStyle = d; c.lineWidth = 3; c.beginPath(); c.moveTo(-56, 16); c.lineTo(24, 16); c.stroke();
+  }
+  c.restore();
+}
+
+// ---------------------------------------------------------------- steag (gonfanon atârnat de o bară)
+function banner(px, top, col, kind, t, seed, q) {
+  const c = ctx, w = 160, h = 196;
+  const sw = Math.sin(t * 2.1 + seed * 1.7) * 7, wv = Math.sin(t * 3.3 + seed) * 3;
+  const B = (x, y) => [px + x + sw * (y / h), top + y];
+  c.save();
+  // cârpa
+  c.beginPath();
+  let p = B(-w / 2, 4); c.moveTo(...p);
+  p = B(w / 2, 4); c.lineTo(...p);
+  let cp = B(w / 2 + wv, h * .5), e = B(w / 2, h); c.quadraticCurveTo(cp[0], cp[1], e[0], e[1]);
+  for (const [x, y] of [[w / 2, h + 22], [w / 4, h - 2], [0, h + 22], [-w / 4, h - 2], [-w / 2, h + 22], [-w / 2, h]]) { const q2 = B(x, y); c.lineTo(q2[0], q2[1]); }
+  cp = B(-w / 2 - wv, h * .5); e = B(-w / 2, 4); c.quadraticCurveTo(cp[0], cp[1], e[0], e[1]);
+  c.closePath();
+  c.fillStyle = col; c.fill();
+  c.save(); c.clip();
+  const g = c.createLinearGradient(px - w / 2, 0, px + w / 2 + sw, 0);
+  g.addColorStop(0, 'rgba(0,0,0,.22)'); g.addColorStop(.35, 'rgba(255,255,255,.06)'); g.addColorStop(.7, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.25)');
+  c.fillStyle = g; c.fillRect(px - w, top, w * 2 + 20, h + 40);
+  c.fillStyle = 'rgba(0,0,0,.22)'; c.fillRect(px - w, top, w * 2 + 20, 18);
+  c.restore();
+  c.strokeStyle = q ? rgba(L, .55) : rgba(L, .8); c.lineWidth = 4; if (q) c.setLineDash([10, 8]); c.stroke(); c.setLineDash([]);
+  c.restore();
+  symbol(kind, px + sw * .5, top + h * .5 + 4, kind === 'q' ? 1 : .9, col);
+  // bara transversală și capetele
+  c.save(); c.strokeStyle = '#5A3D26'; c.lineWidth = 7; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(px - w / 2 - 12, top); c.lineTo(px + w / 2 + 12, top); c.stroke();
+  c.fillStyle = PAL.ocru; for (const sx of [-1, 1]) { c.beginPath(); c.arc(px + sx * (w / 2 + 14), top, 7, 0, 7); c.fill(); }
+  c.restore();
+}
+
+// ---------------------------------------------------------------- purtător (siluetă simplă, fără față)
+function person(x, fy, ph, o, t) {
+  const c = ctx, bob = -Math.abs(Math.sin(ph)) * 4;
+  const hipY = fy - 84 + bob, shY = fy - 150 + bob, headY = fy - 174 + bob;
+  const sw = Math.sin(ph) * 0.42;
+  const tun = o.tunic, dark = mix(tun, '#000000', .35), legC = '#2B2F38';
+  // umbră
+  c.fillStyle = 'rgba(0,0,0,.28)'; c.beginPath(); c.ellipse(x - 6, fy + 6, 46, 9, 0, 0, 7); c.fill();
+  // picioare (spate, apoi față)
+  for (const s of [1, -1]) {
+    const a = s * sw, fx = x + Math.sin(a) * 84, fyy = hipY + Math.cos(a) * 84;
+    c.strokeStyle = s > 0 ? mix(legC, '#000000', .3) : legC; c.lineWidth = 15; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(x + s * 5, hipY); c.lineTo(fx, fyy - 4); c.stroke();
+    c.fillStyle = '#1A1A1F'; c.beginPath(); c.ellipse(fx - 9, fyy - 1, 16, 7, 0, 0, 7); c.fill();
+  }
+  // brațul din spate
+  if (o.role === 'flag') {
+    const a = -sw * .8;
+    c.strokeStyle = dark; c.lineWidth = 12; c.beginPath(); c.moveTo(x + 10, shY + 6); c.lineTo(x + 10 + Math.sin(a) * 62, shY + 6 + Math.cos(a) * 62); c.stroke();
+  }
+  // tunica
+  c.fillStyle = tun; c.beginPath(); c.moveTo(x - 24, shY); c.lineTo(x + 24, shY);
+  c.quadraticCurveTo(x + 30, hipY - 10, x + 34, hipY + 18); c.lineTo(x - 34, hipY + 18); c.quadraticCurveTo(x - 30, hipY - 10, x - 24, shY); c.closePath(); c.fill();
+  c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(x + 8, shY, 16, hipY + 18 - shY);
+  c.fillStyle = '#2A1E16'; c.fillRect(x - 29, hipY - 8, 58, 7);
+  c.fillStyle = PAL.ocru; c.fillRect(x - 5, hipY - 9, 9, 9);
+  // gât și cap (fără trăsături)
+  c.fillStyle = '#C49A74'; c.fillRect(x - 6, headY + 12, 12, 14);
+  c.fillStyle = '#D2AE8A'; c.beginPath(); c.arc(x - 3, headY, 18, 0, 7); c.fill();
+  // pălărie
+  c.fillStyle = o.hatC || HATS;
+  if (o.hat === 0) { c.beginPath(); c.ellipse(x - 1, headY - 14, 24, 9, -0.1, 0, 7); c.fill(); c.beginPath(); c.arc(x - 3, headY - 10, 15, Math.PI, 0); c.fill(); }
+  else if (o.hat === 1) { c.beginPath(); c.arc(x - 1, headY - 2, 21, Math.PI * .9, Math.PI * 2.05); c.lineTo(x + 20, headY + 22); c.lineTo(x + 10, headY + 10); c.closePath(); c.fill(); c.lineWidth = 7; c.strokeStyle = o.hatC || HATS; c.beginPath(); c.moveTo(x + 16, headY + 4); c.quadraticCurveTo(x + 34, headY + 30, x + 30, headY + 52); c.stroke(); }
+  else { c.beginPath(); c.moveTo(x - 20, headY - 8); c.lineTo(x - 12, headY - 38); c.lineTo(x + 10, headY - 38); c.lineTo(x + 16, headY - 8); c.closePath(); c.fill(); c.fillStyle = 'rgba(255,255,255,.15)'; c.fillRect(x - 19, headY - 13, 35, 5); }
+  // rol
+  if (o.role === 'flag') {
+    const px = x - 36;
+    c.strokeStyle = '#6B4A2E'; c.lineWidth = 8; c.lineCap = 'round'; c.beginPath(); c.moveTo(px, fy - 70); c.lineTo(px, fy - 486); c.stroke();
+    c.fillStyle = PAL.ocru; c.beginPath(); c.moveTo(px, fy - 512); c.lineTo(px + 8, fy - 494); c.lineTo(px, fy - 484); c.lineTo(px - 8, fy - 494); c.closePath(); c.fill();
+    c.strokeStyle = tun; c.lineWidth = 12; c.beginPath(); c.moveTo(x - 8, shY + 6); c.lineTo(x - 22, shY + 32); c.lineTo(px + 2, shY + 18); c.stroke();
+    c.fillStyle = '#D2AE8A'; c.beginPath(); c.arc(px + 2, shY + 18, 7, 0, 7); c.fill();
+  } else if (o.role === 'drum') {
+    const dy = fy - 112;
+    c.fillStyle = '#8A2F2A'; c.fillRect(x - 64, dy, 58, 40);
+    c.strokeStyle = L; c.lineWidth = 2.5; c.beginPath(); for (let k = 0; k <= 6; k++) c.lineTo(x - 64 + k * 9.6, dy + (k % 2 ? 36 : 4)); c.stroke();
+    c.fillStyle = '#E9DCC3'; c.beginPath(); c.ellipse(x - 35, dy, 29, 7, 0, 0, 7); c.fill();
+    c.strokeStyle = '#3A2A1E'; c.lineWidth = 3; c.beginPath(); c.moveTo(x - 4, shY + 4); c.lineTo(x - 50, dy); c.stroke();
+    for (const [k, hx] of [[0, -48], [1, -24]]) {
+      const lift = Math.max(0, Math.sin(t * Math.PI * 4 + k * Math.PI)) * 26;
+      c.strokeStyle = tun; c.lineWidth = 11; c.beginPath(); c.moveTo(x - 6 + k * 10, shY + 8); c.lineTo(x + hx + 8, dy - 26 - lift * .4); c.stroke();
+      c.strokeStyle = '#E9DCC3'; c.lineWidth = 4; c.beginPath(); c.moveTo(x + hx + 8, dy - 26 - lift * .4); c.lineTo(x + hx - 8, dy - 3 - lift); c.stroke();
+    }
+  } else if (o.role === 'fife') {
+    c.strokeStyle = tun; c.lineWidth = 11;
+    c.beginPath(); c.moveTo(x - 8, shY + 8); c.lineTo(x - 26, shY + 2); c.lineTo(x - 36, headY + 8); c.stroke();
+    c.beginPath(); c.moveTo(x + 6, shY + 8); c.lineTo(x - 6, shY + 4); c.lineTo(x - 56, headY + 10); c.stroke();
+    c.strokeStyle = '#C9A877'; c.lineWidth = 5; c.beginPath(); c.moveTo(x - 16, headY + 6); c.lineTo(x - 82, headY + 13); c.stroke();
+  }
+}
+
+// ---------------------------------------------------------------- etichete
+function fitFont(str, weight, size, maxW, family) {
+  let s = size; ctx.font = `${weight} ${s}px ${family || 'Inter'}`;
+  while (ctx.measureText(str).width > maxW && s > 12) { s -= 1; ctx.font = `${weight} ${s}px ${family || 'Inter'}`; }
+  return s;
+}
+function labelCard(cx, w, item, num, alpha) {
+  const c = ctx, x = cx - w / 2, y = 812, h = 94;
+  c.save(); c.globalAlpha = alpha;
+  c.fillStyle = 'rgba(15,23,32,.88)'; roundRect(c, x, y, w, h, 14); c.fill();
+  c.fillStyle = item.q ? '#7D8794' : item.c; c.fillRect(x + 10, y, w - 20, 4);
+  // numărul
+  c.fillStyle = item.q ? '#56606C' : item.c; c.beginPath(); c.arc(x + 28, y + 30, 18, 0, 7); c.fill();
+  c.restore();
+  text(ctx, String(num), x + 28, y + 38, { size: 20, weight: 800, align: 'center', alpha, color: L });
+  const tx = x + 54, mw = w - 64;
+  if (item.q) {
+    text(ctx, item.t, tx, y + 36, { size: fitFont(item.t, 700, 23, mw), weight: 700, alpha });
+    text(ctx, item.a, tx, y + 68, { size: fitFont(item.a, 600, 21, mw), weight: 600, color: PAL.ocru, alpha });
+  } else {
+    text(ctx, item.t, tx, y + 34, { size: fitFont(item.t, 700, 24, mw), weight: 700, alpha });
+    text(ctx, item.a, tx, y + 60, { size: fitFont(item.a, 600, 19, mw), weight: 600, color: PAL.ocru, alpha });
+    text(ctx, item.b, tx, y + 84, { size: fitFont(item.b, 400, 17, mw), color: PAL.ceata, alpha });
+  }
+}
+function caption(str, alpha) {
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = 'rgba(10,16,28,.9)'; roundRect(ctx, 80, 924, 1760, 80, 22); ctx.fill(); ctx.restore();
+  ctx.font = '600 27px Inter'; const two = ctx.measureText(str).width > 1690;
+  text(ctx, str, 115, two ? 956 : 973, { size: two ? 24 : 27, weight: 600, alpha, maxW: 1690, lh: 31 });
+}
+function pill(str, x, y, o = {}) {
+  ctx.save(); ctx.font = `${o.weight || 600} ${o.size || 26}px Inter`;
+  const w = ctx.measureText(str).width + 40, xx = o.align === 'right' ? x - w : x;
+  ctx.globalAlpha = o.alpha == null ? 1 : o.alpha; ctx.fillStyle = o.bg || 'rgba(15,23,32,.82)'; roundRect(ctx, xx, y, w, (o.size || 26) + 26, ((o.size || 26) + 26) / 2); ctx.fill(); ctx.restore();
+  text(ctx, str, xx + 20, y + (o.size || 26) + 6, { size: o.size || 26, weight: o.weight || 600, color: o.color || L, alpha: o.alpha });
+  return w;
+}
+
+// ---------------------------------------------------------------- legenda: subtitrări pe intervale
+const CAP = [
+  [6.4, 15.6, 'Pentru 1376, sursele dau exemple: „precum brutarii, pielarii și cuțitarii” (mnir.ro); fierarii apar ca „Fabrorum fraternitatis” (ULBS).'],
+  [15.6, 23.0, 'De ce semnul întrebării? Nicio sursă consultată nu dă lista completă a celor 19 bresle – așa că nu ghicim.'],
+  [23.0, 29.6, 'Sursele mai pomenesc și alte meserii din statut, dar nu dau lista celor 19 bresle; de aceea, 15 steaguri rămân fără nume.'],
+  [33.2, 39.8, 'Alte atestări (documente, însemne): fiecare steag poartă anul și sursa lui.'],
+  [39.8, 48.6, '* Bastionul Soldisch: 1556 la limbaromana.org; patrimoniu.sibiu.ro îl datează 1622–1629 – sursele diferă.'],
+];
+
+// ---------------------------------------------------------------- finalul: contorul 19 → 26 → 34 → 40
+const DATA = [[1376, 19], [1719, 26], [1724, 34], [1780, 40]];
+const STEP0 = 50, STEPD = 2;
+function finale(t, a) {
+  ctx.fillStyle = `rgba(15,23,32,${.97 * a})`; ctx.fillRect(0, 0, W, H);
+  if (a < .02) return;
+  serif(ctx, 'Câte bresle avea Sibiul?', 120, 225, { size: 60, alpha: a });
+  const k = clamp(Math.floor((t - STEP0) / STEPD), 0, 3), lt = t - STEP0 - k * STEPD;
+  const prev = k ? DATA[k - 1][1] : DATA[0][1], cur = DATA[k][1];
+  const val = Math.round(lerp(prev, cur, easeOut(smooth(0, .9, lt))));
+  const na = a * smooth(STEP0 - .6, STEP0, t);
+  serif(ctx, String(val), 112, 500, { size: 240, color: PAL.ocru, alpha: na });
+  text(ctx, 'bresle în ' + DATA[k][0], 122, 566, { size: 36, weight: 600, alpha: na });
+  text(ctx, 'sursa: limbaromana.org', 122, 606, { size: 22, color: PAL.ceata, alpha: na });
+  // bare
+  const bx0 = 860, gap = 240, bw = 150, base = 640;
+  ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = rgba(PAL.ceata, .5); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(830, base); ctx.lineTo(1800, base); ctx.stroke(); ctx.restore();
+  for (let i = 0; i < 4; i++) {
+    const st = STEP0 + i * STEPD, g = easeOut(smooth(st, st + .7, t)); if (g <= 0) continue;
+    const hgt = DATA[i][1] / 40 * 330 * g, x = bx0 + i * gap, curr = i === k;
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = curr ? PAL.ocru : PAL.petrol; roundRect(ctx, x, base - hgt, bw, hgt, 10); ctx.fill(); ctx.restore();
+    text(ctx, String(DATA[i][1]), x + bw / 2, base - hgt - 16, { size: 36, weight: 800, align: 'center', alpha: a * g });
+    text(ctx, String(DATA[i][0]), x + bw / 2, base + 40, { size: 28, weight: 600, align: 'center', color: PAL.ceata, alpha: a * g });
+  }
+  text(ctx, 'anii nu sunt la scară', 1800, 720, { size: 20, align: 'right', color: PAL.ceata, alpha: a * smooth(STEP0, STEP0 + 1, t) });
+  // desființarea
+  const da = a * smooth(58, 58.8, t);
+  if (da > 0) {
+    ctx.save(); ctx.globalAlpha = da; ctx.fillStyle = PAL.slate; roundRect(ctx, 120, 752, 1680, 110, 22); ctx.fill(); ctx.fillStyle = PAL.red; ctx.fillRect(120, 774, 6, 66); ctx.restore();
+    serif(ctx, 'Desființate prin decretul din 1872 / la 18 aprilie 1875 – sursele diferă', 156, 802, { size: 36, color: PAL.var, alpha: da });
+    text(ctx, '1872: limbaromana.org (breslele devin cooperative meșteșugărești) · 18 aprilie 1875: data „desființării oficiale” într-o altă sursă', 158, 840, { size: 22, color: PAL.ceata, alpha: da });
+  }
+  const sa = a * smooth(59.4, 60.2, t);
+  text(ctx, 'Surse: limbaromana.org (Din istoria breslelor sibiene) · mnir.ro (Însemne de breaslă din Transilvania) · magazines.ulbsibiu.ro · patrimoniu.sibiu.ro', 120, 912, { size: 22, color: PAL.ceata, alpha: sa });
+  text(ctx, 'Paradă imaginată, animată cu AI: siluete și steaguri cu unelte desenate în cod, nu însemne reale · muzică: temă originală, sintetizată în cod, în stil de marș', 120, 950, { size: 22, color: PAL.ceata, alpha: sa });
+}
+
+// ---------------------------------------------------------------- randare
+window.render = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+  ctx.drawImage(bg, 0, 0);
+
+  // Partea I
+  if (t < 31) {
+    const S = sAt(S1, t), ph = S / 260 * Math.PI * 2;
+    const items = [];
+    items.push({ x: X0 - S, role: 'fife', tunic: '#6B2F2F', hat: 2 });
+    items.push({ x: X0 + 150 - S, role: 'drum', tunic: '#2F4858', hat: 0 });
+    PASS1.forEach((it, i) => items.push({ x: X0 + OFF1[i] - S, role: 'flag', tunic: TUNICS[(i * 3) % TUNICS.length], hat: i % 3, it, i }));
+    for (const p of items) {
+      if (p.x < -260 || p.x > W + 260) continue;
+      person(p.x, FOOT, ph, p, t);
+      if (p.role === 'flag') banner(p.x - 36, FOOT - 480, p.it.c, p.it.k, t, p.i, p.it.q);
+    }
+    for (const p of items) if (p.role === 'flag' && p.x > -260 && p.x < W + 260) labelCard(p.x - 36, 320, p.it, p.i + 1, 1);
+  }
+  // Partea a II-a
+  if (t >= 30.5 && t < 50) {
+    const S = sAt(S2, t), ph = S / 260 * Math.PI * 2;
+    PASS2.forEach((it, i) => {
+      const x = X0 + OFF2[i] - S; if (x < -260 || x > W + 260) return;
+      person(x, FOOT, ph, { role: 'flag', tunic: TUNICS[(i * 2 + 1) % TUNICS.length], hat: (i + 1) % 3 }, t);
+      banner(x - 36, FOOT - 480, it.c, it.k, t, i + 3, false);
+    });
+    PASS2.forEach((it, i) => { const x = X0 + OFF2[i] - S; if (x > -260 && x < W + 260) labelCard(x - 36, 370, it, i + 1, 1); });
+  }
+
+  // antetul secțiunii
+  const p1a = smooth(5.6, 6.4, t) * (1 - smooth(29.2, 29.8, t));
+  if (p1a > 0) {
+    const S = sAt(S1, t); const n = PASS1.filter((_, i) => X0 + OFF1[i] - S - 36 < W / 2).length;
+    const w = pill('Partea I · cele 19 bresle din statutul de la 1376', 80, 128, { size: 28, alpha: p1a });
+    pill(`au defilat: ${n} din 19`, 80 + w + 14, 128, { size: 28, alpha: p1a, color: PAL.night, bg: PAL.ocru, weight: 700 });
+  }
+  const p2a = smooth(33.0, 33.6, t) * (1 - smooth(48.6, 49.2, t));
+  if (p2a > 0) {
+    const S = sAt(S2, t); const n = PASS2.filter((_, i) => X0 + OFF2[i] - S - 36 < W / 2).length;
+    const w = pill('Partea a II-a · alte bresle atestate la Sibiu, în alți ani', 80, 128, { size: 28, alpha: p2a });
+    pill(`${n} din 9`, 80 + w + 14, 128, { size: 28, alpha: p2a, color: PAL.night, bg: PAL.ocru, weight: 700 });
+  }
+  const tagA = smooth(5.6, 6.4, t) * (1 - smooth(48.6, 49.2, t));
+  if (tagA > 0) pill('Paradă imaginată · unelte desenate în cod, nu însemne reale', 1840, 196, { size: 20, align: 'right', alpha: tagA, color: PAL.ceata, weight: 500 });
+
+  // subtitrări
+  for (const [a0, a1, s] of CAP) { const a = Math.min(smooth(a0, a0 + .4, t), 1 - smooth(a1 - .4, a1, t)); if (a > 0) caption(s, a); }
+
+  // cartonul „Alte bresle…”
+  const ta = smooth(29.4, 30.0, t) * (1 - smooth(32.8, 33.4, t));
+  if (ta > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.72 * ta})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Alte bresle atestate la Sibiu, în alți ani', W / 2, 470, { size: 70, align: 'center', alpha: ta });
+    text(ctx, 'fiecare steag poartă anul și sursa – din alte documente decât statutul din 1376', W / 2, 540, { size: 32, align: 'center', color: PAL.ceata, alpha: ta });
+  }
+
+  // deschiderea
+  const ia = 1 - smooth(5.4, 6.2, t);
+  if (ia > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.78 * ia})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Breslele defilează', W / 2, 395, { size: 104, align: 'center', alpha: ia * smooth(.3, 1.1, t) });
+    text(ctx, '9 noiembrie 1376: statutul comun al breslelor din Sibiu, Sebeș, Sighișoara și Orăștie – 19 bresle, 25 de meserii', W / 2, 490, { size: 40, weight: 600, align: 'center', maxW: 1380, lh: 54, alpha: ia * smooth(1.0, 1.8, t) });
+    text(ctx, 'surse: limbaromana.org · mnir.ro', W / 2, 626, { size: 24, align: 'center', color: PAL.ceata, alpha: ia * smooth(1.6, 2.4, t) });
+  }
+
+  // final
+  const fa = smooth(48.8, 50.0, t);
+  if (fa > 0) finale(t, fa);
+
+  // antet și subsol
+  ctx.fillStyle = 'rgba(10,16,28,.72)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M21', 60, 36, PAL.red);
+  text(ctx, 'Breslele defilează · paradă animată AI a celor 19 bresle din 1376', 270, 64, { size: 30, weight: 600 });
+  ctx.fillStyle = 'rgba(10,16,28,.72)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M21');
+  const fb = 1 - smooth(0, .7, t);
+  if (fb > 0) { ctx.fillStyle = `rgba(0,0,0,${fb})`; ctx.fillRect(0, 0, W, H); }
+};
+document.fonts.load('700 40px "Noto Serif"').then(() => document.fonts.load('600 20px Inter')).then(() => { window.READY = true; });
+</script></body></html>

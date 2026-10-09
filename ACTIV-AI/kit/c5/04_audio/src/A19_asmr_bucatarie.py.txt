@@ -1,0 +1,582 @@
+"""A19 – ASMR AI: o bucătărie transilvăneană duminică dimineața („Duminică, la plită”, ~100 s).
+
+O dimineață de duminică IMAGINATĂ într-o bucătărie, în timp ce se pregătesc sarmale. Nimeni nu
+vorbește. Toate sunetele sunt APROXIMĂRI SINTETIZATE din formule matematice (cod Python), fără
+mostre, fără înregistrări și fără voce: nu este o înregistrare dintr-o bucătărie reală.
+
+Povestea de sunet urmează, liber, faptele din fișa proiectului despre sarmale (en.wikipedia,
+Romanian cuisine): frunze de varză umplute cu carne tocată, orez, ceapă și verdețuri, fierte ore
+în șir, tradițional în oale de ceramică. Ordinea pașilor și timpul (comprimat) sunt imaginate.
+
+Straturi: liniștea camerei, ceasul de perete, ușița de fontă a sobei, chibritul, focul care
+pornește și lemnele care trosnesc (înfundat, după ce se închide ușița), apa turnată în ceaun,
+ceaunul care începe să fiarbă încet (bule), cuțitul pe tocător (ceapa), lingura de lemn în
+umplutură, frunzele de varză desfăcute, oala de ceramică pusă pe plită (și capacul ei),
+un clopot de duminică în depărtare, o cană pusă pe masă.
+
+Loudness-țintă: −18 LUFS (mai încet decât −14 LUFS, ca să rămână o ascultare intimă, „de aproape”;
+declarat în fișa .md și în manifest), true peak ≤ −1 dBTP.
+
+Folosește biblioteca comună audiolib.py din /home/claude/expo/04_audio/_src.
+
+Rulare: python3 A19_asmr_bucatarie.py  -> ../A19_asmr_bucatarie.mp3 + A19_marcaje.json
+"""
+import json
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+
+from audiolib import (SR, add, bp, colored_noise, env_exp, finalize, hp, limiter, lp, make_ir,  # noqa: E402
+                      match_lufs, modal, ns, peaking, report, reverb, rng_of, smooth_random,
+                      stereo, t_axis)
+
+DUR = 100.0
+TARGET_LUFS = -18.0
+OUT = os.path.join(HERE, "..", "A19_asmr_bucatarie.mp3")
+
+# Repere în timp (secunde) – folosite în fișa .md, în manifest și în verificare
+MARKS = {
+    "Liniște: ceasul de perete": 0.0,
+    "Ușița sobei, chibritul, focul pornește": 3.0,
+    "Ușița se închide; lemnele trosnesc": 11.5,
+    "Apa turnată în ceaun": 15.0,
+    "Cuțitul pe tocător: ceapa": 24.0,
+    "Ceaunul începe să fiarbă": 34.0,
+    "Lingura de lemn în umplutură": 40.0,
+    "Frunzele de varză": 51.0,
+    "Pauză: ceas, foc, ceaun": 63.0,
+    "Oala de ceramică pe plită": 68.0,
+    "Clopotul de duminică, departe": 73.0,
+    "Cana pe masă": 86.5,
+    "Final": 93.0,
+}
+
+T_DOOR_OPEN = 3.0
+T_MATCH = 4.6
+T_IGNITE = 5.6
+T_DOOR_CLOSE = 11.5
+T_POUR, POUR_DUR = 15.0, 6.5
+T_SIMMER = 34.0
+T_SPOON, SPOON_DUR = 40.0, 7.9
+LEAF_TIMES = [51.0, 53.4, 55.9, 58.3, 60.8]
+T_POT = 68.0
+BELL_TIMES = [73.0 + 2.6 * k for k in range(7)]
+T_MUG = 86.5
+
+PAN = {"ceas": -0.6, "soba": 0.45, "ceaun": 0.4, "masa": -0.1, "castron": -0.2, "varza": 0.0,
+       "oala": 0.35, "clopot": -0.35, "cana": 0.05}
+
+EVENTS = []
+
+
+def ev(name, t, lo, hi, dur, ref=None):
+    """Eveniment pentru verificare; ref = fereastra de fond (s) cu care se compară, dacă stratul
+    e prezent până la final (altfel: mediana benzii pe tot fișierul)."""
+    e = dict(nume=name, t=round(float(t), 3), banda_hz=[lo, hi], durata_s=round(float(dur), 3))
+    if ref is not None:
+        e["referinta_s"] = [float(ref[0]), float(ref[1])]
+    EVENTS.append(e)
+
+
+# ------------------------------------------------------------------ utilitare
+def nrm(x):
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def smooth_env(n, att, rel):
+    e = np.ones(n)
+    a, r = max(1, min(n // 2, ns(att))), max(1, min(n // 2, ns(rel)))
+    e[:a] = np.sin(np.linspace(0, np.pi / 2, a)) ** 2
+    e[n - r:] *= np.cos(np.linspace(0, np.pi / 2, r)) ** 2
+    return e
+
+
+def grains(rng, length, rate, lo, hi, gmin=0.0003, gmax=0.0015, env=None, amp=(0.2, 1.0)):
+    """Nor de micro-pocnete (granule de zgomot) – foșnet, crănțănit, boabe, frunze."""
+    m = ns(length + gmax + 0.01)
+    x = np.zeros(m)
+    k = rng.poisson(rate * length)
+    for tt in np.sort(rng.uniform(0, length, k)):
+        g = max(4, ns(rng.uniform(gmin, gmax)))
+        i0 = ns(tt)
+        if i0 + g >= m:
+            continue
+        a = rng.uniform(*amp) * (env(tt / length) if env is not None else 1.0)
+        x[i0:i0 + g] += rng.standard_normal(g) * np.hanning(g) * a
+    return bp(x, lo, hi, order=2)
+
+
+def ping(f0, d, rise, rng=None):
+    """Ton scurt al unei bule de aer în apă: frecvența urcă puțin, se stinge repede."""
+    m = ns(d)
+    tt = t_axis(m)
+    f = f0 * (1 + rise * tt)
+    ph0 = rng.uniform(0, 6.28) if rng is not None else 0.0
+    return np.sin(2 * np.pi * np.cumsum(f) / SR + ph0) * np.exp(-tt / (d / 3)) * (1 - np.exp(-tt / 0.0012))
+
+
+def stick_slip(rng, dur, r0, r1, res, jitter=0.15, broad=(600, 6000)):
+    """Scârțâit (frecare cu „lipire și alunecare”): un tren de impulsuri cu ritm variabil,
+    trecut prin rezonanțe înguste (balama de fontă, frunză crocantă)."""
+    n = ns(dur)
+    imp = np.zeros(n)
+    wob = smooth_random(n, rng, 6.0, 0.85, 1.15)
+    t = 0.0
+    while t < dur:
+        i = ns(t)
+        if i >= n:
+            break
+        imp[i] += rng.uniform(0.5, 1.0)
+        u = t / dur
+        r = r0 * (r1 / r0) ** u * wob[i]
+        t += (1.0 / r) * (1 + rng.uniform(-jitter, jitter))
+    y = 0.35 * bp(imp, *broad, order=2)
+    for f, g in res:
+        y += g * bp(imp, f * 0.96, f * 1.04, order=2)
+    return y * smooth_env(n, 0.05, 0.12)
+
+
+def tv_reson(x, f, q):
+    """Rezonator cu frecvență variabilă în timp (filtru „state variable”, ieșire trece-bandă)."""
+    out = np.empty_like(x)
+    low = band = 0.0
+    F = 2 * np.sin(np.pi * np.asarray(f) / SR)
+    qi = 1.0 / q
+    for i in range(len(x)):
+        low += F[i] * band
+        high = x[i] - low - qi * band
+        band += F[i] * high
+        out[i] = band
+    return out
+
+
+# ------------------------------------------------------------------ liniștea camerei
+def room_layer():
+    n = ns(DUR)
+    buf = stereo(DUR)
+    for ch in range(2):
+        nz = colored_noise(n, rng_of(900 + ch), 1.6)
+        buf[ch] = lp(hp(nz, 35), 600) * (0.8 + 0.2 * smooth_random(n, rng_of(950 + ch), 0.2))
+    return buf
+
+
+# ------------------------------------------------------------------ ceasul de perete
+def tick(rng, tock):
+    b = 0.78 if tock else 1.0
+    x = modal([2350 * b, 3620 * b, 5300 * b, 7600 * b], [1, 0.55, 0.35, 0.18], [0.04, 0.03, 0.022, 0.014],
+              0.12, rng=rng, attack=0.0003)
+    x += modal([430 * b, 1010 * b], [0.35, 0.2], [0.07, 0.05], 0.12, rng=rng, attack=0.0005)  # cutia de lemn
+    n = len(x)
+    x += hp(rng.standard_normal(n), 3000) * env_exp(n, 0.0015) * 0.6
+    return nrm(x)
+
+
+def clock_layer(rng):
+    buf = stereo(DUR)
+    t, k = 0.4, 0
+    while t < DUR:
+        add(buf, tick(rng, k % 2 == 1), t + rng.normal(0, 0.002), gain=1.0 if k % 2 == 0 else 0.85,
+            pan=PAN["ceas"])
+        t += 1.0
+        k += 1
+    ev("ceas (tic)", 2.4, 2000, 6000, 0.06)
+    ev("ceas (în pauză)", 64.4, 2000, 6000, 0.06)
+    return lp(buf, 8000)
+
+
+# ------------------------------------------------------------------ ușița sobei
+def metal_hit(rng, fr, amps, t60s, dur, click=0.4, click_hp=2500):
+    x = modal(fr, amps, t60s, dur, rng=rng, attack=0.0004)
+    n = len(x)
+    x += hp(rng.standard_normal(n), click_hp) * env_exp(n, 0.004) * click
+    return nrm(x)
+
+
+def door_layer(rng):
+    buf = stereo(DUR)
+    # deschidere: clichetul (zăvorul) sare, apoi balamaua de fontă scârțâie
+    latch = metal_hit(rng, [1250, 2950, 4800, 6900], [1, 0.6, 0.35, 0.15], [0.12, 0.08, 0.05, 0.03], 0.25)
+    add(buf, latch, T_DOOR_OPEN, gain=0.8, pan=PAN["soba"])
+    creak = stick_slip(rng, 0.85, 60, 125, [(930, 1.0), (1870, 0.7), (2790, 0.45), (3950, 0.2)],
+                       jitter=0.12, broad=(500, 5000))
+    add(buf, nrm(creak), T_DOOR_OPEN + 0.12, gain=0.75, pan=PAN["soba"])
+    ev("ușița sobei (scârțâit)", T_DOOR_OPEN + 0.12, 800, 3000, 0.8)
+    # închidere: ușa grea de fontă lovește cadrul, apoi zăvorul
+    clunk = metal_hit(rng, [310, 760, 1480, 2600, 3900], [1, 0.7, 0.45, 0.25, 0.1],
+                      [0.2, 0.14, 0.09, 0.06, 0.04], 0.4, click=0.25, click_hp=1200)
+    m = len(clunk)
+    clunk = clunk + lp(rng.standard_normal(m), 300) * env_exp(m, 0.04) * 0.6
+    add(buf, nrm(clunk), T_DOOR_CLOSE, gain=0.9, pan=PAN["soba"])
+    add(buf, latch * 0.8, T_DOOR_CLOSE + 0.09, gain=0.6, pan=PAN["soba"])
+    ev("ușița se închide", T_DOOR_CLOSE, 250, 1600, 0.3)
+    return buf
+
+
+# ------------------------------------------------------------------ chibritul
+def match_layer(rng):
+    buf = stereo(DUR)
+    sc = grains(rng, 0.2, 2200, 1500, 8500, 0.0002, 0.0012, env=lambda u: 0.4 + 0.6 * u)
+    m = len(sc)
+    sc += bp(rng.standard_normal(m), 2000, 6000) * smooth_env(m, 0.03, 0.03) * 0.06
+    flare_n = ns(1.6)
+    tt = t_axis(flare_n)
+    nz = rng.standard_normal(flare_n)
+    flare = bp(nz, 600, 7000) * np.minimum(1, tt / 0.02) * np.exp(-6.9 * tt / 0.9) * 0.9
+    flare += lp(nz, 400) * np.minimum(1, tt / 0.01) * np.exp(-6.9 * tt / 0.35) * 0.8
+    flare += hp(rng.standard_normal(flare_n), 1500) * np.exp(-6.9 * tt / 1.6) * 0.12  # flacăra mică
+    x = np.zeros(m + flare_n)
+    x[:m] += sc
+    x[ns(0.18):ns(0.18) + flare_n] += flare
+    add(buf, nrm(x), T_MATCH, gain=1.0, pan=PAN["soba"] - 0.15)
+    ev("chibritul", T_MATCH, 1500, 8000, 0.5)
+    return buf
+
+
+# ------------------------------------------------------------------ focul
+def crackle(rng, big=False):
+    m = ns(0.12 if big else 0.05)
+    x = np.zeros(m)
+    k = int(rng.integers(3, 7) if big else rng.integers(1, 4))
+    pos = 0.0
+    for _ in range(k):
+        g = max(4, ns(rng.uniform(0.0002, 0.0022 if big else 0.0011)))
+        i0 = ns(pos)
+        if i0 + g >= m:
+            break
+        x[i0:i0 + g] += rng.standard_normal(g) * np.hanning(g) * rng.uniform(0.4, 1.0)
+        pos += rng.exponential(0.006 if big else 0.004)
+    x = bp(x, 700, 9500)
+    if big:
+        x += lp(rng.standard_normal(m), 260) * env_exp(m, 0.035) * 0.35
+    return x
+
+
+def fire_layer(rng):
+    n = ns(DUR)
+    t = t_axis(n)
+    level = np.clip((t - T_IGNITE) / 3.0, 0, 1) ** 1.5
+    open_w = np.clip((T_DOOR_CLOSE + 0.05 - t) / 0.12, 0, 1)
+    buf = stereo(DUR)
+    # vuietul moale al flăcării
+    for ch in range(2):
+        nz = colored_noise(n, rng_of(3100 + ch), 2.0)
+        rum = hp(lp(nz, 320), 55, order=4) * (0.6 + 0.4 * smooth_random(n, rng_of(3150 + ch), 2.0))
+        hiss = hp(rng_of(3170 + ch).standard_normal(n), 2500) * smooth_random(n, rng_of(3180 + ch), 1.5) * 0.05
+        buf[ch] = (0.5 * rum + hiss) * level
+    # aprinderea: un „vuuf” scurt și moale, care se deschide puțin spre înalte
+    m = ns(1.8)
+    tt = t_axis(m)
+    nz = rng.standard_normal(m)
+    w = np.clip(tt / 1.2, 0, 1)
+    whoosh = (lp(nz, 300) * (1 - w) + lp(hp(nz, 150), 1400) * w * 0.7) * np.minimum(1, tt / 0.25) * np.exp(-tt / 0.6)
+    add(buf, whoosh * 0.35, T_IGNITE, pan=PAN["soba"])
+    # trosnete: întâi surcelele (dese, mici), apoi lemnele (mai rare, cu pocnete mari)
+    cr = stereo(DUR)
+    tc = T_IGNITE + 0.3
+    while tc < DUR - 0.2:
+        if tc < T_DOOR_CLOSE:
+            rate = 1.0 + 9.0 * np.clip((tc - T_IGNITE) / 3.0, 0, 1)
+        else:
+            rate = 3.2 + 1.5 * np.sin(2 * np.pi * tc / 23.0)
+        big = tc > 9.0 and rng.uniform() < 0.07
+        g_open = 0.8 if tc < T_DOOR_CLOSE else 1.0  # surcelele: dese, dar mai mici
+        add(cr, crackle(rng, big), tc, gain=g_open * rng.uniform(0.25, 1.0) * (1.6 if big else 1.0),
+            pan=PAN["soba"] + rng.uniform(-0.12, 0.12))
+        tc += rng.exponential(1.0 / rate)
+    buf += cr
+    # după închiderea ușiței: totul se aude prin fontă – înfundat și mai încet.
+    # Cele două părți sunt întoarse separat, ca nivelul fiecăreia să fie reglat în mix.
+    closed = lp(buf, 3200, order=2) * (1 - open_w)
+    # focul e prezent până la final: se compară cu fondul de dinainte de aprindere (0,5–2,9 s)
+    ev("focul pornește (surcele)", 7.0, 1500, 8000, 4.0, ref=(0.5, 2.9))
+    ev("lemnele trosnesc (ușița închisă)", 64.0, 700, 3000, 3.5, ref=(0.5, 2.9))
+    return buf * open_w, closed
+
+
+# ------------------------------------------------------------------ apa turnată în ceaun
+def pour_layer(rng):
+    buf = stereo(DUR)
+    n = ns(POUR_DUR)
+    t = t_axis(n)
+    u = t / POUR_DUR
+    env = smooth_env(n, 0.25, 0.35)
+    f_res = 380 * (1 + 1.45 * u ** 0.8)           # rezonanța „aerului” din ceaun urcă pe măsură ce se umple
+    turb = rng.standard_normal(n) * (0.6 + 0.4 * np.abs(lp(rng.standard_normal(n), 40)) * 3)
+    body = tv_reson(turb, f_res, 7.0)
+    body = body / (np.std(body) + 1e-12) * 0.35
+    splash = bp(rng.standard_normal(n), 500, 6000) * (0.5 + 0.5 * smooth_random(n, rng, 8, 0, 1)) * 0.12
+    x = (body + splash) * env
+    # primele clipe: apa lovește fundul gol, de fontă
+    k = ns(0.7)
+    metal = bp(rng.standard_normal(k), 1800, 4500) * np.linspace(1, 0, k) ** 1.5 * 0.35
+    metal += modal([640, 1580, 2900], [0.4, 0.25, 0.12], [0.4, 0.25, 0.15], 0.7, rng=rng) * 0.6
+    x[:k] += metal * smooth_env(k, 0.03, 0.2)
+    # bule dese în jet, legate de rezonanța care urcă
+    tb = 0.1
+    while tb < POUR_DUR - 0.35:
+        i = ns(tb)
+        p = ping(f_res[i] * rng.uniform(0.9, 2.6), rng.uniform(0.008, 0.03), rng.uniform(4, 14), rng)
+        j = min(len(p), n - i)
+        x[i:i + j] += p[:j] * rng.uniform(0.05, 0.25) * env[i]
+        tb += rng.exponential(1 / 90.0)
+    add(buf, x, T_POUR, pan=PAN["ceaun"])
+    add(buf, x * 0.25, T_POUR + 0.011, pan=PAN["ceaun"] - 0.5)  # puțină lățime
+    # ultimele picături
+    for dt in (0.3, 0.65, 1.15):
+        d = ping(rng.uniform(900, 1400), 0.05, 9.0, rng) * 0.35
+        add(buf, d, T_POUR + POUR_DUR + dt, pan=PAN["ceaun"])
+    ev("apa turnată în ceaun", T_POUR, 300, 2500, POUR_DUR)
+    return buf
+
+
+# ------------------------------------------------------------------ ceaunul începe să fiarbă
+def simmer_layer(rng):
+    buf = stereo(DUR)
+    t = T_SIMMER
+    span = DUR - T_SIMMER
+    while t < DUR - 0.1:
+        u = (t - T_SIMMER) / span
+        rate = 0.6 + 13.0 * u ** 1.4
+        f0 = np.exp(rng.uniform(np.log(220), np.log(750)))
+        d = rng.uniform(0.03, 0.09)
+        x = ping(f0, d, rng.uniform(2, 6), rng)
+        m = len(x)
+        x += hp(rng.standard_normal(m), 2000) * env_exp(m, 0.004) * 0.15  # mica „pocnitură” la suprafață
+        add(buf, x, t, gain=rng.uniform(0.3, 1.0) * (0.5 + 0.5 * min(1.0, 2 * u)),
+            pan=PAN["ceaun"] + rng.uniform(-0.1, 0.1))
+        t += rng.exponential(1.0 / rate)
+    # „cântecul” discret al apei care se încălzește
+    n = ns(DUR)
+    tt = t_axis(n)
+    ramp = np.clip((tt - T_SIMMER + 6) / (span + 6), 0, 1)
+    for ch in range(2):
+        s = bp(rng_of(3500 + ch).standard_normal(n), 1800, 5000) * smooth_random(n, rng_of(3550 + ch), 1.2, 0.3, 1)
+        buf[ch] += s * ramp * 0.03
+    # se compară cu fondul de dinainte de fierbere, fără cuțit (28,0–29,4 s: foc, ceas, cameră)
+    ev("ceaunul fierbe încet", 93.0, 200, 900, 5.0, ref=(28.0, 29.4))
+    return buf
+
+
+# ------------------------------------------------------------------ cuțitul pe tocător
+def board_hit(rng):
+    x = modal([185, 440, 960, 1850], [1, 0.6, 0.35, 0.18], [0.07, 0.05, 0.03, 0.02], 0.15, rng=rng,
+              attack=0.0004)
+    n = len(x)
+    x += hp(rng.standard_normal(n), 2000) * env_exp(n, 0.002) * 0.3
+    x += modal([4500], [0.06], [0.03], 0.15, rng=rng)  # o urmă metalică de lamă
+    return nrm(x)
+
+
+def chop(rng, crunch_len):
+    cr = grains(rng, crunch_len, 2600, 1500, 9500, 0.0002, 0.0012, env=lambda u: 1 - 0.6 * u)
+    bh = board_hit(rng)
+    k = ns(crunch_len * 0.85)
+    x = np.zeros(k + len(bh) + 10)
+    x[:len(cr)] += 0.6 * nrm(cr)
+    x[k:k + len(bh)] += bh
+    return x
+
+
+def knife_layer(rng):
+    buf = stereo(DUR)
+    # felii (rar), pauză (ceapa e întoarsă), apoi tocat mărunt (des)
+    for k in range(8):
+        add(buf, chop(rng, 0.05), 24.0 + 0.5 * k + rng.uniform(-0.02, 0.02), gain=rng.uniform(0.8, 1.0),
+            pan=PAN["masa"])
+    t = 29.5
+    for k in range(18):
+        add(buf, chop(rng, 0.03), t, gain=rng.uniform(0.6, 0.9), pan=PAN["masa"] + rng.uniform(-0.04, 0.04))
+        t += 0.27 + rng.uniform(-0.02, 0.02)
+    # lama adună ceapa pe tocător: două trageri
+    for t0 in (35.8, 36.45):
+        L = 0.45
+        m = ns(L)
+        sc = bp(rng.standard_normal(m), 700, 4500) * smooth_env(m, 0.05, 0.1) * 0.25
+        g = grains(rng, L, 700, 2000, 9000, 0.0002, 0.001)[:m]
+        add(buf, sc + 0.5 * g, t0, gain=0.7, pan=PAN["masa"] + 0.05)
+    ev("cuțitul: felii de ceapă", 24.0, 1500, 9000, 4.0)
+    ev("cuțitul: tocat mărunt (tocătorul)", 29.5, 150, 1000, 4.8)
+    return buf
+
+
+# ------------------------------------------------------------------ lingura de lemn în umplutură
+def spoon_tap(rng):
+    x = modal([1180, 2720, 4400], [1, 0.5, 0.3], [0.1, 0.06, 0.04], 0.2, rng=rng, attack=0.0004)
+    x += modal([320], [0.4], [0.03], 0.2, rng=rng)
+    return nrm(x)
+
+
+def spoon_layer(rng):
+    buf = stereo(DUR)
+    n = ns(SPOON_DUR)
+    tt = t_axis(n)
+    stir = 0.5 + 0.5 * np.sin(2 * np.pi * 1.15 * tt - np.pi / 2)
+    env = smooth_env(n, 0.3, 0.4)
+    squish = lp(rng.standard_normal(n), 900) * (0.3 + 0.7 * stir) * 0.5
+    squish += bp(rng.standard_normal(n), 300, 2000) * stir ** 2 * 0.25
+    sticky = grains(rng, SPOON_DUR, 60, 300, 2500, 0.001, 0.004)[:n] * (0.3 + stir)  # „lipicios”
+    rice = grains(rng, SPOON_DUR, 900, 2500, 9000, 0.0002, 0.0008)[:n] * stir * 0.6  # boabele de orez
+    scrape = np.zeros(n)
+    for c in np.arange(0.62, SPOON_DUR - 0.3, 1 / 1.15):
+        i0 = ns(c)
+        m = min(ns(0.25), n - i0)
+        scrape[i0:i0 + m] += bp(rng.standard_normal(m), 900, 3500) * np.hanning(m) * 0.12
+    x = (squish + 2.0 * sticky + rice + scrape) * env
+    add(buf, nrm(x), T_SPOON, gain=1.0, pan=PAN["castron"])
+    for t0, g in ((T_SPOON + SPOON_DUR + 0.4, 1.0), (T_SPOON + SPOON_DUR + 0.75, 0.8)):
+        add(buf, spoon_tap(rng) * 0.9, t0, gain=g, pan=PAN["castron"])
+    ev("lingura de lemn (amestecat)", T_SPOON, 300, 3000, SPOON_DUR)
+    ev("lingura bate de două ori în castron", T_SPOON + SPOON_DUR + 0.4, 1000, 3000, 0.5)
+    return buf
+
+
+# ------------------------------------------------------------------ frunzele de varză
+def leaf(rng):
+    cdur = rng.uniform(0.25, 0.42)
+    creak = stick_slip(rng, cdur, rng.uniform(160, 220), rng.uniform(420, 600),
+                       [(1400, 0.8), (2600, 0.6), (4100, 0.35)], jitter=0.35, broad=(1200, 8000))
+    snap_n = ns(0.03)
+    snap = bp(rng.standard_normal(snap_n), 1000, 9000) * env_exp(snap_n, 0.006)
+    snap += lp(rng.standard_normal(snap_n), 400) * env_exp(snap_n, 0.015) * 0.4
+    rust = grains(rng, 0.45, 520, 2000, 10000, 0.0002, 0.0012, env=lambda u: (1 - u) ** 1.5)
+    rust_soft = lp(rng.standard_normal(len(rust)), 5000) * np.exp(-np.arange(len(rust)) / ns(0.12)) * 0.08
+    flop_n = ns(0.12)
+    flop = lp(rng.standard_normal(flop_n), 500) * env_exp(flop_n, 0.04)
+    gr = grains(rng, 0.08, 300, 2000, 8000)
+    flop[:len(gr)] += gr[:flop_n] * 0.4
+    total = ns(cdur) + len(rust) + ns(0.3) + flop_n
+    x = np.zeros(total)
+    k = 0
+    x[:len(creak)] += nrm(creak) * 0.7
+    k = len(creak)
+    x[k:k + snap_n] += nrm(snap)
+    x[k:k + len(rust)] += nrm(rust + rust_soft) * 0.6
+    k2 = k + ns(0.55)
+    x[k2:k2 + flop_n] += nrm(flop) * 0.45
+    return x
+
+
+def leaves_layer(rng):
+    buf = stereo(DUR)
+    for t0 in LEAF_TIMES:
+        add(buf, leaf(rng), t0, gain=rng.uniform(0.85, 1.0), pan=PAN["varza"] + rng.uniform(-0.12, 0.12))
+        ev("frunză de varză desfăcută", t0, 1500, 9000, 1.0)
+    # între frunze: mâinile care întorc frunzele, foarte încet
+    for t0 in (52.6, 55.0, 57.5, 60.0, 62.2):
+        add(buf, grains(rng, 0.5, 150, 2000, 8000) * 0.12, t0, pan=0.05)
+    return buf
+
+
+# ------------------------------------------------------------------ oala de ceramică pe plită
+def pot_layer(rng):
+    buf = stereo(DUR)
+    L = 0.35
+    m = ns(L)
+    slide = bp(rng.standard_normal(m), 900, 4500) * smooth_env(m, 0.08, 0.05) * 0.18
+    slide += grains(rng, L, 900, 1500, 7000, 0.0002, 0.001)[:m] * 0.4
+    add(buf, slide, T_POT, pan=PAN["oala"])
+    clunk = modal([360, 905, 1690, 2620, 3850], [1, 0.7, 0.45, 0.3, 0.15], [0.22, 0.16, 0.12, 0.09, 0.06],
+                  0.6, rng=rng, attack=0.0005)
+    clunk += modal([150, 510], [0.6, 0.3], [0.12, 0.08], 0.6, rng=rng)  # plita de fontă
+    k = len(clunk)
+    clunk += lp(rng.standard_normal(k), 180) * env_exp(k, 0.05) * 0.8
+    clunk += hp(rng.standard_normal(k), 2500) * env_exp(k, 0.002) * 0.3
+    add(buf, nrm(clunk), T_POT + L, gain=1.0, pan=PAN["oala"])
+    ev("oala de ceramică pe plită", T_POT + L, 300, 2000, 0.4)
+    # capacul de ceramică: câteva clinchete care se liniștesc
+    t_lid = T_POT + 1.3
+    for k, (off, g) in enumerate([(0, 1.0), (0.085, 0.6), (0.15, 0.4), (0.2, 0.25), (0.235, 0.15)]):
+        b = rng.uniform(0.98, 1.02)
+        c = modal([2150 * b, 3350 * b, 5250 * b], [1, 0.6, 0.3], [0.18, 0.12, 0.07], 0.35, rng=rng,
+                  attack=0.0003)
+        add(buf, nrm(c) * g * 0.7, t_lid + off, pan=PAN["oala"])
+    ev("capacul oalei", t_lid, 2000, 6000, 0.35)
+    return buf
+
+
+# ------------------------------------------------------------------ clopotul de duminică, departe
+def church_bell(rng, hum=130.8):
+    ratios = [1.0, 2.0, 2.4, 3.0, 4.0, 5.0, 5.33, 8.0]   # hum, prima, terța mică, cvinta, nominala, ...
+    amps = [0.5, 0.7, 0.6, 0.25, 1.0, 0.35, 0.25, 0.15]
+    t60 = [9.0, 6.0, 5.0, 3.5, 4.0, 2.5, 2.0, 1.2]
+    x = modal([hum * r * rng.uniform(0.999, 1.001) for r in ratios], amps, t60, 7.0, rng=rng,
+              attack=0.002, beat_hz=0.8)
+    n = len(x)
+    x += hp(rng.standard_normal(n), 1500) * env_exp(n, 0.01) * 0.4
+    return nrm(x)
+
+
+def bell_layer(rng):
+    buf = stereo(DUR)
+    for k, t0 in enumerate(BELL_TIMES):
+        x = hp(lp(church_bell(rng), 2400, order=2), 110)
+        add(buf, x, t0 + rng.uniform(-0.03, 0.03), gain=rng.uniform(0.85, 1.0), pan=PAN["clopot"])
+    ev("clopotul, departe", BELL_TIMES[0], 490, 560, 1.5)
+    return buf
+
+
+# ------------------------------------------------------------------ cana pe masă
+def mug_layer(rng):
+    buf = stereo(DUR)
+    touch = modal([1720, 3950], [0.5, 0.3], [0.04, 0.03], 0.1, rng=rng)
+    add(buf, nrm(touch) * 0.2, T_MUG, pan=PAN["cana"])
+    x = modal([135, 320, 700], [1, 0.5, 0.25], [0.09, 0.06, 0.04], 0.5, rng=rng, attack=0.0005)  # masa de lemn
+    x += modal([1720, 3950, 6150], [0.5, 0.3, 0.15], [0.09, 0.05, 0.03], 0.5, rng=rng, attack=0.0003)
+    n = len(x)
+    tt = t_axis(n)
+    slosh = lp(rng.standard_normal(n), 1400) * (0.5 + 0.5 * np.sin(2 * np.pi * 7 * tt)) * np.exp(-tt / 0.06)
+    x += np.roll(slosh, ns(0.03)) * 0.25
+    add(buf, nrm(x), T_MUG + 0.05, gain=1.0, pan=PAN["cana"])
+    ev("cana pe masă", T_MUG + 0.05, 1500, 4500, 0.25)
+    return buf
+
+
+# ------------------------------------------------------------------ mix
+def render(seed=1907):
+    rng = rng_of(seed)
+    ir_room = make_ir(t60=0.45, length=0.8, predelay=0.004, seed=51, hf_ratio=0.6)
+    ir_far = make_ir(t60=2.6, predelay=0.05, seed=52, hf_ratio=0.35)
+    fire_open, fire_closed = fire_layer(rng)
+    layers = {  # nume: (semnal, LUFS țintă al evenimentelor, IR, wet, vârf maxim peste țintă în dB, eliberare limitator ms)
+        "camera": (room_layer(), -46.0, ir_room, 0.0, 12.0, 40.0),
+        "ceas": (clock_layer(rng), -36.0, ir_room, 0.25, 16.0, 12.0),
+        "usita": (door_layer(rng), -29.0, ir_room, 0.2, 16.0, 20.0),
+        "chibrit": (match_layer(rng), -30.0, ir_room, 0.15, 15.0, 20.0),
+        "foc_aprindere": (fire_open, -31.0, ir_room, 0.12, 16.0, 12.0),
+        "foc": (fire_closed, -33.0, ir_room, 0.12, 18.0, 12.0),
+        "apa": (pour_layer(rng), -27.5, ir_room, 0.15, 14.0, 30.0),
+        "fierbere": (simmer_layer(rng), -31.5, ir_room, 0.12, 16.0, 20.0),
+        "cutit": (knife_layer(rng), -27.0, ir_room, 0.12, 14.0, 12.0),
+        "lingura": (spoon_layer(rng), -28.0, ir_room, 0.12, 16.0, 20.0),
+        "varza": (leaves_layer(rng), -27.0, ir_room, 0.12, 12.0, 12.0),
+        "oala": (pot_layer(rng), -27.0, ir_room, 0.15, 14.0, 20.0),
+        "clopot": (bell_layer(rng), -33.0, ir_far, 0.6, 15.0, 40.0),
+        "cana": (mug_layer(rng), -28.0, ir_room, 0.15, 12.0, 12.0),
+    }
+    mix = stereo(DUR)
+    for name, (x, target, ir, wet, crest, rel) in layers.items():
+        # vârfurile foarte scurte (pocnete, lovituri) sunt îmblânzite strat cu strat, cu un limitator
+        # rapid, ca limitatorul final să nu „turtească” tot peisajul
+        x = match_lufs(hp(x, 40, order=4), target)  # fără infrasunete (nu se aud, dar ar ocupa vârful)
+        x = match_lufs(limiter(x, ceiling_db=target + crest, look_ms=1.5, release_ms=rel), target)
+        report(x, name)
+        mix += reverb(x, ir, wet=wet, dry=1.0)
+    mix = peaking(mix, 3500, -1.0, 0.8)
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "A19 Duminică, la plită – ASMR AI: o bucătărie transilvăneană duminică dimineața",
+                   "Sunete de bucătărie sintetizate procedural (Python/numpy), aproximări declarate, nu înregistrări; "
+                   "fără voce; -18 LUFS – ACTIV AI, calupul Meșteșuguri și gastronomie",
+                   target_lufs=TARGET_LUFS, fin=2.0, fout=6.0)
+    report(out, "A19 final")
+    with open(os.path.join(HERE, "A19_marcaje.json"), "w", encoding="utf-8") as fh:
+        json.dump({"durata_s": DUR, "loudness_tinta_lufs": TARGET_LUFS, "marcaje_s": MARKS, "evenimente": EVENTS},
+                  fh, ensure_ascii=False, indent=1)
+    print("marcaje:", json.dumps(MARKS, ensure_ascii=False))

@@ -1,0 +1,44 @@
+[
+ {
+  "cod": "I17",
+  "categorie": "Interactiv",
+  "titlu": "Joc AI: potrivește unealta cu meseria",
+  "fisiere": [
+   "07_interactiv/I17_unealta_si_meseria.html",
+   "07_interactiv/I17_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, ilustrații SVG",
+  "descriere": "Joc de potrivire în două runde: 12 unelte desenate (calapod, nicovală, suveică…) și 12 meserii atestate la Sibiu. Atingi sau tragi unealta peste meserie, apoi afli ce face unealta și un fapt despre breasla din Sibiu.",
+  "status": "realizat",
+  "nota": "Meseriile sunt doar cele atestate la Sibiu în fișa de fapte (cizmar, croitor, fierar, olar, dulgher, tăbăcar, aurar, bărbier, brutar, cositorar, țesător, măcelar), fără a fi prezentate ca membre ale listei din 1376. Ce face fiecare unealtă – informație generală verificată pe dexonline (DEX '09, MDA2) și en.wikipedia, cu citatele în 07_interactiv/_fapte_noi_I17_I19.md; sursa apare și pe ecran după fiecare pereche. Faptele despre Sibiu (an + sursă) vin din fișa de fapte; divergențele se arată (1367 tăbăcari/pielari; desființarea breslelor 1872 sau 1875). Pentru bărbieri fișa nu dă un an: cartea arată Strada Bărbierilor și anul desființării breslelor. Bastionul Soldisch nu e folosit (date divergente 1556 / 1622–1629). Uneltele sunt desenate schematic în cod SVG, nu după obiecte din muzee (mențiune vizibilă pe ecran). Scorul numără perechile găsite din prima; cronometrul e opțional (oprit implicit); „Joacă din nou” amestecă ordinea. Testat cu Playwright la 1920×1080 și 390×844 (atingere, tragere cu mouse-ul, ordine meserie–unealtă, potrivire greșită, ambele runde, scor final), fără erori în consolă."
+ },
+ {
+  "cod": "I19",
+  "categorie": "Interactiv",
+  "titlu": "Cărți de joc AI: „Meserii dispărute” — set de 8 cărți cu meserii neincluse în setul I04",
+  "fisiere": [
+   "07_interactiv/I19_meserii_disparute.html",
+   "07_interactiv/I19_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, ilustrații SVG",
+  "descriere": "Opt cărți de joc care se întorc, cu meserii vechi care nu mai există ca bresle la Sibiu: săbier, arcaș, arbaletrier, pintenar, scutar, cositorar, chimirar și piuar – fiecare cu ilustrație, puteri de joc inventate și un fapt adevărat.",
+  "status": "realizat",
+  "nota": "Continuă setul I04 (pielar, măcelar, brutar, aurar, croitor, bărbier) în același stil: cărți care se întorc, butoanele Amestecă, Întoarce toate, Începe din nou. Meseriile sunt luate din fișa de fapte (limbaromana.org; studiul ULBS al lui I. M. Țiplic despre breslele de armament). Precizare pe ecran: „Dispărute” = nu mai există ca bresle la Sibiu; unele meșteșuguri se mai practică azi. „Ce făcea” – dexonline (DEX '09, MDA2, DAR) și en.wikipedia; pentru arcaș, arbaletrier și scutar dicționarele dau alte sensuri (ostaș, cioban-șef, scutier), de aceea cartea spune „Aici: meșterul care făcea arcuri / arbalete / scuturi”, sensul din sursa ULBS; „chimirar” lipsește din dexonline, sensul e dedus din „chimir”. Faptele de pe cărți (1492 – turnul arcașilor; 25 de arbalete din secolul al XV-lea; scutarii și turnul lor; „gladiatores”; cositorarii și raportul 10 la 1 din 1568; piua cumpărată de postăvari în 1577) vin din fișă; data declinului arcășiei nu e folosită (divergență între fișă și textul englez ULBS). Puterile și valorile sunt inventate, declarate pe ecran. Ilustrații SVG originale, schematice. Detalii: 07_interactiv/_fapte_noi_I17_I19.md. Testat cu Playwright la 1920×1080 și 390×844 (cărți întoarse, Întoarce toate, amestecare, Începe din nou), fără erori în consolă."
+ },
+ {
+  "cod": "I18",
+  "categorie": "Interactiv",
+  "titlu": "Generator AI de rețete transilvănene „reinventate” — combină ingrediente locale",
+  "fisiere": [
+   "07_interactiv/I18_retete_reinventate.html",
+   "07_interactiv/I18_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, canvas",
+  "descriere": "Alegi 2–4 ingrediente din cămară, un stil și un moment, iar generatorul compune o fișă de rețetă imaginată: nume jucăuș, cantități, pași siguri, alergeni, un fapt verificat despre Sibiu și farfuria desenată în cod, descărcabilă ca PNG.",
+  "status": "realizat",
+  "nota": "Cămara are 18 ingrediente locale (telemea de Sibiu, urdă, brânză de burduf, brânză frământată, salam de Sibiu, varză, mălai, smântână, ouă, lapte pasteurizat, ceapă, mere, prune, nuci, mărar, pâine de casă, cartofi, ciuperci cumpărate). Rețetele vin din 25 de șabloane scrise cu AI; combinațiile, numele, cantitățile și timpii sunt imaginați și declarați pe ecran și pe fișă („combinație imaginată, nu rețetă testată”). Faptul din „Legătura cu Sibiul” e luat din fișa de fapte (IGP telemea 2019 și salam 2016, maturare minimum 60 de zile, Michael Fonn 1845, Drumul brânzei, balmoșul, sarmalele transilvănene, Regiune Gastronomică Europeană 2019, Turnul Sfatului, Podul Minciunilor, Țiglari, Dumbrava etc.), cu sursa afișată; mămăliga și bulzul – verificate pe en.wikipedia, în 07_interactiv/_fapte_noi_I18.md. Siguranță: fără alcool, lapte doar pasteurizat, ciuperci doar cumpărate, ouă gătite complet, aragaz/cuptor/blender cu un adult, alergeni listați automat (lapte, ou, gluten, nuci). Ilustrația e desenată procedural pe canvas, nu redă un preparat real. Testat cu Playwright la 1920×1080 și 390×844 (start, 3 combinații, „Altă variantă”, descărcare PNG verificată), fără erori în consolă; toate cele 206.400 de rețete posibile verificate automat, hunspell pe toate textele."
+ }
+]

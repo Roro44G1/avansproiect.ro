@@ -1,0 +1,606 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M22</title></head><body>
+<script src="lib.js"></script>
+<script>
+// M22 – Trailer AI pentru o piesă de teatru IMAGINARĂ despre Podul Minciunilor („Fontă și adevăr”).
+// Piesa, personajele, replicile și „premiera” sunt inventate și declarate ca atare în cadre.
+// Fapte despre pod (fișa de fapte ACTIV AI): terminat 1859; inaugurat 17 decembrie 1860; primul pod din fontă din România;
+// inscripțiile „1859” și „FRIEDRICHSHÜTTE”; leagă Orașul de Sus de Orașul de Jos (Piața Mică); legenda prăbușirii.
+// Podul, inscripțiile și orașul sunt desenate stilizat (nu reproduceri exacte).
+// Muzica: 96 BPM, 4/4 – o măsură = 2,5 s; tăieturile cad pe măsuri.
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const S = 2.4;                      // rezoluția straturilor pre-randate (pentru zoom)
+const L = '#F3EFE6';
+const IRON = '#2B3539', IRON_HI = '#61727A', IRON_DK = '#121A1E';
+const DECK = 440, GIRD = 474;       // nivelul pasarelei și marginea de jos a grinzii
+const AX0 = 540, AX1 = 1380, ASPR = 610, ACTRL = 366;
+
+function fade(t, t0, t1, fi = .3, fo = .3) { if (t < t0 || t > t1) return 0; return Math.min(smooth(t0, t0 + fi, t), 1 - smooth(t1 - fo, t1, t)); }
+function fitSize(str, weight, size, maxW, family = 'Inter') {
+  let s = size; ctx.font = `${weight} ${s}px ${family}`;
+  while (ctx.measureText(str).width > maxW && s > 14) { s -= 1; ctx.font = `${weight} ${s}px ${family}`; }
+  return s;
+}
+function archY(x) { const u = (x - AX0) / (AX1 - AX0); return (1 - u) * (1 - u) * ASPR + 2 * u * (1 - u) * ACTRL + u * u * ASPR; }
+function nz(x, s = 0) { return Math.sin(x * 1.7 + s) * .5 + Math.sin(x * 2.9 + s * 1.3) * .3 + Math.sin(x * 5.3 + s * 2.1) * .2; }
+
+function layer(w = W, h = H, sc = S) { const c = document.createElement('canvas'); c.width = w * sc; c.height = h * sc; const b = c.getContext('2d'); b.scale(sc, sc); return [c, b]; }
+
+// ---------------------------------------------------------------- lumea: podul noaptea (pre-randat)
+const [worldC, wb] = layer(), [railC, rb] = layer();
+const EYES_P = [];
+(function drawWorld() {
+  const b = wb;
+  const g = b.createLinearGradient(0, 0, 0, 720); g.addColorStop(0, '#050A14'); g.addColorStop(.55, '#122039'); g.addColorStop(1, '#2B3652');
+  b.fillStyle = g; b.fillRect(0, 0, W, H);
+  stars(b, W, H, .85, 31);
+  // luna
+  const mx = 1196, my = 178;
+  const hg = b.createRadialGradient(mx, my, 20, mx, my, 190); hg.addColorStop(0, 'rgba(243,239,230,.35)'); hg.addColorStop(1, 'rgba(243,239,230,0)');
+  b.fillStyle = hg; b.fillRect(mx - 200, my - 200, 400, 400);
+  b.fillStyle = '#EDE6D6'; b.beginPath(); b.arc(mx, my, 40, 0, 7); b.fill();
+  b.fillStyle = 'rgba(160,150,135,.35)'; for (const [dx, dy, r] of [[-12, -8, 9], [10, 6, 7], [-4, 16, 5], [14, -14, 4]]) { b.beginPath(); b.arc(mx + dx, my + dy, r, 0, 7); b.fill(); }
+  // Orașul de Sus, în spate (case cu „ochi”)
+  houses(b, { y0: 470, W: 1600, x0: 330, seed: 12, wallH: 120, walls: ['#C9B79A', '#B9A88F', '#A9B3A4', '#C4A893'], roofs: ['#7A3F2C', '#8A4A32', '#6E3A2A'], night: .7, tint: '#0B1322', tintAmt: .66, t: 0 });
+  // vederea pe sub pod: strada care continuă, case mai departe
+  b.save(); b.beginPath(); b.rect(500, GIRD - 4, 920, 360); b.clip();
+  const ug = b.createLinearGradient(0, GIRD, 0, 800); ug.addColorStop(0, '#0B1322'); ug.addColorStop(1, '#1A2438');
+  b.fillStyle = ug; b.fillRect(500, GIRD - 4, 920, 360);
+  houses(b, { y0: 780, W: 1450, x0: 470, seed: 5, wallH: 210, walls: ['#B9A88F', '#A9B3A4', '#C9B79A'], roofs: ['#6E3A2A', '#7A3F2C'], night: .45, tint: '#070D18', tintAmt: .82, t: 0 });
+  b.restore();
+  // strada din prim-plan (pavaj)
+  const sg = b.createLinearGradient(0, 780, 0, H); sg.addColorStop(0, '#2A2C33'); sg.addColorStop(1, '#14161B');
+  b.fillStyle = sg; b.fillRect(0, 780, W, H - 780);
+  const rr = rng(9);
+  for (let y = 786, row = 0; y < H; row++) {
+    const sh = 8 + row * 2.6, sw = 24 + row * 6;
+    for (let x = -rr() * sw; x < W; x += sw + 4) {
+      b.fillStyle = mix('#3A3C44', '#24262C', rr()); roundRect(b, x, y, sw, sh, Math.min(7, sh / 2)); b.fill();
+      b.fillStyle = 'rgba(255,200,120,.05)'; b.fillRect(x + 3, y + 1, sw - 6, 2);
+    }
+    y += sh + 4;
+  }
+  // clădirile laterale (pereți în care se sprijină podul)
+  for (const [x0, x1, seed] of [[-10, 528, 3], [1392, 1930, 4]]) {
+    const r = rng(seed);
+    const wg = b.createLinearGradient(x0, 0, x1, 0);
+    if (x0 < 0) { wg.addColorStop(0, '#1E1C25'); wg.addColorStop(1, '#3A3542'); } else { wg.addColorStop(0, '#3A3542'); wg.addColorStop(1, '#1B1922'); }
+    b.fillStyle = wg; b.fillRect(x0, 110, x1 - x0, H);
+    b.fillStyle = 'rgba(0,0,0,.25)'; b.fillRect(x0, 776, x1 - x0, 10);
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) {
+      const wx = x0 + 80 + i * 150, wy = 170 + j * 150; if (wy > 640) continue;
+      const lit = r() < .4;
+      b.fillStyle = lit ? '#E9B866' : '#151820'; b.fillRect(wx, wy, 56, 84);
+      b.fillStyle = 'rgba(0,0,0,.35)'; b.fillRect(wx + 26, wy, 4, 84); b.fillRect(wx, wy + 38, 56, 4);
+      b.fillStyle = 'rgba(255,255,255,.07)'; b.fillRect(wx - 6, wy + 84, 68, 6);
+    }
+    // ușă boltită la parter
+    const dx = x0 < 0 ? 210 : 1580;
+    b.fillStyle = '#100F14'; b.beginPath(); b.moveTo(dx, 780); b.lineTo(dx, 690); b.arc(dx + 55, 690, 55, Math.PI, 0); b.lineTo(dx + 110, 780); b.closePath(); b.fill();
+    // console de piatră sub arc
+    const cx = x0 < 0 ? 500 : 1380;
+    b.fillStyle = '#5A5260'; b.fillRect(cx, 592, 40, 52); b.fillStyle = 'rgba(0,0,0,.3)'; b.fillRect(cx, 636, 40, 8);
+  }
+  // ---- podul din fontă (stilizat)
+  // arcul
+  b.beginPath();
+  for (let x = AX0; x <= AX1; x += 4) b.lineTo(x, archY(x) - 14);
+  for (let x = AX1; x >= AX0; x -= 4) b.lineTo(x, archY(x) + 9);
+  b.closePath(); b.fillStyle = IRON; b.fill();
+  b.strokeStyle = rgba(IRON_HI, .9); b.lineWidth = 2.5; b.beginPath(); for (let x = AX0; x <= AX1; x += 4) b.lineTo(x, archY(x) - 14); b.stroke();
+  b.strokeStyle = IRON_DK; b.lineWidth = 2; b.beginPath(); for (let x = AX0; x <= AX1; x += 4) b.lineTo(x, archY(x) + 9); b.stroke();
+  // rozetele din timpane (de la capete spre mijloc, simetric)
+  const ring = (x, y, r) => {
+    b.strokeStyle = IRON; b.lineWidth = Math.max(3, r * .22); b.beginPath(); b.arc(x, y, r, 0, 7); b.stroke();
+    b.strokeStyle = rgba(IRON_HI, .7); b.lineWidth = 1.4; b.beginPath(); b.arc(x, y, r + b.lineWidth, Math.PI * 1.05, Math.PI * 1.7); b.stroke();
+    b.strokeStyle = IRON; b.lineWidth = Math.max(2, r * .1); b.beginPath(); b.arc(x, y, r * .45, 0, 7); b.stroke();
+    for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2 + Math.PI / 4; b.beginPath(); b.moveTo(x + Math.cos(a) * r * .45, y + Math.sin(a) * r * .45); b.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); b.stroke(); }
+  };
+  const side = [];
+  let x = AX0 + 6;
+  for (let k = 0; k < 12; k++) {
+    let r = (archY(x) - 14 - GIRD) / 2 - 3;
+    let cx = x + r;
+    r = (archY(cx) - 14 - GIRD) / 2 - 3;
+    if (r < 8 || cx > 900) break;
+    side.push([cx, GIRD + (archY(cx) - 14 - GIRD) / 2, r]);
+    x = cx + r + 12;
+  }
+  for (const [cx, cy, r] of side) {
+    ring(cx, cy, r); ring(AX0 + AX1 - cx, cy, r);
+    const xm = AX0 + AX1 - cx;
+    b.fillStyle = IRON;
+    b.fillRect(cx + r + 2, GIRD, 7, archY(cx + r + 5) - 12 - GIRD);
+    b.fillRect(xm - r - 9, GIRD, 7, archY(xm - r - 5) - 12 - GIRD);
+  }
+  // mijlocul (unde timpanul e îngust): bare verticale scurte
+  const xl = side.length ? side[side.length - 1][0] + side[side.length - 1][2] + 22 : 900;
+  for (let xx = xl; xx <= AX0 + AX1 - xl; xx += 18) { const hh = archY(xx) - 12 - GIRD; if (hh > 2) { b.fillStyle = IRON; b.fillRect(xx - 2, GIRD, 4, hh); } }
+  EYES_P.push({ x: side[0][0], y: side[0][1], r: side[0][2] }, { x: AX0 + AX1 - side[0][0], y: side[0][1], r: side[0][2] });
+  // grinda pasarelei
+  b.fillStyle = IRON; b.fillRect(512, DECK, 896, GIRD - DECK);
+  b.fillStyle = rgba(IRON_HI, .8); b.fillRect(512, DECK, 896, 3);
+  b.fillStyle = IRON_DK; b.fillRect(512, GIRD - 4, 896, 4);
+  b.fillStyle = 'rgba(0,0,0,.35)'; b.fillRect(512, DECK + 9, 896, 2); b.fillRect(512, GIRD - 11, 896, 2);
+  for (let xx = 530; xx < 1400; xx += 28) { b.fillStyle = IRON_DK; b.beginPath(); b.arc(xx, DECK + 18, 5, 0, 7); b.fill(); b.fillStyle = rgba(IRON_HI, .6); b.beginPath(); b.arc(xx - 1, DECK + 17, 2, 0, 7); b.fill(); }
+
+  // ---- balustrada și stâlpii felinarelor (strat separat, desenat peste personaje)
+  const c = rb;
+  c.fillStyle = IRON; c.fillRect(508, 366, 904, 9); c.fillStyle = rgba(IRON_HI, .9); c.fillRect(508, 366, 904, 2);
+  c.fillStyle = IRON; c.fillRect(516, 430, 888, 6);
+  for (let xx = 520; xx < 1400; xx += 40) {
+    c.fillStyle = IRON; c.fillRect(xx - 2, 372, 4, 60);
+    c.strokeStyle = IRON; c.lineWidth = 3.2; c.beginPath(); c.arc(xx + 20, 401, 13, 0, 7); c.stroke();
+    c.beginPath(); c.moveTo(xx + 20, 375); c.lineTo(xx + 20, 388); c.moveTo(xx + 20, 414); c.lineTo(xx + 20, 430); c.stroke();
+    c.strokeStyle = rgba(IRON_HI, .55); c.lineWidth = 1.2; c.beginPath(); c.arc(xx + 20, 401, 14.5, Math.PI * 1.1, Math.PI * 1.6); c.stroke();
+  }
+  for (const xx of [520, 740, 960, 1180, 1400]) {
+    c.fillStyle = IRON; c.fillRect(xx - 6, 360, 12, 80);
+    c.beginPath(); c.arc(xx, 355, 8, 0, 7); c.fill(); c.fillStyle = rgba(IRON_HI, .7); c.beginPath(); c.arc(xx - 2, 353, 3, 0, 7); c.fill();
+  }
+  // felinarele
+  for (const lx of [548, 1372]) {
+    c.fillStyle = IRON; c.fillRect(lx - 5, 300, 10, 140);
+    c.beginPath(); c.moveTo(lx - 18, 296); c.lineTo(lx + 18, 296); c.lineTo(lx + 12, 262); c.lineTo(lx - 12, 262); c.closePath(); c.fill();
+    c.fillStyle = '#FFD98A'; c.fillRect(lx - 10, 266, 20, 26);
+    c.fillStyle = IRON; c.fillRect(lx - 1.5, 266, 3, 26);
+    c.beginPath(); c.moveTo(lx - 16, 264); c.lineTo(lx, 246); c.lineTo(lx + 16, 264); c.closePath(); c.fill();
+    c.beginPath(); c.arc(lx, 243, 4, 0, 7); c.fill();
+  }
+})();
+
+// ---------------------------------------------------------------- inscripțiile (prim-plan, pre-randat)
+const [plateC, pb] = layer(W + 200, H, 1.4);
+function drawPlates() {
+  const b = pb, PW = W + 200;
+  const g = b.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0A0F18'); g.addColorStop(1, '#141B26'); b.fillStyle = g; b.fillRect(0, 0, PW, H);
+  // bokeh: lumini de felinar în fundal
+  const r = rng(44);
+  for (let i = 0; i < 26; i++) { const x = r() * PW, y = r() * H, rad = 20 + r() * 60; const bg = b.createRadialGradient(x, y, 0, x, y, rad); bg.addColorStop(0, `rgba(255,200,120,${.10 + r() * .12})`); bg.addColorStop(1, 'rgba(255,200,120,0)'); b.fillStyle = bg; b.fillRect(x - rad, y - rad, rad * 2, rad * 2); }
+  // grinda de fontă
+  const gg = b.createLinearGradient(0, 300, 0, 790); gg.addColorStop(0, '#3A464B'); gg.addColorStop(.5, '#2B3539'); gg.addColorStop(1, '#1C2428');
+  b.fillStyle = gg; b.fillRect(0, 300, PW, 490);
+  // textură (granulație de turnare)
+  for (let i = 0; i < 9000; i++) { b.fillStyle = r() < .5 ? 'rgba(0,0,0,.10)' : 'rgba(255,255,255,.035)'; b.fillRect(r() * PW, 300 + r() * 490, 1 + r() * 2, 1 + r() * 2); }
+  for (const y of [300, 772]) { b.fillStyle = '#4A585E'; b.fillRect(0, y, PW, 18); b.fillStyle = 'rgba(0,0,0,.4)'; b.fillRect(0, y + 16, PW, 3); }
+  for (let x = 30; x < PW; x += 64) for (const y of [338, 750]) { b.fillStyle = '#1A2125'; b.beginPath(); b.arc(x, y, 9, 0, 7); b.fill(); b.fillStyle = 'rgba(150,170,175,.45)'; b.beginPath(); b.arc(x - 2, y - 2, 4, 0, 7); b.fill(); }
+  const raised = (str, x, y, size, align = 'center') => {
+    b.font = `700 ${size}px "Noto Serif"`; b.textAlign = align; b.textBaseline = 'middle';
+    b.fillStyle = '#0B1013'; b.fillText(str, x + 4, y + 5);
+    b.fillStyle = '#8A9A9F'; b.fillText(str, x - 2, y - 2);
+    b.fillStyle = '#46545A'; b.fillText(str, x, y);
+  };
+  const plaque = (path, inset) => {
+    b.fillStyle = '#0B1013'; b.save(); b.translate(5, 6); path(0); b.fill(); b.restore();
+    b.fillStyle = '#56666C'; path(0); b.fill();
+    b.fillStyle = '#2F3A3F'; path(inset); b.fill();
+    b.strokeStyle = 'rgba(160,180,185,.35)'; b.lineWidth = 2; path(inset); b.stroke();
+  };
+  // medalion cu „1859”
+  plaque(k => { b.beginPath(); b.ellipse(560, 545, 250 - k, 168 - k, 0, 0, 7); }, 18);
+  raised('1859', 560, 556, 170);
+  // bandă cu „FRIEDRICHSHÜTTE”
+  plaque(k => { roundRect(b, 900 + k, 462 + k, 900 - 2 * k, 166 - 2 * k, 26 - k * .5); }, 16);
+  let s = 84; b.font = `700 ${s}px "Noto Serif"`; while (b.measureText('FRIEDRICHSHÜTTE').width > 800) { s -= 2; b.font = `700 ${s}px "Noto Serif"`; }
+  raised('FRIEDRICHSHÜTTE', 1350, 552, s);
+}
+
+// ---------------------------------------------------------------- textura de film (granulație)
+const grainC = document.createElement('canvas'); grainC.width = grainC.height = 256;
+(function () { const g = grainC.getContext('2d'), im = g.createImageData(256, 256), r = rng(123); for (let i = 0; i < im.data.length; i += 4) { const v = r() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); })();
+const grainP = ctx.createPattern(grainC, 'repeat');
+function grain(t, a = .045) {
+  ctx.save(); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'overlay';
+  const k = Math.floor(t * 25); ctx.translate(-((k * 97) % 256), -((k * 61) % 256)); ctx.fillStyle = grainP; ctx.fillRect(0, 0, W + 256, H + 256); ctx.restore();
+}
+function vignette(a = .55) {
+  const vg = ctx.createRadialGradient(W / 2, H / 2, 380, W / 2, H / 2, 1150); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, `rgba(0,0,0,${a})`);
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+}
+
+// ---------------------------------------------------------------- personaje fictive (siluete fără fețe)
+const RIM = 'rgba(242,190,110,.9)', SIL = '#0A0E15', FIG = 1.3;
+// siluetă cu lumină de contur: forma desenată o dată în culoarea conturului (decalată spre felinar), apoi în negru
+function figure(x, f, rimDx, parts, extras) {
+  ctx.save(); ctx.translate(x, f); ctx.scale(FIG, FIG); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.save(); ctx.translate(rimDx, -1.1); parts(RIM); ctx.restore();
+  parts(SIL);
+  if (extras) extras();
+  ctx.restore();
+}
+function ucenica(x, f, t, o = {}) {
+  const bob = Math.sin(t * 2.2) * .6;
+  figure(x, f, -1.5, c => {
+    ctx.fillStyle = c; ctx.strokeStyle = c;
+    ctx.fillRect(-7, -34, 5, 34); ctx.fillRect(2, -34, 5, 34);
+    ctx.beginPath(); ctx.moveTo(-9, -80); ctx.lineTo(9, -80); ctx.quadraticCurveTo(14, -55, 25, -28); ctx.quadraticCurveTo(0, -22, -25, -28); ctx.quadraticCurveTo(-14, -55, -9, -80); ctx.fill();
+    ctx.fillRect(-3, -88 + bob, 7, 10);
+    ctx.beginPath(); ctx.arc(1.5, -93 + bob, 11, 0, 7); ctx.fill();
+    ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-7, -96 + bob); ctx.quadraticCurveTo(-17, -84, -13, -66); ctx.stroke();
+    ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(-4, -76); ctx.lineTo(-13, -60); ctx.lineTo(-18, -56); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(5, -76); ctx.lineTo(11, -58); ctx.stroke();
+  }, () => {
+    // fundița și scrisoarea ascunsă la spate (secretul)
+    ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.moveTo(-13, -66); ctx.lineTo(-20, -70); ctx.lineTo(-20, -61); ctx.closePath(); ctx.moveTo(-13, -66); ctx.lineTo(-6, -70); ctx.lineTo(-6, -61); ctx.closePath(); ctx.fill();
+    ctx.save(); ctx.translate(-22, -58); ctx.rotate(-.35);
+    if (o.glow) { const gg = ctx.createRadialGradient(0, 0, 0, 0, 0, 26); gg.addColorStop(0, `rgba(255,214,140,${.55 * o.glow})`); gg.addColorStop(1, 'rgba(255,214,140,0)'); ctx.fillStyle = gg; ctx.fillRect(-28, -28, 56, 56); }
+    ctx.fillStyle = '#F1E6CF'; ctx.fillRect(-8, -5, 16, 11); ctx.strokeStyle = 'rgba(120,90,60,.8)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(-8, -5); ctx.lineTo(0, 1); ctx.lineTo(8, -5); ctx.stroke();
+    ctx.fillStyle = '#B9583A'; ctx.beginPath(); ctx.arc(0, 1.5, 2, 0, 7); ctx.fill();
+    ctx.restore();
+  });
+}
+function umbrella(cx, cy, R, spin, col) {
+  ctx.save();
+  ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .72, 0, Math.PI, Math.PI * 2); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .12, 0, 0, Math.PI); ctx.fill();
+  ctx.strokeStyle = 'rgba(243,239,230,.55)'; ctx.lineWidth = 1.2;
+  for (let k = 0; k < 8; k++) {
+    const a = k * Math.PI / 4 + spin; if (Math.sin(a) < 0) continue;
+    const rx = cx + R * Math.cos(a);
+    ctx.beginPath(); ctx.moveTo(cx, cy - R * .72); ctx.quadraticCurveTo(cx + R * Math.cos(a) * .92, cy - R * .5, rx, cy + R * .1 * Math.sin(a)); ctx.stroke();
+  }
+  ctx.strokeStyle = RIM; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .72, 0, Math.PI * 1.45, Math.PI * 1.95); ctx.stroke();
+  ctx.fillStyle = '#20242C'; ctx.beginPath(); ctx.arc(cx, cy - R * .74, 2.5, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function negustor(x, f, t, o = {}) {
+  // mănunchiul de umbrele închise, în spate
+  ctx.save(); ctx.translate(x, f); ctx.scale(FIG, FIG); ctx.lineCap = 'round';
+  ['#E2A62B', '#0E7C86', '#B9583A', '#6E56CF'].forEach((c, k) => { ctx.strokeStyle = c; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(4 + k * 3, -30); ctx.lineTo(22 + k * 5, -120 - k * 4); ctx.stroke(); ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(22 + k * 5, -120 - k * 4); ctx.lineTo(24 + k * 5, -129 - k * 4); ctx.lineTo(19 + k * 5, -119 - k * 4); ctx.fill(); });
+  ctx.restore();
+  figure(x, f, 1.5, c => {
+    ctx.fillStyle = c; ctx.strokeStyle = c;
+    ctx.fillRect(-8, -40, 6, 40); ctx.fillRect(2, -40, 6, 40);
+    ctx.beginPath(); ctx.moveTo(-13, -104); ctx.lineTo(13, -104); ctx.lineTo(21, -34); ctx.lineTo(-23, -34); ctx.closePath(); ctx.fill();
+    ctx.fillRect(-3.5, -110, 7, 8);
+    ctx.beginPath(); ctx.arc(0, -117, 10.5, 0, 7); ctx.fill();
+    ctx.fillRect(-9, -150, 18, 28);
+    ctx.beginPath(); ctx.ellipse(0, -122, 18, 3.6, 0, 0, 7); ctx.fill();
+    ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(-9, -99); ctx.lineTo(-22, -88); ctx.lineTo(-19, -110); ctx.stroke();
+  }, () => {
+    ctx.fillStyle = PAL.tigla; ctx.fillRect(-9, -128, 18, 4);
+    ctx.strokeStyle = '#4A3A2C'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(-19, -104); ctx.lineTo(-13, -172); ctx.stroke();
+    ctx.beginPath(); ctx.arc(-22.5, -104, 3.5, 0, Math.PI); ctx.stroke();
+    umbrella(-13, -170, 44, (o.spin || 0) + t * .4, '#4A3A8C');
+  });
+}
+
+// ---------------------------------------------------------------- cadrul cu podul (cameră + elemente animate)
+function flick(t, s) { return .82 + .18 * (0.5 + 0.5 * nz(t * 3.1, s)); }
+function shot(t, cam, o = {}) {
+  const z = cam.z, sh = o.shake || [0, 0];
+  const x0 = cam.x - W / (2 * z), y0 = cam.y - H / (2 * z);
+  ctx.save();
+  if (o.alpha != null) ctx.globalAlpha = o.alpha;
+  ctx.drawImage(worldC, x0 * S, y0 * S, W / z * S, H / z * S, sh[0], sh[1], W, H);
+  ctx.setTransform(z, 0, 0, z, -x0 * z + sh[0], -y0 * z + sh[1]);
+  // ochii podului (rozetele de la capete)
+  if (o.eyes) {
+    for (const [i, e] of EYES_P.entries()) {
+      ctx.save(); ctx.beginPath(); ctx.arc(e.x, e.y, e.r - 3, 0, 7); ctx.clip();
+      const gg = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r); gg.addColorStop(0, `rgba(255,220,140,${o.eyes})`); gg.addColorStop(1, `rgba(226,166,43,${o.eyes * .6})`);
+      ctx.fillStyle = gg; ctx.fillRect(e.x - e.r, e.y - e.r, e.r * 2, e.r * 2);
+      const look = Math.sin(t * 1.3) * e.r * .25;
+      ctx.fillStyle = `rgba(15,23,32,${o.eyes})`; ctx.beginPath(); ctx.arc(e.x + look + (i ? -e.r * .2 : e.r * .2), e.y + 2, e.r * .38, 0, 7); ctx.fill();
+      const bl = o.blink || 0; if (bl > 0) { ctx.fillStyle = IRON; ctx.fillRect(e.x - e.r, e.y - e.r, e.r * 2, e.r * 2 * bl); }
+      ctx.restore();
+    }
+  }
+  if (o.uc) ucenica(o.uc, DECK, t, { glow: o.ucGlow || 0 });
+  if (o.ng) negustor(o.ng, DECK, t, { spin: o.spin || 0 });
+  ctx.restore();
+  ctx.save(); if (o.alpha != null) ctx.globalAlpha = o.alpha;
+  ctx.drawImage(railC, x0 * S, y0 * S, W / z * S, H / z * S, sh[0], sh[1], W, H);
+  ctx.setTransform(z, 0, 0, z, -x0 * z + sh[0], -y0 * z + sh[1]);
+  // lumina felinarelor
+  ctx.globalCompositeOperation = 'lighter';
+  for (const [k, lx] of [548, 1372].entries()) {
+    const f = (o.flicker ? o.flicker(t, k) : flick(t, k)) * (o.alpha == null ? 1 : o.alpha);
+    const gg = ctx.createRadialGradient(lx, 279, 4, lx, 279, 300); gg.addColorStop(0, `rgba(255,200,110,${.42 * f})`); gg.addColorStop(.25, `rgba(255,170,80,${.12 * f})`); gg.addColorStop(1, 'rgba(255,170,80,0)');
+    ctx.fillStyle = gg; ctx.fillRect(lx - 300, -21, 600, 600);
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  // praf care cade (după „prăbușire”)
+  if (o.dust != null && o.dust >= 0) {
+    const r = rng(77);
+    for (let i = 0; i < 140; i++) {
+      const px = 520 + r() * 880, v = 30 + r() * 80, d = r() * .5, sz = 1 + r() * 2.6;
+      const tau = o.dust - d; if (tau < 0) continue;
+      const py = GIRD + v * tau + 120 * tau * tau; if (py > 1000) continue;
+      ctx.fillStyle = `rgba(200,190,170,${clamp(1 - tau / 2.2) * .8})`; ctx.fillRect(px + Math.sin(tau * 3 + i) * 4, py, sz, sz);
+    }
+  }
+  ctx.restore();
+  // ceață joasă
+  if (o.mist) {
+    ctx.save(); ctx.globalAlpha = Math.min(1, o.mist);
+    for (let k = 0; k < 4; k++) {
+      const mx = ((t * 22 + k * 520) % 2600) - 340, my = 840 + k * 50;
+      const mg = ctx.createRadialGradient(mx, my, 10, mx, my, 520); mg.addColorStop(0, 'rgba(170,185,205,.07)'); mg.addColorStop(1, 'rgba(170,185,205,0)');
+      ctx.fillStyle = mg; ctx.fillRect(mx - 520, my - 520, 1040, 1040);
+    }
+    ctx.restore();
+  }
+}
+function shakeAt(t, t0, amp, dur = 1.6) {
+  const u = t - t0; if (u < 0 || u > dur) return [0, 0];
+  const a = amp * Math.exp(-u * 3.2);
+  return [a * Math.sin(u * 71), a * Math.cos(u * 53)];
+}
+
+// ---------------------------------------------------------------- cortina
+function curtain(open, spot = 1) {
+  const top = 110, bot = 1020, half = W / 2;
+  const wNow = half * (1 - open);
+  if (wNow > 1) for (const sd of [-1, 1]) {
+    const xa = sd < 0 ? 0 : W - wNow, N = 16;
+    for (let i = 0; i < N; i++) {
+      const u0 = i / N, u1 = (i + 1) / N, sx0 = xa + u0 * wNow, sx1 = xa + u1 * wNow + .8;
+      const lift = open * 90 * (sd < 0 ? u0 : 1 - u0);
+      const g = ctx.createLinearGradient(sx0, 0, sx1, 0);
+      const hi = .55 + .45 * Math.sin(i * 1.9 + 1);
+      g.addColorStop(0, '#2A040B'); g.addColorStop(.5, mix('#7E1422', '#B52234', hi)); g.addColorStop(1, '#2A040B');
+      ctx.fillStyle = g; ctx.fillRect(sx0, top, sx1 - sx0, bot - top - lift);
+      ctx.fillStyle = PAL.ocru; ctx.fillRect(sx0, bot - lift - 10, sx1 - sx0, 5);
+    }
+  }
+  // draperia de sus (fixă)
+  ctx.fillStyle = '#5E0E19'; ctx.fillRect(0, top, W, 64);
+  ctx.fillStyle = '#7E1422';
+  for (let x = 0; x < W; x += 120) { ctx.beginPath(); ctx.moveTo(x, top + 60); ctx.quadraticCurveTo(x + 60, top + 118, x + 120, top + 60); ctx.closePath(); ctx.fill(); }
+  ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 3; ctx.beginPath(); for (let x = 0; x < W; x += 120) { ctx.moveTo(x, top + 60); ctx.quadraticCurveTo(x + 60, top + 118, x + 120, top + 60); } ctx.stroke();
+  ctx.fillStyle = PAL.ocru; ctx.fillRect(0, top + 56, W, 4);
+  // reflector
+  if (wNow > 1 && spot > 0) {
+    const sg = ctx.createRadialGradient(W / 2, 560, 60, W / 2, 560, 820); sg.addColorStop(0, `rgba(255,230,180,${.18 * spot})`); sg.addColorStop(.5, 'rgba(0,0,0,0)'); sg.addColorStop(1, `rgba(0,0,0,${.6 * spot})`);
+    ctx.fillStyle = sg; ctx.fillRect(0, top, W, bot - top);
+  }
+  // scena (rampa cu lumini)
+  ctx.fillStyle = '#1B120E'; ctx.fillRect(0, 990, W, 30);
+  for (let x = 60; x < W; x += 120) { const lg = ctx.createRadialGradient(x, 992, 2, x, 992, 70); lg.addColorStop(0, 'rgba(255,214,140,.5)'); lg.addColorStop(1, 'rgba(255,214,140,0)'); ctx.fillStyle = lg; ctx.fillRect(x - 70, 920, 140, 100); }
+}
+
+// ---------------------------------------------------------------- ochii Sibiului (prim-plan cu acoperișuri)
+// acoperișuri lungi, cu streașina spre stradă și rânduri de „ochi” (lucarne) – stilizat
+const ROOFS = [
+  { x0: -60, x1: 700, eave: 690, ridge: 250, wall: '#B6A58C', seed: 1 },
+  { x0: 640, x1: 1320, eave: 650, ridge: 190, wall: '#A9B3A4', seed: 2 },
+  { x0: 1260, x1: 1990, eave: 700, ridge: 280, wall: '#C4A893', seed: 3 },
+];
+const EYES2 = [];
+ROOFS.forEach(r => {
+  const rows = [.30, .62], w = r.x1 - r.x0;
+  rows.forEach((v, j) => {
+    const y = r.ridge + (r.eave - r.ridge) * v, inset = (1 - v) * 150 + 110, n = j ? 3 : 2;
+    for (let k = 0; k < n; k++) EYES2.push({ x: r.x0 + inset + (w - 2 * inset) * (n === 1 ? .5 : k / (n - 1)), y, w: j ? 100 : 82 });
+  });
+});
+EYES2.sort((a, b) => a.x - b.x).forEach((e, i) => { e.t0 = 45.15 + ((i * 7) % EYES2.length) * .085; });
+function eyesScene(t) {
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#050A14'); g.addColorStop(1, '#1D2A44'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  stars(ctx, W, H, .7, 8);
+  const push = 1 + (t - 45) * .02;
+  ctx.save(); ctx.translate(W / 2, H); ctx.scale(push, push); ctx.translate(-W / 2, -H);
+  for (const r of ROOFS) {
+    const rr = rng(r.seed);
+    // zidul cu ferestre
+    ctx.fillStyle = mix(r.wall, '#0B1322', .62); ctx.fillRect(r.x0 + 20, r.eave, r.x1 - r.x0 - 40, 420);
+    for (let x = r.x0 + 80; x < r.x1 - 90; x += 120) { const lit = rr() < .45; ctx.fillStyle = lit ? '#E9B866' : '#121620'; ctx.fillRect(x, r.eave + 60, 46, 70); }
+    // acoperișul (în patru ape, văzut din față)
+    ctx.fillStyle = '#4E2C22'; ctx.beginPath(); ctx.moveTo(r.x0, r.eave); ctx.lineTo(r.x0 + 180, r.ridge); ctx.lineTo(r.x1 - 180, r.ridge); ctx.lineTo(r.x1, r.eave); ctx.closePath(); ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.strokeStyle = 'rgba(0,0,0,.28)'; ctx.lineWidth = 2;
+    for (let y = r.ridge + 18; y < r.eave; y += 20) { ctx.beginPath(); ctx.moveTo(r.x0, y); ctx.lineTo(r.x1, y); ctx.stroke(); }
+    const sg = ctx.createLinearGradient(0, r.ridge, 0, r.eave); sg.addColorStop(0, 'rgba(255,255,255,.06)'); sg.addColorStop(1, 'rgba(0,0,0,.25)'); ctx.fillStyle = sg; ctx.fillRect(r.x0, r.ridge, r.x1 - r.x0, r.eave - r.ridge);
+    ctx.restore();
+    ctx.fillStyle = '#2E1A14'; ctx.fillRect(r.x0 - 4, r.eave - 4, r.x1 - r.x0 + 8, 12);
+    ctx.fillStyle = '#3A2119'; ctx.fillRect(r.x0 + 176, r.ridge - 6, r.x1 - r.x0 - 352, 8);
+  }
+  for (const e of EYES2) {
+    const op = smooth(e.t0, e.t0 + .3, t);
+    eye(ctx, e.x, e.y, e.w, '#6A3C2E', { open: Math.max(.03, op), glow: op });
+  }
+  ctx.restore();
+}
+
+// ---------------------------------------------------------------- texte
+function inter(str, t, t0, t1, o = {}) {
+  const a = fade(t, t0, t1, o.fi || .25, o.fo || .25); if (a <= 0) return;
+  const fam = o.family || 'Noto Serif', wt = o.weight || 700;
+  const size = fitSize(str, wt, o.size || 64, o.maxW || 1700, fam);
+  const sc = 1 + (1 - easeOut(inv(t0, t0 + .9, t))) * .05;
+  if (o.scrim) {
+    const sy = o.scrimY || ((o.y || 560) - size * .35), sg = ctx.createRadialGradient(W / 2, sy, 40, W / 2, sy, 900);
+    sg.addColorStop(0, `rgba(0,0,0,${.6 * a})`); sg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.save(); ctx.translate(W / 2, sy); ctx.scale(1, o.scrimH || .32); ctx.translate(-W / 2, -sy); ctx.fillStyle = sg; ctx.fillRect(0, sy - 900, W, 1800); ctx.restore();
+  }
+  ctx.save(); ctx.translate(o.x || W / 2, o.y || 560); ctx.scale(sc, sc);
+  text(ctx, str, 0, 0, { family: fam, weight: wt, size, align: 'center', alpha: a, color: o.color || L, shadow: 22 });
+  ctx.restore();
+}
+function lowerBand(a = 1) {
+  const g = ctx.createLinearGradient(0, 760, 0, 1020); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${.78 * a})`);
+  ctx.fillStyle = g; ctx.fillRect(0, 760, W, 260);
+}
+function pill(str, x, y, o = {}) {
+  ctx.save(); ctx.font = `${o.weight || 600} ${o.size || 24}px Inter`;
+  const w = ctx.measureText(str).width + 40, xx = o.align === 'right' ? x - w : (o.align === 'center' ? x - w / 2 : x), h = (o.size || 24) + 22;
+  ctx.globalAlpha = o.alpha == null ? 1 : o.alpha; ctx.fillStyle = o.bg || 'rgba(15,23,32,.85)'; roundRect(ctx, xx, y, w, h, h / 2); ctx.fill(); ctx.restore();
+  text(ctx, str, xx + 20, y + (o.size || 24) + 4, { size: o.size || 24, weight: o.weight || 600, color: o.color || L, alpha: o.alpha });
+  return w;
+}
+function nameCard(role, sub, x, y, a, align = 'left') {
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = PAL.ocru; ctx.fillRect(align === 'left' ? x : x - 6, y - 92, 6, 120); ctx.restore();
+  const tx = align === 'left' ? x + 28 : x - 28;
+  serif(ctx, role, tx, y - 30, { size: fitSize(role, 700, 64, 760, 'Noto Serif'), alpha: a, align, shadow: 18 });
+  pill(sub, tx, y + 2, { size: 22, alpha: a, bg: PAL.ocru, color: PAL.night, weight: 700, align });
+}
+function replica(str, t, t0, t1) {
+  const a = fade(t, t0, t1, .3, .3); if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a * .9; ctx.fillStyle = 'rgba(8,12,20,.86)'; roundRect(ctx, 160, 884, 1600, 104, 26); ctx.fill(); ctx.restore();
+  const s = fitSize(str, 'italic 400', 44, 1500, 'Noto Serif');
+  text(ctx, str, W / 2, 951, { family: 'Noto Serif', weight: 'italic 400', size: s, align: 'center', alpha: a });
+}
+
+// ---------------------------------------------------------------- cadrul de onestitate
+function honesty(t, a) {
+  ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 110, 170, 1700, 790, 30); ctx.fill();
+  ctx.fillStyle = PAL.red; ctx.fillRect(110, 214, 8, 86);
+  ctx.restore();
+  serif(ctx, 'Piesă imaginară · trailer generat cu AI', 160, 270, { size: 60, alpha: a });
+  const L1 = [
+    ['Inventate:', 'titlul „Fontă și adevăr”, personajele (Ucenica, Negustorul de umbrele, Podul), replicile și „premiera”. Nicio scenă nu joacă această piesă.'],
+    ['Fapte despre pod:', 'terminat în 1859, inaugurat la 17 decembrie 1860, primul pod din fontă din România; inscripțiile „1859” și „FRIEDRICHSHÜTTE”; leagă Orașul de Sus de Orașul de Jos (Piața Mică).'],
+    ['Legenda:', 'că podul s-ar prăbuși sub un mincinos este o legendă, nu un fapt.'],
+    ['Cum e făcut:', 'animație desenată în cod (pod, inscripții și oraș stilizate, nu reproduceri exacte); muzică originală, sintetizată în cod, în stil de trailer.'],
+  ];
+  let y = 380;
+  L1.forEach(([k, v], i) => {
+    const ai = a * smooth(55.2 + i * .35, 55.8 + i * .35, t);
+    text(ctx, k, 160, y, { size: 30, weight: 700, color: PAL.ocru, alpha: ai });
+    const n = text(ctx, v, 470, y, { size: 30, weight: 400, color: L, alpha: ai, maxW: 1290, lh: 42 });
+    y += n * 42 + 34;
+  });
+  text(ctx, 'Sursa faptelor: fișa de fapte verificate ACTIV AI (inclusiv patrimoniu.sibiu.ro, „Premiere”)', 160, 920, { size: 24, color: PAL.ceata, alpha: a * smooth(56.6, 57.2, t) });
+}
+
+// ---------------------------------------------------------------- antet și subsol
+function chrome() {
+  ctx.fillStyle = 'rgba(8,12,20,.9)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M22', 60, 36, PAL.red);
+  text(ctx, 'Trailer AI pentru o piesă de teatru despre Podul Minciunilor', 262, 64, { size: 28, weight: 600 });
+  pill('Piesă imaginară · trailer generat cu AI', 1860, 31, { size: 22, align: 'right', bg: PAL.ocru, color: PAL.night, weight: 700 });
+  ctx.fillStyle = 'rgba(8,12,20,.9)'; ctx.fillRect(0, H - 60, W, 60);
+  text(ctx, 'ACTIV AI · Sibiul meu · Artefact-model generat cu AI', 80, H - 22, { size: 22, color: PAL.ceata });
+  text(ctx, 'M22 · #SibiulMeu', W - 80, H - 22, { size: 22, color: PAL.ocru, align: 'right', weight: 600 });
+}
+
+// ---------------------------------------------------------------- randare
+window.render = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+
+  if (t < 5.0) {                                   // 0–5: cortina se deschide
+    const op = easeInOut(smooth(3.7, 5.0, t));
+    if (op > 0) shot(t, { x: 960, y: 560, z: 1.0 + .02 * op }, { mist: .8 });
+    curtain(op, 1 - op);
+    const ca = 1 - smooth(3.5, 3.9, t);
+    if (ca > 0) {
+      text(ctx, 'PIESĂ IMAGINARĂ · TRAILER GENERAT CU AI', W / 2, 470, { size: 26, weight: 700, color: PAL.ocru, align: 'center', alpha: ca * smooth(.4, 1.0, t) });
+      serif(ctx, 'Într-un oraș cu ochi pe acoperișuri…', W / 2, 570, { size: 58, align: 'center', alpha: ca * smooth(1.2, 1.9, t), shadow: 16 });
+    }
+  } else if (t < 10) {                             // 5–10: podul, plan larg
+    const u = (t - 5) / 5;
+    shot(t, { x: 960, y: 540 - u * 10, z: 1.02 + u * .06 }, { mist: 1 });
+    lowerBand();
+    inter('Un pod din fontă, terminat în 1859.', t, 5.3, 7.5, { y: 940, size: 62 });
+    inter('Inaugurat la 17 decembrie 1860.', t, 7.6, 9.9, { y: 940, size: 62 });
+  } else if (t < 15) {                             // 10–15: inscripțiile
+    const u = (t - 10) / 5, pz = 1.0 + u * .06, px = 60 + u * 120;
+    ctx.drawImage(plateC, px * 1.4, (H * (1 - 1 / pz) / 2) * 1.4, W / pz * 1.4, H / pz * 1.4, 0, 0, W, H);
+    // lumină razantă care mătură metalul
+    const lx = -400 + u * 2700;
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const lg = ctx.createLinearGradient(lx - 260, 0, lx + 260, 0); lg.addColorStop(0, 'rgba(255,200,120,0)'); lg.addColorStop(.5, 'rgba(255,200,120,.16)'); lg.addColorStop(1, 'rgba(255,200,120,0)');
+    ctx.fillStyle = lg; ctx.fillRect(0, 300, W, 490); ctx.restore();
+    lowerBand();
+    inter('Inscripțiile de pe pod: „1859” și „FRIEDRICHSHÜTTE”.', t, 10.3, 12.5, { y: 940, size: 58 });
+    inter('Primul pod din fontă din România.', t, 12.6, 14.9, { y: 940, size: 62 });
+  } else if (t < 17.5) {                           // 15–17,5: card
+    shot(t, { x: 960, y: 520, z: 1.12 }, { alpha: .22 });
+    vignette(.8);
+    inter('Leagă Orașul de Sus de Orașul de Jos', t, 15.15, 17.4, { y: 520, size: 70 });
+    inter('(Piața Mică)', t, 15.5, 17.4, { y: 610, size: 44, family: 'Inter', weight: 600, color: PAL.ceata });
+  } else if (t < 20) {                             // 17,5–20: „Și are o legendă.”
+    const u = (t - 17.5) / 2.5;
+    shot(t, { x: 960, y: 520, z: 1.10 + u * .05 }, { mist: 1.4 });
+    vignette(.65);
+    inter('Și are o legendă.', t, 17.7, 19.9, { y: 560, size: 92, scrim: 1 });
+  } else if (t < 22.5) {                           // 20–22,5: „Dacă minți pe el…”
+    const u = (t - 20) / 2.5;
+    shot(t, { x: 960, y: 500, z: 1.2 + u * .25 }, { mist: 1.2, flicker: (tt, k) => .7 + .3 * Math.abs(nz(tt * 9, k)) });
+    lowerBand();
+    inter('Dacă minți pe el…', t, 20.2, 22.4, { y: 940, size: 72 });
+  } else if (t < 25) {                             // 22,5–25: BUM
+    const sh = shakeAt(t, 22.5, 26);
+    shot(t, { x: 960, y: 520, z: 1.3 }, { shake: sh, dust: t - 22.5, mist: 1, flicker: (tt, k) => (tt - 22.5 < .5 ? (Math.sin(tt * 90 + k) > 0 ? 1 : .1) : .9) });
+    const fl = 1 - smooth(22.5, 22.75, t); if (fl > 0) { ctx.fillStyle = `rgba(255,240,220,${.55 * fl})`; ctx.fillRect(0, 0, W, H); }
+    vignette(.6);
+    inter('…se prăbușește.', t, 22.6, 24.9, { y: 560, size: 104, fi: .08, scrim: 1 });
+    inter('(așa spune legenda)', t, 23.2, 24.9, { y: 650, size: 38, family: 'Inter', weight: 600, color: PAL.ocru });
+  } else if (t < 27.5) {                           // 25–27,5: premisa
+    ctx.fillStyle = '#05070B'; ctx.fillRect(0, 0, W, H);
+    inter('Trei personaje fictive.', t, 25.1, 27.4, { y: 430, size: 66 });
+    inter('Trei minciuni.', t, 25.75, 27.4, { y: 560, size: 66 });
+    inter('O singură seară pe pod.', t, 26.4, 27.4, { y: 690, size: 66, fo: .2 });
+  } else if (t < 32.5) {                           // 27,5–32,5: Ucenica
+    const u = (t - 27.5) / 5;
+    shot(t, { x: 760 + 210, y: 375, z: 2.2 + u * .15 }, { uc: 760, ucGlow: .4 + .3 * Math.sin(t * 3), mist: .6 });
+    nameCard('Ucenica', 'personaj fictiv', 1020, 400, fade(t, 27.7, 32.4, .4, .3));
+    replica('„Eu nu mint. Eu doar… înfrumusețez.”', t, 28.6, 32.4);
+  } else if (t < 37.5) {                           // 32,5–37,5: Negustorul de umbrele
+    const u = (t - 32.5) / 5;
+    shot(t, { x: 1160 - 210, y: 365, z: 2.2 + u * .15 }, { ng: 1160, mist: .6 });
+    nameCard('Negustorul de umbrele', 'personaj fictiv', 900, 400, fade(t, 32.7, 37.4, .4, .3), 'right');
+    replica('„Pariez că trec podul fără să spun nici măcar un adevăr.”', t, 33.6, 37.4);
+  } else if (t < 42.5) {                           // 37,5–42,5: Podul
+    const u = (t - 37.5) / 5;
+    const op = smooth(38.0, 38.6, t), bl = (t > 40.4 && t < 40.7) ? Math.sin((t - 40.4) / .3 * Math.PI) : 0;
+    shot(t, { x: 960, y: 500, z: 1.02 + u * .06 }, { uc: 760, ng: 1160, eyes: op, blink: bl, mist: .9 });
+    nameCard('Podul', 'personaj fictiv · vocea fontei', 120, 260, fade(t, 37.7, 42.4, .4, .3));
+    replica('„Eu nu mă prăbușesc. Eu doar ascult.”', t, 38.6, 42.4);
+  } else if (t < 43.75) {                          // montaj: un secret
+    shot(t, { x: 738, y: 372, z: 3.4 + (t - 42.5) * .3 }, { uc: 760, ucGlow: 1, mist: .4 });
+    inter('Un secret.', t, 42.55, 43.7, { y: 930, size: 84, fi: .1, fo: .1 });
+  } else if (t < 45) {                             // montaj: un pariu
+    shot(t, { x: 1150, y: 300, z: 3.0 }, { ng: 1160, spin: (t - 43.75) * 5, mist: .4 });
+    inter('Un pariu.', t, 43.8, 44.95, { y: 930, size: 84, fi: .1, fo: .1 });
+  } else if (t < 47.5) {                           // ochii Sibiului
+    eyesScene(t);
+    vignette(.5);
+    lowerBand();
+    inter('Orașul cu ochi vede tot.', t, 45.3, 47.4, { y: 940, size: 74 });
+  } else if (t < 50) {                             // podul tremură
+    const u = (t - 47.5) / 2.5, amp = 2 + u * u * 16;
+    const sh = [amp * Math.sin(t * 61), amp * Math.cos(t * 47)];
+    if (t < 49.55) {
+      shot(t, { x: 960, y: 520, z: 1.08 + u * .2 }, { shake: sh, mist: 1.2, dust: u > .5 ? (t - 48.75) * .6 : -1, flicker: (tt, k) => (Math.sin(tt * (20 + u * 60) + k * 2) > -.2 ? 1 : .15) });
+      vignette(.6);
+      inter('Cine minte…', t, 47.65, 49.5, { y: 520, size: 96, fo: .05, scrim: 1, scrimY: 545, scrimH: .45 });
+      inter('cade?', t, 48.5, 49.5, { y: 640, size: 96, color: PAL.ocru, fo: .05 });
+    } else {
+      const fl = 1 - smooth(49.55, 49.8, t);
+      ctx.fillStyle = `rgba(255,245,230,${fl})`; ctx.fillRect(0, 0, W, H);
+      if (t < 49.7) {
+        ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 5; ctx.beginPath();
+        const r = rng(5); let x = 0, y = 520; ctx.moveTo(x, y);
+        while (x < W) { x += 40 + r() * 70; y = 520 + (r() - .5) * 160; ctx.lineTo(x, y); }
+        ctx.stroke();
+      }
+    }
+  } else if (t < 55) {                             // titlul
+    curtain(0, smooth(50, 50.4, t));
+    const ta = smooth(50.05, 50.5, t);
+    const sc = 1.08 - .08 * easeOut(inv(50.05, 51.5, t));
+    ctx.save(); ctx.translate(W / 2, 520); ctx.scale(sc, sc);
+    text(ctx, 'Fontă și adevăr', 0, 0, { family: 'Noto Serif', weight: 700, size: 150, align: 'center', color: '#F6D58A', alpha: ta, shadow: 30 });
+    ctx.restore();
+    text(ctx, 'o comedie imaginară despre Podul Minciunilor', W / 2, 610, { size: 44, weight: 600, align: 'center', alpha: smooth(50.8, 51.4, t) });
+    pill('Premieră imaginară: pe nicio scenă – doar în imaginația ta', W / 2, 700, { size: 32, align: 'center', alpha: smooth(51.8, 52.4, t), bg: 'rgba(8,12,20,.85)', color: PAL.ocru });
+    text(ctx, 'Titlu, personaje, replici și premieră inventate · trailer generat cu AI', W / 2, 840, { size: 28, align: 'center', color: PAL.var, alpha: smooth(52.8, 53.4, t) });
+    const fo = smooth(54.6, 55, t); if (fo > 0) { ctx.fillStyle = `rgba(0,0,0,${fo})`; ctx.fillRect(0, 0, W, H); }
+  } else {                                         // 55–60: cadrul de onestitate
+    honesty(t, smooth(55.0, 55.5, t));
+  }
+
+  if (t < 55) grain(t);
+  chrome();
+  const fb = 1 - smooth(0, .6, t); if (fb > 0) { ctx.fillStyle = `rgba(0,0,0,${fb})`; ctx.fillRect(0, 0, W, H); }
+};
+Promise.all([document.fonts.load('700 40px "Noto Serif"'), document.fonts.load('italic 400 40px "Noto Serif"'), document.fonts.load('600 20px Inter'), document.fonts.load('700 20px Inter'), document.fonts.load('400 20px Inter')]).then(() => {
+  drawPlates();          // stratul cu inscripții folosește fonturi: îl desenăm după încărcarea lor
+  window.READY = true;
+});
+</script></body></html>

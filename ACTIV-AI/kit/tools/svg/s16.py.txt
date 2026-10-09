@@ -1,0 +1,807 @@
+# -*- coding: utf-8 -*-
+"""S16 – Harta drumețiilor din jurul Sibiului (Calupul 4). Rulat din /home/claude/expo/_tools/svg.
+Coordonatele normalizate ale regiunii sunt cele COMUNE din c4/AGENT_COMMON.md (x spre est, y spre sud, Sibiu = 0,0).
+Modulul expune și utilitare (eșantionare de curbe, simboluri de marcaj, pictograme) folosite de s17.py."""
+import math, random
+from lib import *
+import sibiu_map as SM
+from s13 import mk_proj, rich, rich_width, Boxes, G, halo, oak, fir, INK, INK2, OCRU_D, GREEN1, GREEN2, WATER, STONE
+
+OUT = "/home/claude/expo/c4/05_spatial/S16_harta_drumetiilor.svg"
+
+RED = "#C8322B"; BLUE = "#2B63C6"; MARKW = "#FBF7EE"
+RIVER = "#5FA8C4"; RIVER_D = "#2F7A91"
+FIR1 = "#3E7F6A"; FIR2 = "#2F6B59"; FIR3 = "#4F8F6F"
+
+# coordonate comune ale regiunii (AGENT_COMMON.md)
+REG = {
+    "Sibiu": (0.0, 0.0), "Dumbrava Sibiului": (-0.12, 0.1), "Șelimbăr": (0.15, 0.1), "Cristian": (-0.3, -0.02),
+    "Rășinari": (-0.22, 0.32), "Gura Râului": (-0.55, 0.14), "Orlat": (-0.66, 0.0), "Păltiniș": (-0.5, 0.62),
+    "Vf. Oncești": (-0.58, 0.68), "Șaua Bătrâna": (-0.66, 0.72), "Cheile Cibinului": (-0.7, 0.4),
+    "Vf. Cindrel": (-0.95, 0.75),
+}
+# repere fără coordonată în listă – poziții orientative alese de noi, pe traseu
+NICULESTI = (-0.8, 0.5)
+
+
+# ---------------- geometrie: eșantionarea curbelor Catmull-Rom (aceeași formulă ca lib.smooth_path) ----------------
+def curve_pts(points, tension=0.5, n=28):
+    out = [points[0]]
+    m = len(points)
+    for i in range(m - 1):
+        p0 = points[max(i - 1, 0)]; p1 = points[i]; p2 = points[i + 1]; p3 = points[min(i + 2, m - 1)]
+        c1 = (p1[0] + (p2[0] - p0[0]) * tension / 3, p1[1] + (p2[1] - p0[1]) * tension / 3)
+        c2 = (p2[0] - (p3[0] - p1[0]) * tension / 3, p2[1] - (p3[1] - p1[1]) * tension / 3)
+        for k in range(1, n + 1):
+            t = k / n; u = 1 - t
+            x = u ** 3 * p1[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t ** 3 * p2[0]
+            y = u ** 3 * p1[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t ** 3 * p2[1]
+            out.append((x, y))
+    return out
+
+
+def along(poly, frac):
+    """punct și unghi la fracțiunea frac din lungimea polilinei"""
+    L = [0.0]
+    for a, b in zip(poly, poly[1:]):
+        L.append(L[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
+    tgt = frac * L[-1]
+    for i in range(1, len(L)):
+        if L[i] >= tgt:
+            a, b = poly[i - 1], poly[i]
+            seg = L[i] - L[i - 1] or 1
+            t = (tgt - L[i - 1]) / seg
+            return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t), math.atan2(b[1] - a[1], b[0] - a[0])
+    return poly[-1], 0.0
+
+
+def poly_len(poly):
+    return sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(poly, poly[1:]))
+
+
+# ---------------- simboluri de marcaj turistic (desenate în SVG) ----------------
+def mark_symbol(kind, x, y, s=26):
+    """kind: 'cruce_rosie' / 'triunghi_albastru' / 'triunghi_rosu'. Pătrat alb (fondul marcajului) + semnul colorat."""
+    h = s / 2
+    out = (f'<rect x="{x-h:.1f}" y="{y-h:.1f}" width="{s:.1f}" height="{s:.1f}" rx="{s*0.12:.1f}" fill="{MARKW}" '
+           f'stroke="{INK}" stroke-width="{max(1.2, s*0.06):.1f}"/>')
+    if kind == "cruce_rosie":
+        a = s * 0.30; b = s * 0.085
+        out += (f'<rect x="{x-b:.1f}" y="{y-a:.1f}" width="{2*b:.1f}" height="{2*a:.1f}" fill="{RED}"/>'
+                f'<rect x="{x-a:.1f}" y="{y-b:.1f}" width="{2*a:.1f}" height="{2*b:.1f}" fill="{RED}"/>')
+    else:
+        col = BLUE if kind == "triunghi_albastru" else RED
+        r = s * 0.34
+        out += (f'<polygon points="{x:.1f},{y-r:.1f} {x+r*0.95:.1f},{y+r*0.62:.1f} {x-r*0.95:.1f},{y+r*0.62:.1f}" '
+                f'fill="{col}"/>')
+    return out + "\n"
+
+
+def trail_path(poly_pts, col, w=5.5, casing=10):
+    d = smooth_path(poly_pts, closed=False)
+    return (f'<path d="{d}" fill="none" stroke="{MARKW}" stroke-width="{casing}" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>\n'
+            f'<path d="{d}" fill="none" stroke="{col}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="11 6"/>\n')
+
+
+def endpoint(x, y, col, r=8):
+    return (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="{col}" stroke="{MARKW}" stroke-width="3"/>'
+            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r*0.38:.1f}" fill="{MARKW}"/>\n')
+
+
+def num_badge(x, y, n, col, r=13):
+    return (f'<g filter="url(#shs)"><circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="{col}" stroke="{MARKW}" stroke-width="2.5"/></g>'
+            + text(x, y + r * 0.42, str(n), round(r * 1.2), MARKW, "sans", 700, anchor="middle"))
+
+
+def ring_orient(x, y, r=9):
+    return (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="{MARKW}" stroke="{OCRU_D}" stroke-width="2.4" '
+            f'stroke-dasharray="4 3"/>\n')
+
+
+# ---------------- pictograme ----------------
+def peak(x, y, w=64, h=50, snow=True, col="#8C8577", col2="#6F695D"):
+    """vârf stilizat; (x,y) = vârful"""
+    s = (f'<polygon points="{x:.1f},{y:.1f} {x+w/2:.1f},{y+h:.1f} {x-w/2:.1f},{y+h:.1f}" fill="{col}" stroke="{INK2}" '
+         f'stroke-width="1.4" stroke-linejoin="round"/>')
+    s += f'<polygon points="{x:.1f},{y:.1f} {x+w/2:.1f},{y+h:.1f} {x+w*0.08:.1f},{y+h:.1f} {x-w*0.04:.1f},{y+h*0.45:.1f}" fill="{col2}"/>'
+    if snow:
+        s += (f'<polygon points="{x:.1f},{y:.1f} {x+w*0.15:.1f},{y+h*0.3:.1f} {x+w*0.05:.1f},{y+h*0.24:.1f} '
+              f'{x-w*0.03:.1f},{y+h*0.34:.1f} {x-w*0.09:.1f},{y+h*0.22:.1f} {x-w*0.15:.1f},{y+h*0.3:.1f}" fill="#F7F4EC"/>')
+    return s + "\n"
+
+
+def summit_mark(x, y, r=7):
+    return f'<polygon points="{x:.1f},{y-r:.1f} {x+r:.1f},{y+r*0.75:.1f} {x-r:.1f},{y+r*0.75:.1f}" fill="{INK}" stroke="{MARKW}" stroke-width="1.6"/>\n'
+
+
+def saddle(x, y, w=40):
+    """simbol de șa: două coame cu o înșeuare"""
+    d = (f"M{x-w/2:.1f},{y+8:.1f} Q{x-w/3:.1f},{y-16:.1f} {x-w/8:.1f},{y-4:.1f} Q{x:.1f},{y+2:.1f} {x+w/8:.1f},{y-4:.1f} "
+         f"Q{x+w/3:.1f},{y-18:.1f} {x+w/2:.1f},{y+8:.1f} Z")
+    return (f'<path d="{d}" fill="#B8B09C" stroke="{INK2}" stroke-width="1.4" stroke-linejoin="round"/>'
+            f'<circle cx="{x:.1f}" cy="{y-2:.1f}" r="3.2" fill="{INK}"/>\n')
+
+
+def house(x, y, w=14, h=10, roof=TIGLA):
+    return (f'<rect x="{x-w/2:.1f}" y="{y-h:.1f}" width="{w}" height="{h}" fill="#F1E6D2" stroke="{INK2}" stroke-width="1"/>'
+            f'<polygon points="{x-w/2-2:.1f},{y-h:.1f} {x:.1f},{y-h-7:.1f} {x+w/2+2:.1f},{y-h:.1f}" fill="{roof}" stroke="{INK2}" stroke-width="1"/>')
+
+
+def village(x, y, sc=1.0, church=True):
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc:.2f})" filter="url(#shs)">'
+    s += f'<ellipse cx="0" cy="4" rx="26" ry="10" fill="#E6D8B8" opacity="0.9"/>'
+    s += house(-13, 6) + house(12, 7) + house(0, 10, 12, 8)
+    if church:
+        s += (f'<rect x="-4" y="-16" width="8" height="18" fill="{ZID}" stroke="{INK2}" stroke-width="1"/>'
+              f'<polygon points="-5.5,-16 0,-27 5.5,-16" fill="{TIGLA}" stroke="{INK2}" stroke-width="1"/>')
+    return s + "</g>\n"
+
+
+def chalet(x, y, w=16, h=10, roof="#7A4A2E"):
+    return (f'<rect x="{x-w/2:.1f}" y="{y-h:.1f}" width="{w}" height="{h}" fill="#E8D3AE" stroke="{INK2}" stroke-width="1"/>'
+            f'<polygon points="{x-w/2-3:.1f},{y-h+1:.1f} {x:.1f},{y-h-11:.1f} {x+w/2+3:.1f},{y-h+1:.1f}" fill="{roof}" stroke="{INK2}" stroke-width="1"/>'
+            f'<rect x="{x-2:.1f}" y="{y-h+3:.1f}" width="4" height="4" fill="#F6D77A"/>')
+
+
+def resort(x, y, sc=1.0):
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc:.2f})" filter="url(#shs)">'
+    s += f'<ellipse cx="0" cy="5" rx="27" ry="10" fill="#E6E0CC"/>'
+    s += chalet(-13, 6) + chalet(13, 7) + chalet(0, 11, 14, 9, TIGLA)
+    return s + "</g>\n"
+
+
+def city(x, y, sc=1.0):
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc:.2f})" filter="url(#shs)">'
+    s += f'<ellipse cx="0" cy="2" rx="34" ry="24" fill="#EFE3CC" stroke="{STONE}" stroke-width="4"/>'
+    s += f'<ellipse cx="0" cy="2" rx="34" ry="24" fill="none" stroke="#C9A27E" stroke-width="1.5" stroke-dasharray="4 4"/>'
+    for (hx, hy) in [(-20, 10), (-8, 16), (10, 16), (21, 9), (-18, -4), (19, -5)]:
+        s += house(hx, hy, 11, 8)
+    s += (f'<rect x="-4.5" y="-24" width="9" height="30" fill="{ZID}" stroke="{INK}" stroke-width="1.3"/>'
+          f'<polygon points="-6.5,-24 0,-37 6.5,-24" fill="{TIGLA}" stroke="{INK}" stroke-width="1.2"/>')
+    return s + "</g>\n"
+
+
+def stana(x, y, sc=1.0):
+    """stână stilizată cu țarc și oi – ilustrație decorativă"""
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc:.2f})" filter="url(#shs)">'
+    s += f'<ellipse cx="4" cy="8" rx="34" ry="9" fill="#D8D4B4" opacity="0.8"/>'
+    s += (f'<rect x="-14" y="-10" width="22" height="16" fill="#9C7650" stroke="{INK}" stroke-width="1.3"/>'
+          f'<path d="M-14,-6 h22 M-14,-2 h22 M-14,2 h22" stroke="#7A5A3A" stroke-width="0.9"/>'
+          f'<polygon points="-18,-9 -3,-22 12,-9" fill="#6B5A44" stroke="{INK}" stroke-width="1.3" stroke-linejoin="round"/>'
+          f'<rect x="-6" y="-2" width="6" height="8" fill="{INK}"/>')
+    s += f'<path d="M12,6 h26 M12,0 h26 M14,-3 v12 M24,-3 v12 M36,-3 v12" stroke="#8B6A44" stroke-width="1.6"/>'
+    for (ox, oy) in [(19, 3), (30, 4), (25, -1)]:
+        s += (f'<ellipse cx="{ox}" cy="{oy}" rx="4.2" ry="3" fill="#FBF7EE" stroke="{INK2}" stroke-width="0.8"/>'
+              f'<circle cx="{ox+4}" cy="{oy-1}" r="1.6" fill="{INK2}"/>')
+    return s + "</g>\n"
+
+
+def spring(x, y, r=9):
+    """izvor: picătură"""
+    return (f'<path d="M{x:.1f},{y-r*1.3:.1f} C{x+r*0.9:.1f},{y-r*0.2:.1f} {x+r:.1f},{y+r*0.4:.1f} {x:.1f},{y+r*0.75:.1f} '
+            f'C{x-r:.1f},{y+r*0.4:.1f} {x-r*0.9:.1f},{y-r*0.2:.1f} {x:.1f},{y-r*1.3:.1f} Z" fill="#5FA8C4" stroke="{MARKW}" stroke-width="1.8"/>\n')
+
+
+def meadow(x, y, r=9):
+    """poiană: cerc verde deschis cu fire de iarbă"""
+    return (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#B9D38E" stroke="{MARKW}" stroke-width="1.8"/>'
+            f'<path d="M{x-4:.1f},{y+3:.1f} l1,-6 M{x:.1f},{y+3:.1f} l0,-7 M{x+4:.1f},{y+3:.1f} l-1,-6" stroke="#4E7A3A" stroke-width="1.3"/>\n')
+
+
+def big_fir(x, y, h=40):
+    return (f'<g filter="url(#shs)">' + fir(x, y, h, "#24584A") + "</g>"
+            + f'<circle cx="{x:.1f}" cy="{y-h*0.55:.1f}" r="{h*0.62:.1f}" fill="none" stroke="{OCRU_D}" stroke-width="2" stroke-dasharray="4 3"/>\n')
+
+
+def warn_icon(x, y, s=34):
+    h = s * 0.9
+    return (f'<polygon points="{x:.1f},{y-h/2:.1f} {x+s/2:.1f},{y+h/2:.1f} {x-s/2:.1f},{y+h/2:.1f}" fill="{OCRU}" '
+            f'stroke="{BG}" stroke-width="2" stroke-linejoin="round"/>'
+            f'<rect x="{x-2.2:.1f}" y="{y-h*0.18:.1f}" width="4.4" height="{h*0.38:.1f}" rx="1.5" fill="{BG}"/>'
+            f'<circle cx="{x:.1f}" cy="{y+h*0.33:.1f}" r="2.6" fill="{BG}"/>\n')
+
+
+def stat_icon(kind, x, y, col=CEATA):
+    if kind == "len":
+        return (f'<path d="M{x-8},{y} h16 M{x-8},{y-4} v8 M{x+8},{y-4} v8" stroke="{col}" stroke-width="2" fill="none"/>')
+    if kind == "time":
+        return (f'<circle cx="{x}" cy="{y}" r="7" fill="none" stroke="{col}" stroke-width="2"/>'
+                f'<path d="M{x},{y-4} v4 h3.5" stroke="{col}" stroke-width="1.8" fill="none"/>')
+    if kind == "up":
+        return (f'<path d="M{x-8},{y+6} L{x-2},{y-1} L{x+2},{y+3} L{x+8},{y-6}" stroke="{col}" stroke-width="2" fill="none" stroke-linejoin="round"/>'
+                f'<path d="M{x+3},{y-6} h5 v5" stroke="{col}" stroke-width="2" fill="none"/>')
+    return (f'<rect x="{x-8}" y="{y+1}" width="4" height="5" fill="{col}"/><rect x="{x-2}" y="{y-3}" width="4" height="9" fill="{col}" opacity="0.6"/>'
+            f'<rect x="{x+4}" y="{y-7}" width="4" height="13" fill="{col}" opacity="0.35"/>')
+
+
+# ---------------- plasare automată a etichetelor ----------------
+def hits(B, box, own=None):
+    x0, y0, x1, y1 = box
+    for it in B.items:
+        if own and it[0].split(":")[0] == own:
+            continue
+        if x0 < it[3] and it[1] < x1 and y0 < it[4] and it[2] < y1:
+            return it[0]
+    return None
+
+
+def add_curve(B, prefix, pts, step=7, r=3.5):
+    last = None
+    for (x, y) in pts:
+        if last is None or math.hypot(x - last[0], y - last[1]) >= step:
+            B.add(f"{prefix}:pt", x - r, y - r, x + r, y + r)
+            last = (x, y)
+
+
+def layout_block(x, y, lines, anchor):
+    """lines: (txt, size, fill, weight, italic, fam). Returnează (baseline-uri, lățimi, bbox)."""
+    ys, ws = [], []
+    cy = y
+    for i, ln in enumerate(lines):
+        t, sz, _, w, it, fam = ln
+        if i > 0:
+            cy += round(sz * 1.18) + 2
+        ys.append(cy)
+        ws.append(measure(t, sz, fam, w, it))
+    W = max(ws)
+    x0 = x if anchor == "start" else (x - W / 2 if anchor == "middle" else x - W)
+    top = y - lines[0][1] * 0.80
+    bot = ys[-1] + lines[-1][1] * 0.26
+    return ys, ws, (x0, top, x0 + W, bot)
+
+
+def place(B, name, x, y, lines, cands, bounds, hcol=PARCH, hw=5, pad=3, report=True):
+    """Încearcă pe rând pozițiile candidate (dx, dy, ancoră); alege prima fără coliziuni și în interiorul cadrului."""
+    chosen = None
+    for (dx, dy, anc) in cands:
+        ys, ws, (bx0, by0, bx1, by1) = layout_block(x + dx, y + dy, lines, anc)
+        box = (bx0 - pad, by0 - pad, bx1 + pad, by1 + pad)
+        inside = bounds[0] <= box[0] and bounds[1] <= box[1] and box[2] <= bounds[2] and box[3] <= bounds[3]
+        if inside and not hits(B, box, name):
+            chosen = (dx, dy, anc, ys, ws)
+            break
+    if chosen is None:
+        dx, dy, anc = cands[0]
+        ys, ws, _ = layout_block(x + dx, y + dy, lines, anc)
+        chosen = (dx, dy, anc, ys, ws)
+        if report:
+            print("  ! fără loc liber pentru", name)
+    dx, dy, anc, ys, ws = chosen
+    out = ""
+    for i, (ln, yy, w) in enumerate(zip(lines, ys, ws)):
+        t, sz, fill, wt, it, fam = ln
+        out += halo(x + dx, yy, t, sz, fill, wt, it, anc, hw=hw, hcol=hcol, fam=fam)
+        B.text(f"{name}:l{i}", x + dx, yy, w, sz, anc)
+    return out, (x + dx, y + dy, anc)
+
+
+def L(t, sz, fill=INK, w=700, it=False, fam="sans"):
+    return (t, sz, fill, w, it, fam)
+
+
+def hits_ign(B, box, own, ignore=()):
+    x0, y0, x1, y1 = box
+    for it in B.items:
+        pf = it[0].split(":")[0]
+        if pf == own or pf in ignore:
+            continue
+        if x0 < it[3] and it[1] < x1 and y0 < it[4] and it[2] < y1:
+            return it[0]
+    return None
+
+
+def check(B, bounds):
+    """Raport filtrat: semnalează doar etichete care ating orice altceva și pictograme suprapuse;
+    liniile (râu, trasee) au voie să treacă prin pictogramele propriilor repere."""
+    def kind(n):
+        if n.endswith(":pt") or n in ("riv:lake", "riv:src"):
+            return "curve"
+        if ":l" in n or n in ("munti", "note", "legend", "compass", "inset", "hdr"):
+            return "label"
+        return "icon"
+    bad = []
+    it = B.items
+    for i in range(len(it)):
+        for j in range(i + 1, len(it)):
+            a, b = it[i], it[j]
+            if a[0].split(":")[0] == b[0].split(":")[0]:
+                continue
+            if not (a[1] < b[3] and b[1] < a[3] and a[2] < b[4] and b[2] < a[4]):
+                continue
+            ka, kb = kind(a[0]), kind(b[0])
+            if "label" in (ka, kb) or (ka == kb == "icon"):
+                bad.append((a[0], b[0]))
+    X0, Y0, X1, Y1 = bounds
+    for a in it:
+        if kind(a[0]) != "curve" and a[0] != "hdr" and (a[1] < X0 or a[2] < Y0 or a[3] > X1 or a[4] > Y1):
+            bad.append((a[0], "OUT"))
+    for b in sorted(set(bad)):
+        print("  overlap:", b)
+    return bad
+
+
+def place_marks(B, prefix, curve, kind, n, size, lo=0.1, hi=0.92, gap=0.16, ignore=()):
+    out = ""
+    chosen = []
+    cands = [lo + i * (hi - lo) / 60 for i in range(61)]
+    targets = [lo + (k + 0.5) * (hi - lo) / n for k in range(n)]
+    h = size / 2 + 3
+    for t in targets:
+        for c in sorted(cands, key=lambda c: abs(c - t)):
+            if any(abs(c - o) < gap for o in chosen):
+                continue
+            (x, y), _ = along(curve, c)
+            if hits_ign(B, (x - h, y - h, x + h, y + h), prefix, ignore):
+                continue
+            chosen.append(c)
+            out += mark_symbol(kind, x, y, size)
+            B.add(f"{prefix}:m{c:.3f}", x - h + 3, y - h + 3, x + h - 3, y + h - 3)
+            break
+    return out
+
+
+def place_badge(B, prefix, curve, n, col, r=12, fr=(0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8), off=22, ignore=()):
+    for f in fr:
+        (x, y), ang = along(curve, f)
+        for side in (1, -1):
+            bx = x + side * off * math.cos(ang + math.pi / 2); by = y + side * off * math.sin(ang + math.pi / 2)
+            box = (bx - r - 2, by - r - 2, bx + r + 2, by + r + 2)
+            if not hits_ign(B, box, prefix, ignore):
+                B.add(f"{prefix}:badge", *box)
+                return num_badge(bx, by, n, col, r)
+    print("  ! fără loc pentru insigna", n)
+    (x, y), _ = along(curve, fr[0])
+    return num_badge(x, y - off, n, col, r)
+
+
+def gorge(x, y, ang_deg, sc=1.0):
+    """chei: doi pereți de stâncă de o parte și de alta a văii"""
+    s = f'<g transform="translate({x:.1f},{y:.1f}) rotate({ang_deg:.1f}) scale({sc:.2f})" filter="url(#shs)">'
+    for side in (-1, 1):
+        pts = [(-22, side * 15), (-14, side * 30), (-5, side * 22), (4, side * 33), (13, side * 23), (20, side * 29), (24, side * 15)]
+        s += f'<polygon points="{" ".join(f"{a},{b}" for a, b in pts)}" fill="#8A8273" stroke="{INK2}" stroke-width="1.2" stroke-linejoin="round"/>'
+    return s + "</g>\n"
+
+
+# ---------------- harta ----------------
+def main():
+    B = Boxes()
+    s = frame_head("SPAȚIAL · S16", PETROL, "Harta drumețiilor din jurul Sibiului",
+                   "trei trasee marcate, cu simbolurile lor · ilustrată AI, schematic", title_size=58)
+
+    MX, MY, MW, MH = 80, 230, 1220, 770
+    BOUNDS = (MX + 8, MY + 8, MX + MW - 8, MY + MH - 8)
+    P = mk_proj(1085, 318, 905, 790)
+    s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+    body = f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+    body += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.28"/>\n'
+
+    # ---- relief: depresiune, dealuri, munte (schematic) ----
+    hills = [(MX, 500), (300, 495), (560, 530), (760, 560), (980, 640), (1300, 700), (1300, 1000), (MX, 1000)]
+    mount = [(MX, 575), (240, 585), (420, 625), (560, 690), (720, 720), (900, 770), (1300, 800), (1300, 1000), (MX, 1000)]
+    alpine = [(MX, 820), (180, 800), (300, 830), (420, 880), (520, 900), (560, 1000), (MX, 1000)]
+    body += f'<path d="{smooth_path(hills, True, 0.35)}" fill="#D9E0BE" opacity="0.75"/>\n'
+    body += f'<path d="{smooth_path(mount, True, 0.35)}" fill="#A9C29A" opacity="0.85"/>\n'
+    body += f'<path d="{smooth_path(alpine, True, 0.4)}" fill="#D8D2B6" opacity="0.95"/>\n'
+    for k, y0 in enumerate([628, 690, 752]):
+        pts = [(MX + 10 + i * 70, y0 + i * 7 + 14 * math.sin(i * 1.3 + k)) for i in range(0, 13)]
+        pts = [(x, y) for x, y in pts if x < 870]
+        body += f'<path d="{smooth_path(pts, False)}" fill="none" stroke="#7E9A78" stroke-width="2" stroke-dasharray="2 6" opacity="0.7"/>\n'
+    cx0, cy0 = P(0, 0)
+    body += f'<ellipse cx="{cx0-60:.1f}" cy="{cy0+40:.1f}" rx="300" ry="150" fill="#EFE6CF" opacity="0.65" filter="url(#blur8)"/>\n'
+
+    # ---- râul Cibin (schematic) și lacul de la Gura Râului ----
+    lake_tail = P(-0.645, 0.295); dam = P(-0.572, 0.19)
+    riv_up = [P(-0.905, 0.705), P(-0.86, 0.6), P(*NICULESTI), P(-0.7, 0.4), lake_tail]
+    riv_dn = [dam, P(-0.55, 0.14), P(-0.6, 0.06), P(-0.66, 0.0), P(-0.5, -0.03), P(-0.3, -0.02), P(-0.15, -0.015),
+              P(0.0, 0.0), P(0.1, 0.05), P(0.2, 0.11)]
+    for pts, w in ((riv_up, 6), (riv_dn, 8)):
+        body += f'<path d="{smooth_path(pts, False)}" fill="none" stroke="{RIVER}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"/>\n'
+    rvc = curve_pts(riv_up) + curve_pts(riv_dn)
+    add_curve(B, "riv", rvc)
+    lx, ly = (lake_tail[0] + dam[0]) / 2, (lake_tail[1] + dam[1]) / 2
+    ang = math.degrees(math.atan2(dam[1] - lake_tail[1], dam[0] - lake_tail[0]))
+    llen = math.hypot(dam[0] - lake_tail[0], dam[1] - lake_tail[1])
+    body += (f'<ellipse cx="{lx:.1f}" cy="{ly:.1f}" rx="{llen/2+10:.1f}" ry="17" fill="{WATER}" stroke="{RIVER_D}" stroke-width="2" '
+             f'transform="rotate({ang:.1f} {lx:.1f} {ly:.1f})"/>\n')
+    body += (f'<ellipse cx="{lx-4:.1f}" cy="{ly-3:.1f}" rx="{llen/2-14:.1f}" ry="6" fill="none" stroke="#FFFFFF" stroke-width="1.4" '
+             f'stroke-dasharray="6 6" opacity="0.8" transform="rotate({ang:.1f} {lx:.1f} {ly:.1f})"/>\n')
+    a = math.radians(ang + 90)
+    dx_, dy_ = 15 * math.cos(a), 15 * math.sin(a)
+    damx, damy = dam[0] + 6 * math.cos(math.radians(ang)), dam[1] + 6 * math.sin(math.radians(ang))
+    body += (f'<line x1="{damx-dx_:.1f}" y1="{damy-dy_:.1f}" x2="{damx+dx_:.1f}" y2="{damy+dy_:.1f}" stroke="#6E6A60" '
+             f'stroke-width="7" stroke-linecap="round"/>\n')
+    for k in range(9):
+        q = curve_pts([lake_tail, dam])[k * 3]
+        B.add("riv:lake", q[0] - 16, q[1] - 16, q[0] + 16, q[1] + 16)
+
+    # ---- traseul 3 (harta mare): Gura Râului (coada lacului) – Cheile Cibinului – cantonul Niculești ----
+    t3 = [lake_tail, P(-0.685, 0.355), P(-0.7, 0.4), P(-0.745, 0.45), P(*NICULESTI)]
+    t3 = [(x + 14, y + 7) for (x, y) in t3]          # pe vale, alături de râu, ca să rămână vizibil
+    t3c = curve_pts(t3)
+    add_curve(B, "t3", t3c)
+
+    # ---- zona Păltiniș (dreptunghi de detaliu) și detaliul ----
+    Z0, Z1 = (-0.735, 0.577), (-0.385, 0.79)
+    zx0, zy0 = P(*Z0); zx1, zy1 = P(*Z1)
+    B.add("zoom", zx0, zy0, zx1, zy1)
+    IX, IY, IW, IH = 880, 596, 404, 390
+    HDR = 64
+    B.add("inset", IX - 4, IY - 4, IX + IW, IY + IH)
+
+    # ---- localități și repere (pictograme) ----
+    icons = ""
+    sx_, sy_ = P(0, 0)
+    icons += city(sx_, sy_, 1.05)
+    B.add("Sibiu:icon", sx_ - 38, sy_ - 42, sx_ + 38, sy_ + 28)
+    for nm, sc in (("Rășinari", 1.0), ("Gura Râului", 0.95), ("Orlat", 0.85), ("Cristian", 0.85)):
+        X, Y = P(*REG[nm])
+        icons += village(X, Y, sc)
+        B.add(nm + ":icon", X - 26 * sc, Y - 28 * sc, X + 26 * sc, Y + 14 * sc)
+    dX, dY = P(*REG["Dumbrava Sibiului"])
+    rnd = random.Random(4)
+    oaks = []
+    for i in range(34):
+        u = rnd.uniform(-48, 48); v = rnd.uniform(-22, 22)
+        if (u / 48) ** 2 + (v / 22) ** 2 < 1:
+            oaks.append((dY + v, dX + u))
+    for yy, xx in sorted(oaks):
+        icons += oak(xx, yy, rnd.uniform(6.5, 8.5), GREEN1, GREEN2)
+    B.add("Dumbrava:icon", dX - 50, dY - 30, dX + 50, dY + 26)
+    cX, cY = P(*REG["Vf. Cindrel"])
+    icons += f'<g filter="url(#shs)">' + peak(cX + 34, cY - 30, 58, 42, True, "#9A9384", "#7C7669") + peak(cX - 30, cY - 26, 54, 38, True, "#9A9384", "#7C7669")
+    icons += peak(cX, cY - 52, 78, 60, True) + "</g>"
+    icons += summit_mark(cX, cY - 62)
+    B.add("Cindrel:icon", cX - 40, cY - 70, cX + 40, cY + 8)
+    B.add("Cindrel:icon2", cX - 59, cY - 28, cX + 63, cY + 12)
+    srcX, srcY = riv_up[0]
+    icons += spring(srcX, srcY, 8)
+    B.add("riv:src", srcX - 9, srcY - 12, srcX + 9, srcY + 8)
+    stX, stY = P(-0.79, 0.775)
+    icons += stana(stX, stY, 1.0)
+    B.add("stana:icon", stX - 20, stY - 24, stX + 40, stY + 16)
+    chX, chY = P(*REG["Cheile Cibinului"])
+    gang = math.degrees(math.atan2(lake_tail[1] - chY, lake_tail[0] - chX))
+    gcx, gcy = chX + 7, chY + 4          # între râu și traseu
+    icons += gorge(gcx, gcy, gang, 1.0)
+    B.add("Cheile:icon", gcx - 30, gcy - 32, gcx + 30, gcy + 32)
+
+    # ---- traseul 3: linie, simboluri, capete, insignă, Bradul Uriaș ----
+    tr = trail_path(t3, RED)
+    tr += endpoint(*t3[0], RED) + endpoint(*t3[-1], RED)
+    B.add("t3:e0", t3[0][0] - 9, t3[0][1] - 9, t3[0][0] + 9, t3[0][1] + 9)
+    B.add("t3:e1", t3[-1][0] - 9, t3[-1][1] - 9, t3[-1][0] + 9, t3[-1][1] + 9)
+    (bx, by), _ = along(t3c, 0.7)
+    bfX, bfY = bx - 34, by + 4
+    tr += f'<line x1="{bx:.1f}" y1="{by:.1f}" x2="{bfX+6:.1f}" y2="{bfY-12:.1f}" stroke="{INK2}" stroke-width="1.4" stroke-dasharray="2 3"/>'
+    tr += big_fir(bfX, bfY, 32)
+    B.add("Brad:icon", bfX - 20, bfY - 40, bfX + 20, bfY + 6)
+    tr += place_marks(B, "t3", t3c, "triunghi_rosu", 2, 22, 0.18, 0.95, 0.3, ignore=("riv",))
+    tr += place_badge(B, "t3", t3c, 3, RED, 13, fr=(0.08, 0.15, 0.25), off=24)
+
+    # traseele 1 și 2 – mici, în dreptunghiul de detaliu
+    # poziții comune: Păltiniș (-0.5, 0.62), Vf. Oncești / Poiana Lupilor (-0.58, 0.68), Șaua Bătrâna (-0.66, 0.72);
+    # punctele intermediare (izvorul Dorul Clujului, Poiana Găujoara, Poiana Lupilor, Șanta) sunt orientative
+    T1 = [(-0.5, 0.62), (-0.49, 0.675), (-0.505, 0.718), (-0.545, 0.752), (-0.6, 0.762), (-0.645, 0.756), (-0.66, 0.72)]
+    T2 = [(-0.5, 0.62), (-0.54, 0.648), (-0.58, 0.68), (-0.645, 0.657), (-0.655, 0.622), (-0.6, 0.594), (-0.545, 0.598), (-0.5, 0.62)]
+    pX, pY = P(*REG["Păltiniș"])
+    small = ""
+    for T, col in ((T1, RED), (T2, BLUE)):
+        pts = [P(*q) for q in T]
+        small += f'<path d="{smooth_path(pts, False)}" fill="none" stroke="{MARKW}" stroke-width="6" stroke-linecap="round"/>'
+        small += f'<path d="{smooth_path(pts, False)}" fill="none" stroke="{col}" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="6 4"/>\n'
+    small += resort(pX, pY, 0.62)
+    small += saddle(*P(*REG["Șaua Bătrâna"]), 26) + summit_mark(*P(*REG["Vf. Oncești"]), 6)
+    zoom = (f'<rect x="{zx0:.1f}" y="{zy0:.1f}" width="{zx1-zx0:.1f}" height="{zy1-zy0:.1f}" rx="10" fill="#FBF7EE" fill-opacity="0.25" '
+            f'stroke="{OCRU_D}" stroke-width="2.4" stroke-dasharray="8 5"/>\n')
+    zoom += text(zx0 + 10, zy1 - 10, "detaliu →", 13, OCRU_D, "sans", 700, True)
+    conn = (f'<path d="M{zx1:.1f},{zy0:.1f} L{IX:.1f},{IY+HDR:.1f} M{zx1:.1f},{zy1:.1f} L{IX:.1f},{IY+IH:.1f}" '
+            f'stroke="{OCRU_D}" stroke-width="1.6" stroke-dasharray="3 5" fill="none"/>\n')
+
+    # ---- legendă (stânga sus) și busolă ----
+    LX, LY, LW = 100, 250, 344
+    rows = [
+        ("trail", "traseu marcat (numărul din fișă)"),
+        ("end", "capăt de traseu"),
+        ("orient", "reper pe traseu – loc orientativ"),
+        ("peak", "vârf / șa"),
+        ("water", "râul Cibin și lacul de acumulare"),
+        ("deco", "molizi, stână – ilustrații decorative"),
+    ]
+    LH = 58 + len(rows) * 30 + 6
+    leg = f'<rect x="{LX}" y="{LY}" width="{LW}" height="{LH}" rx="16" fill="#FBF7EE" fill-opacity="0.94" stroke="#C9B48E" stroke-width="1.5" filter="url(#shs)"/>\n'
+    leg += text(LX + 20, LY + 36, "Legendă", 22, INK, "serif", 700)
+    y = LY + 68
+    for kind, desc in rows:
+        ix = LX + 38
+        if kind == "trail":
+            leg += f'<path d="M{ix-22},{y-6} h44" stroke="{MARKW}" stroke-width="9" stroke-linecap="round"/><path d="M{ix-22},{y-6} h44" stroke="{RED}" stroke-width="5" stroke-dasharray="11 6"/>'
+        elif kind == "end":
+            leg += endpoint(ix, y - 6, RED, 7)
+        elif kind == "orient":
+            leg += ring_orient(ix, y - 6, 8)
+        elif kind == "peak":
+            leg += summit_mark(ix - 10, y - 6, 7) + saddle(ix + 12, y - 4, 22)
+        elif kind == "water":
+            leg += f'<path d="M{ix-22},{y-2} q11,-10 22,0 t22,0" stroke="{RIVER}" stroke-width="5" fill="none"/><ellipse cx="{ix+12}" cy="{y-10}" rx="9" ry="5" fill="{WATER}" stroke="{RIVER_D}" stroke-width="1.2"/>'
+        else:
+            leg += fir(ix - 10, y + 4, 20, FIR1) + f'<polygon points="{ix+2},{y-4} {ix+12},{y-13} {ix+22},{y-4}" fill="#6B5A44"/><rect x="{ix+5}" y="{y-4}" width="14" height="9" fill="#9C7650"/>'
+        leg += text(LX + 74, y, desc, 15, INK2)
+        assert LX + 74 + measure(desc, 15) <= LX + LW - 12, ("legend row", desc)
+        y += 30
+    B.add("legend", LX, LY, LX + LW, LY + LH)
+    CX, CY = MX + MW - 62, MY + 76
+    comp = SM.compass(CX, CY, r=28)
+    B.add("compass", CX - 52, CY - 54, CX + 52, CY + 54)
+    note = "Hartă schematică, poziții aproximative – nu la scară"
+    nt = text(MX + 22, MY + MH - 18, note, 18, INK2, "sans", 400, True)
+    B.text("note", MX + 22, MY + MH - 18, measure(note, 18, "sans", 400, True), 18)
+
+    # ---- etichete (plasare automată, candidați în ordinea preferinței) ----
+    labels = ""
+
+    def put(name, x, y, lines, cands, **kw):
+        nonlocal labels
+        svg, pos = place(B, name, x, y, lines, cands, BOUNDS, **kw)
+        labels += svg
+        return pos
+
+    put("Sibiu", sx_, sy_ + 58, [L("Sibiu", 30, INK, 700, False, "serif"), L("415 m altitudine", 15, INK2, 400, True)],
+        [(0, 0, "middle"), (-60, 0, "end")], hw=6)
+    put("Dumbrava", dX, dY + 52, [L("Pădurea Dumbrava", 19, "#2F5D3F", 700, False, "serif"), L("993 ha · stejăret de terasă", 15, INK2, 400, True)],
+        [(0, 0, "middle"), (0, -96, "middle")])
+    rX, rY = P(*REG["Rășinari"])
+    put("Rășinari", rX, rY, [L("Rășinari", 19, INK, 700, False, "serif")], [(32, 4, "start"), (-32, 4, "end"), (0, 36, "middle")])
+    oX, oY = P(*REG["Orlat"])
+    put("Orlat", oX, oY, [L("Orlat", 17, INK, 700, False, "serif")], [(0, -32, "middle"), (24, -20, "start"), (0, 36, "middle")])
+    crX, crY = P(*REG["Cristian"])
+    put("Cristian", crX, crY, [L("Cristian", 17, INK, 700, False, "serif")], [(0, 36, "middle"), (0, -32, "middle")])
+    gX, gY = P(*REG["Gura Râului"])
+    put("Gura", gX, gY, [L("Gura Râului", 19, INK, 700, False, "serif"), L("barajul: cea mai mare sursă", 14, INK2, 400, True),
+                         L("de apă potabilă a Sibiului", 14, INK2, 400, True)],
+        [(30, 0, "start"), (34, 10, "start"), (34, 24, "start")])
+    put("Cheile", chX, chY, [L("Cheile Cibinului", 19, INK, 700, False, "serif"), L("circa 2 km, pereți de șist cristalin", 14, INK2, 400, True)],
+        [(34, 6, "start"), (34, 16, "start"), (34, -4, "start")])
+    nX, nY = t3[-1]
+    put("Nic", nX, nY, [L("cantonul Niculești", 15), L("poziție orientativă", 13, OCRU_D, 600, True)],
+        [(18, 32, "start"), (16, 5, "start"), (-16, 5, "end"), (0, 30, "middle")])
+    put("Brad", bfX, bfY, [L("„Bradul Uriaș”", 15), L("peste 500 de ani · circa 40 m", 13, INK2, 400, True),
+                           L("pe traseu, loc orientativ", 13, OCRU_D, 600, True)],
+        [(-24, -16, "end"), (-24, -30, "end"), (-24, -2, "end"), (0, -50, "middle")])
+    put("Cindrel", cX, cY, [L("Vf. Cindrel · 2.244 m", 18, INK, 700, False, "serif")], [(0, 30, "middle"), (0, -82, "middle")])
+    put("rivsrc", srcX, srcY, [L("izvoarele Cibinului", 13, RIVER_D, 600, True)],
+        [(14, -8, "start"), (16, 4, "start"), (12, 18, "start"), (-12, -10, "end")], hw=4)
+    put("Pal", pX, pY, [L("Păltiniș", 22, INK, 700, False, "serif"), L("stațiune fondată în 1894", 14, INK2, 400, True),
+                        L("1.440 sau 1.442 m, după sursă", 14, OCRU_D, 700)],
+        [(-30, -96, "start"), (-60, -96, "start"), (-10, -110, "start"), (-90, -96, "start")])
+    put("rivlab", *P(-0.47, -0.03), [L("râul Cibin →", 15, RIVER_D, 600, True)], [(0, -22, "middle"), (0, 26, "middle"), (40, -22, "middle")], hw=4)
+    put("rivolt", *P(0.16, 0.08), [L("spre Olt →", 14, RIVER_D, 600, True)], [(-30, 34, "start"), (-40, 40, "start"), (-60, -26, "start")], hw=4)
+    mw = measure("MUNȚII CINDREL", 20, "serif", 700, letter_spacing=6)
+    for (mx_, my_) in [(300, 640), (260, 620), (330, 668), (250, 700), (680, 712)]:
+        mbox = (mx_ - mw / 2 - 4, my_ - 19, mx_ + mw / 2 + 4, my_ + 7)
+        if not hits(B, mbox):
+            break
+    else:
+        print("  ! fără loc pentru numele munților")
+    labels += text(mx_, my_, "MUNȚII CINDREL", 20, "#4E6B4E", "serif", 700, anchor="middle",
+                   extra='letter-spacing="6" opacity="0.85"')
+    B.add("munti", *mbox)
+
+    # ---- detaliul (inset) ----
+    inset, IB = inset_paltinis(IX, IY, IW, IH, HDR, Z0, Z1, T1, T2)
+
+    # ---- molizi (după ce cunoaștem etichetele) ----
+    trees = ""
+    rnd = random.Random(11)
+    cand = [(rnd.uniform(600, 995), rnd.uniform(MX + 6, 880)) for _ in range(620)]
+    mpoly = curve_pts(mount, 0.35)
+
+    def mount_top(x):
+        for (ax, ay), (bx2, by2) in zip(mpoly, mpoly[1:]):
+            if min(ax, bx2) <= x <= max(ax, bx2) and ay < 990 and by2 < 990:
+                t = (x - ax) / ((bx2 - ax) or 1)
+                return ay + (by2 - ay) * t
+        return None
+
+    for y, x in sorted(cand):
+        mt = mount_top(x)
+        if mt is None or y < mt + 18:
+            continue
+        if y > 835 and x < 540:          # pajiștile alpine – fără arbori
+            continue
+        h = rnd.uniform(16, 24)
+        if hits(B, (x - h * 0.45, y - h, x + h * 0.45, y + 4)):
+            continue
+        trees += fir(x, y, h, rnd.choice([FIR1, FIR2, FIR3])) + "\n"
+
+    body += trees + icons + tr + small + zoom + conn + labels + leg + comp + nt + inset
+    body += "</g>\n"
+    s += body
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+    # ---------------- coloana dreaptă: fișele traseelor ----------------
+    RX, RW = 1320, 520
+    y = 230
+    TR = [
+        (1, "cruce_rosie", RED, "Păltiniș – Șaua Bătrâna",
+         "Păltiniș (telescaun) – izvorul Dorul Clujului – Poiana Găujoara – Șaua Bătrâna (1.863 m)",
+         [("len", "5,8 km"), ("time", "2 h – 2 h 30 min"), ("up", "urcare 499 m")], "ușor",
+         "Reper: izvorul Dorul Clujului.", "cruce roșie"),
+        (2, "triunghi_albastru", BLUE, "Circuitul Vf. Oncești",
+         "Păltiniș – Vf. Oncești – Poiana Lupilor – Șanta – Păltiniș",
+         [("len", "8,6 km"), ("time", "3 h 15 min – 3 h 45 min"), ("up", "urcare 415 m")], "ușor",
+         "Repere: Poiana Lupilor, Șanta.", "triunghi albastru"),
+        (3, "triunghi_rosu", RED, "Prin Cheile Cibinului",
+         "Gura Râului (coada lacului) – Cheile Cibinului – cantonul Niculești",
+         [("len", "13,7 km"), ("time", "5 h 30 min – 6 h"), ("up", "urcare 944 m")], "„destul de solicitant”",
+         "Repere: Cheile Cibinului (circa 2 km); „Bradul Uriaș”, de peste 500 de ani (circa 40 m).", "triunghi roșu"),
+    ]
+    col_svg = ""
+    for n, kind, col, title, route, stats, dif, rep, mk_name in TR:
+        y0 = y
+        yy = y0 + 40
+        inner = ""
+        inner += mark_symbol(kind, RX + 40, y0 + 46, 38)
+        inner += num_badge(RX + 84, yy - 8, n, col, 14)
+        inner += text(RX + 106, yy, title, 23, VAR, "serif", 700)
+        assert RX + 106 + measure(title, 23, "serif", 700) <= RX + RW - 20, title
+        mk = "marcaj: " + mk_name
+        inner += text(RX + 76, yy + 25, mk, 15, CEATA, "sans", 400, True)
+        # dificultatea – etichetă în dreapta rândului de marcaj
+        dcol = "#3E8E5A" if dif == "ușor" else "#C2671B"
+        dl = "dificultate: " + dif
+        dw = measure(dl, 14, "sans", 700) + 26
+        assert RX + 76 + measure(mk, 15, "sans", 400, True) + 14 <= RX + RW - 20 - dw, ("dif pill", title)
+        inner += f'<rect x="{RX+RW-20-dw:.1f}" y="{yy+8:.1f}" width="{dw:.1f}" height="25" rx="12.5" fill="{dcol}"/>'
+        inner += text(RX + RW - 20 - dw / 2, yy + 25.5, dl, 14, VAR, "sans", 700, anchor="middle")
+        yy += 54
+        p, yy = para(RX + 24, yy, route, 16, RW - 48, VAR, lh=21)
+        inner += p
+        # bandă de statistici: 3 celule (lungime, durată, urcare)
+        top = yy - 21 + 13
+        vs = 17
+        while True:
+            widths = [measure(val, vs, "sans", 700) + 44 for _, val in stats]
+            if sum(widths) + 2 * 8 <= RW - 48 or vs <= 14:
+                break
+            vs -= 1
+        extra = (RW - 48 - sum(widths) - 2 * 8) / 3
+        assert extra >= 0, ("stats overflow", title, vs)
+        cx = RX + 24
+        for (ic, val), w in zip(stats, widths):
+            w += extra
+            inner += f'<rect x="{cx:.1f}" y="{top:.1f}" width="{w:.1f}" height="38" rx="10" fill="{BG}" stroke="#2A3845" stroke-width="1"/>'
+            inner += stat_icon(ic, round(cx + 20), round(top + 19), col)
+            inner += text(cx + 36, top + 25, val, vs, VAR, "sans", 700)
+            cx += w + 8
+        yy = top + 38 + 25
+        p, yy = para(RX + 24, yy, rep, 15, RW - 48, CEATA, lh=20, italic=True)
+        inner += p
+        h = yy - 20 - y0 + 16
+        col_svg += card(RX, y0, RW, h)
+        col_svg += f'<rect x="{RX}" y="{y0+18}" width="5" height="{h-36}" rx="2.5" fill="{col}"/>\n'
+        col_svg += inner
+        y = y0 + h + 10
+    # casetă de siguranță
+    sy0 = y
+    safe = "Verificați traseul și vremea înainte de plecare; mergeți însoțiți; rămâneți pe marcaj; urgențe: 112"
+    p, ye = para(RX + 76, sy0 + 32, safe, 17, RW - 100, VAR, lh=22, weight=600)
+    src = "Sursa traseelor: muntii-nostri.ro"
+    p2, ye2 = para(RX + 76, ye + 1, src, 14, RW - 100, OCRU, lh=18, italic=True)
+    sh = ye2 - 18 - sy0 + 16
+    sh = max(sh, 1000 - sy0)
+    col_svg += card(RX, sy0, RW, sh, fill="#2A2416", stroke=OCRU)
+    col_svg += warn_icon(RX + 40, sy0 + 40, 36)
+    col_svg += p + p2
+    assert ye2 - 18 + 10 <= 1000, ("right column overflow", ye2)
+    s += col_svg
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    print("harta mare")
+    bad = check(B, BOUNDS)
+    print("overlaps:", len(bad))
+    print("detaliu")
+    bad2 = check(IB, (IX + 4, IY + 4, IX + IW - 4, IY + IH - 4))
+    print("overlaps:", len(bad2))
+
+
+def inset_paltinis(IX, IY, IW, IH, HDR, Z0, Z1, T1, T2):
+    B = Boxes()
+    pad = 14
+    kx = (IW - 2 * pad) / (Z1[0] - Z0[0]); ky = (IH - HDR - 2 * pad) / (Z1[1] - Z0[1])
+    BND = (IX + 6, IY + HDR + 4, IX + IW - 6, IY + IH - 6)
+    HC = "#EEF0DE"
+
+    def Q(nx, ny):
+        return (IX + pad + (nx - Z0[0]) * kx, IY + HDR + pad + (ny - Z0[1]) * ky)
+
+    s = f'<g filter="url(#sh)"><rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="16" fill="#E9EDD8" stroke="{OCRU_D}" stroke-width="2.4"/></g>\n'
+    s += f'<clipPath id="iclip"><rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="16"/></clipPath>\n<g clip-path="url(#iclip)">\n'
+    s += f'<rect x="{IX}" y="{IY+HDR}" width="{IW}" height="{IH-HDR}" fill="#B9CFA6"/>\n'
+    mx, my = Q(-0.66, 0.735)
+    s += f'<ellipse cx="{mx:.1f}" cy="{my:.1f}" rx="78" ry="56" fill="#DCDDB8" opacity="0.9" filter="url(#blur8)"/>\n'
+    s += f'<rect x="{IX}" y="{IY}" width="{IW}" height="{HDR}" fill="#1B2733"/>\n'
+    s += text(IX + 16, IY + 27, "Detaliu: zona Păltiniș", 19, VAR, "serif", 700)
+    sub = "fondată în 1894 · prima stațiune montană din România"
+    s += text(IX + 16, IY + 50, sub, 13, CEATA, "sans", 400, True)
+    assert IX + 16 + measure(sub, 13, "sans", 400, True) <= IX + IW - 10
+    B.add("hdr", IX, IY, IX + IW, IY + HDR)
+
+    t1 = [Q(*q) for q in T1]
+    t2 = [Q(*q) for q in T2]
+    c1 = curve_pts(t1); c2 = curve_pts(t2)
+    add_curve(B, "t1", c1, 6, 4)
+    add_curve(B, "t2", c2, 6, 4)
+
+    pX, pY = Q(-0.5, 0.62)
+    oX, oY = Q(-0.58, 0.68)
+    bX, bY = Q(-0.66, 0.72)
+    plX, plY = Q(*T2[3])
+    stX, stY = Q(*T2[5])
+    dcX, dcY = Q(*T1[2])
+    gjX, gjY = Q(*T1[4])
+
+    icons = ""
+    icons += resort(pX, pY - 4, 1.0)
+    B.add("Pal:icon", pX - 28, pY - 32, pX + 28, pY + 10)
+    icons += f'<g filter="url(#shs)">' + peak(oX, oY, 46, 32, False, "#8F8A78", "#746F60") + "</g>" + summit_mark(oX, oY - 4, 6)
+    B.add("Onc:icon", oX - 23, oY - 10, oX + 23, oY + 32)
+    icons += saddle(bX, bY + 6, 46)
+    B.add("Bat:icon", bX - 23, bY - 8, bX + 23, bY + 15)
+    icons += meadow(plX, plY, 7) + ring_orient(stX, stY, 7) + spring(dcX, dcY, 8) + meadow(gjX, gjY, 8)
+    # repere orientative: inel punctat în jurul pictogramei
+    for (qx, qy) in ((plX, plY), (dcX, dcY), (gjX, gjY)):
+        icons += f'<circle cx="{qx:.1f}" cy="{qy:.1f}" r="13" fill="none" stroke="{OCRU_D}" stroke-width="2" stroke-dasharray="4 3"/>'
+    for nm, (qx, qy) in (("PL", (plX, plY)), ("St", (stX, stY)), ("DC", (dcX, dcY)), ("GJ", (gjX, gjY))):
+        B.add(nm + ":icon", qx - 14, qy - 14, qx + 14, qy + 14)
+    B.add("t1:end", bX - 8, bY - 10, bX + 8, bY + 6)
+
+    labels = ""
+
+    def put(name, x, y, lines, cands, **kw):
+        nonlocal labels
+        svg, _ = place(B, name, x, y, lines, cands, BND, hcol=HC, **kw)
+        labels += svg
+
+    put("Pal", pX, pY, [L("Păltiniș", 19, INK, 700, False, "serif"), L("1.440 / 1.442 m", 13, OCRU_D, 700),
+                        L("start: telescaun", 13, INK2, 400, True)],
+        [(30, 2, "start"), (30, 14, "start"), (24, 22, "start"), (-30, 2, "end")])
+    put("St", stX, stY, [L("Șanta", 14)], [(0, -16, "middle"), (16, 5, "start"), (-16, 5, "end"), (0, 28, "middle")])
+    put("PL", plX, plY, [L("Poiana", 14), L("Lupilor", 14)], [(-18, -2, "end"), (-18, 6, "end"), (0, 30, "middle"), (18, -2, "start")])
+    put("Bat", bX, bY, [L("Șaua Bătrâna", 15), L("1.863 m", 13, OCRU_D, 700)],
+        [(-8, -30, "middle"), (-14, -32, "middle"), (0, -26, "middle"), (28, 4, "start"), (0, 40, "middle")])
+    put("Onc", oX, oY, [L("Vf. Oncești", 15)], [(0, 52, "middle"), (-6, 52, "middle"), (26, 22, "start"), (-26, 22, "end"), (0, -16, "middle")])
+    put("DC", dcX, dcY, [L("izvorul", 14), L("Dorul Clujului", 14)], [(18, -2, "start"), (18, 8, "start"), (-18, -2, "end"), (0, 30, "middle")])
+    put("GJ", gjX, gjY, [L("Poiana Găujoara", 14)], [(0, 32, "middle"), (-20, 30, "middle"), (18, 26, "start"), (0, -20, "middle")])
+    put("orient", IX + IW - 14, IY + IH - 14, [L("cerc punctat = loc orientativ", 12, OCRU_D, 600, True)],
+        [(0, 0, "end"), (-200, -10, "start")], hw=4)
+
+    # traseele, simbolurile și capetele (după etichete, ca să le ocolească)
+    tr = trail_path(t2, BLUE, 5, 9) + trail_path(t1, RED, 5, 9)
+    tr += endpoint(pX, pY, INK, 7) + endpoint(bX, bY - 2, RED, 6)
+    tr += place_marks(B, "t2", c2, "triunghi_albastru", 3, 20, 0.1, 0.92, 0.18, ignore=("t1",))
+    tr += place_marks(B, "t1", c1, "cruce_rosie", 2, 20, 0.12, 0.9, 0.25, ignore=("t2",))
+    tr += place_badge(B, "t1", c1, 1, RED, 12, fr=(0.55, 0.45, 0.65, 0.35, 0.75), off=20)
+    tr += place_badge(B, "t2", c2, 2, BLUE, 12, fr=(0.3, 0.4, 0.2, 0.6, 0.7), off=20)
+
+    # molizi în detaliu
+    trees = ""
+    rnd = random.Random(23)
+    cand = [(rnd.uniform(IY + HDR + 16, IY + IH + 10), rnd.uniform(IX + 6, IX + IW - 6)) for _ in range(300)]
+    for y, x in sorted(cand):
+        h = rnd.uniform(14, 20)
+        if hits(B, (x - h * 0.45, y - h, x + h * 0.45, y + 4)):
+            continue
+        if math.hypot((x - mx) / 1.3, y - my) < 52:
+            continue
+        trees += fir(x, y, h, rnd.choice([FIR1, FIR2, FIR3])) + "\n"
+
+    s += trees + tr + icons + labels + "</g>\n"
+    s += f'<rect x="{IX}" y="{IY}" width="{IW}" height="{IH}" rx="16" fill="none" stroke="{OCRU_D}" stroke-width="2.4"/>\n'
+    return s, B
+
+
+if __name__ == "__main__":
+    main()

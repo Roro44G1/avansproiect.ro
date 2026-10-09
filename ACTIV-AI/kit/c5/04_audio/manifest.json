@@ -1,0 +1,108 @@
+[
+ {
+  "cod": "A19",
+  "categorie": "Audio",
+  "titlu": "ASMR AI: o bucătărie transilvăneană duminică dimineața",
+  "titlu_creativ": "Duminică, la plită",
+  "fisiere": [
+   "04_audio/A19_asmr_bucatarie.md",
+   "04_audio/A19_asmr_bucatarie.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – scenariu + sinteză audio procedurală (Python/numpy)",
+  "descriere": "O dimineață de duminică imaginată într-o bucătărie, cu sarmale: focul din sobă, apa în ceaun, ceapa pe tocător, frunzele de varză, oala de ceramică pe plită și un clopot departe – sunete sintetizate din cod.",
+  "status": "realizat",
+  "nota": "Peisaj sonor de tip ASMR, fără voce și fără muzică; toate sunetele sunt aproximări sintetizate din cod, fără mostre și fără înregistrări – nu este o înregistrare dintr-o bucătărie reală. Loudness-țintă −18 LUFS (nu −14 LUFS), ales intenționat pentru o ascultare liniștită, „de aproape”; declarat în md. Fapte din fapte_verificate.md („Preparate” – sarmalele: frunze de varză sau de viță, carne tocată, orez, ceapă, verdețuri, fierte ore în șir, tradițional în oale de ceramică; en.wikipedia, Romanian cuisine): de aici vin ceapa, umplutura, frunzele de varză și oala de ceramică. Imaginate: bucătăria, soba, ceaunul, ceasul, clopotul (nicio biserică anume), cana, persoana care gătește (personaj fictiv, nevăzut), ordinea pașilor și timpul comprimat; piesa nu spune dacă varza e proaspătă sau murată. Termenii ASMR, ceaun și sunetul bulelor (rezonanța Minnaert) – en.wikipedia, în 04_audio/_fapte_noi_A19_A20.md. Verificare tehnică în 04_audio/_verificare/.",
+  "audio": "04_audio/A19_asmr_bucatarie.mp3",
+  "tts_text": null,
+  "tts_lang": null,
+  "durata_s": 100.05,
+  "loudness_lufs": -18.1,
+  "loudness_tinta_lufs": -18.0,
+  "true_peak_dbtp": -1.4,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "cod_sursa": [
+   "04_audio/_src/A19_asmr_bucatarie.py",
+   "04_audio/_src/verificare_A19_A20.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "fapte_noi": "04_audio/_fapte_noi_A19_A20.md",
+  "marcaje_s": {
+   "Liniște: ceasul de perete": 0.0,
+   "Ușița sobei, chibritul, focul pornește": 3.0,
+   "Ușița se închide; lemnele trosnesc": 11.5,
+   "Apa turnată în ceaun": 15.0,
+   "Cuțitul pe tocător: ceapa": 24.0,
+   "Ceaunul începe să fiarbă": 34.0,
+   "Lingura de lemn în umplutură": 40.0,
+   "Frunzele de varză": 51.0,
+   "Pauză: ceas, foc, ceaun": 63.0,
+   "Oala de ceramică pe plită": 68.0,
+   "Clopotul de duminică, departe": 73.0,
+   "Cana pe masă": 86.5,
+   "Final": 93.0
+  },
+  "verificare": [
+   "04_audio/_verificare/A19_asmr_bucatarie_spectrograma.png",
+   "04_audio/_verificare/A19_asmr_bucatarie_forma_unda.png",
+   "04_audio/_verificare/raport_A19_A20.json"
+  ]
+ },
+ {
+  "cod": "A20",
+  "categorie": "Audio",
+  "titlu": "Jingle AI pentru o piață de producători imaginară",
+  "titlu_creativ": "Hai la Coșul cu Soare!",
+  "fisiere": [
+   "04_audio/A20_jingle_piata.md",
+   "04_audio/A20_jingle_piata.mp3"
+  ],
+  "tip": "audio",
+  "instrument": "Claude (Anthropic) – versuri, melodie, acorduri și aranjament + sinteză audio procedurală (Python/numpy)",
+  "descriere": "Un jingle vesel, ca la radio, pentru „Coșul cu Soare”, o piață de producători imaginară: versuri și melodie originale, cu telemea și salam de Sibiu, plus o variantă de 10 secunde. Vocea nu e generată.",
+  "status": "realizat",
+  "nota": "„Coșul cu Soare” este o piață IMAGINARĂ: nume inventat; la o căutare web (8 octombrie 2026) nu s-a găsit o piață cu acest nume; versurile nu pomenesc zi sau loc, ca să nu fie confundată cu târgul real de sâmbătă al producătorilor din Sibiu. Temă originală în stil de jingle radio: melodie, acorduri (Do major, 4/4, 124 BPM) și versuri originale, notate în md (versuri cu acorduri, note pe măsuri). Vocea nu e generată – versurile se cântă peste instrumental; melodia vocii e cântată de un „clarinet” sintetizat, ca ghid (53 din 53 de note recunoscute la verificare). Fișierul conține jingle-ul (0–25,6 s), 1,4 s de liniște și stinger-ul de 10 s (27,0–37,0 s). Fapte (fapte_verificate.md): telemeaua de Sibiu – IGP, 16 octombrie 2019 (economica.net); salamul de Sibiu – IGP din februarie 2016 (euronews.ro; turnulsfatului.ro). Fără firme, mărci, prețuri sau recomandări de consum. Sunete integral sintetizate, fără mostre.",
+  "audio": "04_audio/A20_jingle_piata.mp3",
+  "tts_text": null,
+  "tts_lang": null,
+  "durata_s": 37.07,
+  "durata_jingle_s": 25.58,
+  "durata_stinger_s": 10.04,
+  "stinger_s": [
+   26.98,
+   37.02
+  ],
+  "loudness_lufs": -14.1,
+  "true_peak_dbtp": -1.7,
+  "sample_rate_hz": 44100,
+  "canale": 2,
+  "bitrate_kbps": 192,
+  "tempo": "124 de pătrimi pe minut",
+  "tonalitate": "Do major",
+  "masura": "4/4",
+  "cod_sursa": [
+   "04_audio/_src/A20_jingle_piata.py",
+   "04_audio/_src/verificare_A19_A20.py",
+   "../04_audio/_src/audiolib.py"
+  ],
+  "fapte_noi": "04_audio/_fapte_noi_A19_A20.md",
+  "marcaje_s": {
+   "Intro": 0.0,
+   "Versurile 1–2": 3.87,
+   "Versurile 3–4": 11.61,
+   "Încheiere: versul 1, reluat": 19.35,
+   "Acordul final": 23.23,
+   "Liniște (între jingle și stinger)": 25.58,
+   "Stinger: pornire": 26.98,
+   "Stinger: versul 1": 28.91,
+   "Stinger: acordul final": 32.78
+  },
+  "verificare": [
+   "04_audio/_verificare/A20_jingle_piata_spectrograma.png",
+   "04_audio/_verificare/A20_jingle_piata_forma_unda.png",
+   "04_audio/_verificare/raport_A19_A20.json"
+  ]
+ }
+]

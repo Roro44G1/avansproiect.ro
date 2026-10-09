@@ -1,0 +1,301 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="170" height="44" fill="#3E63DD"/>
+<text x="85.2" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">DATE · D13</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="50" fill="#F3EFE6">Calendarul naturii în Sibiu: ce înflorește și ce se vede în fiecare lună</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">infografic AI · 12 luni · flori, fructe, păstorit și zăpadă</text>
+<circle cx="92" cy="231" r="12" fill="none" stroke="#E2A62B" stroke-width="2.5"/>
+<text x="92.0" y="237.0" font-family="'Noto Serif', serif" font-size="17" font-weight="700" fill="#E2A62B" text-anchor="middle">i</text>
+<text x="114.0" y="238.0" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#E2A62B" text-anchor="start" font-style="italic">Perioade orientative pentru zona Sibiului – variază de la an la an; datele sărbătorilor după sibiu-turism.ro</text>
+<rect x="80" y="256" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="80" y="256" width="280" height="7" rx="3" fill="#8FB8DE"/>
+<text x="102.0" y="302.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Ianuarie</text>
+<text x="342.0" y="298.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#8FB8DE" text-anchor="end" letter-spacing="1.5">IARNĂ</text>
+<circle cx="124" cy="388.0" r="27" fill="#132029" stroke="#8FB8DE" stroke-width="2.5"/>
+<polygon points="102.0,404.0 118.0,380.0 128.0,392.0 136.0,384.0 148.0,404.0" fill="#4E6A86"/>
+<polygon points="118.0,380.0 112.0,389.0 116.0,387.0 120.0,390.0 123.0,387.0" fill="#F3EFE6"/>
+<polygon points="136.0,384.0 132.0,389.0 136.0,388.0 140.0,390.0" fill="#F3EFE6"/>
+<line x1="125.0" y1="373.0" x2="141.0" y2="373.0" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/><line x1="129.0" y1="366.1" x2="137.0" y2="379.9" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/><line x1="137.0" y1="366.1" x2="129.0" y2="379.9" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/>
+<text x="166.0" y="379.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#8FB8DE" text-anchor="start">Zăpadă la Păltiniș</text>
+<text x="166.0" y="400.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">sezonul de schi e în toi</text>
+<circle cx="124" cy="454.0" r="27" fill="#132029" stroke="#8F7BE0" stroke-width="2.5"/>
+<path d="M102,460.0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0" stroke="#8FB8DE" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M102,468.0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0" stroke="#0E7C86" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M116,437.6 Q120,444.0 116,448.0 Q112,444.0 116,437.6 Z" fill="#8FB8DE"/><path d="M126,430.0 Q131,438.0 126,443.0 Q121,438.0 126,430.0 Z" fill="#8FB8DE"/><path d="M135,440.4 Q138.5,446.0 135,449.5 Q131.5,446.0 135,440.4 Z" fill="#8FB8DE"/>
+<text x="166.0" y="445.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#8F7BE0" text-anchor="start">7 ianuarie</text>
+<text x="166.0" y="466.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">„Scăldatul Sfinților Ioni”,</text>
+<text x="166.0" y="485.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">la Tălmăcel</text>
+<line x1="96" y1="540" x2="344" y2="540" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="376" y="256" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="376" y="256" width="280" height="7" rx="3" fill="#8FB8DE"/>
+<text x="398.0" y="302.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Februarie</text>
+<text x="638.0" y="298.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#8FB8DE" text-anchor="end" letter-spacing="1.5">IARNĂ</text>
+<circle cx="420" cy="388.0" r="27" fill="#132029" stroke="#8FB8DE" stroke-width="2.5"/>
+<polygon points="398.0,404.0 414.0,380.0 424.0,392.0 432.0,384.0 444.0,404.0" fill="#4E6A86"/>
+<polygon points="414.0,380.0 408.0,389.0 412.0,387.0 416.0,390.0 419.0,387.0" fill="#F3EFE6"/>
+<polygon points="432.0,384.0 428.0,389.0 432.0,388.0 436.0,390.0" fill="#F3EFE6"/>
+<line x1="421.0" y1="373.0" x2="437.0" y2="373.0" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/><line x1="425.0" y1="366.1" x2="433.0" y2="379.9" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/><line x1="433.0" y1="366.1" x2="425.0" y2="379.9" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/>
+<text x="462.0" y="379.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#8FB8DE" text-anchor="start">Schi la Păltiniș</text>
+<text x="462.0" y="400.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">de regulă, până în aprilie</text>
+<circle cx="420" cy="454.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<path d="M420,472.0 L420,456.0" stroke="#5DAA74" stroke-width="2.5"/><path d="M418,472.0 Q408,460.0 406,452.0" fill="none" stroke="#5DAA74" stroke-width="2.5" stroke-linecap="round"/><path d="M422,472.0 Q432,460.0 434,452.0" fill="none" stroke="#5DAA74" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="414" cy="447.0" rx="6" ry="12" fill="#6E56CF" transform="rotate(-18 414 447.0)"/><ellipse cx="426" cy="447.0" rx="6" ry="12" fill="#6E56CF" transform="rotate(18 426 447.0)"/><ellipse cx="420" cy="446.0" rx="6.5" ry="13" fill="#9B7FE6"/><path d="M420,440.0 L420,452.0" stroke="#E2A62B" stroke-width="2"/>
+<text x="462.0" y="445.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Brândușe</text>
+<text x="462.0" y="466.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">primele apar la sfârșitul</text>
+<text x="462.0" y="485.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">iernii</text>
+<line x1="392" y1="540" x2="640" y2="540" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="672" y="256" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="672" y="256" width="280" height="7" rx="3" fill="#5DAA74"/>
+<text x="694.0" y="302.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Martie</text>
+<text x="934.0" y="298.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#5DAA74" text-anchor="end" letter-spacing="1.5">PRIMĂVARĂ</text>
+<circle cx="716" cy="385.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<path d="M716,403.0 L716,387.0" stroke="#5DAA74" stroke-width="2.5"/><path d="M714,403.0 Q704,391.0 702,383.0" fill="none" stroke="#5DAA74" stroke-width="2.5" stroke-linecap="round"/><path d="M718,403.0 Q728,391.0 730,383.0" fill="none" stroke="#5DAA74" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="710" cy="378.0" rx="6" ry="12" fill="#6E56CF" transform="rotate(-18 710 378.0)"/><ellipse cx="722" cy="378.0" rx="6" ry="12" fill="#6E56CF" transform="rotate(18 722 378.0)"/><ellipse cx="716" cy="377.0" rx="6.5" ry="13" fill="#9B7FE6"/><path d="M716,371.0 L716,383.0" stroke="#E2A62B" stroke-width="2"/>
+<text x="758.0" y="376.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Brândușe</text>
+<text x="758.0" y="397.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">înfloresc la începutul</text>
+<text x="758.0" y="416.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">primăverii</text>
+<circle cx="716" cy="457.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<path d="M698,473.0 L732,443.0" stroke="#6B4E2E" stroke-width="3.5" stroke-linecap="round"/><path d="M712,461.0 l-7,-4 M722,452.0 l6,5 M705,467.0 l5,6" stroke="#6B4E2E" stroke-width="2" stroke-linecap="round"/><circle cx="707.0" cy="448.8" r="5.0" fill="#F3EFE6"/><circle cx="712.9" cy="453.1" r="5.0" fill="#F3EFE6"/><circle cx="710.6" cy="460.0" r="5.0" fill="#F3EFE6"/><circle cx="703.4" cy="460.0" r="5.0" fill="#F3EFE6"/><circle cx="701.1" cy="453.1" r="5.0" fill="#F3EFE6"/><circle cx="707" cy="455.0" r="3.2" fill="#E2A62B"/>
+<circle cx="725.0" cy="437.4" r="4.5" fill="#F3EFE6"/><circle cx="730.3" cy="441.3" r="4.5" fill="#F3EFE6"/><circle cx="728.3" cy="447.5" r="4.5" fill="#F3EFE6"/><circle cx="721.7" cy="447.5" r="4.5" fill="#F3EFE6"/><circle cx="719.7" cy="441.3" r="4.5" fill="#F3EFE6"/><circle cx="725" cy="443.0" r="2.9" fill="#E2A62B"/>
+<circle cx="724.0" cy="461.0" r="4.0" fill="#F3EFE6"/><circle cx="728.7" cy="464.5" r="4.0" fill="#F3EFE6"/><circle cx="726.9" cy="470.0" r="4.0" fill="#F3EFE6"/><circle cx="721.1" cy="470.0" r="4.0" fill="#F3EFE6"/><circle cx="719.3" cy="464.5" r="4.0" fill="#F3EFE6"/><circle cx="724" cy="466.0" r="2.6" fill="#E2A62B"/>
+<text x="758.0" y="448.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Porumbar</text>
+<text x="758.0" y="469.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">flori albe, înaintea</text>
+<text x="758.0" y="488.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">frunzelor</text>
+<line x1="688" y1="540" x2="936" y2="540" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="968" y="256" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="968" y="256" width="280" height="7" rx="3" fill="#5DAA74"/>
+<text x="990.0" y="302.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Aprilie</text>
+<text x="1230.0" y="298.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#5DAA74" text-anchor="end" letter-spacing="1.5">PRIMĂVARĂ</text>
+<circle cx="1012" cy="385.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<path d="M994,401.0 L1028,371.0" stroke="#6B4E2E" stroke-width="3.5" stroke-linecap="round"/><path d="M1008,389.0 l-7,-4 M1018,380.0 l6,5 M1001,395.0 l5,6" stroke="#6B4E2E" stroke-width="2" stroke-linecap="round"/><circle cx="1003.0" cy="376.8" r="5.0" fill="#F3EFE6"/><circle cx="1008.9" cy="381.1" r="5.0" fill="#F3EFE6"/><circle cx="1006.6" cy="388.0" r="5.0" fill="#F3EFE6"/><circle cx="999.4" cy="388.0" r="5.0" fill="#F3EFE6"/><circle cx="997.1" cy="381.1" r="5.0" fill="#F3EFE6"/><circle cx="1003" cy="383.0" r="3.2" fill="#E2A62B"/>
+<circle cx="1021.0" cy="365.4" r="4.5" fill="#F3EFE6"/><circle cx="1026.3" cy="369.3" r="4.5" fill="#F3EFE6"/><circle cx="1024.3" cy="375.5" r="4.5" fill="#F3EFE6"/><circle cx="1017.7" cy="375.5" r="4.5" fill="#F3EFE6"/><circle cx="1015.7" cy="369.3" r="4.5" fill="#F3EFE6"/><circle cx="1021" cy="371.0" r="2.9" fill="#E2A62B"/>
+<circle cx="1020.0" cy="389.0" r="4.0" fill="#F3EFE6"/><circle cx="1024.7" cy="392.5" r="4.0" fill="#F3EFE6"/><circle cx="1022.9" cy="398.0" r="4.0" fill="#F3EFE6"/><circle cx="1017.1" cy="398.0" r="4.0" fill="#F3EFE6"/><circle cx="1015.3" cy="392.5" r="4.0" fill="#F3EFE6"/><circle cx="1020" cy="394.0" r="2.6" fill="#E2A62B"/>
+<text x="1054.0" y="376.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Porumbar</text>
+<text x="1054.0" y="397.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">încă în floare la început</text>
+<text x="1054.0" y="416.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">de primăvară</text>
+<circle cx="1012" cy="457.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<ellipse cx="0" cy="0" rx="11.0" ry="5.0" fill="#5DAA74" transform="translate(1022.0,467.0) rotate(-30)"/>
+<ellipse cx="0" cy="0" rx="9.0" ry="4.0" fill="#3E8E5A" transform="translate(1000.0,469.0) rotate(30)"/>
+<circle cx="1005.0" cy="445.6" r="6.0" fill="#F3EFE6"/><circle cx="1012.1" cy="450.7" r="6.0" fill="#F3EFE6"/><circle cx="1009.4" cy="459.0" r="6.0" fill="#F3EFE6"/><circle cx="1000.6" cy="459.0" r="6.0" fill="#F3EFE6"/><circle cx="997.9" cy="450.7" r="6.0" fill="#F3EFE6"/><circle cx="1005" cy="453.0" r="3.8" fill="#E7C04F"/>
+<circle cx="1022.0" cy="441.4" r="4.5" fill="#F6E7EC"/><circle cx="1027.3" cy="445.3" r="4.5" fill="#F6E7EC"/><circle cx="1025.3" cy="451.5" r="4.5" fill="#F6E7EC"/><circle cx="1018.7" cy="451.5" r="4.5" fill="#F6E7EC"/><circle cx="1016.7" cy="445.3" r="4.5" fill="#F6E7EC"/><circle cx="1022" cy="447.0" r="2.9" fill="#E7C04F"/>
+<text x="1054.0" y="448.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Cireș pădureț</text>
+<text x="1054.0" y="469.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">flori albe, odată cu</text>
+<text x="1054.0" y="488.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">frunzele noi</text>
+<line x1="984" y1="540" x2="1232" y2="540" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="1264" y="256" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="1264" y="256" width="280" height="7" rx="3" fill="#5DAA74"/>
+<text x="1286.0" y="302.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Mai</text>
+<text x="1526.0" y="298.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#5DAA74" text-anchor="end" letter-spacing="1.5">PRIMĂVARĂ</text>
+<circle cx="1308" cy="348" r="27" fill="#132029" stroke="#E2A62B" stroke-width="2.5"/>
+<polygon points="1286.0,366.0 1310.0,330.0 1332.0,366.0" fill="#2F4B3E"/>
+<polygon points="1310.0,330.0 1304.0,339.0 1316.0,339.0" fill="#F3EFE6" opacity="0.85"/>
+<g transform="translate(1302.0,356.0) scale(0.72)"><rect x="-9" y="6" width="3.5" height="9" fill="#7A6656"/><rect x="5" y="6" width="3.5" height="9" fill="#7A6656"/><circle cx="-8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="-4" r="8" fill="#F3EFE6"/><circle cx="8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="4" r="7" fill="#F3EFE6"/><circle cx="-4" cy="2" r="6" fill="#F3EFE6"/><circle cx="5" cy="3" r="6" fill="#F3EFE6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#7A6656" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#7A6656" transform="rotate(-30 11 -7)"/></g>
+<line x1="1323" y1="360" x2="1323" y2="344" stroke="#E2A62B" stroke-width="3"/><polygon points="1318.0,345.0 1323.0,338.0 1328.0,345.0" fill="#E2A62B"/>
+<text x="1350.0" y="339.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">Urcarea oilor</text>
+<text x="1350.0" y="360.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">turmele pleacă la munte</text>
+<circle cx="1308" cy="414" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<ellipse cx="0" cy="0" rx="9.0" ry="4.5" fill="#3E8E5A" transform="translate(1295.0,426.0) rotate(25)"/>
+<ellipse cx="0" cy="0" rx="9.0" ry="4.5" fill="#5DAA74" transform="translate(1321.0,426.0) rotate(-25)"/>
+<circle cx="1296.0" cy="403.7" r="3.5" fill="#F3EFE6"/><circle cx="1300.1" cy="406.7" r="3.5" fill="#F3EFE6"/><circle cx="1298.6" cy="411.5" r="3.5" fill="#F3EFE6"/><circle cx="1293.4" cy="411.5" r="3.5" fill="#F3EFE6"/><circle cx="1291.9" cy="406.7" r="3.5" fill="#F3EFE6"/><circle cx="1296" cy="408" r="2.2" fill="#C94F6D"/>
+<circle cx="1308.0" cy="397.7" r="3.5" fill="#F3EFE6"/><circle cx="1312.1" cy="400.7" r="3.5" fill="#F3EFE6"/><circle cx="1310.6" cy="405.5" r="3.5" fill="#F3EFE6"/><circle cx="1305.4" cy="405.5" r="3.5" fill="#F3EFE6"/><circle cx="1303.9" cy="400.7" r="3.5" fill="#F3EFE6"/><circle cx="1308" cy="402" r="2.2" fill="#C94F6D"/>
+<circle cx="1320.0" cy="403.7" r="3.5" fill="#F3EFE6"/><circle cx="1324.1" cy="406.7" r="3.5" fill="#F3EFE6"/><circle cx="1322.6" cy="411.5" r="3.5" fill="#F3EFE6"/><circle cx="1317.4" cy="411.5" r="3.5" fill="#F3EFE6"/><circle cx="1315.9" cy="406.7" r="3.5" fill="#F3EFE6"/><circle cx="1320" cy="408" r="2.2" fill="#C94F6D"/>
+<circle cx="1302.0" cy="411.7" r="3.5" fill="#F3EFE6"/><circle cx="1306.1" cy="414.7" r="3.5" fill="#F3EFE6"/><circle cx="1304.6" cy="419.5" r="3.5" fill="#F3EFE6"/><circle cx="1299.4" cy="419.5" r="3.5" fill="#F3EFE6"/><circle cx="1297.9" cy="414.7" r="3.5" fill="#F3EFE6"/><circle cx="1302" cy="416" r="2.2" fill="#C94F6D"/>
+<circle cx="1314.0" cy="411.7" r="3.5" fill="#F3EFE6"/><circle cx="1318.1" cy="414.7" r="3.5" fill="#F3EFE6"/><circle cx="1316.6" cy="419.5" r="3.5" fill="#F3EFE6"/><circle cx="1311.4" cy="419.5" r="3.5" fill="#F3EFE6"/><circle cx="1309.9" cy="414.7" r="3.5" fill="#F3EFE6"/><circle cx="1314" cy="416" r="2.2" fill="#C94F6D"/>
+<circle cx="1308.0" cy="404.7" r="3.5" fill="#F3EFE6"/><circle cx="1312.1" cy="407.7" r="3.5" fill="#F3EFE6"/><circle cx="1310.6" cy="412.5" r="3.5" fill="#F3EFE6"/><circle cx="1305.4" cy="412.5" r="3.5" fill="#F3EFE6"/><circle cx="1303.9" cy="407.7" r="3.5" fill="#F3EFE6"/><circle cx="1308" cy="409" r="2.2" fill="#C94F6D"/>
+<text x="1350.0" y="405.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Păducel</text>
+<text x="1350.0" y="426.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">flori albe, mai – început</text>
+<text x="1350.0" y="445.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">de iunie</text>
+<circle cx="1308" cy="486" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<ellipse cx="0" cy="0" rx="11.0" ry="4.0" fill="#5DAA74" transform="translate(1318.3,497.7) rotate(20)"/>
+<ellipse cx="0" cy="0" rx="11.0" ry="4.0" fill="#3E8E5A" transform="translate(1314.3,500.1) rotate(55)"/>
+<ellipse cx="0" cy="0" rx="11.0" ry="4.0" fill="#5DAA74" transform="translate(1308.0,501.0) rotate(90)"/>
+<ellipse cx="0" cy="0" rx="11.0" ry="4.0" fill="#3E8E5A" transform="translate(1301.7,500.1) rotate(125)"/>
+<ellipse cx="0" cy="0" rx="11.0" ry="4.0" fill="#5DAA74" transform="translate(1297.7,497.7) rotate(160)"/>
+<polygon points="1299.0,492.0 1308.0,464.0 1317.0,492.0" fill="#F3EFE6"/>
+<circle cx="1305" cy="476" r="1.8" fill="#D9637E"/><circle cx="1311" cy="482" r="1.8" fill="#D9637E"/><circle cx="1304" cy="487" r="1.8" fill="#D9637E"/><circle cx="1310" cy="471" r="1.8" fill="#D9637E"/><circle cx="1312" cy="489" r="1.8" fill="#D9637E"/>
+<text x="1350.0" y="477.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Castan</text>
+<text x="1350.0" y="498.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">„lumânări” de flori,</text>
+<text x="1350.0" y="517.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">primăvara</text>
+<line x1="1280" y1="540" x2="1528" y2="540" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="1560" y="256" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="1560" y="256" width="280" height="7" rx="3" fill="#E2A62B"/>
+<text x="1582.0" y="302.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Iunie</text>
+<text x="1822.0" y="298.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#E2A62B" text-anchor="end" letter-spacing="1.5">VARĂ</text>
+<circle cx="1604" cy="388.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<ellipse cx="0" cy="0" rx="8.0" ry="4.0" fill="#3E8E5A" transform="translate(1590.0,400.0) rotate(30)"/>
+<ellipse cx="0" cy="0" rx="8.0" ry="4.0" fill="#5DAA74" transform="translate(1618.0,400.0) rotate(-30)"/>
+<circle cx="1604.0" cy="373.0" r="10.5" fill="#E89AB5"/><circle cx="1616.4" cy="382.0" r="10.5" fill="#E89AB5"/><circle cx="1611.7" cy="396.5" r="10.5" fill="#E89AB5"/><circle cx="1596.3" cy="396.5" r="10.5" fill="#E89AB5"/><circle cx="1591.6" cy="382.0" r="10.5" fill="#E89AB5"/><circle cx="1604" cy="386.0" r="6.7" fill="#E7C04F"/>
+<circle cx="1604" cy="386.0" r="4" fill="#F2D27A"/>
+<text x="1646.0" y="379.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Măceș</text>
+<text x="1646.0" y="400.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">flori roz, iunie–iulie</text>
+<circle cx="1604" cy="454.0" r="27" fill="#132029" stroke="#5DAA74" stroke-width="2.5"/>
+<path d="M1590,436.0 Q1606,448.0 1608,472.0" stroke="#6B4E2E" stroke-width="2" fill="none"/><ellipse cx="0" cy="0" rx="17.0" ry="4.5" fill="#B7D36B" transform="translate(1600.0,452.0) rotate(62)"/>
+<ellipse cx="0" cy="0" rx="13.0" ry="8.0" fill="#5DAA74" transform="translate(1616.0,446.0) rotate(-35)"/>
+<path d="M1606,460.0 L1598,468.0 M1606,460.0 L1608,470.0 M1606,460.0 L1616,466.0" stroke="#B7D36B" stroke-width="1.6"/><circle cx="1598.0" cy="464.3" r="3.0" fill="#F2E28A"/><circle cx="1601.5" cy="466.9" r="3.0" fill="#F2E28A"/><circle cx="1600.2" cy="471.0" r="3.0" fill="#F2E28A"/><circle cx="1595.8" cy="471.0" r="3.0" fill="#F2E28A"/><circle cx="1594.5" cy="466.9" r="3.0" fill="#F2E28A"/><circle cx="1598" cy="468.0" r="1.9" fill="#E2A62B"/>
+<circle cx="1608.0" cy="466.3" r="3.0" fill="#F2E28A"/><circle cx="1611.5" cy="468.9" r="3.0" fill="#F2E28A"/><circle cx="1610.2" cy="473.0" r="3.0" fill="#F2E28A"/><circle cx="1605.8" cy="473.0" r="3.0" fill="#F2E28A"/><circle cx="1604.5" cy="468.9" r="3.0" fill="#F2E28A"/><circle cx="1608" cy="470.0" r="1.9" fill="#E2A62B"/>
+<circle cx="1616.0" cy="462.3" r="3.0" fill="#F2E28A"/><circle cx="1619.5" cy="464.9" r="3.0" fill="#F2E28A"/><circle cx="1618.2" cy="469.0" r="3.0" fill="#F2E28A"/><circle cx="1613.8" cy="469.0" r="3.0" fill="#F2E28A"/><circle cx="1612.5" cy="464.9" r="3.0" fill="#F2E28A"/><circle cx="1616" cy="466.0" r="1.9" fill="#E2A62B"/>
+<text x="1646.0" y="445.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#5DAA74" text-anchor="start">Tei</text>
+<text x="1646.0" y="466.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">flori parfumate la</text>
+<text x="1646.0" y="485.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">începutul verii</text>
+<line x1="1576" y1="540" x2="1824" y2="540" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="80" y="600" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="80" y="600" width="280" height="7" rx="3" fill="#E2A62B"/>
+<text x="102.0" y="646.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Iulie</text>
+<text x="342.0" y="642.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#E2A62B" text-anchor="end" letter-spacing="1.5">VARĂ</text>
+<circle cx="124" cy="735.0" r="27" fill="#132029" stroke="#D8775A" stroke-width="2.5"/>
+<path d="M116,741.0 Q120,725.0 130,719.0 M134,743.0 Q132,729.0 130,719.0" stroke="#3E8E5A" stroke-width="2.5" fill="none"/><ellipse cx="0" cy="0" rx="8.0" ry="3.5" fill="#5DAA74" transform="translate(137.0,719.0) rotate(-20)"/>
+<circle cx="115" cy="745.0" r="8.5" fill="#B3263A"/><circle cx="134" cy="747.0" r="8.5" fill="#8E1C2E"/><circle cx="112" cy="742.0" r="2.2" fill="#F3EFE6" opacity="0.7"/><circle cx="131" cy="744.0" r="2.2" fill="#F3EFE6" opacity="0.6"/>
+<text x="166.0" y="726.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#D8775A" text-anchor="start">Cireșe pădurețe</text>
+<text x="166.0" y="747.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">coapte la mijlocul verii</text>
+<circle cx="124" cy="801.0" r="27" fill="#132029" stroke="#E2A62B" stroke-width="2.5"/>
+<polygon points="100.0,817.0 118.0,785.0 132.0,803.0 138.0,795.0 148.0,817.0" fill="#2F4B3E"/>
+<polygon points="118.0,785.0 113.0,794.0 123.0,794.0" fill="#F3EFE6" opacity="0.85"/>
+<g transform="translate(126.0,809.0) scale(0.6)"><rect x="-9" y="6" width="3.5" height="9" fill="#7A6656"/><rect x="5" y="6" width="3.5" height="9" fill="#7A6656"/><circle cx="-8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="-4" r="8" fill="#F3EFE6"/><circle cx="8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="4" r="7" fill="#F3EFE6"/><circle cx="-4" cy="2" r="6" fill="#F3EFE6"/><circle cx="5" cy="3" r="6" fill="#F3EFE6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#7A6656" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#7A6656" transform="rotate(-30 11 -7)"/></g>
+<g transform="translate(111.0,812.0) scale(0.5)"><rect x="-9" y="6" width="3.5" height="9" fill="#7A6656"/><rect x="5" y="6" width="3.5" height="9" fill="#7A6656"/><circle cx="-8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="-4" r="8" fill="#F3EFE6"/><circle cx="8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="4" r="7" fill="#F3EFE6"/><circle cx="-4" cy="2" r="6" fill="#F3EFE6"/><circle cx="5" cy="3" r="6" fill="#F3EFE6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#7A6656" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#7A6656" transform="rotate(-30 11 -7)"/></g>
+<text x="166.0" y="792.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">30 iulie</text>
+<text x="166.0" y="813.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">„Sus pe muntele din Jina”</text>
+<line x1="96" y1="884" x2="344" y2="884" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="376" y="600" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="376" y="600" width="280" height="7" rx="3" fill="#E2A62B"/>
+<text x="398.0" y="646.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">August</text>
+<text x="638.0" y="642.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#E2A62B" text-anchor="end" letter-spacing="1.5">VARĂ</text>
+<circle cx="420" cy="729.0" r="27" fill="#132029" stroke="#E2A62B" stroke-width="2.5"/>
+<g transform="translate(416.0,735.0) scale(0.78)"><rect x="-9" y="6" width="3.5" height="9" fill="#7A6656"/><rect x="5" y="6" width="3.5" height="9" fill="#7A6656"/><circle cx="-8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="-4" r="8" fill="#F3EFE6"/><circle cx="8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="4" r="7" fill="#F3EFE6"/><circle cx="-4" cy="2" r="6" fill="#F3EFE6"/><circle cx="5" cy="3" r="6" fill="#F3EFE6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#7A6656" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#7A6656" transform="rotate(-30 11 -7)"/></g>
+<path d="M436,749.0 L436,717.0 Q436,709.0 429,709.0 Q423,709.0 423,715.0" stroke="#E2A62B" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<text x="462.0" y="720.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">15 august</text>
+<text x="462.0" y="741.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Sărbătoarea oierilor, la</text>
+<text x="462.0" y="760.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Tilișca</text>
+<circle cx="420" cy="801.0" r="27" fill="#132029" stroke="#E2A62B" stroke-width="2.5"/>
+<ellipse cx="416" cy="811.0" rx="16" ry="6" fill="#B8862C"/><rect x="400" y="799.0" width="32" height="12" fill="#D9A23A"/><ellipse cx="416" cy="799.0" rx="16" ry="6" fill="#F2D27A"/><polygon points="416.0,799.0 432.0,799.0 428.0,803.5" fill="#132029"/>
+<circle cx="410" cy="799.0" r="1.6" fill="#D9A23A"/><circle cx="419" cy="796.0" r="1.3" fill="#D9A23A"/><rect x="433" y="787.0" width="9" height="26" rx="3" fill="#CFE3E6" opacity="0.85"/><rect x="435" y="781.0" width="5" height="7" fill="#CFE3E6" opacity="0.85"/><rect x="433" y="799.0" width="9" height="14" rx="2" fill="#E9D9A6" opacity="0.9"/>
+<text x="462.0" y="792.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">31 august</text>
+<text x="462.0" y="813.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Festivalul brânzei și al</text>
+<text x="462.0" y="832.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">țuicii, la Rășinari</text>
+<line x1="392" y1="884" x2="640" y2="884" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="672" y="600" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="672" y="600" width="280" height="7" rx="3" fill="#D8775A"/>
+<text x="694.0" y="646.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Septembrie</text>
+<text x="934.0" y="642.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#D8775A" text-anchor="end" letter-spacing="1.5">TOAMNĂ</text>
+<circle cx="716" cy="732.0" r="27" fill="#132029" stroke="#E2A62B" stroke-width="2.5"/>
+<path d="M694,750.0 L738,750.0" stroke="#3E8E5A" stroke-width="3"/><rect x="695" y="726.0" width="13" height="10" fill="#E3D9C6"/><polygon points="693.0,726.0 701.5,719.0 710.0,726.0" fill="#B9583A"/>
+<g transform="translate(718.0,738.0) scale(0.72)"><rect x="-9" y="6" width="3.5" height="9" fill="#7A6656"/><rect x="5" y="6" width="3.5" height="9" fill="#7A6656"/><circle cx="-8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="-4" r="8" fill="#F3EFE6"/><circle cx="8" cy="0" r="7" fill="#F3EFE6"/><circle cx="0" cy="4" r="7" fill="#F3EFE6"/><circle cx="-4" cy="2" r="6" fill="#F3EFE6"/><circle cx="5" cy="3" r="6" fill="#F3EFE6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#7A6656" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#7A6656" transform="rotate(-30 11 -7)"/></g>
+<line x1="732" y1="716.0" x2="732" y2="732.0" stroke="#E2A62B" stroke-width="3"/><polygon points="727.0,731.0 732.0,738.0 737.0,731.0" fill="#E2A62B"/>
+<text x="758.0" y="723.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#E2A62B" text-anchor="start">Coborârea oilor</text>
+<text x="758.0" y="744.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">turmele se întorc în sate</text>
+<circle cx="716" cy="798.0" r="27" fill="#132029" stroke="#D8775A" stroke-width="2.5"/>
+<path d="M698,784.0 Q714,792.0 732,782.0" stroke="#6B4E2E" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="708" cy="803.0" rx="7" ry="11" fill="#D8452B" transform="rotate(10 708 803.0)"/><path d="M705,792.0 l3,3 l3,-3" stroke="#0F1720" stroke-width="1.6" fill="none"/><line x1="708" y1="792.0" x2="711.2" y2="787.0" stroke="#6B4E2E" stroke-width="2"/><ellipse cx="724" cy="803.0" rx="7" ry="11" fill="#E2622A" transform="rotate(-12 724 803.0)"/><path d="M721,792.0 l3,3 l3,-3" stroke="#0F1720" stroke-width="1.6" fill="none"/><line x1="724" y1="792.0" x2="720.8" y2="787.0" stroke="#6B4E2E" stroke-width="2"/>
+<text x="758.0" y="789.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#D8775A" text-anchor="start">Măceșe</text>
+<text x="758.0" y="810.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">fructe roșii-portocalii,</text>
+<text x="758.0" y="829.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">până în octombrie</text>
+<line x1="688" y1="884" x2="936" y2="884" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="968" y="600" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="968" y="600" width="280" height="7" rx="3" fill="#D8775A"/>
+<text x="990.0" y="646.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Octombrie</text>
+<text x="1230.0" y="642.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#D8775A" text-anchor="end" letter-spacing="1.5">TOAMNĂ</text>
+<circle cx="1012" cy="729.0" r="27" fill="#132029" stroke="#D8775A" stroke-width="2.5"/>
+<path d="M0,-20 C5,-19 4,-14 7,-13 C11,-12 11,-8 8,-6 C12,-5 13,0 9,2 C13,4 12,9 7,9 C8,13 5,16 2,15 L1,22 L-1,22 L-2,15 C-5,16 -8,13 -7,9 C-12,9 -13,4 -9,2 C-13,0 -12,-5 -8,-6 C-11,-8 -11,-12 -7,-13 C-4,-14 -5,-19 0,-20 Z" fill="#C98A2E" transform="translate(1004.0,727.0) rotate(-25) scale(0.85)"/><path d="M0,-16 L0,20" stroke="#0F1720" stroke-width="1.2" opacity="0.5" transform="translate(1004.0,727.0) rotate(-25) scale(0.85)"/>
+<path d="M0,-20 C5,-19 4,-14 7,-13 C11,-12 11,-8 8,-6 C12,-5 13,0 9,2 C13,4 12,9 7,9 C8,13 5,16 2,15 L1,22 L-1,22 L-2,15 C-5,16 -8,13 -7,9 C-12,9 -13,4 -9,2 C-13,0 -12,-5 -8,-6 C-11,-8 -11,-12 -7,-13 C-4,-14 -5,-19 0,-20 Z" fill="#D8775A" transform="translate(1021.0,733.0) rotate(30) scale(0.8)"/><path d="M0,-16 L0,20" stroke="#0F1720" stroke-width="1.2" opacity="0.5" transform="translate(1021.0,733.0) rotate(30) scale(0.8)"/>
+<path d="M992,748.0 q4,-3 8,0 M1024,711.0 q4,-3 8,0" stroke="#A9B4C0" stroke-width="1.6" fill="none" opacity="0.7"/>
+<text x="1054.0" y="720.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#D8775A" text-anchor="start">Frunzele stejarului</text>
+<text x="1054.0" y="741.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">arbore foios: le pierde</text>
+<text x="1054.0" y="760.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">toamna</text>
+<circle cx="1012" cy="801.0" r="27" fill="#132029" stroke="#D8775A" stroke-width="2.5"/>
+<path d="M0,-20 C5,-19 4,-14 7,-13 C11,-12 11,-8 8,-6 C12,-5 13,0 9,2 C13,4 12,9 7,9 C8,13 5,16 2,15 L1,22 L-1,22 L-2,15 C-5,16 -8,13 -7,9 C-12,9 -13,4 -9,2 C-13,0 -12,-5 -8,-6 C-11,-8 -11,-12 -7,-13 C-4,-14 -5,-19 0,-20 Z" fill="#3E8E5A" transform="translate(1022.0,795.0) rotate(35) scale(0.6)"/><path d="M0,-16 L0,20" stroke="#0F1720" stroke-width="1.2" opacity="0.5" transform="translate(1022.0,795.0) rotate(35) scale(0.6)"/>
+<g transform="translate(1005.0,803.0) scale(1.05)"><ellipse cx="0" cy="5" rx="8" ry="11" fill="#B9853F"/><ellipse cx="-2.5" cy="3" rx="2" ry="5" fill="#E0B36A" opacity="0.7"/><path d="M-10,-2 Q-10,-11 0,-11 Q10,-11 10,-2 Z" fill="#6B4E2E"/><path d="M-7,-6 L7,-6 M-8,-3 L8,-3 M-4,-10 L-6,-2 M2,-11 L0,-2 M6,-9 L5,-2" stroke="#4A3520" stroke-width="1"/><line x1="0" y1="-11" x2="2" y2="-16" stroke="#6B4E2E" stroke-width="2.4" stroke-linecap="round"/></g>
+<g transform="translate(1022.0,809.0) scale(0.8)"><ellipse cx="0" cy="5" rx="8" ry="11" fill="#B9853F"/><ellipse cx="-2.5" cy="3" rx="2" ry="5" fill="#E0B36A" opacity="0.7"/><path d="M-10,-2 Q-10,-11 0,-11 Q10,-11 10,-2 Z" fill="#6B4E2E"/><path d="M-7,-6 L7,-6 M-8,-3 L8,-3 M-4,-10 L-6,-2 M2,-11 L0,-2 M6,-9 L5,-2" stroke="#4A3520" stroke-width="1"/><line x1="0" y1="-11" x2="2" y2="-16" stroke="#6B4E2E" stroke-width="2.4" stroke-linecap="round"/></g>
+<text x="1054.0" y="792.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#D8775A" text-anchor="start">Ghinde de gorun</text>
+<text x="1054.0" y="813.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">coapte la circa șase luni</text>
+<text x="1054.0" y="832.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">de la înflorire</text>
+<line x1="984" y1="884" x2="1232" y2="884" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="1264" y="600" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="1264" y="600" width="280" height="7" rx="3" fill="#D8775A"/>
+<text x="1286.0" y="646.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Noiembrie</text>
+<text x="1526.0" y="642.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#D8775A" text-anchor="end" letter-spacing="1.5">TOAMNĂ</text>
+<circle cx="1308" cy="755.5" r="27" fill="#132029" stroke="#D8775A" stroke-width="2.5"/>
+<path d="M1290,743.5 L1326,749.5" stroke="#6B4E2E" stroke-width="3" stroke-linecap="round"/><path d="M1302,745.5 l-3,-7 M1316,747.5 l4,-7" stroke="#6B4E2E" stroke-width="2" stroke-linecap="round"/><circle cx="1299" cy="759.5" r="7.5" fill="#3F4A8A"/><circle cx="1296.5" cy="757.0" r="2.4" fill="#A9B4E0" opacity="0.75"/><circle cx="1313" cy="757.5" r="7.5" fill="#3F4A8A"/><circle cx="1310.5" cy="755.0" r="2.4" fill="#A9B4E0" opacity="0.75"/><circle cx="1306" cy="769.5" r="7.5" fill="#3F4A8A"/><circle cx="1303.5" cy="767.0" r="2.4" fill="#A9B4E0" opacity="0.75"/><circle cx="1321" cy="768.5" r="7.5" fill="#3F4A8A"/><circle cx="1318.5" cy="766.0" r="2.4" fill="#A9B4E0" opacity="0.75"/>
+<text x="1350.0" y="746.5" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#D8775A" text-anchor="start">Porumbe</text>
+<text x="1350.0" y="767.5" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">culese după primele</text>
+<text x="1350.0" y="786.5" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">înghețuri,</text>
+<text x="1350.0" y="805.5" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">octombrie–noiembrie</text>
+<line x1="1280" y1="884" x2="1528" y2="884" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="1560" y="600" width="280" height="328" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="1560" y="600" width="280" height="7" rx="3" fill="#8FB8DE"/>
+<text x="1582.0" y="646.0" font-family="'Noto Serif', serif" font-size="27" font-weight="700" fill="#F3EFE6" text-anchor="start">Decembrie</text>
+<text x="1822.0" y="642.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#8FB8DE" text-anchor="end" letter-spacing="1.5">IARNĂ</text>
+<circle cx="1604" cy="729.0" r="27" fill="#132029" stroke="#8FB8DE" stroke-width="2.5"/>
+<polygon points="1582.0,745.0 1598.0,721.0 1608.0,733.0 1616.0,725.0 1628.0,745.0" fill="#4E6A86"/>
+<polygon points="1598.0,721.0 1592.0,730.0 1596.0,728.0 1600.0,731.0 1603.0,728.0" fill="#F3EFE6"/>
+<polygon points="1616.0,725.0 1612.0,730.0 1616.0,729.0 1620.0,731.0" fill="#F3EFE6"/>
+<line x1="1605.0" y1="714.0" x2="1621.0" y2="714.0" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/><line x1="1609.0" y1="707.1" x2="1617.0" y2="720.9" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/><line x1="1617.0" y1="707.1" x2="1609.0" y2="720.9" stroke="#8FB8DE" stroke-width="2.4" stroke-linecap="round"/>
+<text x="1646.0" y="720.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#8FB8DE" text-anchor="start">Începe schiul</text>
+<text x="1646.0" y="741.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">la Păltiniș, de regulă din</text>
+<text x="1646.0" y="760.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">decembrie</text>
+<circle cx="1604" cy="801.0" r="27" fill="#132029" stroke="#8F7BE0" stroke-width="2.5"/>
+<g transform="translate(1591,801.0) scale(0.85)"><path d="M-9,20 L-7,2 Q0,-2 7,2 L9,20 Z" fill="#F3EFE6"/><rect x="-7" y="4" width="14" height="4" fill="#0F1720"/><circle cx="0" cy="-6" r="6" fill="#E8C9A6"/><path d="M-7,-9 Q-7,-18 0,-18 Q7,-18 7,-9 Z" fill="#0F1720" stroke="#56657A" stroke-width="1"/></g><g transform="translate(1617,801.0) scale(0.85)"><path d="M-9,20 L-7,2 Q0,-2 7,2 L9,20 Z" fill="#F3EFE6"/><rect x="-7" y="4" width="14" height="4" fill="#0F1720"/><circle cx="0" cy="-6" r="6" fill="#E8C9A6"/><path d="M-7,-9 Q-7,-18 0,-18 Q7,-18 7,-9 Z" fill="#0F1720" stroke="#56657A" stroke-width="1"/></g><g transform="translate(1604,801.0) scale(1.0)"><path d="M-9,20 L-7,2 Q0,-2 7,2 L9,20 Z" fill="#F3EFE6"/><rect x="-7" y="4" width="14" height="4" fill="#0F1720"/><circle cx="0" cy="-6" r="6" fill="#E8C9A6"/><path d="M-7,-9 Q-7,-18 0,-18 Q7,-18 7,-9 Z" fill="#0F1720" stroke="#56657A" stroke-width="1"/></g>
+<text x="1646.0" y="792.0" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#8F7BE0" text-anchor="start">28 decembrie</text>
+<text x="1646.0" y="813.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">„Adunarea feciorilor”, la</text>
+<text x="1646.0" y="832.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#A9B4C0" text-anchor="start">Săliște</text>
+<line x1="1576" y1="884" x2="1824" y2="884" stroke="#2A3845" stroke-width="1.5"/>
+<rect x="80.0" y="548" width="1168.0" height="26" rx="13" fill="#8FB8DE"/>
+<rect x="80.0" y="548" width="20" height="26" fill="#8FB8DE"/>
+<polygon points="80.0,548.0 87.0,561.0 80.0,574.0" fill="#0F1720" opacity="0.35"/>
+<line x1="104.0" y1="553.0" x2="104.0" y2="569.0" stroke="#0F1720" stroke-width="2.2" stroke-linecap="round"/><line x1="110.9" y1="557.0" x2="97.1" y2="565.0" stroke="#0F1720" stroke-width="2.2" stroke-linecap="round"/><line x1="110.9" y1="565.0" x2="97.1" y2="557.0" stroke="#0F1720" stroke-width="2.2" stroke-linecap="round"/>
+<text x="124.0" y="566.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0F1720" text-anchor="start">zăpadă la Păltiniș: circa 120 de zile pe an · schi de regulă din decembrie până în aprilie</text>
+<rect x="1560.0" y="892" width="263.2" height="26" rx="13" fill="#8FB8DE"/>
+<rect x="1803.2" y="892" width="20" height="26" fill="#8FB8DE"/>
+<polygon points="1822.2,888.0 1837.2,905.0 1822.2,922.0" fill="#8FB8DE"/>
+<line x1="1584.0" y1="897.0" x2="1584.0" y2="913.0" stroke="#0F1720" stroke-width="2.2" stroke-linecap="round"/><line x1="1590.9" y1="901.0" x2="1577.1" y2="909.0" stroke="#0F1720" stroke-width="2.2" stroke-linecap="round"/><line x1="1590.9" y1="909.0" x2="1577.1" y2="901.0" stroke="#0F1720" stroke-width="2.2" stroke-linecap="round"/>
+<text x="1604.0" y="910.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0F1720" text-anchor="start">sezonul de schi</text>
+<rect x="1297.6" y="548" width="525.6" height="26" rx="13" fill="#E2A62B"/>
+<rect x="1803.2" y="548" width="20" height="26" fill="#E2A62B"/>
+<polygon points="1822.2,544.0 1837.2,561.0 1822.2,578.0" fill="#E2A62B"/>
+<g transform="translate(1319.6,562.0) scale(0.62)"><rect x="-9" y="6" width="3.5" height="9" fill="#0F1720"/><rect x="5" y="6" width="3.5" height="9" fill="#0F1720"/><circle cx="-8" cy="0" r="7" fill="#FFF8E6"/><circle cx="0" cy="-4" r="8" fill="#FFF8E6"/><circle cx="8" cy="0" r="7" fill="#FFF8E6"/><circle cx="0" cy="4" r="7" fill="#FFF8E6"/><circle cx="-4" cy="2" r="6" fill="#FFF8E6"/><circle cx="5" cy="3" r="6" fill="#FFF8E6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#0F1720" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#0F1720" transform="rotate(-30 11 -7)"/></g>
+<text x="1341.6" y="566.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0F1720" text-anchor="start">oile la munte, din mai până în septembrie</text>
+<rect x="80.0" y="892" width="838.4" height="26" rx="13" fill="#E2A62B"/>
+<rect x="80.0" y="892" width="20" height="26" fill="#E2A62B"/>
+<polygon points="80.0,892.0 87.0,905.0 80.0,918.0" fill="#0F1720" opacity="0.35"/>
+<g transform="translate(102.0,906.0) scale(0.62)"><rect x="-9" y="6" width="3.5" height="9" fill="#0F1720"/><rect x="5" y="6" width="3.5" height="9" fill="#0F1720"/><circle cx="-8" cy="0" r="7" fill="#FFF8E6"/><circle cx="0" cy="-4" r="8" fill="#FFF8E6"/><circle cx="8" cy="0" r="7" fill="#FFF8E6"/><circle cx="0" cy="4" r="7" fill="#FFF8E6"/><circle cx="-4" cy="2" r="6" fill="#FFF8E6"/><circle cx="5" cy="3" r="6" fill="#FFF8E6"/><ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="#0F1720" transform="rotate(-15 14 -3)"/><ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="#0F1720" transform="rotate(-30 11 -7)"/></g>
+<text x="124.0" y="910.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0F1720" text-anchor="start">oile la munte (transhumanță) · coboară în septembrie</text>
+<text x="80.0" y="962.0" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#F3EFE6" text-anchor="start">Culori:</text>
+<circle cx="155.296875" cy="957" r="7" fill="#5DAA74"/>
+<text x="169.3" y="962.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">flori</text>
+<circle cx="227.84375" cy="957" r="7" fill="#D8775A"/>
+<text x="241.8" y="962.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">fructe și frunze</text>
+<circle cx="385.953125" cy="957" r="7" fill="#E2A62B"/>
+<text x="400.0" y="962.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">păstorit</text>
+<circle cx="486.40625" cy="957" r="7" fill="#8F7BE0"/>
+<text x="500.4" y="962.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">obiceiuri</text>
+<circle cx="594.640625" cy="957" r="7" fill="#8FB8DE"/>
+<text x="608.6" y="962.0" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#A9B4C0" text-anchor="start">zăpadă</text>
+<text x="1840.0" y="962.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#7E8A96" text-anchor="end" font-style="italic">Plantele sunt din listele pentru Pădurea Dumbrava, iar castanul e din Parcul Sub Arini. Sunt pictograme, nu ilustrații botanice exacte.</text>
+<text x="80.0" y="994.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">Surse: en.wikipedia – paginile speciilor (Crocus, Prunus spinosa, P. avium, Crataegus monogyna, Aesculus hippocastanum, Rosa canina, Tilia, Quercus robur, Q. petraea), Păltiniș; gandul.ro; sibiu-turism.ro (păstorit, obiceiuri); sibiul.ro; ecomagazin.ro; zilesinopti.ro.</text>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

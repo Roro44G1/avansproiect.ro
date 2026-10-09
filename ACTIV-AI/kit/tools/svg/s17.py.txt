@@ -1,0 +1,456 @@
+# -*- coding: utf-8 -*-
+"""S17 – Harta verde a orașului (Calupul 4). Rulat din /home/claude/expo/_tools/svg.
+Coordonatele orașului sunt cele din Calupul 3 (centrul istoric = 0,0; x spre est, y spre sud), conform c4/AGENT_COMMON.md."""
+import math, random
+from lib import *
+import sibiu_map as SM
+from s13 import mk_proj, Boxes, G, halo, oak, fir, INK, INK2, OCRU_D, GREEN1, GREEN2, WATER, STONE
+from s16 import place, L, hits, check, curve_pts, add_curve, along, layout_block, RIVER, RIVER_D
+
+OUT = "/home/claude/expo/c4/05_spatial/S17_harta_verde.svg"
+
+C_PARK = "#4E9A6A"; C_FOREST = "#2F6B4F"; C_BANK = "#2F7A91"; C_LAKE = "#3E9BB8"
+G_PARK = "#BFD9A8"; G_FOREST = "#8DB98A"
+
+# coordonate (Calupul 3 + AGENT_COMMON.md)
+DIST = {"Terezian": (0, -0.45), "Țiglari": (-0.3, -0.78), "Lazaret": (0.45, -0.15), "Ștrand": (-0.62, 0.1),
+        "Valea Aurie": (-0.55, 0.78), "Hipodrom": (0.25, 0.65), "Dumbrăvii": (-0.15, 0.72)}
+DIST_ORIENT = {"Hipodrom", "Dumbrăvii"}
+
+
+# ---------------- pictograme (centrate în 0,0, ±24) ----------------
+def ic_park():
+    s = f'<path d="M-24,18 H24" stroke="#C9B48E" stroke-width="3"/>'
+    s += oak(-10, 2, 9.5) + oak(11, -2, 10.5)
+    s += f'<rect x="-5" y="11" width="18" height="4" rx="1" fill="#8B5E3C"/><path d="M-3,15 v4 M11,15 v4" stroke="#6B4A2E" stroke-width="2"/>'
+    return s
+
+
+def ic_ginkgo():
+    """frunză de ginkgo (evantai) – pentru Parcul Sub Arini"""
+    s = f'<path d="M0,20 L0,4" stroke="#6B4A2E" stroke-width="2.4"/>'
+    s += (f'<path d="M0,6 C-6,2 -22,-6 -20,-18 C-12,-24 -3,-20 0,-16 C3,-20 12,-24 20,-18 C22,-6 6,2 0,6 Z" fill="#E2B93B" '
+          f'stroke="#8A6A10" stroke-width="1.6" stroke-linejoin="round"/>')
+    s += f'<path d="M0,4 L-12,-14 M0,4 L-5,-17 M0,4 L5,-17 M0,4 L12,-14" stroke="#B48A1C" stroke-width="1"/>'
+    return s
+
+
+def ic_forest():
+    return oak(-12, 6, 9) + oak(12, 6, 9) + oak(0, -4, 10.5)
+
+
+def ic_bank():
+    s = f'<path d="M-24,4 q6,-6 12,0 t12,0 t12,0 t12,0" stroke="{C_BANK}" stroke-width="3.2" fill="none"/>'
+    s += f'<path d="M-24,13 q6,-6 12,0 t12,0 t12,0 t12,0" stroke="{C_BANK}" stroke-width="3.2" fill="none" opacity="0.7"/>'
+    s += f'<rect x="-6" y="-14" width="22" height="7" rx="1.5" fill="#B08657" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<path d="M-2,-7 v8 M12,-7 v8" stroke="#6B4A2E" stroke-width="2"/>'
+    # bicicletă stilizată
+    s += f'<circle cx="-19" cy="-10" r="4.5" fill="none" stroke="{INK2}" stroke-width="1.6"/><circle cx="-8" cy="-10" r="4.5" fill="none" stroke="{INK2}" stroke-width="1.6"/>'
+    s += f'<path d="M-19,-10 l4,-6 h6 l-3,6 M-15,-16 l3,6" stroke="{INK2}" stroke-width="1.4" fill="none"/>'
+    return s
+
+
+def ic_lake():
+    s = f'<ellipse cx="0" cy="6" rx="22" ry="11" fill="{WATER}" stroke="#4F8FA0" stroke-width="1.6"/>'
+    s += f'<path d="M-12,5 h10 M3,9 h9" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>'
+    for (px, h) in [(16, 22), (20, 28), (24, 18)]:
+        s += f'<line x1="{px}" y1="10" x2="{px+1}" y2="{10-h}" stroke="{GREEN2}" stroke-width="1.8"/>'
+        s += f'<ellipse cx="{px+1}" cy="{10-h+4}" rx="1.8" ry="4" fill="#7A5A3A"/>'
+    return s
+
+
+def ic_bust():
+    s = f'<rect x="-8" y="2" width="16" height="16" fill="#D9D3C7" stroke="{INK2}" stroke-width="1.4"/>'
+    s += f'<rect x="-11" y="16" width="22" height="4" fill="#BDB6A8" stroke="{INK2}" stroke-width="1"/>'
+    s += f'<path d="M-9,2 q9,-10 18,0 Z" fill="#8F8A80" stroke="{INK2}" stroke-width="1.2"/>'
+    s += f'<circle cx="0" cy="-10" r="6.5" fill="#8F8A80" stroke="{INK2}" stroke-width="1.2"/>'
+    s += oak(-17, 4, 7) + oak(18, 4, 7)
+    return s
+
+
+def ic_zoo():
+    s = f'<path d="M-18,20 v-18 a18,18 0 0 1 36,0 v18" fill="none" stroke="#8B5E3C" stroke-width="4"/>'
+    s += f'<text x="0" y="-2" font-family="{SANS}" font-size="11" font-weight="700" fill="{INK}" text-anchor="middle">ZOO</text>'
+    # urs stilizat
+    s += f'<circle cx="0" cy="12" r="7" fill="#7A5A3A"/><circle cx="-5" cy="6" r="2.6" fill="#7A5A3A"/><circle cx="5" cy="6" r="2.6" fill="#7A5A3A"/>'
+    s += f'<ellipse cx="0" cy="14" rx="3" ry="2.2" fill="#C9A27E"/>'
+    return s
+
+
+def ic_museum():
+    s = f'<rect x="-16" y="0" width="22" height="16" fill="#A0784E" stroke="{INK}" stroke-width="1.3"/>'
+    s += f'<path d="M-16,4 h22 M-16,8 h22 M-16,12 h22" stroke="#7A5A3A" stroke-width="0.8"/>'
+    s += f'<polygon points="-20,1 -5,-16 10,1" fill="#5E4A33" stroke="{INK}" stroke-width="1.3" stroke-linejoin="round"/>'
+    s += f'<rect x="-9" y="6" width="6" height="10" fill="{INK}"/>'
+    # moară de vânt mică
+    s += f'<polygon points="14,18 17,-2 21,-2 24,18" fill="#C9B48E" stroke="{INK}" stroke-width="1"/>'
+    s += f'<path d="M19,-4 l9,-9 M19,-4 l-9,-9 M19,-4 l9,9 M19,-4 l-9,9" stroke="{INK2}" stroke-width="2"/>'
+    return s
+
+
+def ic_belvedere():
+    s = f'<path d="M-24,18 L-6,-4 L4,6 L12,-2 L24,18 Z" fill="#B9C98F" stroke="{INK2}" stroke-width="1.3" stroke-linejoin="round"/>'
+    for (px, py) in [(-8, 4), (2, 10), (12, 8)]:
+        s += f'<line x1="{px}" y1="{py+6}" x2="{px}" y2="{py}" stroke="#6B4A2E" stroke-width="1.6"/><circle cx="{px}" cy="{py-2}" r="3.6" fill="{GREEN1}"/>'
+    s += f'<path d="M-4,-8 h10 v-6 h-10 Z" fill="none" stroke="{INK}" stroke-width="1.4"/>'
+    s += f'<path d="M-6,-18 q6,-6 12,0" stroke="{OCRU_D}" stroke-width="1.6" fill="none"/>'
+    return s
+
+
+def ic_haller():
+    pts = [(0, -16), (17, -5), (11, 14), (-11, 14), (-17, -5)]
+    return f'<polygon points="{" ".join(f"{a},{b}" for a, b in pts)}" fill="#8A9AA5" stroke="#2B3A44" stroke-width="1.6"/>'
+
+
+def medal(x, y, col, icon, orient=False, r=27):
+    if orient:
+        ring = (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#FBF7EE" stroke="{OCRU_D}" stroke-width="3.2" '
+                f'stroke-dasharray="7 5"/>')
+        inner = f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r-5}" fill="none" stroke="{col}" stroke-width="2"/>'
+    else:
+        ring = f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#FBF7EE" stroke="{col}" stroke-width="4"/>'
+        inner = ""
+    return f'<g filter="url(#shs)">{ring}</g>{inner}\n' + G(x, y + 1, (r - 6) / 26, icon, filt=False)
+
+
+def blob(x, y, rx, ry, seed, fill, op=0.85, dashed=False):
+    rnd = random.Random(seed)
+    pts = []
+    n = 12
+    for i in range(n):
+        a = 2 * math.pi * i / n + rnd.uniform(-0.1, 0.1)
+        k = rnd.uniform(0.85, 1.1)
+        pts.append((x + rx * k * math.cos(a), y + ry * k * math.sin(a)))
+    d = smooth_path(pts, True, 0.8)
+    st = f' stroke="{OCRU_D}" stroke-width="2.2" stroke-dasharray="7 5"' if dashed else f' stroke="#7FAF7A" stroke-width="1.4"'
+    return f'<path d="{d}" fill="{fill}" opacity="{op}"{st}/>\n'
+
+
+def main():
+    B = Boxes()
+    s = frame_head("SPAȚIAL · S17", PETROL, "Harta verde a orașului",
+                   "parcuri, păduri, maluri de râu · hartă schematică AI", title_size=58)
+
+    MX, MY, MW, MH = 80, 230, 1220, 770
+    BOUNDS = (MX + 8, MY + 8, MX + MW - 8, MY + MH - 8)
+    P = mk_proj(760, 548, 650, 345)
+    s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+    body = f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+    body += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.25"/>\n'
+    cx0, cy0 = P(0, 0)
+    body += f'<ellipse cx="{cx0-20:.1f}" cy="{cy0+20:.1f}" rx="520" ry="330" fill="#E9DFC8" opacity="0.6" filter="url(#blur8)"/>\n'
+
+    # ---- Pădurea Dumbrava (sud-vest, dincolo de Valea Aurie) ----
+    fpts = [P(-1.25, 0.74), P(-0.95, 0.8), P(-0.72, 0.88), P(-0.45, 0.92), P(-0.22, 0.98), P(-0.1, 1.35), P(-1.25, 1.4)]
+    body += f'<path d="{smooth_path(fpts, True, 0.5)}" fill="{G_FOREST}" opacity="0.9" stroke="#5E8F5E" stroke-width="1.6"/>\n'
+    fpoly = curve_pts(fpts + [fpts[0]], 0.5)
+
+    def in_forest(x, y):
+        # test punct-în-poligon pe conturul eșantionat
+        c = False
+        n = len(fpoly)
+        for i in range(n):
+            (x1, y1), (x2, y2) = fpoly[i], fpoly[(i + 1) % n]
+            if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / ((y2 - y1) or 1e-9) + x1:
+                c = not c
+        return c
+
+    # ---- râul Cibin și promenada ----
+    riv = [P(-1.2, -0.06), P(-0.85, -0.12), P(-0.42, -0.17), P(-0.2, -0.2), P(0.0, -0.22), P(0.3, -0.26), P(0.6, -0.31), P(1.0, -0.38)]
+    rd = smooth_path(riv, False)
+    prom = curve_pts(riv)
+    # promenada: segment de pe curs (aprox. din dreptul Ștrandului până spre Lazaret) – poziție orientativă
+    pa, pb = 0.2, 0.68
+    seg = [p for i, p in enumerate(prom) if pa <= i / (len(prom) - 1) <= pb]
+    body += f'<path d="{smooth_path(seg[::4], False)}" fill="none" stroke="#9CCB8E" stroke-width="40" stroke-linecap="round" opacity="0.85"/>\n'
+    body += f'<path d="{rd}" fill="none" stroke="{RIVER}" stroke-width="13" stroke-linecap="round"/>\n'
+    body += f'<path d="{rd}" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="10 14" opacity="0.7"/>\n'
+    # pista de biciclete (linie punctată, malul sudic)
+    bike = [(x, y + 15) for (x, y) in seg]
+    body += f'<path d="{smooth_path(bike[::4], False)}" fill="none" stroke="{C_BANK}" stroke-width="2.6" stroke-dasharray="2 5" stroke-linecap="round"/>\n'
+    # pontoane
+    for f in (0.45, 0.63, 0.81):
+        (px, py), ang = along(seg, f)
+        body += (f'<rect x="{px-9:.1f}" y="{py-10:.1f}" width="18" height="7" rx="1.5" fill="#B08657" stroke="{INK}" stroke-width="1" '
+                 f'transform="rotate({math.degrees(ang):.1f} {px:.1f} {py:.1f})"/>\n')
+        B.add("prom:pont", px - 11, py - 12, px + 11, py - 1)
+    add_curve(B, "riv", prom, 8, 7)
+    add_curve(B, "prom", seg, 10, 17)
+
+    # ---- drum schematic: Calea Dumbrăvii (centru → pădure) ----
+    road = [P(-0.06, 0.16), P(-0.14, 0.45), P(-0.21, 0.78), P(-0.25, 1.03)]
+    body += f'<path d="{smooth_path(road, False)}" fill="none" stroke="#D8C9A8" stroke-width="9" stroke-linecap="round"/>\n'
+    body += f'<path d="{smooth_path(road, False)}" fill="none" stroke="#FBF7EE" stroke-width="2" stroke-dasharray="8 8"/>\n'
+    rc = curve_pts(road)
+    add_curve(B, "road", rc, 10, 4)
+
+    # ---- centrul istoric (inel de ziduri, schematic) ----
+    RX_, RY_ = 78, 52
+    walls = ""
+    walls += f'<ellipse cx="{cx0:.1f}" cy="{cy0:.1f}" rx="{RX_}" ry="{RY_}" fill="#EFE3CC" stroke="{STONE}" stroke-width="5"/>\n'
+    walls += f'<ellipse cx="{cx0:.1f}" cy="{cy0:.1f}" rx="{RX_}" ry="{RY_}" fill="none" stroke="#C9A27E" stroke-width="1.6" stroke-dasharray="4 4"/>\n'
+    rnd = random.Random(5)
+    for i in range(16):
+        hx = cx0 + rnd.uniform(-52, 52); hy = cy0 + rnd.uniform(-30, 32)
+        if ((hx - cx0) / 60) ** 2 + ((hy - cy0) / 36) ** 2 < 1:
+            walls += (f'<rect x="{hx-6:.1f}" y="{hy-4:.1f}" width="12" height="8" fill="#F1E6D2" stroke="{INK2}" stroke-width="0.8"/>'
+                      f'<polygon points="{hx-7:.1f},{hy-4:.1f} {hx:.1f},{hy-10:.1f} {hx+7:.1f},{hy-4:.1f}" fill="{TIGLA}"/>')
+    walls += (f'<rect x="{cx0-5:.1f}" y="{cy0-30:.1f}" width="10" height="32" fill="{ZID}" stroke="{INK}" stroke-width="1.4"/>'
+              f'<polygon points="{cx0-7:.1f},{cy0-30:.1f} {cx0:.1f},{cy0-44:.1f} {cx0+7:.1f},{cy0-30:.1f}" fill="{TIGLA}" stroke="{INK}" stroke-width="1.2"/>\n')
+    B.add("Centru:icon", cx0 - RX_ - 4, cy0 - RY_ - 4, cx0 + RX_ + 4, cy0 + RY_ + 4)
+
+    # parcul de-a lungul zidurilor: bandă verde pe arcul sud-estic (orientativ)
+    arc = [(cx0 + (RX_ + 14) * math.cos(math.radians(a)), cy0 + (RY_ + 14) * math.sin(math.radians(a))) for a in range(10, 120, 5)]
+    walls_park = f'<path d="{smooth_path(arc, False)}" fill="none" stroke="{G_PARK}" stroke-width="18" stroke-linecap="round"/>\n'
+    walls_park += f'<path d="{smooth_path(arc, False)}" fill="none" stroke="{OCRU_D}" stroke-width="1.8" stroke-dasharray="6 5" opacity="0.8"/>\n'
+    for a in range(14, 120, 16):
+        tx = cx0 + (RX_ + 14) * math.cos(math.radians(a)); ty = cy0 + (RY_ + 14) * math.sin(math.radians(a))
+        walls_park += oak(tx, ty + 3, 5.2)
+    add_curve(B, "wpark", arc, 8, 9)
+    # Bastionul Haller (pe latura estică, ca în sibiu_map.py)
+    hX, hY = cx0 + RX_ + 4, cy0 - 18
+    walls_park += G(hX, hY, 0.8, ic_haller())
+    B.add("Haller:icon", hX - 14, hY - 14, hX + 14, hY + 13)
+
+    # ---- spațiile verzi ----
+    # (cheie, poziție, culoare-tip, pictogramă, orientativ, pată verde: (rx, ry, culoare) sau None)
+    SP = {
+        "SubArini": ((0.05, 0.35), C_PARK, ic_ginkgo, True, (46, 30, G_PARK)),
+        "Astra": ((0.24, 0.24), C_PARK, ic_bust, True, (30, 20, G_PARK)),
+        "Tineretului": ((0.38, 0.02), C_PARK, ic_park, True, (34, 22, G_PARK)),
+        "Terezian": (DIST["Terezian"], C_PARK, ic_park, False, (40, 24, G_PARK)),
+        "Binder": (DIST["Țiglari"], C_LAKE, ic_lake, False, None),
+        "Belvedere": ((-0.42, 0.47), C_PARK, ic_belvedere, True, (36, 24, "#D5E5B8")),
+        "Promenada": ((-0.36, -0.18), C_BANK, ic_bank, False, None),
+        "Dumbrava": ((-0.72, 1.16), C_FOREST, ic_forest, False, None),
+        "Zoo": ((-0.25, 1.08), C_FOREST, ic_zoo, True, None),
+        "ASTRA": ((-0.98, 0.94), C_FOREST, ic_museum, True, None),
+    }
+    greens = ""
+    medals = ""
+    pos = {}
+    for k, ((nx, ny), col, ic, orient, bl) in SP.items():
+        X, Y = P(nx, ny)
+        pos[k] = (X, Y)
+        if bl:
+            rx, ry, fc = bl
+            greens += blob(X, Y, rx, ry, sum(map(ord, k)), fc, 0.9, dashed=orient)
+        r = 27 if k not in ("Zoo", "ASTRA") else 24
+        medals += medal(X, Y, col, ic(), orient, r)
+        B.add(k + ":icon", X - r - 2, Y - r - 2, X + r + 2, Y + r + 2)
+    # lacul lui Binder – formă de lac
+    bx, by = pos["Binder"]
+    greens += f'<ellipse cx="{bx-40:.1f}" cy="{by+6:.1f}" rx="34" ry="15" fill="{WATER}" stroke="#4F8FA0" stroke-width="1.6"/>\n'
+    B.add("Binder:lake", bx - 76, by - 10, bx - 6, by + 22)
+    # lacurile din Dumbrava (unul la Muzeul ASTRA, două la Grădina Zoologică – după sibiul.ro)
+    lakes = ""
+    for (nx, ny, rx, ry) in [(-0.98, 1.1, 16, 7), (-0.39, 1.03, 13, 6), (-0.335, 0.985, 11, 5)]:
+        X, Y = P(nx, ny)
+        lakes += f'<ellipse cx="{X:.1f}" cy="{Y:.1f}" rx="{rx}" ry="{ry}" fill="{WATER}" stroke="#4F8FA0" stroke-width="1.2"/>\n'
+        B.add("dlake:icon", X - rx, Y - ry, X + rx, Y + ry)
+
+    # ---- busolă și mențiune ----
+    CX, CY = MX + MW - 62, MY + 76
+    comp = SM.compass(CX, CY, r=28)
+    B.add("compass", CX - 52, CY - 54, CX + 52, CY + 54)
+    note = "Hartă schematică, poziții aproximative – nu la scară"
+    nw = measure(note, 18, "sans", 400, True)
+    nt = text(MX + MW - 22, MY + MH - 22, note, 18, INK2, "sans", 400, True, "end")
+    B.add("note", MX + MW - 26 - nw, MY + MH - 40, MX + MW - 18, MY + MH - 14)
+
+    # ---- etichete ----
+    labels = ""
+
+    def put(name, x, y, lines, cands, **kw):
+        nonlocal labels
+        svg, p_ = place(B, name, x, y, lines, cands, BOUNDS, **kw)
+        labels += svg
+        return p_
+
+    def NM(t):
+        return L(t, 20, "#1F4D33", 700, False, "serif")
+
+    def F(t):
+        return L(t, 14, INK2, 400, True)
+
+    OR = L("poziție orientativă", 13, OCRU_D, 600, True)
+    R = 34
+    put("Centru", cx0, cy0, [L("Centrul istoric", 19, INK, 700, False, "serif")], [(-RX_ - 12, 6, "end"), (-RX_ - 12, 22, "end"), (0, RY_ + 30, "middle")])
+    put("Haller", hX, hY, [L("Bastionul Haller", 13, INK, 700)], [(0, -22, "middle"), (18, -12, "start"), (18, 4, "start")])
+
+    X, Y = pos["SubArini"]
+    put("SubArini", X, Y, [NM("Parcul Sub Arini"), F("înființat în 1856 · arin, tei, castan,"), F("platan, ginkgo"),
+                           F("68 de specii de plante,"), F("95 de specii de păsări"), OR],
+        [(0, 52, "middle"), (10, 52, "middle"), (R, 2, "start"), (-R, 0, "end")])
+    X, Y = pos["Astra"]
+    put("Astra", X, Y, [NM("Parcul Astra"), F("reamenajat în 1926 · nouă busturi"), F("lângă Palatul Asociațiunii (1905)"), OR],
+        [(R, -22, "start"), (R, -10, "start"), (R, 4, "start"), (0, 48, "middle")])
+    X, Y = pos["Tineretului"]
+    put("Tineretului", X, Y, [NM("Parcul Tineretului"), F("pe Bd. Corneliu Coposu, dincolo"), F("de Bastionul Haller"), OR],
+        [(R, -12, "start"), (R, -2, "start"), (R, -26, "start"), (0, -40, "middle")])
+    wx, wy = arc[len(arc) // 2]
+    lp = put("WallPark", 612, 640, [L("parcul de-a lungul", 14, "#1F4D33", 700), L("zidurilor cetății", 14, "#1F4D33", 700), OR],
+             [(0, 0, "middle"), (-20, -10, "middle"), (-30, 12, "middle")])
+    ax, ay = arc[-3]
+    labels += f'<path d="M{lp[0]+66:.1f},{lp[1]-4:.1f} L{ax-8:.1f},{ay+4:.1f}" stroke="{OCRU_D}" stroke-width="1.4" stroke-dasharray="2 3" fill="none"/>'
+    X, Y = pos["Terezian"]
+    put("Terezian", X, Y, [NM("Parcul Terezian"), F("pe locul fostului Târg al Vitelor"), F("(Viehmarktplatz)")],
+        [(R, -6, "start"), (R, 6, "start"), (-R, -6, "end")])
+    X, Y = pos["Binder"]
+    put("Binder", X, Y, [L("Lacul lui Binder", 20, "#1E5E78", 700, False, "serif"), F("în Țiglari · „singurul lac"), F("din municipiu” (2020)")],
+        [(R, -6, "start"), (R, 6, "start"), (R, -14, "start")])
+    X, Y = pos["Belvedere"]
+    put("Belvedere", X, Y, [NM("Parcul Belvedere"), F("parc nou, la înălțime, vegetație tânără"),
+                            L("poziție orientativă – locul nu e în sursele noastre", 13, OCRU_D, 600, True)],
+        [(-R, -6, "end"), (R, -6, "start"), (0, 50, "middle"), (0, -44, "middle")])
+    X, Y = pos["Promenada"]
+    put("Promenada", X, Y, [L("Promenada Cibinului", 20, "#1E5E78", 700, False, "serif"), F("circa 4 km de piste pentru biciclete,"),
+                            F("trotuare, pontoane și zone de relaxare")],
+        [(0, -66, "middle"), (0, -74, "middle"), (-30, -78, "middle"), (0, 60, "middle")])
+    def tag(name, x, y, lines, cands, border):
+        nonlocal labels
+        svg, (lx, ly, anc) = place(B, name, x, y, lines, cands, BOUNDS, hcol="#FBF7EE", hw=0, pad=10)
+        _, _, (bx0, by0, bx1, by1) = layout_block(lx, ly, lines, anc)
+        labels += (f'<rect x="{bx0-9:.1f}" y="{by0-6:.1f}" width="{bx1-bx0+18:.1f}" height="{by1-by0+12:.1f}" rx="9" '
+                   f'fill="#FBF7EE" fill-opacity="0.94" stroke="{border}" stroke-width="1.6"/>\n') + svg
+
+    X, Y = pos["ASTRA"]
+    tag("ASTRA", X, Y, [L("Muzeul ASTRA în aer liber", 15, INK, 700), L("96 ha · loc orientativ", 13, OCRU_D, 600, True)],
+        [(38, -2, "start"), (38, 8, "start"), (38, -12, "start")], C_FOREST)
+    X, Y = pos["Dumbrava"]
+    tag("Dumbrava", X, Y, [L("Pădurea Dumbrava", 20, "#1F4D33", 700, False, "serif"), F("993 ha · stejăret de terasă")],
+        [(40, -2, "start"), (40, -10, "start"), (-40, -2, "end")], C_FOREST)
+    X, Y = pos["Zoo"]
+    tag("Zoo", X, Y, [L("Grădina Zoologică", 15, INK, 700), L("1929 · prima din România", 13, INK2, 400, True), L("loc orientativ", 13, OCRU_D, 600, True)],
+        [(38, -8, "start"), (38, -18, "start"), (38, 2, "start")], C_FOREST)
+
+    # drumul
+    (rx_, ry_), ang = along(rc, 0.42)
+    put("road", rx_, ry_, [L("Calea Dumbrăvii", 13, "#7A6A4E", 600, True)], [(12, 4, "start"), (-12, 4, "end"), (14, 16, "start")], hw=4)
+    # râul (nume)
+    (vx, vy), _ = along(prom, 0.9)
+    put("rivname", vx, vy, [L("râul Cibin →", 15, RIVER_D, 600, True)], [(0, -16, "middle"), (0, 26, "middle"), (-40, -18, "middle")], hw=4)
+
+    # caseta „De explorat cu clasa” (întrebări, fără fapte noi)
+    QX, QY, QW = 948, 712, 334
+    qs = ["Care e cel mai apropiat spațiu verde de școala voastră? Cât durează drumul pe jos?",
+          "Găsiți pe o hartă reală locul exact al Parcului Belvedere.",
+          "Ce copaci recunoașteți în parcul vostru? Comparați-i cu cei din Sub Arini."]
+    qsvg = ""
+    yq = QY + 36
+    qsvg += text(QX + 18, yq, "De explorat cu clasa", 19, INK, "serif", 700)
+    yq += 28
+    for q in qs:
+        qsvg += f'<rect x="{QX+18}" y="{yq-12}" width="11" height="11" rx="2" fill="none" stroke="{OCRU_D}" stroke-width="2"/>'
+        pq, yq = para(QX + 38, yq, q, 14, QW - 56, INK2, lh=18, italic=True)
+        qsvg += pq
+        yq += 6
+    QH = yq - QY + 2
+    qsvg = (f'<rect x="{QX}" y="{QY}" width="{QW}" height="{QH}" rx="14" fill="#FBF7EE" fill-opacity="0.92" '
+            f'stroke="{OCRU_D}" stroke-width="1.6" filter="url(#shs)"/>\n') + qsvg
+    B.add("quest", QX, QY, QX + QW, QY + QH)
+    assert QY + QH <= MY + MH - 50, ("quest box", QY + QH)
+
+    # repere de cartier (discrete; doar unde e loc)
+    refs = ""
+    for nm, (nx, ny) in DIST.items():
+        X, Y = P(nx, ny)
+        if nm in ("Terezian", "Țiglari"):
+            continue                       # numele cartierului apare deja în eticheta spațiului verde
+        lab = nm + (" (orientativ)" if nm in DIST_ORIENT else "")
+        w = measure(lab, 14, "sans", 600, True)
+        for dx, dy in ((0, 0), (0, 22), (0, -22), (40, 0), (-40, 0)):
+            box = (X + dx - w / 2 - 4, Y + dy - 14, X + dx + w / 2 + 4, Y + dy + 6)
+            if not hits(B, box) and BOUNDS[0] < box[0] and box[2] < BOUNDS[2] and box[3] < BOUNDS[3]:
+                refs += f'<circle cx="{X+dx:.1f}" cy="{Y+dy-18:.1f}" r="3.2" fill="#A8977A"/>'
+                refs += halo(X + dx, Y + dy, lab, 14, "#8C7B5E", 600, True, "middle", hw=4)
+                B.add(f"ref{nm}:l0", *box)
+                break
+        else:
+            print("  (reper omis:", nm, ")")
+
+    # ---- copaci decorativi: stejari în Dumbrava ----
+    trees = ""
+    rnd = random.Random(31)
+    cand = [(rnd.uniform(P(0, 0.58)[1], MY + MH + 8), rnd.uniform(MX, P(-0.08, 0)[0])) for _ in range(900)]
+    for y, x in sorted(cand):
+        if not in_forest(x, y - 6):
+            continue
+        r = rnd.uniform(6.5, 9)
+        if hits(B, (x - r * 1.3, y - r * 1.5, x + r * 1.3, y + r * 1.2)):
+            continue
+        trees += oak(x, y, r, rnd.choice([GREEN1, "#4F8F64", "#6AA57A"]), rnd.choice([GREEN2, "#2F6B4F"])) + "\n"
+    # câțiva arbori în petele de parc
+    ptrees = ""
+    for k in ("SubArini", "Terezian", "Tineretului", "Astra", "Belvedere"):
+        X, Y = pos[k]
+        rnd2 = random.Random(len(k))
+        for i in range(10):
+            a = rnd2.uniform(0, 2 * math.pi); rr = rnd2.uniform(30, 42)
+            tx, ty = X + rr * math.cos(a) * 1.25, Y + rr * math.sin(a) * 0.7
+            if not hits(B, (tx - 7, ty - 9, tx + 7, ty + 7)):
+                ptrees += oak(tx, ty, 5.5 if k != "Belvedere" else 4.2)
+
+    body += trees + lakes + greens + ptrees + walls + walls_park + medals + refs + labels + qsvg + comp + nt
+    body += "</g>\n"
+    s += body
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+    # ---------------- coloana dreaptă ----------------
+    RX, RW = 1320, 520
+    LY = 230
+    rows = [
+        ("park", C_PARK, "parc", ic_park),
+        ("forest", C_FOREST, "pădure", ic_forest),
+        ("bank", C_BANK, "mal de râu", ic_bank),
+        ("lake", C_LAKE, "lac", ic_lake),
+    ]
+    LH = 268
+    col = card(RX, LY, RW, LH)
+    col += text(RX + 28, LY + 44, "Legendă", 26, VAR, "serif", 700)
+    for i, (k, c, lab, ic) in enumerate(rows):
+        cx = RX + 50 + (i % 2) * 240; cy = LY + 92 + (i // 2) * 62
+        col += medal(cx, cy, c, ic(), False, 22)
+        col += text(cx + 36, cy + 7, lab, 19, VAR, "sans", 600)
+    y = LY + 92 + 2 * 62
+    col += f'<circle cx="{RX+50}" cy="{y-6}" r="17" fill="#FBF7EE" stroke="{OCRU}" stroke-width="3" stroke-dasharray="7 5"/>'
+    col += text(RX + 86, y, "contur punctat = poziție orientativă", 17, CEATA)
+    y += 36
+    col += f'<circle cx="{RX+50}" cy="{y-10}" r="4" fill="#A8977A"/>'
+    col += text(RX + 86, y - 4, "nume de cartier – doar ca reper", 17, CEATA)
+    assert y + 10 <= LY + LH
+
+    FY = LY + LH + 14
+    FH = 1000 - FY
+    col += card(RX, FY, RW, FH, fill="#1E2B38", stroke=OCRU)
+    col += text(RX + 28, FY + 44, "Cifre verzi din surse", 24, VAR, "serif", 700)
+    facts = [
+        ("993 ha", "Pădurea Dumbrava (dssibiu.ro: peste 990 ha, în două trupuri)"),
+        ("68 · 95", "specii de plante și de păsări în Parcul Sub Arini"),
+        ("1856", "anul înființării Parcului Sub Arini (noiembrie)"),
+        ("circa 4 km", "de piste pentru biciclete pe promenada Cibinului"),
+        ("1929", "Grădina Zoologică – prima din România"),
+        ("96 ha", "Muzeul ASTRA în aer liber, în Dumbrava"),
+    ]
+    y = FY + 90
+    for big, desc in facts:
+        col += text(RX + 28, y, big, 26, OCRU, "serif", 700)
+        p, yn = para(RX + 180, y - 5, desc, 16, RW - 204, CEATA, lh=20)
+        col += p
+        y = max(y + 50, yn + 20)
+    src = ("Surse: zilesinopti.ro, sibiucityapp.ro, agerpres.ro (2020), dssibiu.ro, sibiul.ro, ecomagazin.ro, "
+           "en.wikipedia. Doar spații verzi documentate în fișa de fapte.")
+    p, yn = para(RX + 28, y - 10, src, 13, RW - 56, CEATA, lh=17, italic=True)
+    col += p
+    assert yn - 17 + 12 <= 1000, ("right column overflow", yn)
+    s += col
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    bad = check(B, BOUNDS)
+    print("overlaps:", len(bad))
+
+
+if __name__ == "__main__":
+    main()

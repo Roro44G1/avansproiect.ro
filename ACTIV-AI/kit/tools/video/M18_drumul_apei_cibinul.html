@@ -1,0 +1,396 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M18</title></head><body>
+<script src="lib.js"></script>
+<script>
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const T0 = 4, SD = 6.25, TEND = 54; // 8 opriri × 6,25 s (4–54 s); cartela finală 54–60 s
+// hartă schematică – coordonatele comune ale regiunii (x spre est, y spre sud, Sibiu = 0,0)
+const CX = 738, CY = 310, SC = 600;
+const mp = p => [CX + p[0] * SC, CY + p[1] * SC];
+const PW = 840, PH = 560;
+const off = document.createElement('canvas'); off.width = PW; off.height = PH; const g = off.getContext('2d');
+const WATER = '#6CC4E4';
+
+const STOPS = [
+  { name: 'Izvorul', p: [-.95, .75], node: 0, lab: 'right', col: '#8FD8F0',
+    f1: 'Cibinul izvorăște în Munții Cindrel, aproape de Vf. Cindrel (2.244 m), cel mai înalt vârf al masivului.',
+    f2: 'De aici pornește la drum picătura noastră – un personaj imaginat.', src: 'en.wikipedia.org (Cibin; Cindrel Mountains)' },
+  { name: 'Cheile Cibinului', p: [-.7, .4], node: 1, lab: 'right', col: '#A9B4C0',
+    f1: 'Cheile Cibinului au circa 2 km de pereți abrupți de șist cristalin.',
+    f2: 'Pe același traseu turistic crește „Bradul Uriaș”: peste 500 de ani și circa 40 m înălțime.', src: 'muntii-nostri.ro' },
+  { name: 'Gura Râului', p: [-.55, .14], node: 2, lab: 'right', col: '#0E7C86',
+    f1: 'Lângă Gura Râului, un baraj adună apa într-un lac și produce electricitate.',
+    f2: 'Lacul este cea mai mare sursă de apă potabilă pentru orașul Sibiu.', src: 'en.wikipedia.org (Cibin)' },
+  { name: 'Orlat', p: [-.66, 0], node: 3, lab: 'above', col: '#6E56CF',
+    f1: 'Lângă Orlat, Cibinul primește râul Săliște, un afluent de stânga.',
+    f2: 'Afluenții de stânga numiți de sursă: Râul Mic, Breaza, Săliște, Rusciori, Fărmăndola, Hârtibaciu.', src: 'en.wikipedia.org (Cibin)' },
+  { name: 'Sibiu', p: [0, 0], node: 5, lab: 'above', col: '#E2A62B',
+    f1: 'Râul trece prin Sibiu, oraș atestat documentar în 1191 (Cibinium).',
+    f2: 'Promenada Cibinului: aproape 4 km de piste pentru biciclete, trotuare, pontoane și zone de relaxare.', src: 'en.wikipedia.org (Sibiu; Cibin); zilesinopti.ro (2024)' },
+  { name: 'Veștem', p: [.22, .48], node: 7, lab: 'left', col: '#3E63DD',
+    f1: 'Lângă Veștem, Cibinul primește Hârtibaciul, tot un afluent de stânga.',
+    f2: 'Din dreapta vin, între alții, Niculești, Crăciuneasa, Păltiniș, Valea Aurie, Cisnădie și Sadu.', src: 'en.wikipedia.org (Cibin)' },
+  { name: 'Tălmaciu', p: [.1, .75], node: 8, lab: 'belowleft', col: '#B9583A',
+    f1: 'La Tălmaciu se varsă Sadul, un râu de circa 60 km care izvorăște tot în Munții Cindrel.',
+    f2: 'Pe Sadu se află cea mai veche hidrocentrală din zonă, construită în 1896.', src: 'en.wikipedia.org (Sadu; Cindrel Mountains)' },
+  { name: 'Podu Olt', p: [.2, .84], node: 9, lab: 'belowleft', col: '#12A594',
+    f1: 'Lângă Tălmaciu, aproape de stația CFR Podu Olt, Cibinul se varsă în Olt.',
+    f2: 'Drumul picăturii continuă de acum pe Olt.', src: 'en.wikipedia.org (Cibin)' },
+];
+// cursul schematic: Vf. Cindrel → Cheile Cibinului → Gura Râului → Orlat → Cristian → Sibiu → Șelimbăr → Veștem → Tălmaciu → Podu Olt
+const COURSE = [[-.95, .75], [-.7, .4], [-.55, .14], [-.66, 0], [-.3, -.02], [0, 0], [.15, .1], [.22, .48], [.1, .75], [.2, .84]].map(mp);
+function catmull(P, per) {
+  const out = [], idx = [];
+  for (let i = 0; i < P.length - 1; i++) {
+    const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+    idx.push(out.length);
+    for (let k = 0; k < per; k++) {
+      const u = k / per, u2 = u * u, u3 = u2 * u;
+      const f = (a, b, c2, d) => .5 * ((2 * b) + (-a + c2) * u + (2 * a - 5 * b + 4 * c2 - d) * u2 + (-a + 3 * b - 3 * c2 + d) * u3);
+      out.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1])]);
+    }
+  }
+  idx.push(out.length); out.push(P[P.length - 1]);
+  return { pts: out, idx };
+}
+const CR = catmull(COURSE, 60);
+// mic meandru (desen), cu capetele fixe
+{ const n = CR.pts.length; for (let i = 1; i < n - 1; i++) { const a = CR.pts[i - 1], b = CR.pts[i + 1]; let dx = b[0] - a[0], dy = b[1] - a[1]; const l = Math.hypot(dx, dy) || 1; const w = Math.sin(i * .21) * 3.2 * Math.sin(Math.PI * i / n); CR.pts[i] = [CR.pts[i][0] - dy / l * w, CR.pts[i][1] + dx / l * w]; } }
+const CUM = [0]; for (let i = 1; i < CR.pts.length; i++) CUM.push(CUM[i - 1] + Math.hypot(CR.pts[i][0] - CR.pts[i - 1][0], CR.pts[i][1] - CR.pts[i - 1][1]));
+const LEN = CUM[CUM.length - 1];
+const SSTOP = STOPS.map(s => CUM[CR.idx[s.node]] / LEN);
+function posAt(s) { const L = s * LEN; let i = 1; while (i < CUM.length - 1 && CUM[i] < L) i++; const u = (L - CUM[i - 1]) / (CUM[i] - CUM[i - 1] || 1); return [lerp(CR.pts[i - 1][0], CR.pts[i][0], u), lerp(CR.pts[i - 1][1], CR.pts[i][1], u)]; }
+function progress(t) {
+  if (t < T0) return 0;
+  const k = Math.min(7, Math.floor((t - T0) / SD));
+  if (k === 0) return 0;
+  const T = T0 + k * SD; return lerp(SSTOP[k - 1], SSTOP[k], easeInOut(inv(T, T + 1.8, t)));
+}
+const TRIBS = [
+  { name: 'râul Săliște', pts: [[-.98, -.08], [-.84, -.07], [-.73, -.03], [-.66, 0]], k: 3, lab: [-.86, -.12] },
+  { name: 'Hârtibaciu', pts: [[.37, .17], [.33, .3], [.27, .4], [.22, .48]], k: 5, lab: [.353, .123], al: 'rightalign' },
+  { name: 'râul Sadu', pts: [[-.24, .94], [-.2, .85], [-.12, .72], [-.02, .7], [.1, .75]], k: 6, lab: [-.3, .88] },
+];
+const OLT = [[.37, .64], [.3, .76], [.2, .84], [.22, .9], [.24, .96]];
+const REF = [['Săliște', [-.98, -.08], 'below'], ['Cristian', [-.3, -.02], 'below'], ['Șelimbăr', [.15, .1], 'left'], ['Rășinari', [-.22, .32], 'below'], ['Cisnădie', [0, .3], 'right'], ['Păltiniș', [-.5, .62], 'below'], ['Sadu', [-.1, .68], 'above']];
+
+function polyPath(c, P) { c.beginPath(); P.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); }
+function smoothPts(P, per) { return catmull(P.map(mp), per || 16).pts; }
+const TRIBP = TRIBS.map(tr => smoothPts(tr.pts)); const OLTP = smoothPts(OLT);
+function labelAt(s, x, y, pos, o) {
+  const d = o.r || 12; let tx = x, ty = y + 7, al = 'left';
+  if (pos === 'right') tx = x + d + 8; else if (pos === 'left') { tx = x - d - 8; al = 'right'; } else if (pos === 'above') { ty = y - d - 10; al = 'center'; } else if (pos === 'belowleft') { tx = x - 6; ty = y + d + 26; al = 'right'; } else { ty = y + d + 24; al = 'center'; }
+  text(ctx, s, tx, ty, Object.assign({ align: al }, o));
+}
+
+// ---------- personajul: picătura ----------
+function dropChar(c, x, y, s, t, o = {}) {
+  c.save(); c.translate(x, y); c.scale(s, s); if (o.rot) c.rotate(o.rot);
+  const sq = 1 + Math.sin(t * 5 + (o.ph || 0)) * .035; c.scale(1 / sq, sq);
+  const base = o.tint || '#4FB6DE';
+  const gr = c.createRadialGradient(-12, -10, 4, 0, 0, 62); gr.addColorStop(0, mix(base, '#FFFFFF', .78)); gr.addColorStop(1, base);
+  c.fillStyle = gr; c.beginPath(); c.moveTo(0, -62); c.bezierCurveTo(12, -40, 34, -18, 34, 8); c.arc(0, 8, 34, 0, Math.PI); c.bezierCurveTo(-34, -18, -12, -40, 0, -62); c.closePath(); c.fill();
+  c.strokeStyle = mix(base, '#0F1720', .35); c.lineWidth = 3; c.stroke();
+  c.fillStyle = 'rgba(255,255,255,.75)'; c.beginPath(); c.ellipse(-15, -8, 5, 11, .35, 0, 7); c.fill();
+  const bl = ((t + (o.ph || 0)) % 3.7) < .14 ? .12 : 1, lx = o.look || 0;
+  for (const ex of [-11, 11]) { c.fillStyle = '#FFFFFF'; c.beginPath(); c.ellipse(ex, 6, 7, 7.5 * bl, 0, 0, 7); c.fill(); if (bl > .5) { c.fillStyle = '#16324A'; c.beginPath(); c.arc(ex + lx * 2.5, 7, 3.6, 0, 7); c.fill(); c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(ex + lx * 2.5 + 1.2, 5.6, 1.1, 0, 7); c.fill(); } }
+  c.strokeStyle = '#16324A'; c.lineWidth = 2.6; c.lineCap = 'round'; c.beginPath(); c.arc(0, 17, 8, .18 * Math.PI, .82 * Math.PI); c.stroke();
+  c.fillStyle = 'rgba(240,130,150,.35)'; c.beginPath(); c.arc(-21, 17, 4.5, 0, 7); c.fill(); c.beginPath(); c.arc(21, 17, 4.5, 0, 7); c.fill();
+  if (o.wave) { c.strokeStyle = mix(base, '#0F1720', .2); c.lineWidth = 5; c.beginPath(); c.moveTo(30, 10); c.quadraticCurveTo(46, -4, 44 + Math.sin(t * 9) * 6, -22); c.stroke(); }
+  c.restore();
+}
+function tagG(c, x, y, s, a, col) {
+  if (a <= 0) return; c.save(); c.globalAlpha = a; c.font = '600 22px Inter'; const w = c.measureText(s).width + 30;
+  c.fillStyle = 'rgba(15,23,32,.85)'; roundRect(c, x - w / 2, y - 21, w, 40, 20); c.fill(); c.strokeStyle = col || PAL.ocru; c.lineWidth = 2; c.stroke(); c.restore();
+  text(c, s, x, y + 7, { size: 22, weight: 600, align: 'center', alpha: a });
+}
+function skyG(c, top, bot, y1) { const gr = c.createLinearGradient(0, 0, 0, y1 || PH); gr.addColorStop(0, top); gr.addColorStop(1, bot); c.fillStyle = gr; c.fillRect(0, 0, PW, PH); }
+function hill(c, y, amp, col, f, ph) { c.fillStyle = col; c.beginPath(); c.moveTo(0, PH); for (let x = 0; x <= PW; x += 12) c.lineTo(x, y - amp * (.5 + .5 * Math.sin(x * f + ph)) - amp * .3 * Math.sin(x * f * 2.6 + ph * 1.7)); c.lineTo(PW, PH); c.closePath(); c.fill(); }
+function pine(c, x, y, s, col) { c.save(); c.translate(x, y); c.scale(s, s); c.fillStyle = '#4A3A2E'; c.fillRect(-3, -10, 6, 12); c.fillStyle = col || '#2E5A3A'; for (let i = 0; i < 4; i++) { const w = 26 - i * 5, yy = -10 - i * 16; c.beginPath(); c.moveTo(-w, yy); c.lineTo(0, yy - 26); c.lineTo(w, yy); c.closePath(); c.fill(); } c.restore(); }
+function decid(c, x, y, s, t, col) { c.save(); c.translate(x, y); c.scale(s, s); const sw = Math.sin(t * 1.3 + x * .05) * 2; c.fillStyle = '#5A3E2B'; c.fillRect(-4, -36, 8, 36); c.fillStyle = col || '#4E7A3A'; c.beginPath(); c.arc(sw, -56, 26, 0, 7); c.arc(-16 + sw, -44, 18, 0, 7); c.arc(16 + sw, -44, 19, 0, 7); c.fill(); c.restore(); }
+function hut(c, x, base, w, h, wall, roof) { c.fillStyle = wall; c.fillRect(x, base - h, w, h); c.fillStyle = roof; c.beginPath(); c.moveTo(x - 6, base - h); c.lineTo(x + w / 2, base - h - w * .55); c.lineTo(x + w + 6, base - h); c.closePath(); c.fill(); c.fillStyle = 'rgba(30,36,44,.7)'; c.fillRect(x + w * .2, base - h * .7, w * .22, h * .32); c.fillRect(x + w * .58, base - h * .7, w * .22, h * .32); }
+function band(c, P, w0, w1, col) { // râu ca bandă de lățime variabilă
+  const L = [], R = []; for (let i = 0; i < P.length; i++) { const a = P[Math.max(0, i - 1)], b = P[Math.min(P.length - 1, i + 1)]; let dx = b[0] - a[0], dy = b[1] - a[1]; const l = Math.hypot(dx, dy) || 1; const w = lerp(w0, w1, i / (P.length - 1)) / 2; L.push([P[i][0] - dy / l * w, P[i][1] + dx / l * w]); R.push([P[i][0] + dy / l * w, P[i][1] - dx / l * w]); }
+  c.fillStyle = col; c.beginPath(); L.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); for (let i = R.length - 1; i >= 0; i--) c.lineTo(R[i][0], R[i][1]); c.closePath(); c.fill();
+}
+function flowLines(c, P, t, speed, col, n, spread) { // linii de curent animate de-a lungul unui traseu
+  const segL = []; let tot = 0; for (let i = 1; i < P.length; i++) { const l = Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]); segL.push(l); tot += l; }
+  const at = d => { let i = 0; while (i < segL.length - 1 && d > segL[i]) { d -= segL[i]; i++; } const u = clamp(d / segL[i]); return [lerp(P[i][0], P[i + 1][0], u), lerp(P[i][1], P[i + 1][1], u), Math.atan2(P[i + 1][1] - P[i][1], P[i + 1][0] - P[i][0])]; };
+  c.save(); c.strokeStyle = col; c.lineCap = 'round';
+  for (let k = 0; k < n; k++) { const d = ((t * speed + k * tot / n) % tot), q = at(d), o = (((k * 37) % 11) / 10 - .5) * spread; const nx = -Math.sin(q[2]), ny = Math.cos(q[2]); c.lineWidth = 2.5; c.globalAlpha = .6; c.beginPath(); c.moveTo(q[0] + nx * o - Math.cos(q[2]) * 12, q[1] + ny * o - Math.sin(q[2]) * 12); c.lineTo(q[0] + nx * o + Math.cos(q[2]) * 12, q[1] + ny * o + Math.sin(q[2]) * 12); c.stroke(); }
+  c.restore();
+}
+
+// ---------- ilustrațiile opririlor (contextul g, 840×560) ----------
+function ill0(lt, t) { // izvorul, sub Vf. Cindrel
+  const c = g; skyG(c, '#6FAEE0', '#D6ECF6', 360);
+  c.fillStyle = '#8796AE'; c.beginPath(); c.moveTo(0, 300); c.lineTo(140, 190); c.lineTo(250, 240); c.lineTo(400, 96); c.lineTo(520, 200); c.lineTo(640, 150); c.lineTo(840, 260); c.lineTo(840, 400); c.lineTo(0, 400); c.closePath(); c.fill();
+  c.fillStyle = '#A6B3C6'; c.beginPath(); c.moveTo(400, 96); c.lineTo(440, 140); c.lineTo(418, 150); c.lineTo(392, 132); c.lineTo(366, 130); c.closePath(); c.fill();
+  hill(c, 330, 40, '#8FA860', .007, 1.2);
+  hill(c, 400, 26, '#7C9A50', .01, 2.6);
+  for (const [x, y, s] of [[60, 330, .8], [110, 345, 1], [720, 320, .8], [770, 340, 1.05], [810, 330, .9]]) pine(c, x, y, s, '#2E5A3A');
+  // stânci
+  c.fillStyle = '#7A7F86'; c.beginPath(); c.ellipse(250, 420, 120, 56, 0, 0, 7); c.fill(); c.fillStyle = '#8E949C'; c.beginPath(); c.ellipse(220, 400, 78, 38, -.2, 0, 7); c.fill(); c.fillStyle = '#6A6F76'; c.beginPath(); c.ellipse(330, 440, 70, 34, .2, 0, 7); c.fill();
+  // firul de apă
+  const P = [[300, 432], [380, 452], [470, 470], [580, 500], [700, 530], [860, 560]];
+  band(c, P, 8, 46, '#5EB0DA'); flowLines(c, P, t, 90, '#E6F6FC', 10, 10);
+  c.fillStyle = '#5EB0DA'; c.beginPath(); c.ellipse(304, 430, 20, 8, 0, 0, 7); c.fill();
+  // picătura apare din izvor
+  const a = smooth(.3, 1.1, lt), bounce = Math.abs(Math.sin(lt * 3.2)) * 18 * (1 - smooth(2.5, 4, lt));
+  if (a > 0) dropChar(c, 420, 420 - bounce - (1 - a) * 30, .95 * easeOut(a), t, { wave: lt > 1.6 && lt < 3.6, look: -1 });
+  tagG(c, 400, 60, 'Vf. Cindrel · 2.244 m', 1);
+  tagG(c, 220, 512, 'izvorul · desen imaginat', smooth(.4, 1, lt));
+}
+function ill1(lt, t) { // cheile
+  const c = g; skyG(c, '#7FB8E6', '#CFE6F2', 200);
+  c.fillStyle = '#9AAAB8'; c.fillRect(0, 120, PW, 200);
+  const river = [[420, 150], [412, 240], [430, 330], [400, 430], [420, 560]];
+  band(c, river, 30, 230, '#4E9CC4');
+  flowLines(c, river, t, 260, '#F3FAFF', 26, 80);
+  // pereți de șist
+  const wall = (pts, col) => { c.fillStyle = col; polyPath(c, pts); c.closePath(); c.fill(); c.save(); polyPath(c, pts); c.closePath(); c.clip(); c.strokeStyle = 'rgba(30,38,48,.35)'; c.lineWidth = 3; for (let k = -40; k < 60; k++) { c.beginPath(); c.moveTo(k * 22 - 200, 0); c.lineTo(k * 22 + 160, 560); c.stroke(); } c.strokeStyle = 'rgba(255,255,255,.12)'; c.lineWidth = 2; for (let k = -40; k < 60; k++) { c.beginPath(); c.moveTo(k * 22 - 190, 0); c.lineTo(k * 22 + 170, 560); c.stroke(); } c.restore(); };
+  wall([[0, 60], [210, 40], [260, 110], [330, 180], [350, 260], [372, 330], [330, 430], [260, 560], [0, 560]], '#5E6A78');
+  wall([[840, 50], [600, 70], [560, 140], [490, 190], [470, 270], [452, 340], [500, 440], [600, 560], [840, 560]], '#66727F');
+  for (const [x, y, s] of [[40, 64, .7], [100, 56, .8], [160, 50, .7], [640, 74, .75], [700, 64, .85]]) pine(c, x, y, s, '#2E5A3A');
+  pine(c, 780, 66, 1.7, '#2A5236');
+  // picătura sare pe valuri
+  const x = 420 + Math.sin(lt * 2.6) * 34, y = 360 - Math.abs(Math.sin(lt * 5.2)) * 26;
+  dropChar(c, x, y, .9, t, { rot: Math.sin(lt * 5.2) * .15, look: Math.sin(lt * 2.6) });
+  c.fillStyle = 'rgba(243,250,255,.85)'; for (let k = 0; k < 6; k++) { const q = (lt * 2.6 + k / 6) % 1; c.beginPath(); c.arc(x + (k - 2.5) * 16 * q, y + 40 - Math.sin(q * Math.PI) * 30, 4 * (1 - q), 0, 7); c.fill(); }
+  tagG(c, 420, 24 + 16, 'pereți de șist cristalin · circa 2 km', 1);
+  tagG(c, 690, 150, '„Bradul Uriaș” · peste 500 de ani', smooth(1.4, 2, lt));
+}
+function ill2(lt, t) { // lacul și barajul
+  const c = g; skyG(c, '#78B2E0', '#DCEEF6', 300);
+  hill(c, 220, 50, '#5E8A58', .006, .3); hill(c, 270, 40, '#4E7A48', .009, 2.1);
+  for (let i = 0; i < 12; i++) pine(c, 20 + i * 70, 250 + (i % 3) * 8, .8, '#2E5A3A');
+  // lacul
+  const lg = c.createLinearGradient(0, 270, 0, 420); lg.addColorStop(0, '#5AA8D6'); lg.addColorStop(1, '#2E78AA'); c.fillStyle = lg; c.beginPath(); c.moveTo(0, 290); c.quadraticCurveTo(300, 270, 560, 284); c.lineTo(640, 290); c.lineTo(640, 420); c.lineTo(0, 420); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 2; for (let k = 0; k < 7; k++) { const y = 300 + k * 17; c.beginPath(); for (let x = 0; x < 640; x += 12) { const yy = y + Math.sin(x * .03 + t * 1.6 + k) * 2; x ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke(); }
+  // barajul (schemă)
+  c.fillStyle = '#B8B6AE'; c.beginPath(); c.moveTo(600, 270); c.lineTo(680, 270); c.lineTo(760, 560); c.lineTo(560, 560); c.closePath(); c.fill();
+  c.fillStyle = '#D6D3CA'; c.fillRect(592, 262, 96, 10); c.fillStyle = 'rgba(0,0,0,.12)'; for (let k = 0; k < 6; k++) c.fillRect(612 + k * 12, 280 + k * 46, 60 + k * 18, 3);
+  c.fillStyle = '#4E9CC4'; c.fillRect(0, 420, 600, 140); c.fillStyle = '#2E5A3A'; c.fillRect(0, 418, 600, 8);
+  c.fillStyle = '#7C9A50'; c.fillRect(0, 426, 600, 134);
+  c.fillStyle = '#4E9CC4'; c.beginPath(); c.moveTo(700, 560); c.lineTo(740, 470); c.lineTo(780, 470); c.lineTo(840, 560); c.closePath(); c.fill();
+  // picătura plutește pe lac
+  const x = 300 + Math.sin(lt * .6) * 30, y = 330 + Math.sin(lt * 1.8) * 4;
+  c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 2; for (let k = 0; k < 3; k++) { const q = (lt * .5 + k / 3) % 1; c.globalAlpha = 1 - q; c.beginPath(); c.ellipse(x, y + 30, 30 + q * 90, 8 + q * 20, 0, 0, 7); c.stroke(); } c.globalAlpha = 1;
+  dropChar(c, x, y, .85, t, { look: 1 });
+  // pictograme: robinet și fulger
+  const ia = smooth(1, 1.6, lt);
+  c.save(); c.globalAlpha = ia; c.fillStyle = 'rgba(15,23,32,.85)'; roundRect(c, 30, 450, 410, 80, 20); c.fill(); c.strokeStyle = PAL.ocru; c.lineWidth = 2; c.stroke();
+  c.fillStyle = '#C9CDD2'; c.fillRect(64, 470, 40, 12); c.fillRect(96, 470, 12, 30); c.fillRect(80, 462, 10, 10); c.fillStyle = '#6CC4E4'; c.beginPath(); c.ellipse(102, 512 + (lt * 40 % 10), 4, 6, 0, 0, 7); c.fill();
+  c.restore(); text(c, 'apă potabilă pentru Sibiu', 124, 498, { size: 22, weight: 600, alpha: ia });
+  const ib = smooth(1.8, 2.4, lt);
+  c.save(); c.globalAlpha = ib; c.fillStyle = 'rgba(15,23,32,.85)'; roundRect(c, 456, 450, 214, 80, 20); c.fill(); c.strokeStyle = PAL.ocru; c.lineWidth = 2; c.stroke();
+  c.fillStyle = PAL.ocru; c.beginPath(); c.moveTo(490, 462); c.lineTo(474, 494); c.lineTo(488, 494); c.lineTo(480, 520); c.lineTo(504, 484); c.lineTo(490, 484); c.lineTo(498, 462); c.closePath(); c.fill();
+  c.restore(); text(c, 'electricitate', 518, 498, { size: 22, weight: 600, alpha: ib });
+  tagG(c, 640, 226, 'barajul · schemă', 1); tagG(c, 230, 248, 'lacul de acumulare', smooth(.4, 1, lt));
+}
+function alongPoly(P, u) { const L = [0]; for (let i = 1; i < P.length; i++) L.push(L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1])); const d = u * L[L.length - 1]; let i = 1; while (i < L.length - 1 && L[i] < d) i++; const v = (d - L[i - 1]) / (L[i] - L[i - 1] || 1); return [lerp(P[i - 1][0], P[i][0], v), lerp(P[i - 1][1], P[i][1], v)]; }
+function joinScene(c, lt, t, o) { // două râuri care se unesc; o: {main, trib, tint, mainLab, tribLab, bg}
+  band(c, o.trib, 20, 70, '#5AA6D0'); band(c, o.main, o.w0 || 70, o.w1 || 150, '#4E9CC4');
+  flowLines(c, o.trib, t, 120, '#E6F6FC', 8, 20); flowLines(c, o.main, t, 140, '#E6F6FC', 16, 60);
+  const jt = easeInOut(smooth(.4, 3.4, lt));
+  const pa = alongPoly(o.pathA.concat([[o.meet[0] - 40, o.meet[1]]]), lerp(.18, 1, jt));
+  const pb = alongPoly(o.pathB.concat([[o.meet[0] + 40, o.meet[1] - 6]]), lerp(.18, 1, jt));
+  dropChar(c, pa[0], pa[1] - 20, .8, t, { look: 1, wave: lt > 3.6 });
+  dropChar(c, pb[0], pb[1] - 20, .7, t, { tint: o.tint, ph: 1.3, look: -1, wave: lt > 3.6 });
+  if (lt > 3.4) { c.save(); c.globalAlpha = smooth(3.4, 3.8, lt) * (1 - smooth(5.2, 5.8, lt)); c.strokeStyle = PAL.ocru; c.lineWidth = 4; c.beginPath(); c.moveTo(o.meet[0] - 14, o.meet[1] - 96); c.quadraticCurveTo(o.meet[0], o.meet[1] - 110, o.meet[0] + 14, o.meet[1] - 96); c.stroke(); c.fillStyle = PAL.ocru; c.beginPath(); c.arc(o.meet[0], o.meet[1] - 112, 5, 0, 7); c.fill(); c.restore(); }
+  tagG(c, o.mainLabP[0], o.mainLabP[1], o.mainLab, 1, '#6CC4E4');
+  tagG(c, o.tribLabP[0], o.tribLabP[1], o.tribLab, 1, o.tint);
+}
+function ill3(lt, t) { // Orlat – vine râul Săliște
+  const c = g; skyG(c, '#7AB4E2', '#DDEEF6', 300);
+  hill(c, 200, 50, '#7E9C6A', .006, 1); hill(c, 250, 34, '#6E9A55', .01, 3);
+  const r = rng(5); for (let i = 0; i < 9; i++) { const x = 40 + i * 90 + r() * 20; hut(c, x, 262 + r() * 8, 46, 30, ['#E9DCC3', '#E6D3B0', '#EFE6D2'][i % 3], ['#8A4A35', '#A05A3A', '#7A3E2E'][i % 3]); }
+  c.fillStyle = '#7C9A50'; c.fillRect(0, 270, PW, PH);
+  for (const [x, y] of [[60, 330], [770, 320], [690, 520], [120, 540]]) decid(c, x, y, 1, t);
+  joinScene(c, lt, t, { main: [[110, 560], [260, 470], [420, 400], [600, 380], [860, 350]], trib: [[0, 300], [150, 330], [300, 370], [420, 400]], meet: [470, 395], pathA: [[110, 560], [260, 470], [420, 400]], pathB: [[0, 300], [150, 330], [300, 370], [420, 400]], tint: '#9A86E8', mainLab: 'Cibinul', tribLab: 'râul Săliște', mainLabP: [210, 420], tribLabP: [120, 260], w0: 60, w1: 120 });
+  tagG(c, 600, 214, 'satul · desen imaginat', 1);
+}
+function ill4(lt, t) { // Sibiu – promenada
+  const c = g; skyG(c, '#6EAEE2', '#E6F0F6', 320);
+  c.save(); c.scale(.6, .6); houses(c, { y0: 250 / .6, W: PW / .6, seed: 11, walls: ['#E9DCC3', '#E6D3B0', '#D9C8A8', '#EFE6D2'], roofs: ['#8A4A35', '#A05A3A', '#7A3E2E'], wallH: 80, t });
+  tower(c, 500, 250 / .6, 56, 210, { wall: '#E9DCC3', roof: '#5B3A2E', clock: true }); tower(c, 1040, 250 / .6, 44, 150, { wall: '#E6D3B0', roof: '#4A3A34' }); c.restore();
+  c.fillStyle = '#9C9C94'; c.fillRect(0, 250, PW, 40);
+  for (let i = 0; i < 8; i++) decid(c, 30 + i * 112, 300, .9, t, ['#4E7A3A', '#5E8A44'][i % 2]);
+  // malul îndepărtat și apa
+  c.fillStyle = '#B8B4AA'; c.fillRect(0, 300, PW, 30);
+  c.fillStyle = '#4E9CC4'; c.fillRect(0, 330, PW, 120);
+  c.strokeStyle = 'rgba(255,255,255,.4)'; c.lineWidth = 2; for (let k = 0; k < 5; k++) { const y = 345 + k * 22; c.beginPath(); for (let x = 0; x <= PW; x += 14) { const yy = y + Math.sin(x * .025 - t * 2 + k) * 2.5; x ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke(); }
+  // pontonul
+  c.fillStyle = '#8A6A44'; c.fillRect(520, 410, 200, 26); c.fillStyle = '#6B4A35'; for (let k = 0; k < 6; k++) c.fillRect(526 + k * 34, 436, 6, 16);
+  // promenada: trotuar + pistă pentru biciclete
+  c.fillStyle = '#C9C4B8'; c.fillRect(0, 448, PW, 40); c.fillStyle = '#B9583A'; c.fillRect(0, 488, PW, 38); c.fillStyle = '#9C9890'; c.fillRect(0, 526, PW, 34);
+  c.fillStyle = '#F3EFE6'; for (let x = 10; x < PW; x += 70) c.fillRect(x, 505, 36, 4);
+  c.strokeStyle = '#F3EFE6'; c.lineWidth = 3; for (const bx of [160, 560]) { c.beginPath(); c.arc(bx, 512, 8, 0, 7); c.arc(bx + 30, 512, 8, 0, 7); c.moveTo(bx, 512); c.lineTo(bx + 12, 500); c.lineTo(bx + 30, 512); c.stroke(); }
+  // bancă
+  c.fillStyle = '#6B4A35'; c.fillRect(300, 452, 70, 8); c.fillRect(300, 440, 70, 6); c.fillRect(306, 460, 5, 14); c.fillRect(360, 460, 5, 14);
+  // biciclist (personaj imaginat)
+  const bx = ((lt * 140) % (PW + 200)) - 100; c.save(); c.translate(bx, 500); c.strokeStyle = '#2A3442'; c.lineWidth = 4; c.beginPath(); c.arc(-18, 10, 12, 0, 7); c.arc(18, 10, 12, 0, 7); c.moveTo(-18, 10); c.lineTo(-2, -6); c.lineTo(18, 10); c.moveTo(-2, -6); c.lineTo(12, -8); c.stroke(); c.fillStyle = '#3E63DD'; roundRect(c, -8, -38, 14, 26, 6); c.fill(); c.fillStyle = '#2A3442'; c.beginPath(); c.arc(0, -46, 7, 0, 7); c.fill(); c.restore();
+  dropChar(c, 360 + Math.sin(lt * .9) * 40, 350, .85, t, { wave: true, look: 1 });
+  tagG(c, 420, 40, 'promenada Cibinului · circa 4 km', 1);
+  tagG(c, 690, 380, 'ponton', smooth(.8, 1.4, lt)); tagG(c, 120, 470, 'pistă pentru biciclete', smooth(1.2, 1.8, lt));
+  tagG(c, 470, 200, 'siluete schematice', smooth(1.8, 2.4, lt), '#A9B4C0');
+}
+function ill5(lt, t) { // Veștem – vine Hârtibaciul
+  const c = g; skyG(c, '#7AB6E2', '#E4EFF4', 260);
+  hill(c, 190, 30, '#8AA070', .005, 2); c.fillStyle = '#A6B86A'; c.fillRect(0, 200, PW, PH);
+  for (let k = 0; k < 9; k++) { c.fillStyle = ['#B8C470', '#98AE5A', '#C8B868', '#A6B86A'][k % 4]; c.beginPath(); c.moveTo(0, 210 + k * 40); c.lineTo(PW, 196 + k * 46); c.lineTo(PW, 216 + k * 46); c.lineTo(0, 230 + k * 40); c.closePath(); c.fill(); }
+  for (const [x, y] of [[90, 240], [720, 236], [800, 250]]) decid(c, x, y, .8, t);
+  joinScene(c, lt, t, { main: [[0, 470], [200, 420], [420, 380], [620, 420], [860, 470]], trib: [[860, 200], [720, 250], [560, 320], [430, 380]], meet: [470, 385], pathA: [[0, 470], [200, 420], [420, 380]], pathB: [[860, 200], [720, 250], [560, 320], [470, 370]], tint: '#7D98F0', mainLab: 'Cibinul', tribLab: 'Hârtibaciu', mainLabP: [150, 520], tribLabP: [700, 200], w0: 90, w1: 130 });
+}
+function ill6(lt, t) { // Tălmaciu – vine Sadul; hidrocentrala din 1896
+  const c = g; skyG(c, '#76B0DE', '#DDECF4', 280);
+  c.fillStyle = '#7F8EA6'; c.beginPath(); c.moveTo(0, 220); c.lineTo(120, 120); c.lineTo(230, 180); c.lineTo(330, 110); c.lineTo(470, 200); c.lineTo(600, 140); c.lineTo(840, 230); c.lineTo(840, 320); c.lineTo(0, 320); c.closePath(); c.fill();
+  hill(c, 290, 50, '#5E8A58', .008, .6); c.fillStyle = '#7C9A50'; c.fillRect(0, 300, PW, PH);
+  for (let i = 0; i < 6; i++) pine(c, 30 + i * 60, 300 - i * 6, .7, '#2E5A3A');
+  // hidrocentrala (schemă, imaginată) pe Sadu
+  c.fillStyle = '#5E5A54'; c.save(); c.translate(80, 160); c.rotate(.55); c.fillRect(0, -6, 200, 12); c.restore();
+  c.fillStyle = '#C8BBA6'; c.fillRect(220, 250, 110, 66); c.fillStyle = '#8A4A35'; c.beginPath(); c.moveTo(212, 250); c.lineTo(275, 214); c.lineTo(338, 250); c.closePath(); c.fill();
+  c.fillStyle = '#2E3640'; for (let k = 0; k < 3; k++) { c.beginPath(); c.moveTo(236 + k * 30, 306); c.lineTo(236 + k * 30, 272); c.arc(246 + k * 30, 272, 10, Math.PI, 0); c.lineTo(256 + k * 30, 306); c.fill(); }
+  joinScene(c, lt, t, { main: [[0, 520], [220, 470], [430, 440], [640, 470], [860, 500]], trib: [[300, 320], [360, 360], [410, 400], [440, 440]], meet: [480, 440], pathA: [[0, 520], [220, 470], [430, 440]], pathB: [[300, 320], [360, 360], [410, 400], [440, 430]], tint: '#5ED0C0', mainLab: 'Cibinul', tribLab: 'râul Sadu', mainLabP: [130, 516], tribLabP: [440, 330], w0: 110, w1: 150 });
+  tagG(c, 275, 182, 'hidrocentrala de pe Sadu, 1896 · schemă', smooth(.8, 1.4, lt));
+}
+function ill7(lt, t) { // Podu Olt – vărsarea în Olt
+  const c = g; skyG(c, '#7AB4E0', '#E2EEF4', 240);
+  c.fillStyle = '#7F8EA6'; c.beginPath(); c.moveTo(0, 180); c.lineTo(160, 90); c.lineTo(300, 150); c.lineTo(460, 80); c.lineTo(640, 160); c.lineTo(840, 110); c.lineTo(840, 260); c.lineTo(0, 260); c.closePath(); c.fill();
+  hill(c, 240, 30, '#5E8A58', .01, 1.4); c.fillStyle = '#7C9A50'; c.fillRect(0, 250, PW, PH);
+  // calea ferată și stația (schemă)
+  c.fillStyle = '#8A8478'; c.fillRect(0, 262, PW, 12); c.strokeStyle = '#4A4A46'; c.lineWidth = 3; c.beginPath(); c.moveTo(0, 264); c.lineTo(PW, 264); c.moveTo(0, 272); c.lineTo(PW, 272); c.stroke();
+  c.fillStyle = '#E6DCC4'; c.fillRect(560, 214, 120, 46); c.fillStyle = '#7A3E2E'; c.beginPath(); c.moveTo(552, 214); c.lineTo(620, 188); c.lineTo(688, 214); c.closePath(); c.fill();
+  c.fillStyle = '#2E3640'; c.fillRect(578, 228, 18, 24); c.fillRect(612, 228, 18, 24); c.fillRect(646, 228, 18, 24);
+  c.fillStyle = '#1E4A8A'; roundRect(c, 574, 160, 92, 26, 5); c.fill(); text(c, 'Podu Olt', 620, 180, { size: 17, weight: 700, align: 'center', color: '#F3EFE6' });
+  c.fillStyle = '#4A4A46'; c.fillRect(617, 186, 6, 4);
+  // Oltul (lat) și Cibinul care vine din stânga-sus
+  const olt = [[0, 380], [300, 400], [600, 410], [860, 420]];
+  band(c, olt, 170, 190, '#3E86B4'); flowLines(c, olt, t, 120, '#D6EEF8', 24, 140);
+  const cib = [[0, 290], [120, 300], [240, 330], [330, 370]];
+  band(c, cib, 50, 90, '#4E9CC4'); flowLines(c, cib, t, 140, '#E6F6FC', 8, 30);
+  // picăturile (Cibin + afluenți) intră în Olt
+  const q = easeInOut(smooth(.4, 3.2, lt));
+  const tints = [null, '#9A86E8', '#7D98F0', '#5ED0C0'];
+  tints.forEach((tn, i) => { const x = lerp(60 + i * 50, 380 + i * 80, q), y = lerp(300 + i * 4, 400 + (i % 2) * 20, q); dropChar(c, x, y - 20, i ? .6 : .8, t, { tint: tn || undefined, ph: i * .9, wave: lt > 3.4, look: 1 }); });
+  tagG(c, 200, 236, 'Cibinul', 1, '#6CC4E4'); tagG(c, 700, 500, 'Oltul', 1, '#6CC4E4');
+  tagG(c, 620, 132, 'stația CFR · schemă', smooth(.8, 1.4, lt));
+}
+const ILL = [ill0, ill1, ill2, ill3, ill4, ill5, ill6, ill7];
+
+// ---------- harta ----------
+function drawMap(t, s, k) {
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 80, 130, 880, 870, 32); ctx.fill();
+  ctx.save(); roundRect(ctx, 80, 130, 880, 870, 32); ctx.clip();
+  ctx.strokeStyle = 'rgba(169,180,192,.07)'; ctx.lineWidth = 1; for (let x = 80; x < 960; x += 55) { ctx.beginPath(); ctx.moveTo(x, 130); ctx.lineTo(x, 1000); ctx.stroke(); } for (let y = 130; y < 1000; y += 55) { ctx.beginPath(); ctx.moveTo(80, y); ctx.lineTo(960, y); ctx.stroke(); }
+  const ma = smooth(.2, 1.2, t);
+  ctx.globalAlpha = ma;
+  // Munții Cindrel (zonă schematică)
+  const mz = [[-1.12, .58], [-.9, .48], [-.62, .5], [-.4, .56], [-.32, .74], [-.42, .96], [-.8, 1.0], [-1.12, .92]].map(mp);
+  ctx.fillStyle = 'rgba(126,142,166,.16)'; polyPath(ctx, mz); ctx.closePath(); ctx.fill();
+  for (const [p, sz] of [[[-.86, .66], 22], [[-1.04, .8], 20], [[-.72, .82], 18], [[-.6, .7], 16], [[-.42, .82], 16], [[-.82, .9], 16]]) { const [x, y] = mp(p); ctx.fillStyle = 'rgba(169,180,192,.35)'; ctx.beginPath(); ctx.moveTo(x - sz, y + sz * .6); ctx.lineTo(x, y - sz * .8); ctx.lineTo(x + sz, y + sz * .6); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+  text(ctx, 'Munții Cindrel', mp([-.78, .97])[0], mp([-.78, .97])[1], { size: 20, color: PAL.ceata, align: 'center', alpha: ma, weight: 600 });
+  text(ctx, 'Hartă schematică, poziții aproximative – nu la scară', 116, 182, { size: 22, weight: 600, color: PAL.ceata, alpha: ma });
+  ctx.save(); ctx.globalAlpha = ma; ctx.strokeStyle = PAL.ceata; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(904, 222, 22, 0, 7); ctx.stroke(); ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.moveTo(904, 203); ctx.lineTo(912, 225); ctx.lineTo(896, 225); ctx.closePath(); ctx.fill(); ctx.fillStyle = PAL.ceata; ctx.beginPath(); ctx.moveTo(904, 241); ctx.lineTo(912, 225); ctx.lineTo(896, 225); ctx.closePath(); ctx.fill(); ctx.restore();
+  text(ctx, 'N', 904, 192, { size: 18, weight: 700, align: 'center', color: PAL.var, alpha: ma });
+  // localități de reper
+  REF.forEach(([n, p, pos]) => { const [x, y] = mp(p); ctx.save(); ctx.globalAlpha = ma * .8; ctx.fillStyle = PAL.ceata; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill(); ctx.restore(); labelAt(n, x, y, pos, { size: 20, color: PAL.ceata, alpha: ma * .8, r: 6 }); });
+  // Sibiu – pată urbană
+  { const [x, y] = mp([0, 0]); ctx.save(); ctx.globalAlpha = ma; ctx.fillStyle = rgba(PAL.ocru, .18); ctx.strokeStyle = rgba(PAL.ocru, .6); ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x + 6, y - 4, 54, 32, -.1, 0, 7); ctx.fill(); ctx.stroke(); ctx.restore(); }
+  // Oltul
+  ctx.save(); ctx.globalAlpha = ma * (.45 + .55 * smooth(T0 + 7 * SD, T0 + 7 * SD + 2, t)); ctx.strokeStyle = '#4E9CC4'; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; polyPath(ctx, OLTP); ctx.stroke(); ctx.restore();
+  text(ctx, 'Olt', mp([.33, .82])[0], mp([.33, .82])[1], { size: 24, weight: 700, color: '#8FC8E8', alpha: ma, align: 'center' });
+  // afluenții
+  TRIBS.forEach((tr, i) => { const on = smooth(T0 + tr.k * SD + 1.4, T0 + tr.k * SD + 2.2, t); ctx.save(); ctx.globalAlpha = ma * (.35 + .65 * on); ctx.strokeStyle = on > .5 ? WATER : PAL.ceata; ctx.lineWidth = 3 + 2 * on; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; if (on < .5) ctx.setLineDash([4, 7]); polyPath(ctx, TRIBP[i]); ctx.stroke(); ctx.restore(); const [lx, ly] = mp(tr.lab); text(ctx, tr.name, lx, ly, { size: 20, color: on > .5 ? '#9AD8F0' : PAL.ceata, alpha: ma, align: tr.al === 'rightalign' ? 'right' : 'center', weight: 600 }); });
+  // cursul complet (palid) și cursul parcurs
+  ctx.save(); ctx.globalAlpha = ma * .45; ctx.strokeStyle = PAL.ceata; ctx.lineWidth = 2.5; ctx.setLineDash([3, 8]); ctx.lineCap = 'round'; polyPath(ctx, CR.pts); ctx.stroke(); ctx.restore();
+  const n = Math.floor(s * (CR.pts.length - 1));
+  ctx.save(); ctx.strokeStyle = WATER; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (let i = 0; i < n; i += 6) { const j = Math.min(n, i + 7); ctx.lineWidth = lerp(3, 10, i / (CR.pts.length - 1)); ctx.beginPath(); for (let q = i; q <= j; q++) q === i ? ctx.moveTo(CR.pts[q][0], CR.pts[q][1]) : ctx.lineTo(CR.pts[q][0], CR.pts[q][1]); ctx.stroke(); }
+  ctx.restore();
+  // lacul și barajul de la Gura Râului; cheile
+  { const [x, y] = mp([-.565, .24]); ctx.save(); ctx.globalAlpha = ma; ctx.fillStyle = rgba('#4E9CC4', .85); ctx.beginPath(); ctx.ellipse(x, y, 12, 24, .35, 0, 7); ctx.fill(); ctx.strokeStyle = PAL.var; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x - 16, y - 22); ctx.lineTo(x + 6, y - 28); ctx.stroke(); ctx.restore(); }
+  { ctx.save(); ctx.globalAlpha = ma * .9; ctx.strokeStyle = '#8A96A6'; ctx.lineWidth = 2; const i0 = CR.idx[1] - 14, i1 = CR.idx[1] + 14; for (let i = i0; i <= i1; i += 4) { const a = CR.pts[i - 1], b = CR.pts[i + 1], p = CR.pts[i]; let dx = b[0] - a[0], dy = b[1] - a[1]; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l; for (const sg of [-1, 1]) { ctx.beginPath(); ctx.moveTo(p[0] - dy * 9 * sg, p[1] + dx * 9 * sg); ctx.lineTo(p[0] - dy * 17 * sg + dx * 4, p[1] + dx * 17 * sg + dy * 4); ctx.stroke(); } } ctx.restore(); }
+  // hidrocentrala de pe Sadu (poziție orientativă)
+  { const a = smooth(T0 + 6 * SD + 1.5, T0 + 6 * SD + 2.2, t); if (a > 0) { const [x, y] = mp([-.2, .66]); ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.moveTo(x - 2, y - 14); ctx.lineTo(x - 9, y + 2); ctx.lineTo(x - 1, y + 2); ctx.lineTo(x - 5, y + 15); ctx.lineTo(x + 8, y - 3); ctx.lineTo(x, y - 3); ctx.lineTo(x + 4, y - 14); ctx.closePath(); ctx.fill(); ctx.restore(); text(ctx, '1896', x - 14, y + 7, { size: 20, color: PAL.ocru, alpha: a, align: 'right', weight: 700 }); } }
+  // opririle
+  STOPS.forEach((st, i) => {
+    const [x, y] = mp(st.p), T = T0 + i * SD, reached = i === 0 ? smooth(T0, T0 + .5, t) : smooth(T + 1.6, T + 2, t), cur = i === k && t < TEND;
+    ctx.save(); ctx.globalAlpha = ma;
+    if (cur) { ctx.strokeStyle = rgba(st.col, .65); ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(x, y, 26 + 4 * Math.sin(t * 4), 0, 7); ctx.stroke(); }
+    ctx.fillStyle = reached > 0 ? mix(PAL.slate, st.col, reached) : PAL.slate; ctx.strokeStyle = st.col; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(x, y, 15, 0, 7); ctx.fill(); ctx.stroke(); ctx.restore();
+    text(ctx, String(i + 1), x, y + 7, { size: 19, weight: 800, align: 'center', color: reached > .5 ? PAL.night : PAL.var, alpha: ma });
+    labelAt(i === 0 ? 'Izvorul · Vf. Cindrel' : st.name, x, y + (st.dy || 0), st.lab, { size: 23, weight: 700, color: PAL.var, alpha: ma, r: 16 });
+  });
+  // picătura pe hartă
+  if (t >= T0 + .3) { const [x, y] = posAt(s); const gl = ctx.createRadialGradient(x, y, 2, x, y, 36); gl.addColorStop(0, rgba('#8FD8F0', .6)); gl.addColorStop(1, rgba('#8FD8F0', 0)); ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x, y, 36, 0, 7); ctx.fill(); dropChar(ctx, x, y - 4, .36 * smooth(T0 + .3, T0 + .9, t), t, { look: 1 }); }
+  if (t > T0 && t < T0 + 3.4) { const [x, y] = posAt(0); text(ctx, 'picătură · personaj imaginat', x - 40, y + 52, { size: 20, color: PAL.ocru, weight: 600, alpha: smooth(T0 + .4, T0 + 1, t) * (1 - smooth(T0 + 2.8, T0 + 3.4, t)) }); }
+  // contorul de kilometri
+  const km = Math.round(82 * s), fin = s > .999;
+  text(ctx, 'kilometri parcurși (contor orientativ)', 120, 934, { size: 20, color: PAL.ceata, weight: 600, alpha: ma });
+  serif(ctx, (fin || km === 0 ? '' : '≈ ') + km + ' km', 920, 940, { size: 40, color: PAL.ocru, align: 'right', alpha: ma * smooth(T0, T0 + .6, t) });
+  ctx.save(); ctx.globalAlpha = ma; ctx.fillStyle = 'rgba(169,180,192,.2)'; roundRect(ctx, 120, 956, 800, 10, 5); ctx.fill(); ctx.fillStyle = WATER; if (s > 0) { roundRect(ctx, 120, 956, Math.max(10, 800 * s), 10, 5); ctx.fill(); }
+  SSTOP.forEach((v, i) => { ctx.fillStyle = s >= v - 1e-4 && t >= T0 ? STOPS[i].col : PAL.slate; ctx.strokeStyle = STOPS[i].col; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(120 + 800 * v, 961, 7, 0, 7); ctx.fill(); ctx.stroke(); }); ctx.restore();
+  text(ctx, '0', 120, 990, { size: 18, color: PAL.ceata, alpha: ma }); text(ctx, '82 km', 920, 990, { size: 18, color: PAL.ceata, alpha: ma, align: 'right' });
+}
+
+window.render = function (t) {
+  ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H);
+  const gr = ctx.createRadialGradient(1420, 500, 60, 1420, 500, 1000); gr.addColorStop(0, '#1C2836'); gr.addColorStop(1, PAL.night); ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  const s = progress(Math.min(t, TEND)), k = Math.min(7, Math.max(-1, Math.floor((t - T0) / SD)));
+  drawMap(t, s, k);
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 1000, 130, 840, 560, 32); ctx.fill();
+  ctx.fillStyle = PAL.slate; roundRect(ctx, 1000, 710, 840, 290, 28); ctx.fill();
+  if (k < 0) { // intro
+    const a = smooth(.2, 1, t) * (1 - smooth(3.5, 4.1, t));
+    serif(ctx, 'Drumul apei', 1060, 320, { size: 84, alpha: a });
+    serif(ctx, 'Cibinul în 60 de secunde', 1060, 410, { size: 56, color: PAL.ocru, alpha: a });
+    text(ctx, 'O picătură imaginată coboară pe Cibin,', 1064, 490, { size: 30, color: PAL.var, alpha: a });
+    text(ctx, 'de la izvor până la vărsarea în Olt.', 1064, 532, { size: 30, color: PAL.var, alpha: a });
+    dropChar(ctx, 1700, 560, 1.1 * smooth(.6, 1.4, t), t, { wave: t > 1.4, look: -1 });
+    text(ctx, 'Opririle', 1040, 772, { size: 24, weight: 700, color: PAL.ceata, alpha: a });
+    text(ctx, 'izvorul · Cheile Cibinului · Gura Râului · Orlat · Sibiu · Veștem · Tălmaciu · Podu Olt', 1040, 818, { size: 26, weight: 600, maxW: 770, lh: 36, alpha: a });
+    text(ctx, 'Hartă schematică, poziții aproximative – nu la scară.', 1040, 950, { size: 22, color: PAL.ceata, alpha: a });
+  } else if (t < TEND) {
+    const st = STOPS[k], T = T0 + k * SD, lt = t - T;
+    const ta = k === 0 ? 0 : smooth(T - .1, T + .3, t) * (1 - smooth(T + 1.2, T + 1.7, t));
+    if (ta > 0) { text(ctx, 'mai departe, spre', 1420, 370, { size: 32, align: 'center', color: PAL.ceata, alpha: ta }); serif(ctx, st.name, 1420, 460, { size: 72, align: 'center', color: st.col === '#3E63DD' ? '#7D98F0' : st.col === '#6E56CF' ? '#9A86E8' : st.col, alpha: ta }); }
+    const i0 = k === 0 ? 0 : 1.3;
+    const ia = smooth(T + i0, T + i0 + .7, t) * (1 - smooth(T + SD - .45, T + SD, t));
+    if (ia > 0) {
+      g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, PW, PH);
+      ILL[k](lt - i0, t);
+      ctx.save(); roundRect(ctx, 1000, 130, 840, 560, 32); ctx.clip(); ctx.globalAlpha = ia; ctx.drawImage(off, 1000, 130); ctx.restore();
+      ctx.save(); ctx.globalAlpha = ia; ctx.strokeStyle = rgba(st.col, .7); ctx.lineWidth = 3; roundRect(ctx, 1000, 130, 840, 560, 32); ctx.stroke(); ctx.restore();
+    }
+    const fa = smooth(T + i0 + .3, T + i0 + 1, t) * (1 - smooth(T + SD - .45, T + SD, t));
+    if (fa > 0) {
+      ctx.save(); ctx.globalAlpha = fa; ctx.fillStyle = st.col; ctx.fillRect(1000, 740, 8, 230); ctx.restore();
+      text(ctx, `oprirea ${k + 1} din 8`, 1040, 752, { size: 22, weight: 600, color: PAL.ceata, alpha: fa });
+      serif(ctx, st.name, 1040, 800, { size: 46, alpha: fa });
+      const n1 = text(ctx, st.f1, 1040, 842, { size: 24, maxW: 770, lh: 31, color: PAL.var, alpha: fa * smooth(T + i0 + .6, T + i0 + 1.2, t) });
+      text(ctx, st.f2, 1040, 842 + n1 * 31 + 8, { size: 24, maxW: 770, lh: 31, color: PAL.var, alpha: fa * smooth(T + i0 + 1.8, T + i0 + 2.4, t) });
+      text(ctx, 'Sursă: ' + st.src, 1040, 985, { size: 20, color: PAL.ceata, alpha: fa });
+    }
+  }
+  // cartela finală
+  const ea = smooth(TEND, TEND + 1, t);
+  if (ea > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.97 * ea})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Drumul apei: Cibinul în 60 de secunde', W / 2, 270, { size: 64, align: 'center', alpha: ea });
+    serif(ctx, '82 km · bazin 2.194 km²', W / 2, 400, { size: 92, align: 'center', color: PAL.ocru, alpha: ea });
+    text(ctx, 'de la izvorul din Munții Cindrel până la vărsarea în Olt, lângă Tălmaciu', W / 2, 460, { size: 30, align: 'center', color: PAL.var, alpha: ea });
+    serif(ctx, 'Hartă schematică, poziții aproximative – nu la scară', W / 2, 570, { size: 42, align: 'center', color: PAL.var, alpha: ea });
+    text(ctx, 'Picăturile sunt personaje imaginate, iar ilustrațiile sunt imaginate. Contorul de kilometri este orientativ: doar lungimea totală (82 km) vine din surse.', W / 2, 630, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1500, lh: 36 });
+    text(ctx, 'Surse: en.wikipedia.org (Cibin; Sadu; Cindrel Mountains); muntii-nostri.ro (Cheile Cibinului); zilesinopti.ro (2024, promenada Cibinului).', W / 2, 730, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1500, lh: 36 });
+    text(ctx, 'Animație generată cu AI · muzică: temă originală, sintetizată în cod · artefact-model ACTIV AI', W / 2, 830, { size: 24, align: 'center', color: PAL.ceata, alpha: ea });
+    dropChar(ctx, W / 2, 940, .7 * ea, t, { wave: true });
+  }
+  ctx.fillStyle = 'rgba(10,16,28,.55)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M18', 60, 36, PAL.red);
+  text(ctx, 'Drumul apei: Cibinul în 60 de secunde · animație', 270, 64, { size: 30, weight: 600 });
+  ctx.fillStyle = 'rgba(10,16,28,.6)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M18');
+};
+window.READY = true;
+</script></body></html>

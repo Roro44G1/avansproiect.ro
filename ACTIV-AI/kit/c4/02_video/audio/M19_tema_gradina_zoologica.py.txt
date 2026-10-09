@@ -1,0 +1,262 @@
+"""M19 – fundal muzical pentru „Prima grădină zoologică din România (1929)” (~63 s).
+
+Temă originală, compusă și sintetizată în cod pentru animația M19 (artefact-model ACTIV AI).
+Nu citează și nu imită o melodie existentă; nu are titlu de cântec popular.
+Caracter: vesel și blând – marimbă (melodia), celestă și clopoței (sclipiri),
+bas ciupit, pad cald, percuție ușoară (lemn, shaker, tobă mare discretă).
+
+Tempo 100 BPM, 4/4 (o măsură = 2,4 s), Fa major. Secțiunile urmăresc scenele video:
+  0,0 s  intro (celestă, pad)                    – titlul
+  4,8 s  tema A, discret (marimbă + bas)         – barajul de la Sadu, vulpile; 9,7 s „ideea” (sclipire)
+ 14,4 s  tema A cu percuție                      – poarta se deschide (glissando de celestă)
+ 21,6 s  tema B, săltăreață                      – primele animale (câte un „pop” de clopoțel la fiecare card)
+ 36,0 s  rostogolire + motiv jucăuș              – puiul de urs (1930)
+ 42,0 s  pasaj liniștit (pad + celestă)          – stejarul de peste 600 de ani
+ 48,0 s  tema A, plină                           – cifrele de azi
+ 57,6 s  acord final, stins treptat              – cartela finală
+
+Totul este sintetizat din formule (sinteză modală, Karplus-Strong, zgomot filtrat) – fără eșantioane.
+Folosește biblioteca comună /home/claude/expo/04_audio/_src/audiolib.py.
+
+Rulare: python3 M19_tema_gradina_zoologica.py  -> M19_tema_gradina_zoologica.mp3 (în același folder)
+"""
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+LIB = "/home/claude/expo/04_audio/_src"
+if LIB not in sys.path:
+    sys.path.insert(0, LIB)
+
+from audiolib import (SR, add, additive, bp, env_adsr, env_ar, env_exp, finalize, hp, hz, kick,
+                      ks_pluck, lp, make_ir, match_lufs, modal, ns, report, reverb, rng_of,
+                      shaker, stereo, t_axis)
+
+BPM = 100
+BEAT = 60.0 / BPM          # 0,6 s
+BAR = 4 * BEAT             # 2,4 s
+DUR = 63.0
+OUT = os.path.join(HERE, "M19_tema_gradina_zoologica.mp3")
+
+
+def b2t(bar, beat=0.0):
+    return bar * BAR + beat * BEAT
+
+
+# ------------------------------------------------------------------ instrumente
+def marimba(f, rng, vel=1.0):
+    t60 = float(np.clip(1.5 * (220.0 / f) ** 0.5, 0.35, 1.6))
+    x = modal([f, f * 3.98, f * 9.6], [1.0, 0.26 * vel, 0.05 * vel], [t60, t60 * 0.3, t60 * 0.1],
+              1.8, rng=rng, attack=0.0015)
+    n = len(x)
+    x += lp(rng.standard_normal(n), 2200) * env_exp(n, 0.007) * 0.12 * vel
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def celesta(f, rng, dur=2.2):
+    k = float(np.clip((880.0 / f) ** 0.4, 0.5, 1.4))
+    x = modal([f, f * 2.0, f * 3.0, f * 4.2], [1.0, 0.32, 0.1, 0.04],
+              [1.8 * k, 0.9 * k, 0.45 * k, 0.25 * k], dur, rng=rng, attack=0.002, beat_hz=0.4)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def glock(f, rng):
+    x = modal([f, f * 2.76, f * 5.4, f * 8.93], [1.0, 0.38, 0.16, 0.07], [1.3, 0.6, 0.3, 0.18], 1.6,
+              rng=rng, attack=0.001)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def pizz_bass(f, rng, dur=1.0):
+    x = 0.8 * ks_pluck(f, dur, t60=0.9, bright=0.22, pos=0.22, rng=rng, damp=0.3)
+    n = len(x)
+    x += 0.7 * np.sin(2 * np.pi * f * t_axis(n)) * env_ar(n, 0.006, 0.55)
+    return lp(x, 1400) / (np.max(np.abs(x)) + 1e-12)
+
+
+def woodblock(rng, f=900.0):
+    x = modal([f, f * 2.41, f * 3.9], [1.0, 0.35, 0.12], [0.06, 0.035, 0.02], 0.15, rng=rng, attack=0.0005)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def pad_chord(notes, dur, rng):
+    m = ns(dur)
+    x = np.zeros(m)
+    for nm in notes:
+        for det in (-0.07, 0.07):
+            x += additive(hz(nm) * 2 ** (det / 12), [1, 0.45, 0.22, 0.1, 0.05], m, phase0=rng.uniform())
+    return lp(x * env_adsr(m, 0.5, 0.4, 0.8, 0.8), 2600)
+
+
+# ------------------------------------------------------------------ materialul muzical (Fa major)
+# fiecare frază = o măsură de 4 timpi: (notă sau None, durată în timpi)
+A1 = [("A5", .5), ("C6", .5), ("A5", .5), ("F5", .5), ("G5", .5), ("A5", .5), ("C6", 1)]
+A2 = [("D6", .5), ("C6", .5), ("Bb5", .5), ("A5", .5), ("G5", 1), ("F5", .5), ("G5", .5)]
+A3 = [("E5", .5), ("G5", .5), ("C6", .5), ("Bb5", .5), ("A5", .5), ("G5", .5), ("E5", 1)]
+A4 = [("F5", 1.5), ("A5", .5), ("C6", 1), (None, 1)]
+A6 = [("D6", .5), ("F6", .5), ("E6", .5), ("D6", .5), ("C6", 1), ("A5", 1)]
+A7 = [("Bb5", .5), ("D6", .5), ("C6", .5), ("Bb5", .5), ("A5", .5), ("G5", .5), ("E5", .5), ("G5", .5)]
+A8 = [("F5", 1), ("C5", .5), ("F5", .5), ("A5", 1.5), (None, .5)]
+B1 = [("D5", .5), (None, .5), ("F5", .5), (None, .5), ("Bb5", .5), ("A5", .5), ("Bb5", 1)]
+B2 = [("C6", .5), (None, .5), ("A5", .5), (None, .5), ("F5", .5), ("G5", .5), ("A5", 1)]
+B3 = [("Bb5", .5), ("A5", .5), ("G5", .5), ("F5", .5), ("G5", .5), ("Bb5", .5), ("D6", 1)]
+B4 = [("C6", 1), ("E5", .5), ("G5", .5), ("C6", 1.5), (None, .5)]
+BEAR = [("C6", .5), ("A5", .5), ("F5", .5), ("A5", .5), ("G5", .5), ("Bb5", .5), ("A5", 1)]
+
+for ph in (A1, A2, A3, A4, A6, A7, A8, B1, B2, B3, B4, BEAR):
+    assert abs(sum(d for _, d in ph) - 4) < 1e-9
+
+CH = {"F": ["F3", "A3", "C4"], "Bb": ["F3", "Bb3", "D4"], "C": ["E3", "G3", "C4"], "C7": ["E3", "Bb3", "C4"],
+      "Dm": ["F3", "A3", "D4"], "Gm": ["G3", "Bb3", "D4"], "Csus": ["F3", "G3", "C4"]}
+ROOT = {"F": "F2", "Bb": "Bb1", "C": "C2", "C7": "C2", "Dm": "D2", "Gm": "G1", "Csus": "C2"}
+FIFTH = {"F": "C3", "Bb": "F2", "C": "G2", "C7": "G2", "Dm": "A2", "Gm": "D2", "Csus": "G2"}
+
+# (bara de start, frază melodică, acord(e) pe jumătăți de măsură, nivel)
+#  nivel: 0 = discret (fără percuție), 1 = ușor, 2 = plin
+PLAN = [
+    (2, A1, ("F", "F"), 0), (3, A2, ("Bb", "Bb"), 0), (4, A3, ("C7", "C7"), 0), (5, A4, ("F", "F"), 0),
+    (6, A1, ("F", "F"), 1), (7, A6, ("Dm", "Dm"), 1), (8, A7, ("Bb", "C"), 1),
+    (9, B1, ("Bb", "Bb"), 2), (10, B2, ("F", "F"), 2), (11, B3, ("Gm", "Gm"), 2), (12, B4, ("C", "C"), 2),
+    (13, B1, ("Bb", "Bb"), 2), (14, B2, ("F", "F"), 2),
+    (16, BEAR, ("C7", "F"), 1),
+    (20, A1, ("F", "F"), 2), (21, A6, ("Dm", "Dm"), 2), (22, A7, ("Bb", "C"), 2), (23, A8, ("F", "F"), 2),
+]
+
+
+def render(seed=1929):
+    rng = rng_of(seed)
+    mel, cel, glk, bas, pad, kik, wdb, shk = (stereo(DUR) for _ in range(8))
+
+    def phrase(buf, ph, bar, inst, gain, pan, transpose=0, beat0=0.0):
+        pos = beat0
+        for nm, d in ph:
+            if nm is not None:
+                f = hz(nm, transpose)
+                x = inst(f, rng)
+                add(buf, x, b2t(bar, pos) + rng.uniform(-0.004, 0.004), gain=gain * rng.uniform(0.88, 1.0), pan=pan)
+            pos += d
+
+    # ---- intro: arpegii de celestă + pad
+    for bar, notes in ((0, ["F5", "A5", "C6", "F6", "C6", "A5", "F5", "C6"]),
+                       (1, ["E5", "G5", "Bb5", "C6", "E6", "C6", "Bb5", "G5"])):
+        for k, nm in enumerate(notes):
+            add(cel, celesta(hz(nm), rng), b2t(bar, k * 0.5), gain=0.55 + 0.1 * (k % 2 == 0), pan=-0.3 + 0.08 * k)
+    add(pad, pad_chord(CH["F"], BAR + 0.6, rng), 0.0, gain=0.8)
+    add(pad, pad_chord(CH["C7"], BAR + 0.6, rng), BAR, gain=0.8)
+
+    # ---- melodii + armonie după plan
+    for bar, ph, (h1, h2), lvl in PLAN:
+        g = (0.62, 0.85, 1.0)[lvl]
+        phrase(mel, ph, bar, marimba, g, 0.1)
+        if lvl == 2 and bar >= 20:  # finalul: celesta dublează melodia la octavă, discret
+            phrase(cel, ph, bar, lambda f, r: celesta(f, r, 1.4), 0.32, 0.35, transpose=12)
+        for half, ch in enumerate((h1, h2)):
+            t0 = b2t(bar, 2 * half)
+            if half == 0 or h2 != h1:
+                add(pad, pad_chord(CH[ch], BAR / (1 if h2 == h1 else 2) + 0.5, rng), t0, gain=0.55 + 0.15 * lvl)
+            # bas
+            if lvl == 2 and 9 <= bar <= 14:   # bas „mergător” pe pătrimi în tema B
+                for k, nm in enumerate((ROOT[ch], FIFTH[ch])):
+                    add(bas, pizz_bass(hz(nm), rng), t0 + k * BEAT, gain=1.0 if k == 0 else 0.8)
+            else:
+                add(bas, pizz_bass(hz(ROOT[ch]), rng, 1.3), t0, gain=0.95)
+                if lvl > 0:
+                    add(bas, pizz_bass(hz(FIFTH[ch]), rng), t0 + BEAT, gain=0.6)
+        # percuție
+        for beat in range(4):
+            t = b2t(bar, beat)
+            if lvl >= 1:
+                if beat in (0, 2):
+                    add(kik, kick(dur=0.35, f_hi=110, f_lo=52, t60=0.22, click=0.05, rng=rng), t, gain=0.9)
+                if beat in (1, 3):
+                    add(wdb, woodblock(rng, 980 if beat == 1 else 860), t, gain=0.9, pan=0.25)
+            for e in (0.0, 0.5):
+                gsh = (0.35, 0.65, 0.85)[lvl] * (1.0 if e else 0.7)
+                add(shk, shaker(rng=rng), t + e * BEAT, gain=gsh * rng.uniform(0.85, 1.0), pan=-0.35)
+            if lvl == 2 and beat == 3:
+                add(wdb, woodblock(rng, 1250), t + 0.5 * BEAT, gain=0.45, pan=0.3)
+
+    # ---- efecte legate de imagine
+    # anacruză de celestă spre poartă (în pauza frazei A4)
+    for k, nm in enumerate(["C6", "D6", "E6"]):
+        add(cel, celesta(hz(nm), rng, 1.6), b2t(5, 2.5 + k * 0.5), gain=0.45, pan=0.3)
+    # vulpile apar (5,8 s și 7,6 s): două note scurte de marimbă
+    for t0 in (5.8, 7.6):
+        add(mel, marimba(hz("C6"), rng, 0.7), t0, gain=0.45, pan=0.4)
+        add(mel, marimba(hz("F6"), rng, 0.7), t0 + 0.09, gain=0.5, pan=0.4)
+    # „ideea” – becul se aprinde (9,7 s): sclipire ascendentă + clopoțel
+    for k, nm in enumerate(["C6", "E6", "G6", "C7", "E7", "G7"]):
+        add(cel, celesta(hz(nm), rng, 1.6), 9.7 + k * 0.055, gain=0.42, pan=-0.5 + k * 0.12)
+    add(glk, glock(hz("C7"), rng), 10.1, gain=0.6, pan=-0.3)
+    # poarta se deschide (15,2 s): glissando de celestă pe gama Fa major
+    scale = ["F5", "G5", "A5", "Bb5", "C6", "D6", "E6", "F6", "G6", "A6", "Bb6", "C7", "D7", "E7", "F7"]
+    for k, nm in enumerate(scale):
+        add(cel, celesta(hz(nm), rng, 1.4), 15.2 + k * 0.08, gain=0.3 + 0.015 * k, pan=-0.6 + k * 0.08)
+    add(glk, glock(hz("F6"), rng), 16.8, gain=0.55, pan=0.2)
+    add(glk, glock(hz("A6"), rng), 16.8, gain=0.4, pan=0.3)
+    # cardurile cu animale (22,2 s + k·1,8 s): „pop” de clopoței (cvartă ascendentă)
+    pops = [("C6", "F6"), ("D6", "G6"), ("F6", "Bb6"), ("C6", "F6"), ("D6", "G6"), ("F6", "C7")]
+    for k, (n1, n2) in enumerate(pops):
+        t0 = 22.2 + k * 1.8
+        add(glk, glock(hz(n1), rng), t0, gain=0.55, pan=-0.4 + k * 0.16)
+        add(glk, glock(hz(n2), rng), t0 + 0.1, gain=0.65, pan=-0.4 + k * 0.16)
+    # puiul de urs se rostogolește (36,2–37,8 s), aterizează, apoi face cu mâna
+    run = ["F6", "E6", "D6", "C6", "Bb5", "A5", "G5", "F5", "E5", "D5", "C5"]
+    for k, nm in enumerate(run):
+        add(mel, marimba(hz(nm), rng, 0.9), 36.2 + k * 0.13, gain=0.7, pan=0.3 - k * 0.05)
+    add(kik, kick(dur=0.5, f_hi=90, f_lo=45, t60=0.3, click=0.02, rng=rng), 37.75, gain=1.0)
+    add(bas, pizz_bass(hz("F2"), rng, 1.4), 37.75, gain=1.0)
+    for k, nm in enumerate(["C5", "F5", "A5", "C6"]):  # „hop” jucăuș
+        add(mel, marimba(hz(nm), rng, 0.8), 37.95 + k * 0.11, gain=0.55, pan=0.1)
+    add(pad, pad_chord(CH["F"], BAR + 0.5, rng), b2t(15), gain=0.6)
+    for k in range(4):
+        add(bas, pizz_bass(hz(("F2", "C3", "F2", "A2")[k]), rng), b2t(15, k), gain=0.55)
+    # tranziția spre stejar (40,8–42,0 s): pad Si bemol
+    add(pad, pad_chord(CH["Bb"], 1.8, rng), 40.8, gain=0.75)
+    add(bas, pizz_bass(hz("Bb1"), rng, 1.5), 40.8, gain=0.8)
+
+    # ---- stejarul (42,0–48,0 s): liniștit – pad, bas lung, celestă rară care urcă odată cu indicatorul
+    for t0, ch, L in ((42.0, "F", 2.4), (44.4, "Bb", 2.4), (46.8, "Csus", 1.2)):
+        add(pad, pad_chord(CH[ch], L + 0.8, rng), t0, gain=0.55)
+        m = ns(L + 0.4)
+        x = np.sin(2 * np.pi * hz(ROOT[ch]) * t_axis(m)) * env_adsr(m, 0.08, 0.3, 0.7, 0.4)
+        add(bas, x, t0, gain=0.45)
+    for k, nm in enumerate(["F5", "A5", "C6", "D6", "F6", "A6"]):
+        add(cel, celesta(hz(nm), rng, 2.4), 42.6 + k * BEAT * 0.75, gain=0.55, pan=-0.4 + k * 0.16)
+    add(glk, glock(hz("C7"), rng), 45.0, gain=0.5, pan=0.0)
+    add(cel, celesta(hz("F6"), rng, 2.6), 45.0, gain=0.4, pan=-0.2)
+    add(cel, celesta(hz("A6"), rng, 2.6), 45.0, gain=0.35, pan=0.2)
+    for k, nm in enumerate(["G5", "C6", "F6", "E6"]):
+        add(cel, celesta(hz(nm), rng, 1.8), 46.8 + k * 0.3, gain=0.4, pan=0.2)
+
+    # ---- acord final (57,6 s) + ecou discret al temei A
+    t_end = b2t(24)
+    add(pad, pad_chord(["F3", "A3", "C4", "F4"], 5.4, rng), t_end, gain=1.1)
+    add(bas, pizz_bass(hz("F1"), rng, 3.0), t_end, gain=1.0)
+    m = ns(4.5)
+    add(bas, np.sin(2 * np.pi * hz("F1") * t_axis(m)) * env_ar(m, 0.01, 3.2), t_end, gain=0.6)
+    for nm in ("F5", "A5", "C6"):
+        add(mel, marimba(hz(nm), rng), t_end, gain=0.7, pan=0.1)
+    add(glk, glock(hz("F6"), rng), t_end, gain=0.5)
+    for k, nm in enumerate(["A6", "C7", "A6", "F6", "G6", "A6", "C7"]):
+        add(cel, celesta(hz(nm), rng, 2.0), t_end + 0.9 + k * 0.3, gain=0.28 - 0.02 * k, pan=0.4 - 0.1 * k)
+
+    ir = make_ir(t60=1.7, predelay=0.018, seed=29)
+    # filtrare blândă a straturilor strălucitoare (parțialele foarte înalte produc vârfuri la recodarea AAC din MP4)
+    cel, glk, shk, wdb = lp(cel, 9000), lp(glk, 9000), lp(shk, 11000), lp(wdb, 7000)
+    stems = [(mel, -17.5, 0.18), (cel, -23.0, 0.35), (glk, -22.5, 0.3), (bas, -20.5, 0.06),
+             (pad, -26.0, 0.3), (kik, -26.0, 0.05), (wdb, -27.5, 0.15), (shk, -31.0, 0.12)]
+    mix = None
+    for x, target, wet in stems:
+        y = reverb(match_lufs(hp(x, 30), target), ir, wet=wet)
+        mix = y if mix is None else mix + y
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "M19 – temă originală pentru Prima grădină zoologică din România (1929)",
+                   "Temă originală, sintetizată în cod (marimbă, celestă, bas ciupit, percuție ușoară) – ACTIV AI",
+                   target_lufs=-14.0, fin=0.05, fout=2.5, ceiling_db=-2.2, max_tp=-1.6)  # rezervă pentru recodarea AAC din MP4
+    report(out, "M19 final")

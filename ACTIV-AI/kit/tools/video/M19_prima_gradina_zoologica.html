@@ -1,0 +1,576 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M19</title></head><body>
+<script src="lib.js"></script>
+<script>
+// M19 – Prima grădină zoologică din România (1929): animație cu animale stilizate (desenate în cod, forme simple)
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const BEAT = 0.6; // muzica: 100 BPM, 4/4 – o măsură = 2,4 s
+// scene: [t_start, t_end, insignă, text narator (sau [text1, text2, moment schimbare])]
+const SC = [
+  [0, 4.8, '', 'Cum a început prima grădină zoologică din România? O reconstituire animată.'],
+  [4.8, 14.4, 'Sadu', ['La barajul de la Sadu, în timpul reparațiilor, inginerul Székely găsește niște vulpi.', 'După această întâlnire, inginerul propune o grădină zoologică; inițiativa o ia Întreprinderea de electricitate.', 4.9]],
+  [14.4, 21.6, '1929', 'În 1929 ia ființă grădina, în Pădurea Dumbrava: „prima grădină zoologică din România” (patrimoniu.sibiu.ro).'],
+  [21.6, 36.0, 'la început', 'Primele animale au fost donate: o pisică sălbatică, o lupoaică, un lup, un vultur, un cerb carpatin și mistreți (wzd.cz; sibiucityapp.ro).'],
+  [36.0, 42.0, '1930', 'În 1930 apare primul pui de urs al grădinii (sibiucityapp.ro).'],
+  [42.0, 48.0, 'stejarul', 'La intrare stă un stejar „de peste 600 de ani”, viu și monitorizat anual (agerpres.ro, 2021).'],
+  [48.0, 56.4, 'azi', 'Câte animale are azi? Două surse, din ani diferiți, dau cifre diferite – le arătăm pe amândouă.'],
+];
+const TEND = 56.4; // cartela finală 56,4–62,4 s
+
+// ------------------------------------------------------------ animale stilizate (patrupede generice)
+const DARKEYE = '#1A1410';
+const A = {
+  fox: { bw: 70, bh: 48, lh: 34, lw: 11, col: '#D9733A', dark: '#7A3A1A', belly: '#F3EFE6', hr: 24, sn: 26, ear: 26, ears: 'point', earIn: '#5A2A14', tail: 'bushy', tl: 96, tw: 21, tipC: '#F3EFE6', tailRot: -0.2, hx: 1.0, hy: 0.6, neckW: 26, cheek: '#F3EFE6', socks: '#4A2412' },
+  wolf: { bw: 82, bh: 58, lh: 50, lw: 14, col: '#8C9196', dark: '#4A4F55', belly: '#D5D8DB', hr: 29, sn: 34, ear: 26, ears: 'point', earIn: '#3A3F45', tail: 'bushy', tl: 92, tw: 19, tipC: '#3A3F45', tailRot: -0.75, hx: 1.0, hy: 0.55, neckW: 36, cheek: '#D5D8DB', saddle: '#6A6F75' },
+  wolfF: { bw: 78, bh: 54, lh: 48, lw: 13, col: '#A89C8C', dark: '#5E544A', belly: '#E3DACB', hr: 27, sn: 32, ear: 24, ears: 'point', earIn: '#4A4238', tail: 'bushy', tl: 88, tw: 18, tipC: '#4A4238', tailRot: -0.75, hx: 1.0, hy: 0.55, neckW: 34, cheek: '#E3DACB', saddle: '#857868' },
+  cat: { bw: 56, bh: 44, lh: 30, lw: 11, col: '#9A8A70', dark: '#4A3E30', belly: '#D8CCB4', hr: 25, sn: 9, ear: 17, ears: 'point', earIn: '#5A4A3A', tail: 'ringed', tl: 62, tw: 11, tipC: '#2A221A', tailRot: -0.25, hx: 0.95, hy: 0.6, neckW: 26, cheek: '#D8CCB4', stripes: true },
+  deer: { bw: 78, bh: 56, lh: 84, lw: 10, col: '#9A6440', dark: '#5A3A22', belly: '#D9C3A0', hr: 22, sn: 30, ear: 20, ears: 'oval', earIn: '#C9A27A', tail: 'short', tl: 14, tw: 9, tipC: '#E8D8BC', tailRot: 0.5, hx: 1.08, hy: 1.45, neckW: 28, cheek: '#C9A27A', antlers: true, rump: '#E8D8BC', hoof: '#2E2016' },
+  boar: { bw: 80, bh: 66, lh: 26, lw: 14, col: '#5E4E42', dark: '#2E241E', belly: '#6E5E50', hr: 30, sn: 30, ear: 17, ears: 'point', earIn: '#2E241E', tail: 'thin', tl: 26, tw: 3, tipC: '#2E241E', tailRot: 0.3, hx: 0.98, hy: 0.12, neckW: 50, snout: 'pig', mane: true, tusks: true, hoof: '#1E1814' },
+  bear: { bw: 84, bh: 72, lh: 40, lw: 24, col: '#7A5236', dark: '#4A3020', belly: '#8A6246', hr: 32, sn: 20, ear: 12, ears: 'round', earIn: '#B08A66', tail: 'short', tl: 12, tw: 9, tipC: '#7A5236', tailRot: 0.3, hx: 1.0, hy: 0.4, neckW: 54, snout: 'bear', cheek: '#B08A66' },
+};
+
+function blink(t, ph) { const q = (t * 0.31 + (ph || 0) * 0.17) % 1; return q < 0.04 ? 0.15 : 1; }
+
+function ear(c, ex, hy, P, far) {
+  const r = P.hr;
+  c.fillStyle = far ? P.dark : P.col;
+  if (P.ears === 'round') {
+    c.beginPath(); c.arc(ex - r * 0.35, hy - r * 0.82, P.ear, 0, 7); c.fill();
+    if (!far) { c.fillStyle = P.earIn; c.beginPath(); c.arc(ex - r * 0.35, hy - r * 0.82, P.ear * 0.5, 0, 7); c.fill(); }
+  } else if (P.ears === 'oval') {
+    c.save(); c.translate(ex - r * 0.45, hy - r * 0.7); c.rotate(far ? -0.6 : -0.95);
+    c.beginPath(); c.ellipse(-P.ear * 0.75, 0, P.ear, P.ear * 0.42, 0, 0, 7); c.fill();
+    if (!far) { c.fillStyle = P.earIn; c.beginPath(); c.ellipse(-P.ear * 0.75, 0, P.ear * 0.6, P.ear * 0.2, 0, 0, 7); c.fill(); }
+    c.restore();
+  } else {
+    c.beginPath(); c.moveTo(ex - r * 0.8, hy - r * 0.4); c.lineTo(ex - r * 0.5, hy - r * 0.8 - P.ear); c.lineTo(ex - r * 0.02, hy - r * 0.78); c.closePath(); c.fill();
+    if (!far) { c.fillStyle = P.earIn; c.beginPath(); c.moveTo(ex - r * 0.66, hy - r * 0.52); c.lineTo(ex - r * 0.5, hy - r * 0.78 - P.ear * 0.7); c.lineTo(ex - r * 0.2, hy - r * 0.74); c.closePath(); c.fill(); }
+  }
+}
+
+function headDraw(c, hx, hy, P, t, ph, look) {
+  const r = P.hr;
+  ear(c, hx + r * 0.35, hy, P, true);
+  c.fillStyle = P.col;
+  if (P.snout === 'pig') {
+    roundRect(c, hx, hy - r * 0.32, r + P.sn, r * 0.95, r * 0.35); c.fill();
+    c.fillStyle = '#8A7262'; c.beginPath(); c.ellipse(hx + r + P.sn, hy + r * 0.15, r * 0.16, r * 0.46, 0, 0, 7); c.fill();
+    c.fillStyle = '#2E241E'; c.beginPath(); c.arc(hx + r + P.sn + 1, hy + r * 0.02, r * 0.06, 0, 7); c.arc(hx + r + P.sn + 1, hy + r * 0.3, r * 0.06, 0, 7); c.fill();
+  } else if (P.snout === 'bear') {
+    c.beginPath(); c.ellipse(hx + r * 0.75, hy + r * 0.22, r * 0.25 + P.sn, r * 0.48, 0, 0, 7); c.fill();
+  } else {
+    c.beginPath(); c.moveTo(hx + r * 0.1, hy - r * 0.62); c.quadraticCurveTo(hx + r + P.sn * 0.55, hy - r * 0.3, hx + r + P.sn, hy + r * 0.12); c.lineTo(hx + r * 0.1, hy + r * 0.78); c.closePath(); c.fill();
+  }
+  c.fillStyle = P.col; c.beginPath(); c.arc(hx, hy, r, 0, 7); c.fill();
+  if (P.cheek && P.snout !== 'bear') {
+    c.fillStyle = P.cheek; c.beginPath(); c.moveTo(hx - r * 0.35, hy + r * 0.3); c.lineTo(hx + r + P.sn * 0.92, hy + r * 0.2); c.quadraticCurveTo(hx + r * 0.6, hy + r * 0.95, hx - r * 0.1, hy + r * 0.85); c.closePath(); c.fill();
+  }
+  if (P.snout === 'bear') { c.fillStyle = P.cheek; c.beginPath(); c.ellipse(hx + r * 0.95, hy + r * 0.28, P.sn * 0.9, r * 0.36, 0, 0, 7); c.fill(); }
+  ear(c, hx - r * 0.1, hy, P, false);
+  if (P.tusks) { c.fillStyle = '#F3EFE6'; c.beginPath(); c.moveTo(hx + r + P.sn * 0.45, hy + r * 0.5); c.quadraticCurveTo(hx + r + P.sn * 0.8, hy + r * 0.45, hx + r + P.sn * 0.62, hy - r * 0.05); c.lineTo(hx + r + P.sn * 0.32, hy + r * 0.42); c.closePath(); c.fill(); }
+  // ochi
+  const bl = blink(t, ph), ex = hx + r * 0.38 + (look || 0), ey = hy - r * 0.15;
+  c.fillStyle = DARKEYE; c.beginPath(); c.ellipse(ex, ey, r * 0.13, Math.max(1, r * 0.13 * bl), 0, 0, 7); c.fill();
+  if (bl > .5) { c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(ex + r * 0.04, ey - r * 0.05, r * 0.045, 0, 7); c.fill(); }
+  if (P.snout !== 'pig') { c.fillStyle = DARKEYE; c.beginPath(); c.ellipse(hx + r + P.sn - (P.snout === 'bear' ? r * 0.05 : 2), hy + r * 0.1, r * 0.15, r * 0.12, 0, 0, 7); c.fill(); }
+  // coarne de cerb
+  if (P.antlers) {
+    const bx = hx - r * 0.1, bY = hy - r * 0.8;
+    c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+    // cornul din spate (aplecat înainte)
+    const fx = bx + r * 0.35; c.strokeStyle = P.antF || '#B8A07A'; c.lineWidth = 5;
+    c.beginPath(); c.moveTo(fx, bY); c.quadraticCurveTo(fx + 12, bY - 42, fx + 30, bY - 86);
+    c.moveTo(fx + 6, bY - 22); c.lineTo(fx + 26, bY - 32); c.moveTo(fx + 18, bY - 58); c.lineTo(fx + 38, bY - 64);
+    c.moveTo(fx + 30, bY - 86); c.lineTo(fx + 20, bY - 106); c.moveTo(fx + 30, bY - 86); c.lineTo(fx + 44, bY - 102); c.stroke();
+    // cornul din față (aplecat înapoi)
+    c.strokeStyle = P.antC || '#E6D3AE'; c.lineWidth = 6;
+    c.beginPath(); c.moveTo(bx, bY); c.quadraticCurveTo(bx - 6, bY - 46, bx - 34, bY - 92);
+    c.moveTo(bx - 3, bY - 20); c.lineTo(bx + 18, bY - 32); c.moveTo(bx - 14, bY - 56); c.lineTo(bx + 6, bY - 74);
+    c.moveTo(bx - 34, bY - 92); c.lineTo(bx - 52, bY - 106); c.moveTo(bx - 34, bY - 92); c.lineTo(bx - 26, bY - 116); c.stroke();
+    c.restore();
+  }
+}
+
+function tail(c, P, bw, by, bh, t, ph, walk) {
+  const wag = Math.sin(t * (walk ? 6 : 2.4) + (ph || 0)) * (P.tail === 'bushy' ? 0.12 : 0.08);
+  c.save(); c.translate(-bw * 0.9, by - bh * 0.18); c.rotate(P.tailRot + wag);
+  if (P.tail === 'bushy') {
+    c.beginPath(); c.ellipse(-P.tl / 2, 0, P.tl / 2, P.tw, 0, 0, 7); c.fillStyle = P.col; c.fill();
+    c.save(); c.clip(); c.fillStyle = P.tipC; c.beginPath(); c.arc(-P.tl + P.tw * 0.3, 0, P.tw * 1.3, 0, 7); c.fill(); c.restore();
+  } else if (P.tail === 'ringed') {
+    c.fillStyle = P.col; roundRect(c, -P.tl, -P.tw, P.tl + 6, P.tw * 2, P.tw); c.fill();
+    c.save(); roundRect(c, -P.tl, -P.tw, P.tl + 6, P.tw * 2, P.tw); c.clip();
+    c.fillStyle = P.dark; for (let k = 1; k <= 3; k++) c.fillRect(-P.tl * (0.2 + k * 0.17), -P.tw, 6, P.tw * 2);
+    c.fillStyle = P.tipC; c.fillRect(-P.tl, -P.tw, P.tl * 0.16, P.tw * 2); c.restore();
+  } else if (P.tail === 'short') {
+    c.fillStyle = P.tipC; c.beginPath(); c.ellipse(-P.tl * 0.6, 0, P.tl, P.tw, 0, 0, 7); c.fill();
+  } else {
+    c.strokeStyle = P.dark; c.lineWidth = P.tw; c.lineCap = 'round'; c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(-P.tl * 0.6, -6, -P.tl * 0.8, P.tl * 0.6); c.stroke();
+    c.fillStyle = P.dark; c.beginPath(); c.ellipse(-P.tl * 0.8, P.tl * 0.7, 4, 7, 0, 0, 7); c.fill();
+  }
+  c.restore();
+}
+
+// patruped: (x, y) = punctul de pe sol sub mijlocul corpului; s = scară; dir = 1 spre dreapta, -1 spre stânga
+function quad(c, x, y, s, dir, t, P, o = {}) {
+  const walk = o.walk || 0, ph = o.ph || 0, gait = t * (P.lh > 70 ? 6 : 8) + ph;
+  c.save(); c.translate(x, y); c.scale(s * dir, s);
+  const { bw, bh, lh, lw } = P, by = -lh - bh / 2;
+  // umbră
+  c.fillStyle = 'rgba(0,0,0,.18)'; c.beginPath(); c.ellipse(0, 2, bw * 1.15, 7, 0, 0, 7); c.fill();
+  const bob = walk ? Math.abs(Math.sin(gait)) * 3 : Math.sin(t * 2.2 + ph) * 1.2;
+  const leg = (lx, phase, far) => {
+    const a = walk ? Math.sin(gait + phase) * 0.38 : 0;
+    c.save(); c.translate(lx, by + bh * 0.15 - bob); c.rotate(a);
+    const L = lh + bh * 0.35 + bob;
+    c.fillStyle = far ? P.dark : mix(P.col, P.dark, .3); roundRect(c, -lw / 2, 0, lw, L, lw / 2.2); c.fill();
+    if (P.hoof || P.socks) { c.fillStyle = P.hoof || P.socks; roundRect(c, -lw / 2, L - (P.hoof ? 7 : 14), lw, P.hoof ? 7 : 14, 3); c.fill(); }
+    c.restore();
+  };
+  leg(-bw * 0.55 + 12, Math.PI, true); leg(bw * 0.55 + 12, 0, true);
+  leg(-bw * 0.55, 0, false); leg(bw * 0.55, Math.PI, false);
+  c.translate(0, -bob);
+  tail(c, P, bw, by, bh, t, ph, walk);
+  // corp
+  c.fillStyle = P.col; c.beginPath(); c.ellipse(0, by, bw, bh / 2, 0, 0, 7); c.fill();
+  if (P.mane) { c.beginPath(); c.ellipse(bw * 0.3, by - bh * 0.06, bw * 0.75, bh * 0.58, 0, 0, 7); c.fill(); }
+  c.save(); c.beginPath(); c.ellipse(0, by, bw, bh / 2, 0, 0, 7); if (P.mane) c.ellipse(bw * 0.3, by - bh * 0.06, bw * 0.75, bh * 0.58, 0, 0, 7); c.clip();
+  if (P.belly) { c.fillStyle = P.belly; c.beginPath(); c.ellipse(bw * 0.1, by + bh * 0.42, bw * 0.75, bh * 0.25, 0, 0, 7); c.fill(); }
+  if (P.saddle) { c.fillStyle = P.saddle; c.beginPath(); c.ellipse(-bw * 0.1, by - bh * 0.45, bw * 0.7, bh * 0.28, 0, 0, 7); c.fill(); }
+  if (P.rump) { c.fillStyle = P.rump; c.beginPath(); c.ellipse(-bw * 0.95, by - bh * 0.05, bw * 0.2, bh * 0.36, 0, 0, 7); c.fill(); }
+  if (P.stripes) { c.strokeStyle = rgba(P.dark, .55); c.lineWidth = 5; c.lineCap = 'round'; for (let k = 0; k < 4; k++) { const sx = -bw * 0.55 + k * bw * 0.33; c.beginPath(); c.moveTo(sx, by - bh * 0.5); c.quadraticCurveTo(sx - 6, by - bh * 0.15, sx + 2, by + bh * 0.05); c.stroke(); } }
+  c.restore();
+  if (P.mane) { c.fillStyle = P.dark; for (let k = 0; k < 9; k++) { const mx = -bw * 0.45 + k * bw * 0.16, my = by - bh * 0.5 - (k > 3 ? (k - 3) * 2.2 : 0) - 2; c.beginPath(); c.moveTo(mx - 7, my + 6); c.lineTo(mx + 2, my - 10); c.lineTo(mx + 9, my + 6); c.closePath(); c.fill(); } }
+  // gât + cap
+  const hx = bw * P.hx, hy = by - bh * P.hy + (o.headDip || 0);
+  c.strokeStyle = P.col; c.lineWidth = P.neckW; c.lineCap = 'round'; c.beginPath(); c.moveTo(bw * 0.55, by - bh * 0.05); c.lineTo(hx - P.hr * 0.2, hy + P.hr * 0.2); c.stroke();
+  headDraw(c, hx, hy, P, t, ph, o.look);
+  c.restore();
+}
+
+// vultur cocoțat; flap 0..1 = aripi deschise
+function vulture(c, x, y, s, dir, t, flap, ph) {
+  c.save(); c.translate(x, y); c.scale(s * dir, s);
+  const body = '#4A3A2E', wing = '#33271F', pale = '#E8DCC8', ruff = '#F0E6D4';
+  // picioare
+  c.strokeStyle = '#8A8478'; c.lineWidth = 6; c.lineCap = 'round'; c.beginPath(); c.moveTo(-8, -30); c.lineTo(-10, 0); c.moveTo(10, -30); c.lineTo(12, 0); c.stroke();
+  c.strokeStyle = '#2A2420'; c.lineWidth = 4; for (const fx of [-10, 12]) { c.beginPath(); c.moveTo(fx, 0); c.lineTo(fx + 12, 2); c.moveTo(fx, 0); c.lineTo(fx - 9, 3); c.stroke(); }
+  // aripa din spate (deschisă)
+  if (flap > 0.02) {
+    c.save(); c.translate(-6, -96); c.rotate(-0.25 - flap * 0.9 + Math.sin(t * 7 + ph) * 0.12 * flap);
+    c.fillStyle = mix(wing, '#000000', .25); c.beginPath(); c.moveTo(0, 0); c.lineTo(-170 * flap - 30, -30); c.lineTo(-190 * flap - 34, 10); for (let k = 0; k < 5; k++) c.lineTo(-170 * flap - 30 + k * 34 * flap, 34 - k * 4); c.lineTo(0, 40); c.closePath(); c.fill();
+    c.restore();
+  }
+  // corp
+  c.fillStyle = body; c.beginPath(); c.ellipse(0, -72, 44, 58, 0.18, 0, 7); c.fill();
+  // coadă
+  c.fillStyle = wing; c.beginPath(); c.moveTo(-30, -40); c.lineTo(-62, 8); c.lineTo(-38, 10); c.lineTo(-14, -30); c.closePath(); c.fill();
+  // aripa din față
+  c.save(); c.translate(-4, -100); c.rotate(flap > 0.02 ? -0.1 - flap * 0.7 + Math.sin(t * 7 + ph + 0.4) * 0.12 * flap : 0.2);
+  c.fillStyle = wing; c.beginPath(); c.moveTo(10, 0); c.quadraticCurveTo(-40 - 150 * flap, -40 * flap, -60 - 170 * flap, 40 - 30 * flap);
+  for (let k = 0; k < 5; k++) c.lineTo(-60 - 170 * flap + k * (22 + 30 * flap), 52 - 30 * flap + (k % 2) * 10);
+  c.quadraticCurveTo(20, 70, 30, 20); c.closePath(); c.fill();
+  c.restore();
+  // guler (ruff) + gât + cap
+  c.fillStyle = ruff; c.beginPath(); c.ellipse(16, -122, 30, 16, 0.2, 0, 7); c.fill();
+  c.strokeStyle = '#CDBFA6'; c.lineWidth = 14; c.lineCap = 'round'; c.beginPath(); c.moveTo(18, -128); c.quadraticCurveTo(26, -150, 36, -156); c.stroke();
+  c.fillStyle = pale; c.beginPath(); c.arc(40, -160, 16, 0, 7); c.fill();
+  c.fillStyle = '#B8A88E'; c.beginPath(); c.moveTo(50, -168); c.quadraticCurveTo(76, -166, 72, -146); c.lineTo(64, -150); c.quadraticCurveTo(64, -158, 52, -152); c.closePath(); c.fill();
+  const bl = blink(t, ph); c.fillStyle = DARKEYE; c.beginPath(); c.ellipse(44, -164, 3.5, Math.max(1, 3.5 * bl), 0, 0, 7); c.fill();
+  c.restore();
+}
+
+// pui de urs, șezând; wave = 0..1 (laba ridicată)
+function cub(c, x, y, s, t, wave, rot) {
+  c.save(); c.translate(x, y); c.rotate(rot || 0); c.scale(s, s);
+  const col = '#7A5236', dark = '#5A3A24', light = '#C29A72', pad = '#E3C7A2';
+  c.fillStyle = 'rgba(0,0,0,.18)'; c.beginPath(); c.ellipse(0, 4, 90, 12, 0, 0, 7); c.fill();
+  // corp
+  c.fillStyle = col; c.beginPath(); c.ellipse(0, -78, 70, 80, 0, 0, 7); c.fill();
+  c.fillStyle = light; c.beginPath(); c.ellipse(0, -66, 40, 50, 0, 0, 7); c.fill();
+  // picioare (tălpi spre noi)
+  for (const sx of [-1, 1]) {
+    c.fillStyle = dark; c.beginPath(); c.ellipse(sx * 46, -18, 30, 22, 0, 0, 7); c.fill();
+    c.fillStyle = pad; c.beginPath(); c.ellipse(sx * 48, -14, 15, 11, 0, 0, 7); c.fill();
+    for (let k = -1; k <= 1; k++) { c.beginPath(); c.arc(sx * 48 + k * 9, -30, 4.5, 0, 7); c.fill(); }
+  }
+  // brațul stâng (în repaus)
+  c.save(); c.translate(-52, -112); c.rotate(0.35); c.fillStyle = dark; roundRect(c, -15, 0, 30, 70, 15); c.fill(); c.restore();
+  // brațul drept (face cu mâna)
+  const wa = -0.3 - wave * (1.9 + Math.sin(t * 9) * 0.25);
+  c.save(); c.translate(52, -112); c.rotate(wa); c.fillStyle = dark; roundRect(c, -15, 0, 30, 70, 15); c.fill(); c.fillStyle = pad; c.beginPath(); c.arc(0, 60, 9, 0, 7); c.fill(); c.restore();
+  // cap
+  const hy = -178, tilt = Math.sin(t * 1.6) * 0.06;
+  c.save(); c.translate(0, hy); c.rotate(tilt);
+  c.fillStyle = col; for (const sx of [-1, 1]) { c.beginPath(); c.arc(sx * 40, -38, 18, 0, 7); c.fill(); }
+  c.fillStyle = light; for (const sx of [-1, 1]) { c.beginPath(); c.arc(sx * 40, -38, 9, 0, 7); c.fill(); }
+  c.fillStyle = col; c.beginPath(); c.arc(0, 0, 52, 0, 7); c.fill();
+  c.fillStyle = light; c.beginPath(); c.ellipse(0, 16, 26, 20, 0, 0, 7); c.fill();
+  c.fillStyle = DARKEYE; c.beginPath(); c.ellipse(0, 6, 10, 7, 0, 0, 7); c.fill();
+  c.strokeStyle = DARKEYE; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(0, 13); c.lineTo(0, 20); c.moveTo(-8, 24); c.quadraticCurveTo(0, 30, 8, 24); c.stroke();
+  const bl = blink(t, 2); c.fillStyle = DARKEYE; for (const sx of [-1, 1]) { c.beginPath(); c.ellipse(sx * 20, -12, 6, Math.max(1, 6 * bl), 0, 0, 7); c.fill(); }
+  c.fillStyle = '#FFFFFF'; if (bl > .5) for (const sx of [-1, 1]) { c.beginPath(); c.arc(sx * 20 + 2, -14, 2, 0, 7); c.fill(); }
+  c.restore();
+  c.restore();
+}
+
+// siluetă de inginer (nu portret): pălărie, palton, felinar
+function engineer(c, x, y, s, t, lamp) {
+  c.save(); c.translate(x, y); c.scale(s, s);
+  const col = '#121820';
+  c.fillStyle = col;
+  roundRect(c, -22, -80, 18, 80, 6); c.fill(); roundRect(c, 4, -80, 18, 80, 6); c.fill();
+  c.beginPath(); c.moveTo(-38, -60); c.lineTo(-30, -190); c.quadraticCurveTo(0, -206, 30, -190); c.lineTo(40, -60); c.closePath(); c.fill();
+  c.beginPath(); c.arc(0, -222, 25, 0, 7); c.fill();
+  c.beginPath(); c.ellipse(0, -238, 44, 8, 0, 0, 7); c.fill(); roundRect(c, -24, -272, 48, 36, 8); c.fill();
+  // brațul cu felinarul
+  c.strokeStyle = col; c.lineWidth = 18; c.lineCap = 'round'; c.beginPath(); c.moveTo(24, -176); c.lineTo(52, -130); c.lineTo(70, -116); c.stroke();
+  c.lineWidth = 3; c.beginPath(); c.moveTo(72, -114); c.lineTo(72, -100); c.stroke();
+  const fl = 0.85 + 0.15 * Math.sin(t * 11) * Math.sin(t * 6.1);
+  if (lamp > 0) { const g = c.createRadialGradient(72, -84, 2, 72, -84, 90); g.addColorStop(0, rgba('#FFD27A', .55 * lamp * fl)); g.addColorStop(1, rgba('#FFD27A', 0)); c.fillStyle = g; c.beginPath(); c.arc(72, -84, 90, 0, 7); c.fill(); }
+  c.fillStyle = '#2A2420'; roundRect(c, 60, -102, 24, 34, 4); c.fill();
+  c.fillStyle = mix('#5A4A30', '#FFD27A', lamp * fl); c.fillRect(64, -97, 16, 24);
+  // contur luminos discret (lumina apusului)
+  c.strokeStyle = rgba('#F2A65A', .45); c.lineWidth = 2; c.beginPath(); c.moveTo(-30, -190); c.quadraticCurveTo(0, -206, 30, -190); c.stroke(); c.beginPath(); c.arc(0, -222, 25, Math.PI * 1.1, Math.PI * 1.9); c.stroke();
+  c.restore();
+}
+
+// stejar: trunchi gros, ramuri desfăcute, coroană din „ghemuri” de frunziș (formă fixă, după seed)
+const OAKS = {};
+function oakShape(seed) {
+  if (OAKS[seed]) return OAKS[seed];
+  const r = rng(seed); const br = [], clumps = [];
+  const n = 6;
+  for (let i = 0; i < n; i++) br.push({ a: -Math.PI + 0.3 + i * (Math.PI - 0.6) / (n - 1) + (r() - .5) * .16, l: 0.6 + r() * 0.32 });
+  const pts = br.map(b => [Math.cos(b.a) * b.l, Math.sin(b.a) * b.l * 0.62]);
+  pts.push([0, -0.66], [-0.36, -0.52], [0.36, -0.52], [0, -0.3]);
+  for (const [px, py] of pts) { const cl = []; for (let k = 0; k < 7; k++) { const an = r() * 6.28, d = r() * 0.16; cl.push({ x: px + Math.cos(an) * d, y: py + Math.sin(an) * d * 0.8, r: 0.13 + r() * 0.09, top: Math.sin(an) < 0 }); } clumps.push(cl); }
+  return (OAKS[seed] = { br, clumps });
+}
+function oak(c, x, y, s, t, o = {}) {
+  c.save();
+  const g = o.grow == null ? 1 : o.grow, sh = oakShape(o.seed || 5);
+  const R = 300 * s * g, TH = 240 * s * (0.35 + 0.65 * g), cy = y - TH;
+  const tr = o.trunk || '#5A3E2B';
+  c.fillStyle = tr; const tw = (o.thick || 40) * s * (0.4 + 0.6 * g);
+  c.beginPath(); c.moveTo(x - tw, y); c.quadraticCurveTo(x - tw * 0.55, y - TH * 0.5, x - tw * 0.7, y - TH); c.lineTo(x + tw * 0.7, y - TH); c.quadraticCurveTo(x + tw * 0.55, y - TH * 0.5, x + tw, y);
+  c.quadraticCurveTo(x + tw * 1.6, y + 2, x + tw * 2.1, y + 6); c.lineTo(x - tw * 2.1, y + 6); c.quadraticCurveTo(x - tw * 1.6, y + 2, x - tw, y); c.fill();
+  c.strokeStyle = tr; c.lineCap = 'round';
+  for (const b of sh.br) { const ex = x + Math.cos(b.a) * R * b.l, ey = cy + Math.sin(b.a) * R * b.l * 0.62, mx = x + (ex - x) * 0.45, my = cy - R * 0.08 + (ey - cy) * 0.3; c.lineWidth = tw * 0.62; c.beginPath(); c.moveTo(x, cy + tw * 0.4); c.quadraticCurveTo(x + (mx - x) * 0.3, cy, mx, my); c.stroke(); c.lineWidth = tw * 0.34; c.beginPath(); c.moveTo(mx, my); c.quadraticCurveTo(lerp(mx, ex, 0.5), my - R * 0.05, ex, ey); c.stroke(); }
+  const cols = o.cols || ['#2F5426', '#44703A', '#6A9550'];
+  const sw = Math.sin(t * 1.1 + x * 0.013) * 3 * s;
+  c.fillStyle = cols[0]; for (const cl of sh.clumps) for (const b of cl) { c.beginPath(); c.arc(x + b.x * R + sw, cy + b.y * R, b.r * R, 0, 7); c.fill(); }
+  c.fillStyle = cols[1]; for (const cl of sh.clumps) for (const b of cl) { c.beginPath(); c.arc(x + b.x * R - b.r * R * 0.16 + sw * 1.2, cy + b.y * R - b.r * R * 0.2, b.r * R * 0.78, 0, 7); c.fill(); }
+  c.fillStyle = cols[2]; for (const cl of sh.clumps) for (const b of cl) { if (!b.top) continue; c.beginPath(); c.arc(x + b.x * R - b.r * R * 0.32 + sw * 1.4, cy + b.y * R - b.r * R * 0.36, b.r * R * 0.4, 0, 7); c.fill(); }
+  c.restore();
+}
+
+function hills(c, y, col, seed, amp, step) {
+  const r = rng(seed); const pts = []; for (let x = -200; x <= W + 400; x += step || 260) pts.push([x, y - r() * amp]);
+  c.fillStyle = col; c.beginPath(); c.moveTo(-200, H); c.lineTo(pts[0][0], pts[0][1]);
+  for (let i = 0; i < pts.length - 1; i++) { const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2; c.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); }
+  c.lineTo(W + 400, H); c.closePath(); c.fill();
+}
+function paw(c, x, y, s, rot, a, col) {
+  if (a <= 0) return; c.save(); c.globalAlpha = a; c.translate(x, y); c.rotate(rot); c.scale(s, s); c.fillStyle = col;
+  c.beginPath(); c.moveTo(0, -2); c.bezierCurveTo(14, -2, 17, 14, 9, 16); c.quadraticCurveTo(0, 12, -9, 16); c.bezierCurveTo(-17, 14, -14, -2, 0, -2); c.fill();
+  for (const [dx, dy] of [[-16, -10], [-6, -19], [6, -19], [16, -10]]) { c.beginPath(); c.ellipse(dx, dy, 4.5, 5.8, dx * 0.02, 0, 7); c.fill(); }
+  c.restore();
+}
+function tag(c, x, y, s, a, col, size) {
+  if (a <= 0) return; const fs = size || 22; c.save(); c.globalAlpha = a; c.font = `600 ${fs}px Inter`; const w = c.measureText(s).width + 32;
+  c.fillStyle = 'rgba(15,23,32,.86)'; roundRect(c, x - w / 2, y - fs * 0.95, w, fs * 1.82, fs * 0.9); c.fill(); c.strokeStyle = col || PAL.ocru; c.lineWidth = 2; c.stroke(); c.restore();
+  text(c, s, x, y + fs * 0.33, { size: fs, weight: 600, align: 'center', alpha: a });
+}
+function butterfly(c, x, y, s, t, col) {
+  const f = Math.abs(Math.sin(t * 14)) * 0.8 + 0.2; c.save(); c.translate(x, y); c.scale(s, s); c.fillStyle = col;
+  for (const sx of [-1, 1]) { c.beginPath(); c.ellipse(sx * 9 * f, -5, 10 * f, 8, sx * 0.4, 0, 7); c.fill(); c.beginPath(); c.ellipse(sx * 7 * f, 6, 7 * f, 6, -sx * 0.4, 0, 7); c.fill(); }
+  c.fillStyle = '#2A2420'; c.fillRect(-1.5, -9, 3, 18); c.restore();
+}
+function people(c, x, y, s, col, t, ph, kid) { // siluetă de vizitator (generic)
+  c.save(); c.translate(x, y); c.scale(s * (kid ? 0.7 : 1), s * (kid ? 0.7 : 1)); c.fillStyle = col;
+  const sw = Math.sin(t * 7 + ph) * 8; c.strokeStyle = col; c.lineWidth = 14; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(-6, -64); c.lineTo(-6 - sw, -4); c.moveTo(6, -64); c.lineTo(6 + sw, -4); c.stroke();
+  roundRect(c, -22, -150, 44, 92, 16); c.fill(); c.beginPath(); c.arc(0, -172, 20, 0, 7); c.fill(); c.restore();
+}
+
+// ------------------------------------------------------------ scenele
+function sIntro(lt, t) {
+  const g = ctx.createRadialGradient(W / 2, 420, 60, W / 2, 420, 1100); g.addColorStop(0, '#1F3340'); g.addColorStop(1, PAL.night); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  stars(ctx, W, H, .35, 19);
+  // pădure-siluetă
+  for (let i = 0; i < 9; i++) oak(ctx, -60 + i * 250, 860, 0.55 + (i % 3) * 0.08, t, { seed: 30 + i, cols: ['#13262A', '#183036', '#1D3A40'], trunk: '#10201F' });
+  ctx.fillStyle = '#0E1A20'; ctx.fillRect(0, 840, W, 240);
+  // urme de labe care traversează ecranul
+  for (let k = 0; k < 16; k++) { const px = 140 + k * 108, py = 800 + (k % 2) * 26; paw(ctx, px, py, 0.9, Math.PI / 2, smooth(0.2 + k * 0.14, 0.5 + k * 0.14, lt) * 0.85, PAL.ocru); }
+  // animale-siluetă care privesc
+  quad(ctx, 360, 840, 0.75, 1, t, Object.assign({}, A.fox, { col: '#2A4148', dark: '#1E3036', belly: '#2A4148', cheek: '#2A4148', tipC: '#3A5560', socks: null, earIn: '#1E3036' }), { ph: 1 });
+  quad(ctx, 1560, 840, 0.7, -1, t, Object.assign({}, A.deer, { col: '#2A4148', dark: '#1E3036', belly: '#2A4148', cheek: '#2A4148', rump: '#2A4148', tipC: '#2A4148', earIn: '#1E3036', hoof: '#1E3036', antC: '#3A5560', antF: '#22383E' }), { ph: 2 });
+  const a = smooth(0.4, 1.4, lt);
+  serif(ctx, 'Prima grădină zoologică', W / 2, 330, { size: 84, align: 'center', alpha: a });
+  serif(ctx, 'din România', W / 2, 425, { size: 64, align: 'center', color: PAL.var, alpha: smooth(0.8, 1.8, lt) });
+  serif(ctx, '1929', W / 2, 590, { size: 150, align: 'center', color: PAL.ocru, alpha: smooth(1.3, 2.3, lt) });
+  text(ctx, 'animale stilizate, desenate în cod', W / 2, 660, { size: 30, align: 'center', color: PAL.ceata, alpha: smooth(1.8, 2.8, lt) });
+}
+
+function sSadu(lt, t) {
+  sky(ctx, W, H, 0.69, 1);
+  mountains(ctx, W, 300, '#7A8AA0', 23, 120);
+  mountains(ctx, W, 380, '#5E7088', 29, 90);
+  // versanții văii
+  ctx.fillStyle = '#4F6A4A'; ctx.beginPath(); ctx.moveTo(-10, 320); ctx.quadraticCurveTo(400, 300, 590, 360); ctx.lineTo(760, 760); ctx.lineTo(-10, 820); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#486244'; ctx.beginPath(); ctx.moveTo(W + 10, 300); ctx.quadraticCurveTo(1650, 300, 1470, 360); ctx.lineTo(1290, 760); ctx.lineTo(W + 10, 820); ctx.closePath(); ctx.fill();
+  for (let i = 0; i < 14; i++) { const r = rng(70 + i); const px = i < 7 ? 40 + i * 80 + r() * 30 : 1440 + (i - 7) * 72 + r() * 30, py = i < 7 ? 380 + i * 30 + r() * 40 : 420 + (13 - i) * 25 + r() * 40; ctx.fillStyle = '#2E4A30'; ctx.beginPath(); ctx.moveTo(px, py - 70); ctx.lineTo(px + 24, py); ctx.lineTo(px - 24, py); ctx.closePath(); ctx.fill(); }
+  // barajul (schemă)
+  const crest = 360;
+  ctx.fillStyle = '#BDB6A8'; ctx.beginPath(); ctx.moveTo(590, crest); ctx.lineTo(1470, crest); ctx.lineTo(1290, 760); ctx.lineTo(760, 760); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,56,50,.25)'; ctx.lineWidth = 2; for (let k = 1; k < 12; k++) { const u = k / 12; ctx.beginPath(); ctx.moveTo(lerp(590, 1470, u), crest); ctx.lineTo(lerp(760, 1290, u), 760); ctx.stroke(); }
+  for (let k = 1; k < 6; k++) { const y = crest + k * 66; const u = (y - crest) / 400; ctx.beginPath(); ctx.moveTo(lerp(590, 760, u), y); ctx.lineTo(lerp(1470, 1290, u), y); ctx.stroke(); }
+  ctx.fillStyle = '#8A857A'; ctx.fillRect(580, crest - 16, 900, 18);
+  ctx.fillStyle = '#6E6A60'; for (let x = 590; x < 1470; x += 30) ctx.fillRect(x, crest - 34, 5, 18); ctx.fillRect(580, crest - 36, 900, 5);
+  // apa deversorului
+  ctx.save(); ctx.beginPath(); ctx.moveTo(930, crest); ctx.lineTo(1130, crest); ctx.lineTo(1100, 760); ctx.lineTo(960, 760); ctx.closePath(); ctx.clip();
+  const wg = ctx.createLinearGradient(0, crest, 0, 760); wg.addColorStop(0, '#9FD0E8'); wg.addColorStop(1, '#5EA0C8'); ctx.fillStyle = wg; ctx.fillRect(900, crest, 260, 420);
+  ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3; for (let k = 0; k < 9; k++) { const x = 940 + k * 22; ctx.beginPath(); for (let y = crest; y < 760; y += 12) { const yy = (y + (t * 160) % 48); ctx.moveTo(x + Math.sin(y * 0.05 + k) * 3, yy); ctx.lineTo(x + Math.sin(y * 0.05 + k) * 3, yy + 18); } ctx.stroke(); }
+  ctx.restore();
+  // schelă de reparații
+  ctx.strokeStyle = '#6B4A35'; ctx.lineWidth = 6; for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.moveTo(1180 + k * 34, 470 + k * 6); ctx.lineTo(1170 + k * 32, 760); ctx.stroke(); }
+  for (let k = 0; k < 5; k++) { ctx.fillStyle = '#8A6040'; ctx.fillRect(1160, 500 + k * 55, 140 - k * 4, 8); }
+  // râul și malul
+  ctx.fillStyle = '#5C7A4E'; ctx.fillRect(0, 740, W, H - 740);
+  ctx.fillStyle = '#5EA0C8'; ctx.beginPath(); ctx.moveTo(960, 750); ctx.lineTo(1100, 750); ctx.quadraticCurveTo(1180, 800, 1260, 860); ctx.lineTo(880, 860); ctx.quadraticCurveTo(930, 800, 960, 750); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 2; for (let k = 0; k < 5; k++) { const y = 770 + ((t * 40 + k * 18) % 90); ctx.beginPath(); ctx.moveTo(1000 + (y - 770) * -0.6, y); ctx.lineTo(1040 + (y - 770) * -0.4, y); ctx.stroke(); }
+  // vulpile – ies dintre pietre
+  const f1 = smooth(1.0, 1.8, lt), f2 = smooth(2.0, 4.2, lt), f3 = smooth(2.8, 3.6, lt);
+  quad(ctx, 800, 852 - 70 * f1 + 70, 0.85, -1, t, A.fox, { ph: 0.3, look: 0 });
+  quad(ctx, lerp(830, 540, f2), 834, 0.8, -1, t, A.fox, { ph: 1.1, walk: f2 > 0 && f2 < 1 ? 1 : 0 });
+  quad(ctx, 1380, 830 - 80 * f3 + 80, 0.75, -1, t, A.fox, { ph: 2.2 });
+  // pietre în față
+  const rocks = [[700, 860, 120, 70, '#6E6A64'], [790, 870, 90, 50, '#7E7A72'], [1360, 860, 120, 60, '#6E6A64'], [1440, 870, 80, 40, '#7E7A72'], [610, 880, 70, 40, '#5E5A54']];
+  for (const [x, y, rx, ry, col] of rocks) { ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.beginPath(); ctx.ellipse(x - rx * .25, y - ry * .55, rx * .4, ry * .25, 0, 0, 7); ctx.fill(); }
+  // inginerul (siluetă) + ideea (bec)
+  engineer(ctx, 330, 832, 1.15, t, 1);
+  const ia = smooth(4.9, 5.6, lt);
+  if (ia > 0) {
+    const bx = 330, by = 470 - 10 * easeOut(ia), pulse = 1 + 0.06 * Math.sin(t * 6);
+    const gl = ctx.createRadialGradient(bx, by, 4, bx, by, 120 * pulse); gl.addColorStop(0, rgba('#FFD27A', .7 * ia)); gl.addColorStop(1, rgba('#FFD27A', 0)); ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(bx, by, 120 * pulse, 0, 7); ctx.fill();
+    ctx.save(); ctx.globalAlpha = ia; ctx.fillStyle = '#FFE6A8'; ctx.beginPath(); ctx.arc(bx, by, 34, 0, 7); ctx.fill(); ctx.fillStyle = '#C9C4B8'; ctx.fillRect(bx - 16, by + 28, 32, 22); ctx.fillStyle = '#8A857A'; ctx.fillRect(bx - 16, by + 34, 32, 4); ctx.fillRect(bx - 16, by + 42, 32, 4);
+    ctx.strokeStyle = '#E2A62B'; ctx.lineWidth = 4; ctx.lineCap = 'round'; for (let k = 0; k < 7; k++) { const an = -Math.PI + k * Math.PI / 6; ctx.beginPath(); ctx.moveTo(bx + Math.cos(an) * 48, by + Math.sin(an) * 48); ctx.lineTo(bx + Math.cos(an) * 64, by + Math.sin(an) * 64); ctx.stroke(); }
+    ctx.restore();
+    // bula de gând: țarc + copac
+    const ba = smooth(5.8, 6.6, lt);
+    if (ba > 0) {
+      ctx.save(); ctx.globalAlpha = ba; ctx.fillStyle = 'rgba(243,239,230,.95)';
+      ctx.beginPath(); ctx.arc(420, 400, 10, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(452, 372, 15, 0, 7); ctx.fill();
+      roundRect(ctx, 470, 200, 300, 170, 40); ctx.fill();
+      ctx.restore();
+      ctx.save(); ctx.globalAlpha = ba; ctx.beginPath(); roundRect(ctx, 470, 200, 300, 170, 40); ctx.clip();
+      ctx.fillStyle = '#A9C98A'; ctx.fillRect(470, 300, 300, 70);
+      oak(ctx, 700, 318, 0.22, t, { seed: 4 });
+      quad(ctx, 560, 330, 0.42, 1, t, A.fox, { ph: 3 });
+      ctx.strokeStyle = '#6B4A35'; ctx.lineWidth = 4; for (let x = 490; x < 760; x += 26) { ctx.beginPath(); ctx.moveTo(x, 362); ctx.lineTo(x, 330); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(486, 340); ctx.lineTo(764, 340); ctx.moveTo(486, 354); ctx.lineTo(764, 354); ctx.stroke();
+      ctx.restore();
+    }
+  }
+  tag(ctx, 1500, 160, 'barajul de la Sadu · schemă imaginată, nu la scară', 1, PAL.petrol);
+  tag(ctx, 330, 166, 'inginerul Székely · siluetă, nu portret', smooth(0.6, 1.2, lt) * (1 - smooth(4.6, 5.0, lt)), PAL.ocru);
+}
+
+function sGate(lt, t) {
+  sky(ctx, W, H, 0.45, 1);
+  ctx.fillStyle = 'rgba(255,255,255,.75)'; for (const [cx, cy, s] of [[300, 150, 1], [900, 110, .8], [1500, 170, 1.1]]) { const dx = (t * 8) % 60; ctx.beginPath(); ctx.ellipse(cx + dx, cy, 90 * s, 26 * s, 0, 0, 7); ctx.ellipse(cx + dx + 50 * s, cy - 16 * s, 60 * s, 24 * s, 0, 0, 7); ctx.fill(); }
+  hills(ctx, 470, '#6F8E5C', 41, 50, 300);
+  for (let i = 0; i < 10; i++) oak(ctx, -40 + i * 215, 560 + (i % 2) * 14, 0.5 + (i % 3) * 0.06, t, { seed: 50 + i, cols: ['#2F5426', '#3E6630', '#557E44'] });
+  ctx.fillStyle = '#7C9A5A'; ctx.fillRect(0, 560, W, H - 560);
+  // aleea
+  ctx.fillStyle = '#C9B88E'; ctx.beginPath(); ctx.moveTo(1180, 660); ctx.lineTo(1320, 660); ctx.lineTo(1560, 860); ctx.lineTo(940, 860); ctx.closePath(); ctx.fill();
+  // poarta: stâlpi, grindă cu acoperiș, canaturi care se deschid
+  const gx = 1250, gy = 660, open = easeInOut(smooth(0.8, 2.8, lt));
+  // ce se vede prin poartă
+  ctx.save(); ctx.beginPath(); ctx.rect(gx - 120, gy - 250, 240, 250); ctx.clip();
+  ctx.fillStyle = '#88A866'; ctx.fillRect(gx - 120, gy - 250, 240, 250);
+  ctx.fillStyle = '#5EA0C8'; ctx.beginPath(); ctx.ellipse(gx + 40, gy - 30, 90, 18, 0, 0, 7); ctx.fill();
+  oak(ctx, gx - 60, gy - 60, 0.32, t, { seed: 61 });
+  quad(ctx, gx + 50, gy - 54, 0.38, -1, t, A.deer, { ph: 4 });
+  ctx.fillStyle = '#C9B88E'; ctx.beginPath(); ctx.moveTo(gx - 20, gy - 90); ctx.lineTo(gx + 20, gy - 90); ctx.lineTo(gx + 70, gy); ctx.lineTo(gx - 70, gy); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = '#8A6040';
+  for (const sd of [-1, 1]) { const w = 120 * (1 - open * 0.82); const x0 = sd < 0 ? gx - 120 : gx + 120 - w; ctx.fillStyle = mix('#8A6040', '#4A3020', open * 0.5); ctx.fillRect(x0, gy - 230, w, 230); ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 3; for (let k = 1; k < 5; k++) { ctx.beginPath(); ctx.moveTo(x0 + w * k / 5, gy - 230); ctx.lineTo(x0 + w * k / 5, gy); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(x0, gy - 60); ctx.lineTo(x0 + w, gy - 170); ctx.stroke(); }
+  for (const sd of [-1, 1]) { const px = gx + sd * 150; ctx.fillStyle = '#C9BFAE'; ctx.fillRect(px - 30, gy - 330, 60, 330); ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(px + 10, gy - 330, 20, 330); ctx.fillStyle = '#B9583A'; ctx.beginPath(); ctx.moveTo(px - 40, gy - 330); ctx.lineTo(px, gy - 370); ctx.lineTo(px + 40, gy - 330); ctx.closePath(); ctx.fill(); }
+  ctx.fillStyle = '#6B4A35'; ctx.fillRect(gx - 150, gy - 300, 300, 40); ctx.fillStyle = '#B9583A'; ctx.beginPath(); ctx.moveTo(gx - 180, gy - 300); ctx.lineTo(gx, gy - 350); ctx.lineTo(gx + 180, gy - 300); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.arc(gx, gy - 280, 12, 0, 7); ctx.fill();
+  // ghirlandă / fanioane la deschidere
+  const fa = smooth(2.4, 3.2, lt);
+  if (fa > 0) { const cols = ['#E2A62B', '#0E7C86', '#6E56CF', '#B9583A', '#F3EFE6']; for (let k = 0; k < 11; k++) { const x = gx - 150 + k * 30, y = gy - 256 + Math.sin(k / 10 * Math.PI) * 26; ctx.save(); ctx.globalAlpha = fa; ctx.fillStyle = cols[k % 5]; ctx.beginPath(); ctx.moveTo(x - 11, y); ctx.lineTo(x + 11, y); ctx.lineTo(x, y + 24 + Math.sin(t * 5 + k) * 3); ctx.closePath(); ctx.fill(); ctx.restore(); } }
+  // vizitatori (siluete generice) care intră
+  const vp = smooth(2.6, 7.0, lt);
+  const vis = [[-80, 0, 0], [-20, 0.4, 1], [40, 0.8, 0], [100, 1.1, 1]];
+  for (const [dx, d, kid] of vis) { const p = clamp(vp * 1.3 - d * 0.25); if (p <= 0) continue; const s = lerp(0.95, 0.42, p); const x = lerp(gx + dx * 2.2, gx + dx * 0.4, p), y = lerp(850, gy + 4, p); if (p < 1) people(ctx, x, y, s, '#2A3442', t, dx, kid); }
+  // panou cu anul
+  ctx.fillStyle = 'rgba(15,23,32,.82)'; roundRect(ctx, 100, 170, 640, 400, 32); ctx.fill();
+  const ta = smooth(0.3, 1.0, lt);
+  serif(ctx, '1929', 150, 330, { size: 150, color: PAL.ocru, alpha: ta });
+  serif(ctx, 'prima grădină zoologică din România', 150, 410, { size: 42, alpha: smooth(0.7, 1.4, lt), maxW: 560, lh: 54 });
+  text(ctx, 'Pădurea Dumbrava, Sibiu', 152, 530, { size: 30, color: PAL.ceata, alpha: smooth(1.0, 1.7, lt) });
+  tag(ctx, 1250, 170, 'poartă și vizitatori · desen imaginat', 1, PAL.petrol);
+}
+
+const CARDS = [
+  { k: 'cat', name: 'o pisică sălbatică', by: 'donator nemenționat în surse', col: '#9A8A70' },
+  { k: 'wolfF', name: 'o lupoaică', by: 'de la Obert von Spiess, în numele regelui', col: '#A89C8C' },
+  { k: 'wolf', name: 'un lup', by: 'de la asociația „Șoimii”', col: '#8C9196' },
+  { k: 'vulture', name: 'un vultur', by: 'donator nemenționat în surse', col: '#B8A88E' },
+  { k: 'deer', name: 'un cerb carpatin', by: 'de la vânătorii din Tălmăcel', col: '#9A6440' },
+  { k: 'boar', name: 'mistreți', by: 'donator nemenționat în surse', col: '#7E6E62' },
+];
+function sAnimals(lt, t) {
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#142430'); g.addColorStop(1, PAL.night); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  for (let k = 0; k < 26; k++) { const r = rng(300 + k); paw(ctx, r() * W, 130 + r() * 700, 0.7, r() * 6.28, 0.06, PAL.var); }
+  const cw = 570, ch = 335;
+  CARDS.forEach((cd, i) => {
+    const x = 80 + (i % 3) * (cw + 25), y = 128 + Math.floor(i / 3) * (ch + 22);
+    const T = 0.6 + i * 1.8, p = smooth(T, T + 0.45, lt); if (p <= 0) return;
+    const sc = 0.86 + 0.14 * easeOut(p) + Math.sin(clamp((lt - T) / 0.6) * Math.PI) * 0.03;
+    ctx.save(); ctx.globalAlpha = p; ctx.translate(x + cw / 2, y + ch / 2); ctx.scale(sc, sc); ctx.translate(-cw / 2, -ch / 2);
+    ctx.fillStyle = PAL.slate; roundRect(ctx, 0, 0, cw, ch, 26); ctx.fill(); ctx.strokeStyle = rgba(cd.col, .9); ctx.lineWidth = 3; roundRect(ctx, 0, 0, cw, ch, 26); ctx.stroke();
+    // fereastra ilustrației
+    ctx.save(); roundRect(ctx, 14, 14, cw - 28, 216, 18); ctx.clip();
+    const sg = ctx.createLinearGradient(0, 14, 0, 230); sg.addColorStop(0, '#CFE3EE'); sg.addColorStop(1, '#E9F1E4'); ctx.fillStyle = sg; ctx.fillRect(14, 14, cw - 28, 216);
+    hills(ctx, 160, '#A7C48C', 80 + i, 20, 120);
+    ctx.fillStyle = '#8DB070'; ctx.fillRect(14, 192, cw - 28, 40);
+    oak(ctx, 470, 196, 0.2, t, { seed: 90 + i }); oak(ctx, 90, 196, 0.16, t, { seed: 97 + i });
+    const lt2 = lt - T, hop = Math.sin(clamp(lt2 / 0.5) * Math.PI) * 16;
+    if (cd.k === 'vulture') {
+      ctx.fillStyle = '#8A857A'; ctx.beginPath(); ctx.ellipse(cw / 2, 214, 120, 34, 0, Math.PI, 0); ctx.fill();
+      const flap = smooth(0, 0.4, lt2) * (1 - smooth(1.4, 2.0, lt2)) + (Math.sin(t * 0.9) > 0.92 ? 0.5 : 0);
+      vulture(ctx, cw / 2 - 10, 186 - hop, 0.95, 1, t, clamp(flap), i);
+    } else {
+      const s = { cat: 1.05, wolfF: 0.9, wolf: 0.9, deer: 0.56, boar: 0.85 }[cd.k];
+      if (cd.k === 'boar') quad(ctx, cw / 2 - 150, 214, 0.5, 1, t, A.boar, { ph: 5 });
+      quad(ctx, cw / 2 + (cd.k === 'boar' ? 50 : -10), 212 - hop, s, 1, t, A[cd.k], { ph: i * 1.3 });
+    }
+    ctx.restore();
+    serif(ctx, cd.name, 26, 278, { size: 36 });
+    text(ctx, cd.by, 26, 316, { size: 23, color: cd.by.startsWith('donator') ? PAL.ceata : PAL.ocru, weight: 600 });
+    ctx.restore();
+  });
+}
+
+function sBear(lt, t) {
+  sky(ctx, W, H, 0.42, 1);
+  hills(ctx, 520, '#7F9C66', 12, 40, 320);
+  for (let i = 0; i < 6; i++) oak(ctx, 80 + i * 340, 600, 0.55 + (i % 2) * 0.1, t, { seed: 120 + i });
+  ctx.fillStyle = '#86A863'; ctx.fillRect(0, 600, W, H - 600);
+  ctx.strokeStyle = '#6E9050'; ctx.lineWidth = 3; for (let k = 0; k < 60; k++) { const r = rng(400 + k); const x = r() * W, y = 640 + r() * 200; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 4 + Math.sin(t * 2 + k) * 2, y - 14); ctx.stroke(); }
+  // puiul se rostogolește în cadru, apoi se așază și face cu mâna
+  const roll = easeOut(smooth(0.2, 1.8, lt));
+  const x = lerp(-150, 700, roll), rot = (1 - roll) * -Math.PI * 4;
+  const wave = smooth(2.2, 2.6, lt) * (1 - smooth(4.6, 5.2, lt));
+  cub(ctx, x, 800 - (roll < 1 ? 60 * Math.abs(Math.sin(roll * Math.PI * 2)) * (1 - roll) : 0), 1.25, t, wave, rot);
+  // fluture
+  const bt = t * 0.9; butterfly(ctx, 860 + Math.sin(bt * 1.3) * 150, 480 + Math.sin(bt * 2.1) * 60, 2.4, t, PAL.ocru);
+  // panou
+  ctx.fillStyle = 'rgba(15,23,32,.82)'; roundRect(ctx, 1160, 220, 620, 380, 32); ctx.fill();
+  serif(ctx, '1930', 1220, 420, { size: 170, color: PAL.ocru, alpha: smooth(0.5, 1.2, lt) });
+  serif(ctx, 'primul pui de urs', 1224, 510, { size: 52, alpha: smooth(0.9, 1.6, lt) });
+  text(ctx, 'sibiucityapp.ro', 1226, 560, { size: 26, color: PAL.ceata, alpha: smooth(1.2, 1.9, lt) });
+  tag(ctx, 700, 330, 'pui de urs stilizat · desen imaginat', smooth(2.0, 2.6, lt), PAL.petrol);
+}
+
+function sOak(lt, t) {
+  sky(ctx, W, H, 0.6, 2);
+  hills(ctx, 540, '#8A9A64', 66, 40, 340);
+  ctx.fillStyle = '#93A86A'; ctx.fillRect(0, 640, W, H - 640);
+  const gr = easeOut(smooth(0.1, 2.6, lt));
+  oak(ctx, 540, 800, 1.0, t, { seed: 7, grow: 0.25 + 0.75 * gr, thick: 62, cols: ['#3A5A28', '#557A36', '#7A9A48'] });
+  // poarta (mică) lângă stejar = „la intrare”
+  ctx.fillStyle = '#C9BFAE'; for (const px of [1010, 1170]) { ctx.fillRect(px - 16, 610, 32, 190); ctx.fillStyle = '#B9583A'; ctx.beginPath(); ctx.moveTo(px - 22, 610); ctx.lineTo(px, 588); ctx.lineTo(px + 22, 610); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#C9BFAE'; }
+  ctx.fillStyle = '#6B4A35'; ctx.fillRect(994, 630, 192, 20); ctx.fillStyle = '#B9583A'; ctx.beginPath(); ctx.moveTo(984, 630); ctx.lineTo(1090, 600); ctx.lineTo(1196, 630); ctx.closePath(); ctx.fill();
+  text(ctx, 'intrare', 1090, 700, { size: 24, weight: 700, align: 'center', color: PAL.night });
+  // indicator de secole
+  const cx = 1500, cy = 430, R = 190; ctx.fillStyle = 'rgba(27,39,51,.96)'; roundRect(ctx, 1220, 170, 560, 620, 32); ctx.fill();
+  ctx.lineCap = 'butt'; const segs = 6, fill = smooth(0.4, 3.0, lt) * segs;
+  for (let k = 0; k < segs; k++) { const a0 = -Math.PI / 2 + k * (Math.PI * 2 / 6.6) + 0.03, a1 = a0 + Math.PI * 2 / 6.6 - 0.06; const f = clamp(fill - k); ctx.strokeStyle = rgba('#A9B4C0', .18); ctx.lineWidth = 34; ctx.beginPath(); ctx.arc(cx, cy, R, a0, a1); ctx.stroke(); if (f > 0) { ctx.strokeStyle = mix('#557A36', '#E2A62B', k / 5); ctx.beginPath(); ctx.arc(cx, cy, R, a0, a0 + (a1 - a0) * f); ctx.stroke(); } }
+  const pa = smooth(3.0, 3.5, lt); ctx.save(); ctx.globalAlpha = pa; ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 34; ctx.setLineDash([6, 8]); const a6 = -Math.PI / 2 + 6 * (Math.PI * 2 / 6.6) + 0.03; ctx.beginPath(); ctx.arc(cx, cy, R, a6, -Math.PI / 2 - 0.03 + Math.PI * 2); ctx.stroke(); ctx.restore();
+  const cnt = Math.min(6, Math.floor(fill + 0.0001)) * 100;
+  serif(ctx, (lt > 3.0 ? '600+' : String(cnt)), cx, cy + 30, { size: 96, align: 'center', color: PAL.ocru });
+  text(ctx, 'ani', cx, cy + 78, { size: 30, align: 'center', color: PAL.ceata });
+  serif(ctx, '„de peste 600 de ani”', cx, 700, { size: 40, align: 'center', alpha: smooth(3.1, 3.7, lt) });
+  text(ctx, 'agerpres.ro, 2021 · sibiucityapp.ro: circa 600 de ani', cx, 748, { size: 22, align: 'center', color: PAL.ceata, alpha: smooth(3.3, 3.9, lt) });
+  tag(ctx, 560, 160, 'stejarul de la intrare · desen imaginat', 1, PAL.petrol);
+}
+
+function sToday(lt, t) {
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#16303A'); g.addColorStop(1, PAL.night); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const cards = [
+    { x: 100, src: 'sibiucityapp.ro', ha: '20 ha', an: 'peste 300 de animale', sp: 'din 70 de specii', col: PAL.petrol, d: 0.3 },
+    { x: 1060, src: 'wzd.cz · text din 2011', ha: '15 ha', an: '187 de animale și păsări', sp: 'din 47 de specii', col: PAL.violet, d: 1.6 },
+  ];
+  for (const cd of cards) {
+    const a = smooth(cd.d, cd.d + 0.6, lt), dy = (1 - easeOut(a)) * 30;
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(0, dy);
+    ctx.fillStyle = PAL.slate; roundRect(ctx, cd.x, 140, 760, 470, 30); ctx.fill(); ctx.fillStyle = cd.col; roundRect(ctx, cd.x, 140, 760, 64, 30); ctx.fill(); ctx.fillRect(cd.x, 180, 760, 24);
+    ctx.restore();
+    text(ctx, 'după ' + cd.src, cd.x + 40, 184 + dy, { size: 28, weight: 700, color: PAL.var, alpha: a });
+    serif(ctx, cd.ha, cd.x + 40, 340 + dy, { size: 110, color: PAL.ocru, alpha: smooth(cd.d + 0.4, cd.d + 1.0, lt) });
+    serif(ctx, cd.an, cd.x + 40, 450 + dy, { size: 50, alpha: smooth(cd.d + 0.7, cd.d + 1.3, lt) });
+    serif(ctx, cd.sp, cd.x + 40, 540 + dy, { size: 50, color: PAL.ceata, alpha: smooth(cd.d + 1.0, cd.d + 1.6, lt) });
+  }
+  // semnul „diferit”
+  const ea = smooth(2.6, 3.2, lt); ctx.save(); ctx.globalAlpha = ea; ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.arc(960, 375, 44, 0, 7); ctx.fill();
+  ctx.strokeStyle = PAL.night; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(940, 362); ctx.lineTo(980, 362); ctx.moveTo(940, 388); ctx.lineTo(980, 388); ctx.moveTo(972, 348); ctx.lineTo(948, 402); ctx.stroke(); ctx.restore();
+  text(ctx, 'sursele diferă', 960, 450, { size: 22, weight: 700, align: 'center', color: PAL.ocru, alpha: ea });
+  // paradă de animale stilizate
+  ctx.fillStyle = '#1E3A2E'; roundRect(ctx, 80, 650, 1760, 180, 26); ctx.fill();
+  ctx.save(); roundRect(ctx, 80, 650, 1760, 180, 26); ctx.clip();
+  ctx.fillStyle = '#2C4E3C'; ctx.fillRect(80, 790, 1760, 40);
+  const order = ['fox', 'wolf', 'deer', 'boar', 'bear', 'cat', 'wolfF'], sc = { fox: .55, wolf: .5, deer: .4, boar: .5, bear: .48, cat: .6, wolfF: .5 };
+  const span = 2200, speed = 110;
+  order.forEach((k, i) => { let x = ((lt * speed + i * span / order.length) % span) - 200; quad(ctx, x, 800, sc[k], 1, t, A[k], { walk: 1, ph: i * 1.7 }); });
+  ctx.restore();
+}
+
+const SCENEFN = [sIntro, sSadu, sGate, sAnimals, sBear, sOak, sToday];
+
+window.render = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+  ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H);
+  let si = 0; for (let i = 0; i < SC.length; i++) if (t >= SC[i][0]) si = i;
+  const [s0, s1, yr, ln] = SC[si]; const lt = t - s0, sd = s1 - s0;
+  if (t < TEND + 1.05) {
+    SCENEFN[si](lt, t);
+    const a = Math.min(smooth(0, .45, lt), 1 - smooth(sd - .4, sd, lt));
+    if (a < 1) { ctx.fillStyle = `rgba(15,23,32,${1 - a})`; ctx.fillRect(0, 0, W, H); }
+    // caseta narator (text pe ecran)
+    if (t < TEND) {
+      const line = Array.isArray(ln) ? (lt < ln[2] ? ln[0] : ln[1]) : ln;
+      const la = Array.isArray(ln) ? (lt < ln[2] ? 1 - smooth(ln[2] - .35, ln[2], lt) : smooth(ln[2], ln[2] + .35, lt)) : 1;
+      ctx.fillStyle = `rgba(10,16,28,${.86 * a})`; roundRect(ctx, 80, H - 226, 1760, 136, 28); ctx.fill();
+      if (yr) { ctx.fillStyle = rgba(PAL.ocru, a); roundRect(ctx, 106, H - 200, 190, 84, 18); ctx.fill(); ctx.font = '800 34px Inter'; const fs = ctx.measureText(yr).width > 160 ? 26 : 34; text(ctx, yr, 201, H - 146, { size: fs, weight: 800, align: 'center', color: PAL.night, alpha: a }); }
+      const x0 = yr ? 326 : 120; ctx.font = '600 34px Inter'; const two = ctx.measureText(line).width > (1810 - x0);
+      text(ctx, line, x0, two ? H - 168 : H - 146, { size: 34, weight: 600, alpha: a * la, maxW: 1810 - x0, lh: 44 });
+    }
+  }
+  // cartela finală
+  const ea = smooth(TEND, TEND + 1, t);
+  if (ea > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.99 * ea})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Prima grădină zoologică din România (1929)', W / 2, 270, { size: 64, align: 'center', alpha: ea });
+    text(ctx, 'Pădurea Dumbrava, Sibiu · vulpile de la barajul de la Sadu · primele animale, donate · primul pui de urs în 1930', W / 2, 335, { size: 28, align: 'center', color: PAL.var, alpha: ea, maxW: 1640, lh: 38 });
+    serif(ctx, 'Reconstituire animată, desene imaginate; faptele după surse.', W / 2, 445, { size: 42, align: 'center', color: PAL.ocru, alpha: ea });
+    text(ctx, 'Surse: patrimoniu.sibiu.ro (Premiere); wzd.cz (istoria grădinii, text din 2011); sibiucityapp.ro; agerpres.ro (2021). Cifrele de azi diferă între surse și sunt arătate amândouă.', W / 2, 515, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1560, lh: 36 });
+    text(ctx, 'Inginerul Székely apare ca siluetă, nu ca portret. Animalele, vizitatorii, barajul și poarta sunt desene stilizate, imaginate – nu reproduc imagini de epocă.', W / 2, 610, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1560, lh: 36 });
+    text(ctx, 'Animație generată cu AI · muzică: temă originală, sintetizată în cod · artefact-model ACTIV AI', W / 2, 705, { size: 26, align: 'center', color: PAL.ceata, alpha: ea });
+    ctx.save(); ctx.globalAlpha = ea;
+    const row = [['fox', .5], ['cat', .55], ['wolfF', .45], ['wolf', .45], ['vulture', .55], ['deer', .36], ['boar', .45]];
+    row.forEach(([k, s], i) => k === 'vulture' ? vulture(ctx, 330 + i * 190, 900, s, 1, t, 0, i) : quad(ctx, 330 + i * 190, 900, s, 1, t, A[k], { ph: i }));
+    cub(ctx, 1660, 905, 0.55, t, 0, 0);
+    ctx.restore();
+  }
+  ctx.fillStyle = 'rgba(10,16,28,.6)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M19', 60, 36, PAL.red);
+  text(ctx, 'Prima grădină zoologică din România (1929) · animale stilizate', 270, 64, { size: 30, weight: 600 });
+  ctx.fillStyle = 'rgba(10,16,28,.6)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M19');
+};
+window.READY = true;
+</script></body></html>

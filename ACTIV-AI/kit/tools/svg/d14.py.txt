@@ -1,0 +1,516 @@
+# -*- coding: utf-8 -*-
+"""D14 – Muzeul în aer liber ASTRA (96 ha) – infografic despre satul-muzeu.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md („Muzeul ASTRA în aer liber”);
+1971 (bursa.ro) – verificat și notat în /home/claude/expo/c4/06_date/_fapte_noi.md.
+Divergențe arătate: 300/400 de construcții; deschiderea 1967/1964/1963."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c4/06_date/D14_muzeul_astra.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+WATER = "#1F9AA8"
+WATER_L = "#63C6CF"
+WOOD = "#7A5232"
+WOOD_D = "#5A3B24"
+ROOF = "#4A3426"
+WALL = "#EDE6D6"
+GREEN = "#2F6E46"
+GREEN_L = "#3E8E5A"
+PETROL_T = "#3FB0BA"
+DIM = "#2C3A47"
+
+s = frame_head("DATE · D14", BLUE, "Muzeul în aer liber ASTRA (96 ha): satul-muzeu în cifre",
+               "infografic AI · „cel mai mare muzeu în aer liber din România” – conform sibiu-turism.ro",
+               title_size=58)
+
+
+def label_pill(x, y, lab, col, txt=BG, size=15):
+    w = measure(lab, size, "sans", 700, letter_spacing=1.5) + 28
+    o = f'<rect x="{x}" y="{y}" width="{w:.1f}" height="30" rx="15" fill="{col}"/>\n'
+    o += text(x + w / 2, y + 20, lab, size, txt, "sans", 700, anchor="middle", extra='letter-spacing="1.5"')
+    return o, w
+
+
+def card_head(x, y, w, lab, col, sub=None, txt=BG):
+    o = ""
+    p, pw = label_pill(x + 22, y + 20, lab, col, txt)
+    o += p
+    if sub:
+        assert x + 22 + pw + 12 + measure(sub, 14, "sans", 400, True) <= x + w - 18, sub
+        o += text(x + 22 + pw + 12, y + 40, sub, 14, MUTED, "sans", 400, True)
+    return o
+
+
+# ================================================================== A. suprafața (waffle 96 ha)
+AX, AY, AW, AH = 80, 228, 560, 328
+s += card(AX, AY, AW, AH)
+s += card_head(AX, AY, AW, "SUPRAFAȚA", OCRU, "en.wikipedia; bursa.ro; exarc.net")
+s += text(AX + 22, AY + 112, "96 ha", 64, OCRU, "serif", 700)
+s += text(AX + 22 + measure("96 ha", 64, "serif", 700) + 16, AY + 92, "în Pădurea Dumbrava, la circa", 16, CEATA)
+s += text(AX + 22 + measure("96 ha", 64, "serif", 700) + 16, AY + 113, "4 km de centrul Sibiului", 16, CEATA)
+CELL, GAP = 20, 4
+NC = 16
+WX, WY = AX + 22, AY + 128
+for k in range(96):
+    r, c = divmod(k, NC)
+    col = PETROL if k < 40 else DIM
+    s += f'<rect x="{WX + c*(CELL+GAP)}" y="{WY + r*(CELL+GAP)}" width="{CELL}" height="{CELL}" rx="4" fill="{col}"/>\n'
+# „peste”: un „+” după al 40-lea pătrat
+r, c = divmod(39, NC)
+s += text(WX + c * (CELL + GAP) + CELL + 6, WY + r * (CELL + GAP) + 16, "+", 18, OCRU, "sans", 700)
+ww = NC * (CELL + GAP) - GAP
+wh = 6 * (CELL + GAP) - GAP
+LX = WX + ww + 18
+s += text(LX, WY + 18, "1 pătrat =", 14, MUTED, "sans", 400, True)
+s += text(LX, WY + 37, "1 hectar", 14, MUTED, "sans", 400, True)
+s += text(LX, WY + 56, "(100 × 100 m)", 14, MUTED, "sans", 400, True)
+assert LX + measure("(100 × 100 m)", 14, "sans", 400, True) < AX + AW - 12
+ly = WY + wh + 34
+s += f'<rect x="{WX}" y="{ly-14}" width="18" height="18" rx="4" fill="{PETROL}"/>\n'
+s += text(WX + 28, ly, "peste 40 ha – expoziția permanentă", 16, VAR, "sans", 600)
+lx2 = WX + 28 + measure("peste 40 ha – expoziția permanentă", 16, "sans", 600) + 24
+s += f'<rect x="{lx2}" y="{ly-14}" width="18" height="18" rx="4" fill="{DIM}"/>\n'
+s += text(lx2 + 28, ly, "restul suprafeței", 16, CEATA)
+assert lx2 + 28 + measure("restul suprafeței", 16) < AX + AW - 12
+assert ly + 6 < AY + AH - 8, ly
+
+
+# ================================================================== B. ilustrația (satul-muzeu, schematic)
+BX, BY, BW, BH = 656, 228, 1184, 212
+
+
+def waves(x0, x1, y, col=WATER_L, amp=3, step=14, sw=2):
+    d = f"M{x0:.1f},{y}"
+    x = x0; up = True
+    while x < x1:
+        d += f" q{step/2:.1f},{-amp if up else amp} {step:.1f},0"
+        x += step; up = not up
+    return f'<path d="{d}" fill="none" stroke="{col}" stroke-width="{sw}" stroke-linecap="round"/>\n'
+
+
+def tree_round(cx, by, r, col=GREEN):
+    return (f'<rect x="{cx-3}" y="{by-r-6}" width="6" height="{r+6}" fill="{WOOD_D}"/>'
+            f'<circle cx="{cx}" cy="{by-r-10}" r="{r}" fill="{col}"/>'
+            f'<circle cx="{cx-r*0.35:.1f}" cy="{by-r-14}" r="{r*0.55:.1f}" fill="{GREEN_L}" opacity="0.55"/>\n')
+
+
+def lake(cx, cy, rx, ry):
+    o = f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{WATER}"/>\n'
+    o += f'<ellipse cx="{cx}" cy="{cy-ry*0.25:.1f}" rx="{rx*0.92:.1f}" ry="{ry*0.55:.1f}" fill="#2AAAB6" opacity="0.35"/>\n'
+    o += waves(cx - rx * 0.6, cx - rx * 0.1, cy - 3, WATER_L, 2, 10, 1.6)
+    o += waves(cx + rx * 0.05, cx + rx * 0.55, cy + ry * 0.35, WATER_L, 2, 10, 1.6)
+    return o
+
+
+def mill(cx, by):
+    """Moară de apă: căsuță de lemn cu roată."""
+    o = f'<rect x="{cx-30}" y="{by-56}" width="62" height="56" fill="{WOOD}"/>\n'
+    for k in range(5):
+        o += f'<line x1="{cx-30}" y1="{by-48+k*11}" x2="{cx+32}" y2="{by-48+k*11}" stroke="{WOOD_D}" stroke-width="1.5"/>\n'
+    o += poly([(cx - 40, by - 54), (cx + 1, by - 92), (cx + 42, by - 54)], fill=ROOF)
+    o += f'<rect x="{cx-6}" y="{by-30}" width="16" height="30" fill="{WOOD_D}"/>\n'
+    # roata
+    wx, wy, wr = cx - 50, by - 20, 26
+    o += f'<circle cx="{wx}" cy="{wy}" r="{wr}" fill="none" stroke="{WOOD_D}" stroke-width="5"/>\n'
+    for k in range(8):
+        a = k * math.pi / 4
+        o += (f'<line x1="{wx}" y1="{wy}" x2="{wx + wr*math.cos(a):.1f}" y2="{wy + wr*math.sin(a):.1f}" '
+              f'stroke="{WOOD}" stroke-width="3"/>\n')
+        o += (f'<rect x="{wx + (wr+2)*math.cos(a) - 4:.1f}" y="{wy + (wr+2)*math.sin(a) - 4:.1f}" width="8" height="8" '
+              f'fill="{WOOD}" transform="rotate({math.degrees(a):.0f} {wx + (wr+2)*math.cos(a):.1f} {wy + (wr+2)*math.sin(a):.1f})"/>\n')
+    o += f'<circle cx="{wx}" cy="{wy}" r="5" fill="{ROOF}"/>\n'
+    # jgheabul
+    o += f'<path d="M{wx-4},{wy-wr-14} L{wx+34},{wy-wr-24}" stroke="{WOOD}" stroke-width="6"/>\n'
+    o += f'<path d="M{wx-6},{wy-wr-10} q-4,10 0,20" stroke="{WATER_L}" stroke-width="3" fill="none"/>\n'
+    return o
+
+
+def house(cx, by):
+    """Casă țărănească: pereți albi, acoperiș înalt, prispă pe stâlpi."""
+    o = f'<rect x="{cx-62}" y="{by-8}" width="124" height="8" fill="#8C8270"/>\n'
+    o += f'<rect x="{cx-58}" y="{by-52}" width="116" height="44" fill="{WALL}"/>\n'
+    o += poly([(cx - 74, by - 50), (cx - 40, by - 104), (cx + 40, by - 104), (cx + 74, by - 50)], fill=ROOF)
+    for k in range(6):
+        o += f'<line x1="{cx-66+k*2}" y1="{by-58-k*8}" x2="{cx+66-k*2}" y2="{by-58-k*8}" stroke="#5E4433" stroke-width="1.5"/>\n'
+    for px in (cx - 52, cx - 18, cx + 16, cx + 50):
+        o += f'<rect x="{px-2}" y="{by-50}" width="4" height="42" fill="{WOOD}"/>\n'
+    o += f'<rect x="{cx-40}" y="{by-42}" width="14" height="14" fill="{PETROL}" opacity="0.85"/>\n'
+    o += f'<rect x="{cx+26}" y="{by-42}" width="14" height="14" fill="{PETROL}" opacity="0.85"/>\n'
+    o += f'<rect x="{cx-7}" y="{by-40}" width="14" height="32" fill="{WOOD}"/>\n'
+    o += f'<path d="M{cx-58},{by-30} h116" stroke="{TIGLA}" stroke-width="3"/>\n'
+    return o
+
+
+def church(cx, by):
+    """Biserică de lemn cu turn înalt și coif ascuțit."""
+    o = f'<rect x="{cx-50}" y="{by-50}" width="84" height="50" fill="{WOOD}"/>\n'
+    for k in range(4):
+        o += f'<line x1="{cx-50}" y1="{by-42+k*11}" x2="{cx+34}" y2="{by-42+k*11}" stroke="{WOOD_D}" stroke-width="1.5"/>\n'
+    o += poly([(cx - 60, by - 48), (cx - 36, by - 86), (cx + 34, by - 86), (cx + 44, by - 48)], fill=ROOF)
+    o += f'<rect x="{cx+30}" y="{by-46}" width="26" height="46" fill="{WOOD}"/>\n'
+    o += poly([(cx + 26, by - 44), (cx + 43, by - 70), (cx + 60, by - 44)], fill=ROOF)
+    # turnul
+    o += f'<rect x="{cx-40}" y="{by-118}" width="22" height="36" fill="{WOOD_D}"/>\n'
+    o += f'<rect x="{cx-44}" y="{by-126}" width="30" height="10" fill="{ROOF}"/>\n'
+    o += poly([(cx - 44, by - 126), (cx - 29, by - 160), (cx - 14, by - 126)], fill=ROOF)
+    o += f'<line x1="{cx-29}" y1="{by-160}" x2="{cx-29}" y2="{by-170}" stroke="{OCRU}" stroke-width="2.5"/>\n'
+    o += f'<line x1="{cx-34}" y1="{by-166}" x2="{cx-24}" y2="{by-166}" stroke="{OCRU}" stroke-width="2.5"/>\n'
+    o += f'<rect x="{cx-12}" y="{by-30}" width="14" height="30" rx="7" fill="{WOOD_D}"/>\n'
+    return o
+
+
+def fir(cx, by, h, col="#24503A"):
+    return poly([(cx - h * 0.28, by), (cx, by - h), (cx + h * 0.28, by)], fill=col) + \
+        f'<rect x="{cx-2}" y="{by}" width="4" height="6" fill="{WOOD_D}"/>\n'
+
+
+def small_label(x, y, lab, anchor="middle", col=VAR):
+    w = measure(lab, 14, "sans", 600)
+    x0 = x - w / 2 if anchor == "middle" else (x if anchor == "start" else x - w)
+    o = f'<rect x="{x0-8:.1f}" y="{y-16}" width="{w+16:.1f}" height="22" rx="11" fill="{BG}" opacity="0.78"/>\n'
+    o += text(x, y, lab, 14, col, "sans", 600, anchor=anchor)
+    return o
+
+
+s += f'<clipPath id="ill"><rect x="{BX}" y="{BY}" width="{BW}" height="{BH}" rx="22"/></clipPath>\n'
+s += f'<g clip-path="url(#ill)">\n'
+s += ('<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2A38"/>'
+      '<stop offset="1" stop-color="#22384A"/></linearGradient>\n')
+s += f'<rect x="{BX}" y="{BY}" width="{BW}" height="{BH}" fill="url(#sky)"/>\n'
+GY = BY + BH - 34                                   # linia solului
+# dealuri de fundal
+s += (f'<path d="M{BX},{GY-60} C{BX+200},{GY-110} {BX+380},{GY-70} {BX+560},{GY-96} C{BX+760},{GY-126} {BX+960},{GY-74} '
+      f'{BX+BW},{GY-100} L{BX+BW},{GY+40} L{BX},{GY+40} Z" fill="#1E3A2F"/>\n')
+s += (f'<path d="M{BX},{GY-26} C{BX+240},{GY-58} {BX+520},{GY-30} {BX+700},{GY-44} C{BX+900},{GY-60} {BX+1060},{GY-30} '
+      f'{BX+BW},{GY-46} L{BX+BW},{GY+40} L{BX},{GY+40} Z" fill="#244839"/>\n')
+# pădurea (stejari rotunzi + câțiva brazi)
+import random
+random.seed(14)
+for k in range(30):
+    tx = BX + 20 + k * 40 + random.randint(-10, 10)
+    if BX + 540 < tx < BX + 760:
+        continue
+    ty = GY - 40 - random.randint(0, 22)
+    if k % 5 == 2:
+        s += fir(tx, ty + 8, 46 + random.randint(0, 14))
+    else:
+        s += tree_round(tx, ty + 6, 14 + random.randint(0, 6), ["#2B5E40", "#2F6E46", "#285539"][k % 3])
+s += f'<rect x="{BX}" y="{GY}" width="{BW}" height="40" fill="#2A4E3C"/>\n'
+# aleile (linie punctată șerpuită)
+s += (f'<path d="M{BX-10},{GY+24} C{BX+160},{GY+6} {BX+330},{GY+30} {BX+470},{GY+16} S{BX+760},{GY+4} {BX+880},{GY+22} '
+      f'S{BX+1080},{GY+30} {BX+BW+10},{GY+12}" fill="none" stroke="#D9CBA8" stroke-width="5" stroke-dasharray="14 9" stroke-linecap="round"/>\n')
+# lacuri
+s += lake(BX + 190, GY + 4, 150, 22)
+s += lake(BX + 1010, GY + 2, 110, 18)
+# clădiri
+s += mill(BX + 380, GY + 2)
+s += house(BX + 600, GY + 4)
+s += church(BX + 820, GY + 4)
+s += tree_round(BX + 700, GY + 2, 18, "#2F6E46")
+s += tree_round(BX + 900, GY - 2, 16, "#2B5E40")
+s += "</g>\n"
+s += f'<rect x="{BX}" y="{BY}" width="{BW}" height="{BH}" rx="22" fill="none" stroke="#2A3845" stroke-width="1.5"/>\n'
+# etichete
+s += small_label(BX + 190, BY + 140, "lac artificial")
+s += small_label(BX + 1010, BY + 146, "al doilea lac")
+s += small_label(BX + 366, BY + 40, "moară de apă")
+s += small_label(BX + 600, BY + 40, "casă țărănească")
+s += small_label(BX + 900, BY + 40, "biserică de lemn")
+s += small_label(BX + 1110, BY + 200, "alei", "middle", "#E9DDBB")
+s += text(BX + 22, BY + 30, "ilustrație schematică", 13, CEATA, "sans", 400, True)
+
+# ================================================================== C. cifre (4 plăci)
+TY, TH = 452, 104
+TWS = [244, 214, 268, 410]
+assert sum(TWS) + 3 * 16 == BW
+tx = BX
+
+
+def tile(x, w, small, big, desc, src, col=OCRU):
+    o = card(x, TY, w, TH)
+    o += text(x + 20, TY + 26, small, 13, CEATA, "sans", 700, extra='letter-spacing="1.5"')
+    o += text(x + 20, TY + 66, big, 38, col, "serif", 700)
+    bw_ = measure(big, 38, "serif", 700)
+    o += text(x + 20 + bw_ + 10, TY + 66, desc, 17, VAR, "sans", 600)
+    assert x + 20 + bw_ + 10 + measure(desc, 17, "sans", 600) <= x + w - 12, desc
+    o += text(x + 20, TY + 90, src, 13, MUTED, "sans", 400, True)
+    return o
+
+
+s += tile(tx, TWS[0], "PESTE", "10 km", "de alei", "en.wikipedia; sibiu-turism.ro"); tx += TWS[0] + 16
+s += tile(tx, TWS[1], "LACURI", "2", "artificiale", "en.wikipedia; sibiu-turism.ro", PETROL_T); tx += TWS[1] + 16
+s += tile(tx, TWS[2], "PESTE", "16.000", "de obiecte", "bursa.ro"); tx += TWS[2] + 16
+# divergența construcțiilor
+x, w = tx, TWS[3]
+s += card(x, TY, w, TH, stroke=TIGLA)
+s += text(x + 20, TY + 26, "CASE ȘI ALTE CONSTRUCȚII · DIVERGENȚĂ", 13, "#D8775A", "sans", 700, extra='letter-spacing="1.5"')
+s += text(x + 20, TY + 66, "peste 300", 30, OCRU, "serif", 700)
+m1 = measure("peste 300", 30, "serif", 700)
+s += text(x + 20 + m1 + 14, TY + 62, "sau", 17, CEATA, "sans", 600, True)
+x2 = x + 20 + m1 + 14 + measure("sau", 17, "sans", 600, True) + 14
+s += text(x2, TY + 66, "peste 400", 30, OCRU, "serif", 700)
+assert x2 + measure("peste 400", 30, "serif", 700) <= x + w - 12
+s += text(x + 20, TY + 90, "en.wikipedia", 13, MUTED, "sans", 400, True)
+s += text(x2, TY + 90, "bursa.ro; exarc.net", 13, MUTED, "sans", 400, True)
+
+# ================================================================== rândul de jos: 4 carduri
+RY, RH = 572, 392
+CWS = 428
+XS = [80 + i * (CWS + 16) for i in range(4)]
+assert XS[3] + CWS == 1840
+
+# ---------- 1. cronologie
+x = XS[0]
+s += card(x, RY, CWS, RH)
+s += card_head(x, RY, CWS, "CRONOLOGIE", OCRU)
+lx = x + 36
+ty = RY + 88
+YC = lx + 20            # coloana anilor
+BC = lx + 86            # coloana textului
+BWID = x + CWS - 20 - BC
+s += f'<line x1="{lx}" y1="{ty-8}" x2="{lx}" y2="{RY+RH-30}" stroke="{LINE}" stroke-width="4"/>\n'
+
+
+def chron(y, year, body, col=OCRU):
+    o = f'<circle cx="{lx}" cy="{y-7}" r="9" fill="{BG}" stroke="{col}" stroke-width="4"/>\n'
+    o += text(YC, y + 1, year, 22, col, "serif", 700)
+    o2, ny = para(BC, y, body, 15, BWID, CEATA, lh=19)
+    return o + o2, ny
+
+
+o, ty = chron(ty, "1963", "Primul proiect: Muzeul Tehnicii Populare. Echipa lui Cornel Irimie aduce o moară hidraulică – "
+              "e și azi în muzeu.")
+s += o
+ty += 12
+# deschiderea – divergență
+s += f'<circle cx="{lx}" cy="{ty-7}" r="9" fill="{BG}" stroke="{TIGLA}" stroke-width="4"/>\n'
+s += text(YC, ty, "Deschiderea oficială – trei ani, după sursă:", 16, VAR, "sans", 700)
+ty += 10
+for yr, src in [("1967", "bursa.ro; en.wikipedia (corpul articolului)"), ("1964", "en.wikipedia (introducere)"),
+                ("1963", "exarc.net")]:
+    s += f'<rect x="{YC}" y="{ty}" width="60" height="24" rx="12" fill="{TIGLA}" opacity="{0.95 if yr == "1967" else 0.55}"/>\n'
+    s += text(YC + 30, ty + 18, yr, 16, VAR, "sans", 700, anchor="middle")
+    assert YC + 72 + measure(src, 14, "sans", 400, True) <= x + CWS - 14, src
+    s += text(YC + 72, ty + 17, src, 14, CEATA, "sans", 400, True)
+    ty += 28
+ty += 24
+o, ty = chron(ty, "1971", "Încep să fie aduse case țărănești și ateliere meșteșugărești (bursa.ro).")
+s += o
+ty += 12
+o, ty = chron(ty, "1990", "Celor patru sectoare de la început li se adaugă al cincilea: monumentele de utilitate publică (bursa.ro).")
+s += o
+assert ty - 19 <= RY + RH - 14, ("cronologie", ty)
+
+# ---------- 2. grupe tematice
+x = XS[1]
+s += card(x, RY, CWS, RH)
+s += card_head(x, RY, CWS, "6 GRUPE TEMATICE", PETROL, "după en.wikipedia", VAR)
+
+
+def g_food(cx, cy):  # spic + sac
+    o = f'<line x1="{cx-6}" y1="{cy+14}" x2="{cx-6}" y2="{cy-12}" stroke="{OCRU}" stroke-width="2.5"/>'
+    for k in range(4):
+        yy = cy - 10 + k * 6
+        o += f'<ellipse cx="{cx-10}" cy="{yy}" rx="3" ry="5" fill="{OCRU}" transform="rotate(-25 {cx-10} {yy})"/>'
+        o += f'<ellipse cx="{cx-2}" cy="{yy}" rx="3" ry="5" fill="{OCRU}" transform="rotate(25 {cx-2} {yy})"/>'
+    o += f'<path d="M{cx+4},{cy+14} q-2,-14 6,-18 h4 q8,4 6,18 Z" fill="#C9B48A"/><path d="M{cx+8},{cy-4} h8" stroke="{WOOD}" stroke-width="2"/>'
+    return o + "\n"
+
+
+def g_raw(cx, cy):  # bușteni + topor
+    o = ""
+    for dx, dy in [(-8, 6), (8, 6), (0, -6)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="7.5" fill="#B9853F" stroke="{WOOD_D}" stroke-width="2"/><circle cx="{cx+dx}" cy="{cy+dy}" r="2.5" fill="none" stroke="{WOOD_D}" stroke-width="1.2"/>'
+    return o + "\n"
+
+
+def g_transport(cx, cy):  # roată de car
+    o = f'<circle cx="{cx}" cy="{cy}" r="15" fill="none" stroke="{WOOD}" stroke-width="4"/>'
+    for k in range(6):
+        a = k * math.pi / 3
+        o += f'<line x1="{cx}" y1="{cy}" x2="{cx+15*math.cos(a):.1f}" y2="{cy+15*math.sin(a):.1f}" stroke="{WOOD}" stroke-width="2.5"/>'
+    o += f'<circle cx="{cx}" cy="{cy}" r="4" fill="{WOOD_D}"/>'
+    return o + "\n"
+
+
+def g_house(cx, cy):  # ulcior
+    o = f'<path d="M{cx-6},{cy-14} h12 l-2,6 q12,6 8,16 q-3,8 -12,8 q-9,0 -12,-8 q-4,-10 8,-16 Z" fill="{TIGLA}"/>'
+    o += f'<path d="M{cx+6},{cy-8} q12,0 8,12" stroke="{TIGLA}" stroke-width="3" fill="none"/>'
+    o += f'<path d="M{cx-9},{cy+4} h18" stroke="{OCRU}" stroke-width="2"/>'
+    return o + "\n"
+
+
+def g_public(cx, cy):  # clădire cu clopotniță
+    o = f'<rect x="{cx-14}" y="{cy-4}" width="28" height="18" fill="{WALL}"/>'
+    o += poly([(cx - 17, cy - 4), (cx, cy - 14), (cx + 17, cy - 4)], fill=ROOF)
+    o += f'<rect x="{cx-4}" y="{cy-22}" width="8" height="10" fill="{WOOD}"/>'
+    o += poly([(cx - 6, cy - 22), (cx, cy - 30), (cx + 6, cy - 22)], fill=ROOF)
+    o += f'<rect x="{cx-3}" y="{cy+4}" width="6" height="10" fill="{WOOD}"/>'
+    return o + "\n"
+
+
+def g_sculpt(cx, cy):  # stâlp sculptat
+    o = f'<rect x="{cx-7}" y="{cy-16}" width="14" height="32" rx="2" fill="#B9853F"/>'
+    for k in range(4):
+        yy = cy - 12 + k * 8
+        o += poly([(cx - 7, yy), (cx, yy + 4), (cx + 7, yy)], fill="none", stroke=WOOD_D, stroke_width=1.6)
+    o += f'<rect x="{cx-11}" y="{cy+14}" width="22" height="4" fill="#8C8270"/>'
+    return o + "\n"
+
+
+groups = [
+    (g_food, "producția de alimente și creșterea animalelor"),
+    (g_raw, "producția de materii prime"),
+    (g_transport, "mijloace de transport"),
+    (g_house, "fabricarea obiectelor de uz casnic"),
+    (g_public, "construcții publice"),
+    (g_sculpt, "o expoziție de sculptură monumentală"),
+]
+gy = RY + 76
+for k, (ic, lab) in enumerate(groups):
+    s += f'<circle cx="{x+46}" cy="{gy+18}" r="22" fill="#132029" stroke="{PETROL}" stroke-width="2"/>\n'
+    s += ic(x + 46, gy + 18)
+    lines = wrap(lab, CWS - 100, 16)
+    assert len(lines) <= 2, lab
+    yy = gy + 24 - (len(lines) - 1) * 10
+    for ln in lines:
+        s += text(x + 82, yy, ln, 16, VAR, "sans", 500)
+        yy += 20
+    gy += 45
+o, ny = para(x + 22, gy + 8, "Altă împărțire (bursa.ro): patru sectoare la început, al cincilea din 1990.", 14, CWS - 44,
+             MUTED, italic=True, lh=19)
+s += o
+assert ny - 19 <= RY + RH - 12, ("grupe", ny)
+
+# ---------- 3. monumente de utilitate publică (izotip)
+x = XS[2]
+s += card(x, RY, CWS, RH)
+s += card_head(x, RY, CWS, "UTILITATE PUBLICĂ", VIOLET, "inventar după bursa.ro", VAR)
+
+
+def m_church(cx, by):
+    o = f'<rect x="{cx-10}" y="{by-14}" width="16" height="14" fill="{WOOD}"/>'
+    o += poly([(cx - 12, by - 13), (cx - 2, by - 21), (cx + 8, by - 13)], fill=ROOF)
+    o += f'<rect x="{cx+4}" y="{by-20}" width="7" height="20" fill="{WOOD_D}"/>'
+    o += poly([(cx + 3, by - 20), (cx + 7.5, by - 32), (cx + 12, by - 20)], fill=ROOF)
+    return o
+
+
+def m_school(cx, by):
+    o = f'<rect x="{cx-13}" y="{by-15}" width="26" height="15" fill="{WALL}"/>'
+    o += poly([(cx - 15, by - 15), (cx, by - 24), (cx + 15, by - 15)], fill=TIGLA)
+    for dx in (-9, -2, 5):
+        o += f'<rect x="{cx+dx}" y="{by-11}" width="4" height="5" fill="{PETROL}"/>'
+    o += f'<path d="M{cx},{by-24} v-7 h7 v4 h-7" fill="{OCRU}" stroke="{OCRU}" stroke-width="1"/>'
+    return o
+
+
+def m_inn(cx, by):
+    o = f'<rect x="{cx-14}" y="{by-14}" width="28" height="14" fill="{WALL}"/>'
+    o += poly([(cx - 17, by - 13), (cx - 9, by - 24), (cx + 9, by - 24), (cx + 17, by - 13)], fill=ROOF)
+    o += f'<rect x="{cx-4}" y="{by-10}" width="8" height="10" fill="{WOOD}"/>'
+    o += f'<line x1="{cx+14}" y1="{by-12}" x2="{cx+20}" y2="{by-12}" stroke="{WOOD}" stroke-width="2"/><rect x="{cx+16}" y="{by-11}" width="7" height="6" fill="{OCRU}"/>'
+    return o
+
+
+def m_tavern(cx, by):
+    o = f'<rect x="{cx-10}" y="{by-12}" width="20" height="12" fill="{WALL}"/>'
+    o += poly([(cx - 12, by - 11), (cx, by - 21), (cx + 12, by - 11)], fill=ROOF)
+    o += f'<ellipse cx="{cx+16}" cy="{by-6}" rx="5" ry="6" fill="#B9853F" stroke="{WOOD_D}" stroke-width="1.3"/>'
+    return o
+
+
+def m_dance(cx, by):
+    o = f'<ellipse cx="{cx}" cy="{by-3}" rx="15" ry="4" fill="#B9853F"/>'
+    o += f'<line x1="{cx-11}" y1="{by-3}" x2="{cx-11}" y2="{by-15}" stroke="{WOOD}" stroke-width="2"/><line x1="{cx+11}" y1="{by-3}" x2="{cx+11}" y2="{by-15}" stroke="{WOOD}" stroke-width="2"/>'
+    o += poly([(cx - 16, by - 14), (cx, by - 27), (cx + 16, by - 14)], fill=ROOF)
+    return o
+
+
+def m_bowling(cx, by):
+    o = ""
+    for dx in (-8, 0, 8):
+        o += f'<path d="M{cx+dx},{by} q-4,-6 -1.5,-11 q-1.5,-3 0,-6 q1.5,-3 3,0 q1.5,3 0,6 q2.5,5 -1.5,11 Z" fill="{VAR}"/>'
+        o += f'<rect x="{cx+dx-1.5}" y="{by-13}" width="3" height="1.6" fill="{TIGLA}"/>'
+    o += f'<circle cx="{cx+18}" cy="{by-5}" r="5" fill="{VIOLET}"/>'
+    return o
+
+
+def m_fire(cx, by):
+    o = f'<rect x="{cx-12}" y="{by-14}" width="20" height="14" fill="{WALL}"/>'
+    o += f'<rect x="{cx-8}" y="{by-10}" width="12" height="10" fill="{TIGLA}"/>'
+    o += poly([(cx - 14, by - 13), (cx - 2, by - 21), (cx + 10, by - 13)], fill=ROOF)
+    o += f'<rect x="{cx+8}" y="{by-30}" width="7" height="30" fill="{WOOD}"/>'
+    o += poly([(cx + 6, by - 30), (cx + 11.5, by - 37), (cx + 17, by - 30)], fill=ROOF)
+    return o
+
+
+def m_swing(cx, by):
+    o = f'<path d="M{cx-14},{by} L{cx-8},{by-26} L{cx+8},{by-26} L{cx+14},{by}" stroke="{WOOD}" stroke-width="3" fill="none"/>'
+    o += f'<line x1="{cx-3}" y1="{by-26}" x2="{cx-3}" y2="{by-8}" stroke="{CEATA}" stroke-width="1.5"/><line x1="{cx+3}" y1="{by-26}" x2="{cx+3}" y2="{by-8}" stroke="{CEATA}" stroke-width="1.5"/>'
+    o += f'<rect x="{cx-6}" y="{by-9}" width="12" height="3" fill="{OCRU}"/>'
+    return o
+
+
+mon = [(m_church, 2, "biserici"), (m_school, 1, "școală"), (m_inn, 2, "hanuri"), (m_tavern, 1, "cârciumă"),
+       (m_dance, 2, "ringuri de dans"), (m_bowling, 1, "popicărie"), (m_fire, 2, "remize de pompieri"), (m_swing, 1, "leagăn")]
+assert sum(n for _, n, _ in mon) == 12
+my = RY + 68
+ROWH = 35
+for ic, n, lab in mon:
+    for k in range(n):
+        s += f'<g transform="translate({x + 46 + k * 52},{my + 29}) scale(1.12)">{ic(0, 0)}</g>\n'
+    s += text(x + 156, my + 26, str(n), 22, OCRU, "serif", 700)
+    s += text(x + 178, my + 25, lab, 17, VAR, "sans", 500)
+    my += ROWH
+s += f'<line x1="{x+22}" y1="{my+2}" x2="{x+CWS-22}" y2="{my+2}" stroke="{LINE}" stroke-width="1.5"/>\n'
+s += text(x + 156, my + 28, "12", 22, OCRU, "serif", 700)
+s += text(x + 186, my + 27, "în total", 17, VAR, "sans", 600)
+s += text(x + 22, my + 27, "sector din 1990", 14, CEATA, "sans", 400, True)
+assert my + 28 <= RY + RH - 10, ("utilitate", my)
+
+# ---------- 4. bancnota + muzeele complexului
+x = XS[3]
+s += card(x, RY, CWS, RH)
+s += card_head(x, RY, CWS, "PE BANCNOTA DE 10 LEI", OCRU)
+# bancnotă schematică
+nx, ny_, nw, nh = x + 22, RY + 66, 150, 84
+s += f'<rect x="{nx}" y="{ny_}" width="{nw}" height="{nh}" rx="8" fill="#3A2A33" stroke="#C98AA0" stroke-width="2"/>\n'
+s += f'<rect x="{nx+6}" y="{ny_+6}" width="{nw-12}" height="{nh-12}" rx="5" fill="none" stroke="#C98AA0" stroke-width="1" stroke-dasharray="3 3"/>\n'
+s += text(nx + 14, ny_ + 30, "10", 22, "#F2C4D2", "serif", 700)
+s += text(nx + 14, ny_ + 72, "LEI", 12, "#F2C4D2", "sans", 700, extra='letter-spacing="1.5"')
+hx, hb = nx + 98, ny_ + 68
+s += f'<rect x="{hx-28}" y="{hb-22}" width="56" height="22" fill="{WALL}"/>\n'
+s += poly([(hx - 36, hb - 21), (hx - 18, hb - 46), (hx + 18, hb - 46), (hx + 36, hb - 21)], fill=ROOF)
+for px_ in (hx - 22, hx - 6, hx + 10, hx + 24):
+    s += f'<rect x="{px_-1.5}" y="{hb-21}" width="3" height="21" fill="{WOOD}"/>\n'
+s += text(nx + nw / 2, ny_ + nh + 18, "desen schematic", 12, MUTED, "sans", 400, True, anchor="middle")
+o, ty = para(nx + nw + 16, ny_ + 16, "„Casa de pomicultori”: replică a celei mai vechi case din satul Vlădești (Vâlcea), "
+             "achiziționată de muzeu în 2006 (bursa.ro).", 15, CWS - nw - 60, VAR, lh=20)
+s += o
+ty = max(ty, ny_ + nh + 30) + 14
+s += f'<line x1="{x+22}" y1="{ty-14}" x2="{x+CWS-22}" y2="{ty-14}" stroke="{LINE}" stroke-width="1.5"/>\n'
+s += text(x + 22, ty + 12, "Muzeele complexului ASTRA", 19, VAR, "serif", 700)
+s += text(x + 22, ty + 32, "după en.wikipedia", 13, MUTED, "sans", 400, True)
+ty += 60
+for k, (nm, cur) in enumerate([("Muzeul Civilizației Populare Tradiționale – în aer liber", True),
+                               ("Muzeul de Etnografie Universală „Franz Binder”", False),
+                               ("Muzeul Civilizației Transilvane ASTRA", False),
+                               ("Muzeul „Emil Sigerus”", False)]):
+    s += f'<rect x="{x+22}" y="{ty-13}" width="12" height="12" rx="3" fill="{OCRU if cur else PETROL}"/>\n'
+    o, ty = para(x + 44, ty, nm, 15, CWS - 66, VAR if cur else CEATA, "sans", 600 if cur else 400, lh=19)
+    s += o
+    ty += 6
+assert ty - 25 <= RY + RH - 12, ("muzee", ty)
+
+# ================================================================== surse
+src = ("Surse: en.wikipedia (ASTRA National Museum Complex); bursa.ro (reportaj despre Muzeul Astra și casa de pe bancnota de 10 lei); "
+       "exarc.net; sibiu-turism.ro. Desenele sunt schematice.")
+assert measure(src, 14, "sans", 400, True) < 1760
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

@@ -1,0 +1,32 @@
+[
+  {
+    "cod": "L24",
+    "categorie": "Literar",
+    "titlu": "Monologul unui stejar din Dumbrava",
+    "titlu_creativ": "Ghinda pe codiță lungă: un stejar din Dumbrava vorbește",
+    "fisiere": [
+      "03_literar/L24_monologul_stejarului.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Un stejar imaginat din stejăretul de terasă al Pădurii Dumbrava își prezintă vecinii (gorunul, carpenul, teiul, căpriorul, gaița) și povestește, doar cu fapte din surse, istoria pădurii: de la propunerea lui Martin von Seeberg din 1754 până la tramvaiul din 1910, grădina zoologică din 1929 și Muzeul ASTRA.",
+    "status": "realizat",
+    "nota": "Stejarul care vorbește este fictiv, nu corespunde niciunui arbore anume și nu are o vârstă exactă (doar „peste o sută”, ca peste jumătate din arboretele pădurii). Fapte din fapte_verificate.md („Pădurea / Parcul natural Dumbrava Sibiului”, „Grădina Zoologică”, „Muzeul ASTRA”, „Tramvaiul”): stejăret de terasă și speciile vecine, arbuști, brândușe, fauna listată; promenadă din secolul al XVII-lea; 1754 – propunerea lui Martin von Seeberg (prezentată explicit ca propunere: sursele nu spun dacă s-a aplicat); regulamentul din 30 mai 1781; Iosif al II-lea, 1787; Prescriptele regulative 1795–1805; „Stejarul împăratului” (10,3 m circumferință, circa 700 de ani la tăiere, după uscare; originea numelui nu e dată de surse și nu e legată de vizita împăratului); stejarul de peste 600 de ani de la intrarea Grădinii Zoologice (viu, monitorizat anual, tratat din 2017, fotografia de la Durham – agerpres.ro, 2021); tramvaiul la 15 mai 1910; grădina zoologică din 1929 (inginerul Székely, vulpile de la barajul Sadu, primul urs în 1930); ASTRA – moara hidraulică din 1963, deschidere 1967 (alte surse 1963/1964), peste 300 sau peste 400 de construcții; pârâul Valea Aurie sau Trinkbach. Divergențele sunt arătate în text. Detaliile botanice (ghindele stejarului pe codiță lungă, ale gorunului fără codiță; scoarța netedă a carpenului; teiul parfumat la începutul verii) – verificate pe en.wikipedia, cu citate în 03_literar/_fapte_noi.md. Inventate: glasul și amintirile stejarului, cititorul, comparațiile. Corpul textului: aproximativ 875 de cuvinte.",
+    "extras": "Vârsta mea e inventată, ca și mine, și n-aș vrea să te mint tocmai cu inelele.\nAtât spun sursele: că a propus.\nApa nu-și citește numele."
+  },
+  {
+    "cod": "L25",
+    "categorie": "Literar",
+    "titlu": "Jurnal de drumeție: o zi pe munte deasupra Sibiului",
+    "titlu_creativ": "Crucea roșie până în șa: jurnalul unei zile pe munte",
+    "fisiere": [
+      "03_literar/L25_jurnal_drumetie.md"
+    ],
+    "tip": "text",
+    "instrument": "Claude (Anthropic) – text",
+    "descriere": "Andrei, un adolescent inventat, notează oră cu oră o drumeție de la Păltiniș la Șaua Bătrâna, pe crucea roșie: rucsacul pregătit, prima stațiune montană din România, stâna de pe drum, socoteala altitudinilor, norii care îi întorc din drum și regulile de siguranță.",
+    "status": "realizat",
+    "nota": "Narator și însoțitori fictivi (Andrei, Ioana, Luca, tatăl); ziua (o sâmbătă de august), vremea, orele, întâlnirile și gândurile sunt imaginate. Traseul din fapte_verificate.md (muntii-nostri.ro): Păltiniș (telescaun) – izvorul Dorul Clujului – Poiana Găujoara – Șaua Bătrâna (1.863 m), cruce roșie, 5,8 km, 2 h – 2 h 30 min, urcare 499 m, ușor. Stâna cu izvor de pe drum nu apare în fișa de fapte și e declarată detaliu imaginat. Păltiniș: 1894, SKV, prima stațiune montană din România, 1.440 sau 1.442 m și 35 sau 32 km de Sibiu (divergențe arătate), circa 7 °C media anuală, pădure de conifere, Casa Turiștilor (1894), schitul din anii 1930 (hramul „Schimbarea la Față”, ctitor Nicolae Bălan) și mormântul lui Constantin Noica (doar faptele din fișă; „Școala de la Păltiniș” nu e explicată). Vf. Cindrel 2.244 m și izvorul Cibinului; calendarul păstoresc din Mărginime (sibiu-turism.ro). Diferența 420/499 m e semnalată ca întrebare, nu explicată ca fapt. Regulile de siguranță sunt integrate în text (marcaj, echipament, vremea, nu singur, 112 / Salvamont), plus mențiunea „Verificați traseul și vremea înainte de plecare; mergeți însoțiți.” Corpul textului: aproximativ 885 de cuvinte.",
+    "extras": "„Ușor nu înseamnă fără pregătire”, zice Ioana.\nNu știu sigur care dintre vârfurile din zare e el, așa că nu scriu că l-am văzut.\n„Muntele nu pleacă nicăieri. Noi da.”"
+  }
+]

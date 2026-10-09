@@ -1,0 +1,327 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M23</title></head><body>
+<script src="lib.js"></script>
+<script>
+// M23 – Videoclip AI: „Orașul care citește” – cărți care zboară ca păsările peste acoperișurile cu „ochi”.
+// Animație poetică imaginată (desenată în cod); cifrele formate de stol sunt fapte din fișa de fapte ACTIV AI:
+// 1525 (prima tipografie din Transilvania), 1544 (prima carte în limba română de pe actualul teritoriu al României),
+// 1869 (prima bibliotecă publică românească din Transilvania), Biblioteca Brukenthal – circa 300.000 de unități,
+// Biblioteca Județeană ASTRA – 813.551 de documente, cea mai veche carte din 1511.
+// Muzica: vals 3/4, 90 BPM – o măsură = 2 s.
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const L = '#F3EFE6';
+const N = 380;                          // numărul de cărți din stol
+function fade(t, t0, t1, fi = .4, fo = .4) { if (t < t0 || t > t1) return 0; return Math.min(smooth(t0, t0 + fi, t), 1 - smooth(t1 - fo, t1, t)); }
+function fitSize(str, weight, size, maxW, family = 'Inter') { let s = size; ctx.font = `${weight} ${s}px ${family}`; while (ctx.measureText(str).width > maxW && s > 14) { s -= 1; ctx.font = `${weight} ${s}px ${family}`; } return s; }
+function night(t) { return smooth(4, 50, t); }
+
+// ---------------------------------------------------------------- acoperișurile din față (cu „ochi”)
+const FRONT = [
+  { x0: -90, x1: 560, eave: 1010, ridge: 770, wall: '#B6A58C', seed: 1 },
+  { x0: 470, x1: 1090, eave: 985, ridge: 735, wall: '#A9B3A4', seed: 2 },
+  { x0: 1000, x1: 1560, eave: 1015, ridge: 785, wall: '#C4A893', seed: 3 },
+  { x0: 1480, x1: 2010, eave: 990, ridge: 755, wall: '#B9A88F', seed: 4 },
+];
+const EYES = [];
+FRONT.forEach((r, ri) => {
+  const w = r.x1 - r.x0;
+  [[.40, 2, 70], [.74, 3, 84]].forEach(([v, n, ew]) => {
+    const y = r.ridge + (r.eave - r.ridge) * v, inset = (1 - v) * 130 + 120;
+    for (let k = 0; k < n; k++) {
+      const x = r.x0 + inset + (w - 2 * inset) * (n === 1 ? .5 : k / (n - 1));
+      if (x > 40 && x < W - 40) EYES.push({ x, y, w: ew, ri });
+    }
+  });
+});
+function roofLayer(roofC, tileA, wallMix) {
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const b = c.getContext('2d');
+  for (const r of FRONT) {
+    b.fillStyle = mix(r.wall, '#0B1322', wallMix); b.fillRect(r.x0 + 20, r.eave, r.x1 - r.x0 - 40, 200);
+    b.fillStyle = roofC; b.beginPath(); b.moveTo(r.x0, r.eave); b.lineTo(r.x0 + 170, r.ridge); b.lineTo(r.x1 - 170, r.ridge); b.lineTo(r.x1, r.eave); b.closePath(); b.fill();
+    b.save(); b.clip();
+    b.strokeStyle = `rgba(0,0,0,${tileA})`; b.lineWidth = 2;
+    for (let y = r.ridge + 16; y < r.eave; y += 18) { b.beginPath(); b.moveTo(r.x0, y); b.lineTo(r.x1, y); b.stroke(); }
+    const rr = rng(r.seed * 31);
+    for (let y = r.ridge + 16; y < r.eave; y += 18) for (let x = r.x0 + (y % 36 ? 0 : 14); x < r.x1; x += 28) { b.fillStyle = `rgba(0,0,0,${tileA * .5 * rr()})`; b.fillRect(x, y - 16, 2, 16); }
+    const sg = b.createLinearGradient(0, r.ridge, 0, r.eave); sg.addColorStop(0, 'rgba(255,255,255,.07)'); sg.addColorStop(1, 'rgba(0,0,0,.28)'); b.fillStyle = sg; b.fillRect(r.x0, r.ridge, r.x1 - r.x0, r.eave - r.ridge);
+    b.restore();
+    b.fillStyle = mix(roofC, '#000000', .35); b.fillRect(r.x0 + 166, r.ridge - 6, r.x1 - r.x0 - 332, 8);
+    b.fillStyle = 'rgba(0,0,0,.35)'; b.beginPath(); b.moveTo(r.x1 - 170, r.ridge); b.lineTo(r.x1, r.eave); b.lineTo(r.x1 - 60, r.eave); b.closePath(); b.fill();
+  }
+  return c;
+}
+const roofDusk = roofLayer('#8A4A32', .22, .35), roofNight = roofLayer('#3E2620', .3, .7);
+
+// ---------------------------------------------------------------- siluete îndepărtate (turnuri generice)
+const farC = document.createElement('canvas'); farC.width = W; farC.height = H;
+(function () {
+  const b = farC.getContext('2d'); b.fillStyle = '#FFFFFF';
+  const r = rng(17); let x = -20;
+  while (x < W + 40) { const w = 90 + r() * 160, h = 60 + r() * 70; b.fillRect(x, 760 - h, w, h + 300); b.beginPath(); b.moveTo(x - 4, 760 - h); b.lineTo(x + w / 2, 760 - h - w * .7); b.lineTo(x + w + 4, 760 - h); b.fill(); x += w - 6; }
+  // trei turnuri generice (nu reprezintă clădiri anume)
+  for (const [tx, tw, th, sp] of [[330, 70, 300, 200], [1180, 90, 330, 150], [1640, 60, 250, 230]]) {
+    b.fillRect(tx - tw / 2, 760 - th, tw, th + 300);
+    b.beginPath(); b.moveTo(tx - tw / 2 - 6, 760 - th); b.lineTo(tx, 760 - th - sp); b.lineTo(tx + tw / 2 + 6, 760 - th); b.fill();
+    for (const s of [-1, 1]) { b.beginPath(); b.moveTo(tx + s * tw / 2 - 9, 760 - th); b.lineTo(tx + s * tw / 2, 760 - th - sp * .3); b.lineTo(tx + s * tw / 2 + 9, 760 - th); b.fill(); }
+  }
+})();
+function tinted(src, col) {   // desenează silueta (alb pe transparent) într-o culoare dată
+  const c = tinted.c || (tinted.c = document.createElement('canvas')); c.width = W; c.height = H; const b = c.getContext('2d');
+  b.drawImage(src, 0, 0); b.globalCompositeOperation = 'source-in'; b.fillStyle = col; b.fillRect(0, 0, W, H); b.globalCompositeOperation = 'source-over';
+  return c;
+}
+
+// ---------------------------------------------------------------- cerul
+function skyAt(t) {
+  const n = night(t);
+  const top = mix(mix('#3A2E66', '#20254A', smooth(0, .4, n)), '#060B17', smooth(.3, 1, n));
+  const mid = mix('#B0627A', '#14203A', n);
+  const bot = mix('#F2A65A', '#1E2B48', smooth(0, .8, n));
+  const g = ctx.createLinearGradient(0, 0, 0, 900); g.addColorStop(0, top); g.addColorStop(.55, mid); g.addColorStop(1, bot);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  stars(ctx, W, H, .9 * smooth(16, 36, t), 23);
+  // luna răsare
+  const ma = smooth(24, 34, t), my = lerp(330, 210, smooth(24, 60, t));
+  if (ma > 0) {
+    const mx = 1730;
+    const hg = ctx.createRadialGradient(mx, my, 10, mx, my, 170); hg.addColorStop(0, `rgba(243,239,230,${.3 * ma})`); hg.addColorStop(1, 'rgba(243,239,230,0)');
+    ctx.fillStyle = hg; ctx.fillRect(mx - 180, my - 180, 360, 360);
+    ctx.globalAlpha = ma; ctx.fillStyle = '#EDE6D6'; ctx.beginPath(); ctx.arc(mx, my, 36, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+  }
+  return n;
+}
+
+// ---------------------------------------------------------------- formațiile (cifre desenate de stol)
+const FORM = [
+  { s: '1525', a: 12.2, b: 19.7, size: 320 },
+  { s: '1544', a: 20.2, b: 27.7, size: 320 },
+  { s: '1869', a: 28.2, b: 35.7, size: 320 },
+  { s: '300.000', a: 36.2, b: 43.7, size: 270 },
+  { s: '813.551', a: 44.2, b: 51.0, size: 270 },
+];
+const NUM_CY = 330;
+function samplePoints(str, size) {
+  const c = document.createElement('canvas'); c.width = W; c.height = 600; const b = c.getContext('2d');
+  b.font = `700 ${size}px "Noto Serif"`; b.textAlign = 'center'; b.textBaseline = 'middle'; b.fillStyle = '#fff';
+  b.fillText(str, W / 2, 300);
+  const d = b.getImageData(0, 0, W, 600).data;
+  const r = rng(str.length * 97 + size);
+  let step = 13, pts = [];
+  for (; step < 40; step += 1) {
+    pts = [];
+    for (let y = step / 2; y < 600; y += step) for (let x = step / 2; x < W; x += step) {
+      const xx = Math.round(x + (r() - .5) * step * .35), yy = Math.round(y + (r() - .5) * step * .35);
+      if (d[(yy * W + xx) * 4 + 3] > 140) pts.push([xx, yy - 300 + NUM_CY]);
+    }
+    if (pts.length <= N - 40) break;
+  }
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; for (const [x, y] of pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  return { pts, box: [x0, y0, x1, y1], step };
+}
+
+// ---------------------------------------------------------------- cărțile
+const COLS = [['#E2A62B', '#9A6A1F'], ['#0E7C86', '#085A61'], ['#6E56CF', '#4B3A94'], ['#B9583A', '#80391F'], ['#3E63DD', '#2A449C'], ['#D9CBB0', '#9E8F75']];
+const BOOKS = [];
+(function () {
+  const r = rng(1869);
+  for (let i = 0; i < N; i++) {
+    BOOKS.push({
+      ph: r() * Math.PI * 2, rx: 70 + r() * 300, ry: 30 + r() * 130, om: (0.35 + r() * .45) * (r() < .5 ? -1 : 1),
+      nz: r() * 100, z: .75 + r() * .55, col: COLS[Math.floor(r() * COLS.length)], ff: 2.6 + r() * 1.2, fph: r() * 7,
+      eye: Math.floor(r() * 1e6), tl: 6.0 + r() * 5.2, td: r() * .9, orb: r() * Math.PI * 2,
+    });
+  }
+  BOOKS.forEach((bk, i) => { bk.eye = EYES[i % EYES.length]; });
+  BOOKS.sort((a, b) => a.z - b.z);  // cele mai „apropiate” se desenează ultimele
+})();
+function center(t) { return [960 + 520 * Math.sin(.23 * t + .4), 335 + 60 * Math.sin(.41 * t + 1)]; }
+function freePos(bk, t) {
+  const [cx, cy] = center(t);
+  const a = bk.om * t + bk.ph;
+  let x = cx + bk.rx * Math.cos(a) + 18 * Math.sin(t * .9 + bk.nz);
+  let y = cy + bk.ry * Math.sin(a * 1.3 + bk.nz) + 14 * Math.cos(t * 1.1 + bk.nz * 2);
+  if (y < 200) y = 200 - 50 * Math.tanh((200 - y) / 50);
+  return [x, y];
+}
+// pregătește formațiile: punctele țintă și alocarea cărților (sortate după x, ca să nu se încrucișeze)
+const FORMS = [];   // se completează după încărcarea fontului
+function formAt(t) { for (const f of FORMS) if (t > f.a - .1 && t < f.b + .1) return f; return null; }
+
+function bookPos(bk, i, t) {
+  let [x, y] = freePos(bk, t);
+  let m = 0, sc = bk.z;
+  const f = formAt(t);
+  if (f) {
+    m = smooth(f.a, f.a + 1.5, t) * (1 - smooth(f.b - 1.3, f.b, t));
+    if (m > 0) {
+      let tx, ty;
+      const tg = f.target[i];
+      if (tg) { tx = tg[0] + Math.sin(t * 1.7 + i) * 1.5; ty = tg[1] + Math.cos(t * 1.3 + i) * 2.2; }
+      else {
+        const [x0, y0, x1, y1] = f.box, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+        const a = bk.orb + t * .35 * (bk.om > 0 ? 1 : -1);
+        tx = cx + ((x1 - x0) / 2 + 170 + bk.rx * .3) * Math.cos(a); ty = cy + ((y1 - y0) / 2 + 45 + bk.ry * .15) * Math.sin(a); if (ty < 175) ty = 175 - 25 * Math.tanh((175 - ty) / 25);
+      }
+      const e = easeInOut(m);
+      x = lerp(x, tx, e); y = lerp(y, ty, e);
+      if (tg) sc = lerp(bk.z, .74, e);
+    }
+  }
+  // decolarea din „ochi” (6–11 s)
+  const la = smooth(bk.tl, bk.tl + 2.4, t);
+  if (la < 1) { const e = easeInOut(la), lift = Math.sin(e * Math.PI) * 120; x = lerp(bk.eye.x, x, e); y = lerp(bk.eye.y - 6, y, e) - lift * (1 - e) * .0; sc = lerp(.25, sc, smooth(0, .5, la)); }
+  // întoarcerea acasă (52–55 s)
+  const lb = smooth(50.9 + bk.td, 53.1 + bk.td, t);
+  if (lb > 0) { const e = easeInOut(lb); x = lerp(x, bk.eye.x, e); y = lerp(y, bk.eye.y - 6, e); sc = lerp(sc, .2, e); }
+  return { x, y, sc, m, vis: t >= bk.tl && lb < .98 };
+}
+function drawBook(x, y, ang, face, th, sc, col) {
+  const Lb = 26 * sc, w = 20 * sc;
+  const dyA = -w * Math.cos(th) + .5 * w * Math.sin(th), dyB = -w * Math.cos(th) - .5 * w * Math.sin(th), s = .14 * w * Math.sin(th);
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang * face); ctx.scale(face, 1);
+  // coperta din spate
+  ctx.fillStyle = col[1]; ctx.beginPath(); ctx.moveTo(-Lb / 2, 0); ctx.lineTo(Lb / 2, 0); ctx.lineTo(Lb / 2 - s, dyB); ctx.lineTo(-Lb / 2 - s, dyB); ctx.closePath(); ctx.fill();
+  // paginile
+  const dyP = (dyA + dyB) / 2 * .93;
+  ctx.fillStyle = '#F6EFDD'; ctx.beginPath(); ctx.moveTo(-Lb * .46, 0); ctx.lineTo(Lb * .46, 0); ctx.lineTo(Lb * .46, dyP); ctx.lineTo(-Lb * .46, dyP); ctx.closePath(); ctx.fill();
+  if (sc > .5) { ctx.strokeStyle = 'rgba(120,100,70,.45)'; ctx.lineWidth = Math.max(.6, sc * .8); ctx.beginPath(); ctx.moveTo(-Lb * .46, dyP * .55); ctx.lineTo(Lb * .46, dyP * .55); ctx.stroke(); }
+  // coperta din față
+  ctx.fillStyle = col[0]; ctx.beginPath(); ctx.moveTo(-Lb / 2, 0); ctx.lineTo(Lb / 2, 0); ctx.lineTo(Lb / 2 + s, dyA); ctx.lineTo(-Lb / 2 + s, dyA); ctx.closePath(); ctx.fill();
+  if (sc > .5) { ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.beginPath(); ctx.moveTo(-Lb * .3, dyA * .35); ctx.lineTo(Lb * .3, dyA * .35); ctx.lineTo(Lb * .3 + s * .35, dyA * .5); ctx.lineTo(-Lb * .3 + s * .35, dyA * .5); ctx.closePath(); ctx.fill(); }
+  ctx.strokeStyle = col[1]; ctx.lineWidth = Math.max(1, 2 * sc); ctx.beginPath(); ctx.moveTo(-Lb / 2, 0); ctx.lineTo(Lb / 2, 0); ctx.stroke();
+  ctx.restore();
+}
+function drawBooks(t) {
+  BOOKS.forEach((bk, i) => {
+    const p = bookPos(bk, i, t); if (!p.vis) return;
+    const q = bookPos(bk, i, t + .04);
+    const dx = q.x - p.x, dy = q.y - p.y;
+    const fv = freePos(bk, t + .04)[0] - freePos(bk, t)[0];
+    let face = (Math.abs(dx) > .3 ? dx : fv) >= 0 ? 1 : -1;
+    let ang = clamp(Math.atan2(dy, Math.abs(dx) + 1e-3), -.6, .6) * (1 - p.m);
+    const fr = lerp(bk.ff, 1.0, p.m), amp = lerp(.62, .14, p.m), base = lerp(.78, .98, p.m);
+    const th = base + amp * Math.sin(t * fr * Math.PI * 2 + bk.fph);
+    drawBook(p.x, p.y, ang, face, th, p.sc, bk.col);
+  });
+}
+
+// ---------------------------------------------------------------- texte
+const CAPS = [
+  ['1525 – prima tipografie din Transilvania', 'a doua ca vechime de pe actualul teritoriu al României', 'patrimoniu.sibiu.ro („Premiere”) · konferencijos.lnb.lt'],
+  ['1544 – prima carte în limba română de pe actualul teritoriu al României', 'Catehismul, tipărit la Sibiu de Filip Moldoveanul', 'patrimoniu.sibiu.ro („Premiere”) · en.wikipedia (Filip Moldoveanul)'],
+  ['1869 – prima bibliotecă publică românească din Transilvania', 'Biblioteca Asociațiunii (ASTRA), la Sibiu', 'patrimoniu.sibiu.ro („Premiere”) · musikland.sonoro.org'],
+  ['Biblioteca Brukenthal: circa 300.000 de unități', 'manuscrise, incunabule, cărți rare, carte românească veche', 'en.wikipedia (Muzeul Național Brukenthal)'],
+  ['Biblioteca Județeană ASTRA: 813.551 de documente', 'cea mai veche carte din colecție este din 1511', 'musikland.sonoro.org (cele mai recente statistici ale sursei)'],
+];
+function caption(k, a) {
+  if (a <= 0) return;
+  const [l1, l2, src] = CAPS[k];
+  ctx.save(); ctx.globalAlpha = a * .92; ctx.fillStyle = 'rgba(10,16,28,.88)'; roundRect(ctx, 200, 548, 1520, 168, 26); ctx.fill();
+  ctx.globalAlpha = a; ctx.fillStyle = PAL.ocru; ctx.fillRect(200, 572, 7, 120); ctx.restore();
+  serif(ctx, l1, 240, 606, { size: fitSize(l1, 700, 44, 1440, 'Noto Serif'), alpha: a });
+  text(ctx, l2, 240, 650, { size: fitSize(l2, 400, 30, 1440), alpha: a, color: L });
+  text(ctx, 'sursa: ' + src, 240, 692, { size: 21, alpha: a, color: PAL.ceata });
+}
+function pill(str, x, y, o = {}) {
+  ctx.save(); ctx.font = `${o.weight || 600} ${o.size || 24}px Inter`;
+  const w = ctx.measureText(str).width + 40, xx = o.align === 'right' ? x - w : x, h = (o.size || 24) + 22;
+  ctx.globalAlpha = o.alpha == null ? 1 : o.alpha; ctx.fillStyle = o.bg || 'rgba(15,23,32,.85)'; roundRect(ctx, xx, y, w, h, h / 2); ctx.fill(); ctx.restore();
+  text(ctx, str, xx + 20, y + (o.size || 24) + 4, { size: o.size || 24, weight: o.weight || 600, color: o.color || L, alpha: o.alpha });
+}
+function honesty(t, a) {
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a * .94; ctx.fillStyle = 'rgba(15,23,32,.93)'; roundRect(ctx, 150, 160, 1620, 560, 30); ctx.fill();
+  ctx.globalAlpha = a; ctx.fillStyle = PAL.red; ctx.fillRect(150, 200, 8, 80); ctx.restore();
+  serif(ctx, 'Cum a fost făcut acest videoclip', 200, 255, { size: 54, alpha: a });
+  const rows = [
+    ['Imagine:', 'animație AI desenată în cod; cărțile zburătoare și acoperișurile cu „ochi” sunt imaginate, stilizate.'],
+    ['Muzică:', 'temă originală în stil de vals, sintetizată în cod; foșnetul paginilor e sintetizat, nu înregistrat.'],
+    ['Cifre și ani:', 'din fișa de fapte verificate ACTIV AI – patrimoniu.sibiu.ro („Premiere”), konferencijos.lnb.lt, en.wikipedia, musikland.sonoro.org.'],
+  ];
+  let y = 345;
+  rows.forEach(([k, v], i) => {
+    const ai = a * smooth(56.2 + i * .3, 56.8 + i * .3, t);
+    text(ctx, k, 200, y, { size: 30, weight: 700, color: PAL.ocru, alpha: ai });
+    const n = text(ctx, v, 430, y, { size: 30, color: L, alpha: ai, maxW: 1290, lh: 42 });
+    y += n * 42 + 30;
+  });
+}
+
+// ---------------------------------------------------------------- randare
+window.render = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  const n = skyAt(t);
+  // silueta îndepărtată
+  ctx.drawImage(tinted(farC, mix('#5A4A72', '#0E1628', n)), 0, 0);
+  // rândul din mijloc (case cu „ochi” care clipesc; ferestrele se aprind odată cu seara)
+  houses(ctx, { y0: 860, W, x0: -40, seed: 33, wallH: 120, walls: ['#C9B79A', '#B9A88F', '#A9B3A4', '#C4A893'], roofs: ['#7A3F2C', '#8A4A32', '#6E3A2A'], night: .25 + .75 * n, tint: mix('#7A5A78', '#0D1626', n), tintAmt: .45 + .2 * n, t, winC: 'rgba(30,30,40,.6)' });
+  // ceață ușoară între planuri
+  const hz = ctx.createLinearGradient(0, 700, 0, 900); hz.addColorStop(0, 'rgba(0,0,0,0)'); hz.addColorStop(1, rgba(mix('#C9906A', '#101A2E', n), .45)); ctx.fillStyle = hz; ctx.fillRect(0, 700, W, 200);
+  // acoperișurile din față
+  ctx.drawImage(roofDusk, 0, 0); ctx.globalAlpha = n; ctx.drawImage(roofNight, 0, 0); ctx.globalAlpha = 1;
+  // „ochii”: se deschid la 4–6 s, se luminează când pleacă și când se întorc cărțile
+  EYES.forEach((e, i) => {
+    const op = smooth(4 + i * .1, 5.6 + i * .1, t);
+    const glow = clamp(.25 * op + .5 * smooth(6, 9, t) + .3 * n + .4 * smooth(52.5, 55, t));
+    eye(ctx, e.x, e.y, e.w, mix('#9A5638', '#4E2E24', n), { open: Math.max(.04, op), glow });
+  });
+  // umbra discretă a cifrei (ajută citirea formației de cărți)
+  const fm = formAt(t);
+  if (fm) {
+    const g = smooth(fm.a + .8, fm.a + 1.8, t) * (1 - smooth(fm.b - 1.5, fm.b - .7, t));
+    if (g > 0) {
+      ctx.save(); ctx.font = `700 ${fm.size}px "Noto Serif"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(255,214,140,.5)'; ctx.shadowBlur = 40; ctx.fillStyle = `rgba(226,166,43,${.16 * g})`;
+      ctx.fillText(fm.s, W / 2, NUM_CY); ctx.restore();
+    }
+  }
+  // cărțile
+  drawBooks(t);
+
+  // titlul
+  const ta = fade(t, .5, 5.8, .8, .6);
+  if (ta > 0) {
+    serif(ctx, 'Orașul care citește', W / 2, 360, { size: 112, align: 'center', alpha: ta, shadow: 26 });
+    text(ctx, 'cărți care zboară peste acoperișuri · videoclip AI', W / 2, 440, { size: 36, weight: 600, align: 'center', alpha: ta * smooth(1.4, 2.2, t), shadow: 14 });
+  }
+  const sa = fade(t, 6.4, 11.6, .6, .6);
+  if (sa > 0) { ctx.save(); ctx.globalAlpha = sa * .8; ctx.fillStyle = 'rgba(10,16,28,.75)'; roundRect(ctx, 130, 182, 1660, 100, 50); ctx.fill(); ctx.restore(); }
+  if (sa > 0) serif(ctx, 'Când se lasă seara, cărțile își iau zborul din ochii acoperișurilor.', W / 2, 250, { size: fitSize('Când se lasă seara, cărțile își iau zborul din ochii acoperișurilor.', 700, 50, 1580, 'Noto Serif'), align: 'center', alpha: sa, shadow: 18 });
+  // legendele faptelor
+  FORMS.forEach((f, k) => caption(k, fade(t, f.a + 1.1, f.b - .1, .5, .5)));
+  // îndemnul final
+  const ea = fade(t, 52.6, 56.0, .6, .5);
+  if (ea > 0) {
+    ctx.save(); ctx.globalAlpha = ea * .85; ctx.fillStyle = 'rgba(10,16,28,.7)'; roundRect(ctx, 360, 250, 1200, 230, 40); ctx.fill(); ctx.restore();
+    serif(ctx, 'Deschide o carte.', W / 2, 350, { size: 104, align: 'center', alpha: ea, shadow: 24 });
+    text(ctx, 'Orașul care citește începe cu tine.', W / 2, 440, { size: 44, weight: 600, align: 'center', alpha: ea * smooth(53.3, 54.0, t), color: '#F6D58A', shadow: 16 });
+  }
+  honesty(t, smooth(56.0, 56.5, t));
+
+  // antet și subsol
+  ctx.fillStyle = 'rgba(8,12,20,.88)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M23', 60, 36, PAL.red);
+  text(ctx, 'Orașul care citește · cărți care zboară peste acoperișuri', 262, 64, { size: 28, weight: 600 });
+  pill('Animație imaginată · cifre din surse', 1860, 31, { size: 22, align: 'right', bg: PAL.ocru, color: PAL.night, weight: 700 });
+  ctx.fillStyle = 'rgba(8,12,20,.9)'; ctx.fillRect(0, H - 60, W, 60);
+  text(ctx, 'ACTIV AI · Sibiul meu · Artefact-model generat cu AI', 80, H - 22, { size: 22, color: PAL.ceata });
+  text(ctx, 'M23 · #SibiulMeu', W - 80, H - 22, { size: 22, color: PAL.ocru, align: 'right', weight: 600 });
+  const fb = 1 - smooth(0, .6, t); if (fb > 0) { ctx.fillStyle = `rgba(0,0,0,${fb})`; ctx.fillRect(0, 0, W, H); }
+};
+Promise.all([document.fonts.load('700 40px "Noto Serif"'), document.fonts.load('600 20px Inter'), document.fonts.load('700 20px Inter'), document.fonts.load('400 20px Inter')]).then(() => {
+  // formațiile se calculează după încărcarea fontului (cifrele sunt eșantionate din Noto Serif)
+  FORMS.length = 0;
+  FORM.forEach(f => {
+    const sp = samplePoints(f.s, f.size);
+    const pts = sp.pts.slice().sort((p, q) => p[0] - q[0]);
+    const tm = f.a + .7;
+    const order = BOOKS.map((bk, i) => [freePos(bk, tm)[0], i]).sort((p, q) => p[0] - q[0]);
+    const target = new Array(N), M = pts.length, pick = new Set();
+    for (let k = 0; k < M; k++) pick.add(Math.floor((k + .5) * N / M));
+    let j = 0;
+    order.forEach(([, i], rank) => { target[i] = pick.has(rank) ? pts[j++] : null; });
+    FORMS.push(Object.assign({}, f, { target, box: sp.box, step: sp.step, M }));
+  });
+  window.FORM_INFO = FORMS.map(f => [f.s, f.M, f.step]);
+  window.READY = true;
+});
+</script></body></html>

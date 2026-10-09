@@ -1,0 +1,460 @@
+# -*- coding: utf-8 -*-
+"""S22 – Traseul unui festival imaginar prin oraș: hartă ilustrată AI (Calupul 6).
+Rulat din /home/claude/expo/_tools/svg. Geometria centrului istoric: sibiu_map.py (decupaj mărit al centrului).
+Festivalul („Festivalul Lucarnelor Curioase”) și spectacolele sunt INVENTATE și declarate; locurile și faptele despre
+ele sunt reale (fișa de fapte). Pozițiile opririlor sunt orientative."""
+import math
+from lib import *
+import sibiu_map as SM
+from s13 import Boxes, G, halo, rich, rich_width, INK, INK2, OCRU_D
+from s16 import place, L, hits, check, layout_block, add_curve, curve_pts, along
+from s18 import C_SUS, C_JOS
+from s21 import ic_music, ic_theatre
+
+OUT = "/home/claude/expo/c6/05_spatial/S22_traseul_festivalului.svg"
+
+VIO_D = "#4B3A99"; VIO_L = "#B9A7F5"; IRON = "#3E4A57"; BRICK = "#A8573A"; GLOW = "#F6D77A"
+
+
+# ---------------- pictogramele spectacolelor imaginare (centrate în 0,0, cutie aprox. ±28) ----------------
+def ic_lantern():
+    """două felinare de hârtie pe o sfoară"""
+    s = f'<path d="M-28,-22 Q0,-12 28,-22" stroke="{INK2}" stroke-width="1.6" fill="none"/>'
+    for (cx, cy, col) in [(-12, -2, TIGLA), (12, 2, OCRU)]:
+        top = cy - 14
+        s += f'<path d="M{cx},{top-6} V{top}" stroke="{INK2}" stroke-width="1.4"/>'
+        s += f'<rect x="{cx-5}" y="{top-2}" width="10" height="4" rx="1" fill="{INK2}"/>'
+        s += f'<ellipse cx="{cx}" cy="{cy}" rx="10.5" ry="13" fill="{col}" stroke="{INK}" stroke-width="1.5"/>'
+        s += f'<ellipse cx="{cx}" cy="{cy}" rx="4.5" ry="7" fill="{GLOW}" opacity="0.85"/>'
+        s += (f'<path d="M{cx-5},{cy-12} Q{cx-9},{cy} {cx-5},{cy+12} M{cx+5},{cy-12} Q{cx+9},{cy} {cx+5},{cy+12}" '
+              f'stroke="{INK}" stroke-width="1" fill="none" opacity="0.6"/>')
+        s += f'<rect x="{cx-4}" y="{cy+12}" width="8" height="3" rx="1" fill="{INK2}"/>'
+        s += f'<path d="M{cx},{cy+15} V{cy+22}" stroke="{TIGLA}" stroke-width="1.6"/>'
+    return s
+
+
+def ic_bells():
+    """clopote de hârtie, pliate"""
+    s = ""
+    for (cx, cy, sc) in [(-9, -2, 1.0), (11, 4, 0.82)]:
+        s += f'<g transform="translate({cx},{cy}) scale({sc})">'
+        s += f'<path d="M0,-22 V-17" stroke="{INK2}" stroke-width="1.6"/>'
+        s += (f'<path d="M-15,12 Q-15,-17 0,-17 Q15,-17 15,12 L19,16 H-19 Z" fill="#FBF7EE" stroke="{INK}" '
+              f'stroke-width="1.6" stroke-linejoin="round"/>')
+        s += f'<path d="M-7,-14 L-9,15 M0,-17 V16 M7,-14 L9,15" stroke="{VIOLET}" stroke-width="1.1" stroke-dasharray="3 2"/>'
+        s += f'<circle cx="0" cy="20" r="3.4" fill="{OCRU}" stroke="{INK}" stroke-width="1"/>'
+        s += "</g>"
+    return s
+
+
+def ic_bubble():
+    """bulă de dialog cu bifă: „povești adevărate”"""
+    s = (f'<path d="M-25,-20 H25 Q28,-20 28,-17 V7 Q28,10 25,10 H-4 L-14,21 L-12,10 H-25 Q-28,10 -28,7 V-17 '
+         f'Q-28,-20 -25,-20 Z" fill="#FBF7EE" stroke="{INK}" stroke-width="1.8" stroke-linejoin="round"/>')
+    s += f'<path d="M-12,-6 L-3,3 L13,-12" stroke="{PETROL}" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+    return s
+
+
+def ic_puppet():
+    """marionetă pe sfori (teatru de păpuși)"""
+    s = f'<path d="M-20,-25 H20 M0,-29 V-19" stroke="{WOOD}" stroke-width="4" stroke-linecap="round"/>'
+    s += f'<path d="M-18,-24 L-14,2 M18,-24 L14,2 M0,-20 V-13 M-8,-24 L-6,20 M8,-24 L6,20" stroke="{INK2}" stroke-width="0.9"/>'
+    s += f'<circle cx="0" cy="-8" r="5.5" fill="#E8C39E" stroke="{INK}" stroke-width="1.2"/>'
+    s += f'<path d="M-6,-11 Q0,-19 6,-11 Z" fill="{PETROL}" stroke="{INK}" stroke-width="1"/>'
+    s += f'<path d="M-8,14 L-6,-2 H6 L8,14 Z" fill="{TIGLA}" stroke="{INK}" stroke-width="1.2" stroke-linejoin="round"/>'
+    s += f'<path d="M-6,0 L-14,2 M6,0 L14,2" stroke="{INK}" stroke-width="2.2" stroke-linecap="round"/>'
+    s += f'<path d="M-4,14 L-6,21 M4,14 L6,21" stroke="{INK}" stroke-width="2.2" stroke-linecap="round"/>'
+    s += f'<rect x="10" y="-2" width="7" height="9" rx="1.5" fill="#CFE3E6" stroke="{INK}" stroke-width="1"/>'
+    return s
+
+
+WOOD = "#8B5E3C"
+
+
+def ic_eye():
+    """lucarnă-„ochi” care se trezește: acoperiș, pleoapă, pupilă și raze"""
+    s = f'<polygon points="-27,16 0,-13 27,16" fill="{TIGLA}" stroke="{INK}" stroke-width="1.6" stroke-linejoin="round"/>'
+    for yy in (2, 9):
+        hw = 27 * (yy + 13) / 29 - 3
+        s += f'<path d="M{-hw:.1f},{yy} H{hw:.1f}" stroke="#7E3520" stroke-width="1.1"/>'
+    s += f'<path d="M-13,10 Q0,-6 13,10 Z" fill="#FBF7EE" stroke="{INK}" stroke-width="1.5" stroke-linejoin="round"/>'
+    s += f'<path d="M-15,9 Q0,-9 15,9" stroke="{INK}" stroke-width="2.6" fill="none"/>'
+    s += f'<circle cx="0" cy="5" r="3.6" fill="{INK}"/><circle cx="1" cy="4" r="1" fill="#FFFFFF"/>'
+    for a in (-150, -120, -90, -60, -30):
+        r1, r2 = 19, 27
+        ca, sa = math.cos(math.radians(a)), math.sin(math.radians(a))
+        s += (f'<path d="M{r1*ca:.1f},{-6+r1*sa:.1f} L{r2*ca:.1f},{-6+r2*sa:.1f}" stroke="{OCRU}" stroke-width="2.6" '
+              f'stroke-linecap="round"/>')
+    return s
+
+
+def ic_shadow():
+    """teatru de umbre: ecran luminat cu trei turnuri"""
+    s = f'<rect x="-27" y="-20" width="54" height="36" rx="3" fill="{GLOW}" stroke="{WOOD}" stroke-width="3"/>'
+    for (cx, h) in [(-14, 20), (0, 26), (14, 18)]:
+        s += f'<rect x="{cx-4.5}" y="{14-h+8}" width="9" height="{h-8}" fill="{INK}"/>'
+        s += f'<polygon points="{cx-6},{14-h+8} {cx},{14-h} {cx+6},{14-h+8}" fill="{INK}"/>'
+    s += f'<path d="M-22,16 V24 M22,16 V24" stroke="{WOOD}" stroke-width="3" stroke-linecap="round"/>'
+    return s
+
+
+def ic_notes():
+    return ic_music(VIOLET)
+
+
+ICONS = {"lantern": ic_lantern, "bells": ic_bells, "bubble": ic_bubble, "puppet": ic_puppet, "eye": ic_eye,
+         "shadow": ic_shadow, "notes": ic_notes}
+
+
+def medallion(x, y, kind, r=27, num=None):
+    s = (f'<g filter="url(#shs)"><circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="#FBF7EE" stroke="{VIOLET}" '
+         f'stroke-width="3" stroke-dasharray="7 4"/></g>')
+    s += G(x, y, (r - 4) / 29, ICONS[kind](), filt=False)
+    if num is not None:
+        bx, by = x + r * 0.74, y - r * 0.74
+        s += (f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="10" fill="{VIO_D}" stroke="{VAR}" stroke-width="1.8"/>'
+              + text(bx, by + 4.6, str(num), 13, VAR, "sans", 700, anchor="middle"))
+    return s + "\n"
+
+
+def fpin(x, y, n, col=VIOLET, r=15):
+    """ac de hartă cu număr; vârful în (x, y). Returnează (svg, bbox)."""
+    cy = y - 31
+    d = (f"M{x:.1f},{y:.1f} C{x-5:.1f},{y-9:.1f} {x-r:.1f},{cy+11:.1f} {x-r:.1f},{cy:.1f} "
+         f"A{r},{r} 0 1 1 {x+r:.1f},{cy:.1f} C{x+r:.1f},{cy+11:.1f} {x+5:.1f},{y-9:.1f} {x:.1f},{y:.1f} Z")
+    s = f'<ellipse cx="{x:.1f}" cy="{y+1:.1f}" rx="7" ry="2.4" fill="#000" opacity="0.25"/>'
+    s += f'<g filter="url(#shs)"><path d="{d}" fill="{col}" stroke="{VAR}" stroke-width="2.5"/></g>'
+    s += text(x, cy + 6.5, str(n), 18, VAR, "sans", 700, anchor="middle")
+    return s + "\n", (x - r - 2, cy - r - 2, x + r + 2, y + 3)
+
+
+def bridge(x, y):
+    """Podul Minciunilor, desenat din lateral: pod de fontă cu arc și balustradă; (x, y) = mijlocul tablierului"""
+    w = 34
+    s = f'<path d="M{x-w-8:.1f},{y+18:.1f} H{x+w+8:.1f}" stroke="#B9AE96" stroke-width="10" stroke-linecap="round"/>'
+    s += f'<rect x="{x-w-6:.1f}" y="{y-2:.1f}" width="8" height="22" fill="#C9BBA0" stroke="{INK2}" stroke-width="1.2"/>'
+    s += f'<rect x="{x+w-2:.1f}" y="{y-2:.1f}" width="8" height="22" fill="#C9BBA0" stroke="{INK2}" stroke-width="1.2"/>'
+    s += f'<path d="M{x-w:.1f},{y+4:.1f} Q{x:.1f},{y+24:.1f} {x+w:.1f},{y+4:.1f}" stroke="{IRON}" stroke-width="3.4" fill="none"/>'
+    for i in range(-4, 5):
+        xx = x + i * 7.2
+        yb = y + 4 + 20 * (1 - (i / 4.7) ** 2) * 0.9
+        s += f'<path d="M{xx:.1f},{y+2:.1f} V{yb:.1f}" stroke="{IRON}" stroke-width="1.2"/>'
+    s += f'<rect x="{x-w:.1f}" y="{y-2:.1f}" width="{2*w}" height="5" fill="{IRON}"/>'
+    s += f'<path d="M{x-w:.1f},{y-13:.1f} H{x+w:.1f}" stroke="{IRON}" stroke-width="2.4"/>'
+    for i in range(-5, 6):
+        s += f'<path d="M{x+i*6.4:.1f},{y-13:.1f} V{y-2:.1f}" stroke="{IRON}" stroke-width="1.2"/>'
+    s += (f'<rect x="{x-11:.1f}" y="{y-12:.1f}" width="22" height="9" rx="1.5" fill="{IRON}"/>'
+          + text(x, y - 4.6, "1859", 8.5, VAR, "sans", 700, anchor="middle"))
+    return s + "\n", (x - w - 8, y - 15, x + w + 8, y + 24)
+
+
+def stair_tower(x, y, sc=1.0):
+    """Turnul Scărilor: construcție masivă de cărămidă, un etaj, pasaj boltit, acoperiș înalt; (x, y) = baza"""
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc})" filter="url(#shs)">'
+    s += f'<rect x="-15" y="-32" width="30" height="32" fill="{BRICK}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<path d="M-15,-22 H15 M-15,-12 H15" stroke="#7E3A24" stroke-width="0.9"/>'
+    s += f'<path d="M-7,0 V-11 A7,7 0 0 1 7,-11 V0 Z" fill="{INK}"/>'
+    s += f'<rect x="-4" y="-28" width="8" height="7" fill="{INK2}"/>'
+    s += f'<polygon points="-19,-32 0,-58 19,-32" fill="{TIGLA}" stroke="{INK}" stroke-width="1.5" stroke-linejoin="round"/>'
+    return s + "</g>\n", (x - 19 * sc, y - 58 * sc, x + 19 * sc, y + 2)
+
+
+def thalia(x, y, sc=1.0):
+    """Sala Thalia în fostul bastion (Turnul Gros): corp rotunjit, ferestre asimetrice; (x, y) = baza"""
+    s = f'<g transform="translate({x:.1f},{y:.1f}) scale({sc})" filter="url(#shs)">'
+    s += f'<path d="M-30,0 V-24 A30,10 0 0 1 30,-24 V0 A30,8 0 0 1 -30,0 Z" fill="{ZID}" stroke="{INK}" stroke-width="1.6"/>'
+    s += f'<path d="M-33,-23 Q0,-52 33,-23 Q0,-33 -33,-23 Z" fill="{TIGLA}" stroke="{INK}" stroke-width="1.5" stroke-linejoin="round"/>'
+    for (wx, wy, ww, wh) in [(-21, -16, 4, 7), (-9, -21, 4, 6), (3, -12, 5, 7), (15, -19, 4, 6), (22, -9, 3, 6), (-15, -6, 3, 5)]:
+        s += f'<rect x="{wx}" y="{wy}" width="{ww}" height="{wh}" rx="1" fill="{INK2}"/>'
+    s += f'<path d="M-6,0 V-8 A6,6 0 0 1 6,-8 V0" fill="{VIOLET}" opacity="0.85"/>'
+    return s + "</g>\n", (x - 33 * sc, y - 44 * sc, x + 33 * sc, y + 8 * sc)
+
+
+def pill(x, y, label, fill, tcol, size=11):
+    w = measure(label, size, "sans", 700, letter_spacing=1.2) + 14
+    s = f'<rect x="{x:.1f}" y="{y-size-3:.1f}" width="{w:.1f}" height="{size+8}" rx="{(size+8)/2:.1f}" fill="{fill}"/>'
+    s += text(x + w / 2, y + 0.5, label, size, tcol, "sans", 700, anchor="middle", extra='letter-spacing="1.2"')
+    return s, w
+
+
+def para_after(x, y, first_offset, txt, size, maxw, fill, lh, italic=False, weight=400):
+    """paragraf al cărui prim rând începe după o etichetă (first_offset); returnează (svg, nr_rânduri)"""
+    words = txt.split()
+    lines, cur, first = [], "", True
+    for wd in words:
+        t = (cur + " " + wd).strip()
+        lim = maxw - (first_offset if first else 0)
+        if measure(t, size, "sans", weight, italic) <= lim or not cur:
+            cur = t
+        else:
+            lines.append(cur); cur = wd; first = False
+    if cur:
+        lines.append(cur)
+    out = ""
+    for i, ln in enumerate(lines):
+        out += text(x + (first_offset if i == 0 else 0), y + i * lh, ln, size, fill, "sans", weight, italic)
+    return out, len(lines)
+
+
+# ---------------- opririle ----------------
+# n, nume pe hartă, nume în card, sursa, spectacol (titlu, descriere), fapt real, pictogramă
+STOPS = [
+    (1, "Turnul Scărilor", "Turnul Scărilor · Pasajul Scărilor", "patrimoniu.sibiu.ro",
+     ("„Urcarea felinarelor”", "paradă cu felinare de hârtie pe scări"),
+     "Turnul Scărilor (sec. al XIII-lea, refăcut în 1542) – singura dintre cele trei porți ale primei incinte "
+     "care s-a păstrat; prin el se ajunge la scările dintre Orașul de Jos și Orașul de Sus.", "lantern"),
+    (2, "Piața Huet", "Piața Huet", "patrimoniu.sibiu.ro",
+     ("„Concert pentru clopote de hârtie”", "un cor în jurul bisericii"),
+     "Prima incintă a orașului (1191–1224) a fost ridicată în jurul Bisericii Sf. Maria – locul de azi al Pieței Huet.",
+     "bells"),
+    (3, "Podul Minciunilor", "Podul Minciunilor", "patrimoniu.sibiu.ro; fișa de fapte",
+     ("„Concursul de povești adevărate”", "aici nu minte nimeni, ca să țină podul"),
+     "Terminat în 1859, inaugurat la 17 decembrie 1860 – primul pod din fontă din România. Legenda spune că se "
+     "prăbușește dacă cineva minte pe el.", "bubble"),
+    (4, "Piața Mică", "Piața Mică", "sibiu-turism.ro; mesageruldesibiu.ro",
+     ("„Farmacistul de mucava”", "teatru de păpuși despre leacuri vechi"),
+     "Aici, la nr. 26, Muzeul de Istorie a Farmaciei s-a deschis în 1972, în fosta farmacie „La Ursul Negru”.",
+     "puppet"),
+    (5, "Piața Mare", "Piața Mare", "patrimoniu.sibiu.ro; en.wikipedia",
+     ("„Trezirea lucarnelor”", "lumini în „ochii” acoperișurilor, pe scena mare"),
+     "În piață se află Palatul Brukenthal: muzeul s-a deschis oficial în 1817 – primul muzeu din România.", "eye"),
+    (6, "Strada Cetății", "Strada Cetății", "patrimoniu.sibiu.ro",
+     ("„Trei turnuri, trei povești”", "teatru de umbre pe zidul cetății"),
+     "Aici s-au păstrat trei turnuri ale zidului: al Archebuzierilor (1357–1366), al Olarilor și al Dulgherilor.",
+     "shadow"),
+    (7, "Sala Thalia", "Sala Thalia", "en.wikipedia (Thalia Hall); tnrs.ro",
+     ("„Uvertură pentru 482 de scaune”", "concertul de final"),
+     "Prima clădire de teatru din țară, ridicată în 1787–1788 de Martin Hochmeister; din 2004, sediul Filarmonicii. "
+     "Are 482 de locuri.", "notes"),
+]
+
+
+def main():
+    B = Boxes()
+    s = frame_head("SPAȚIAL · S22", PETROL, "Traseul unui festival imaginar prin oraș",
+                   "hartă ilustrată AI · festival și spectacole inventate, locuri reale", title_size=58)
+
+    MX, MY, MW, MH = 80, 230, 1000, 770
+    BOUNDS = (MX + 8, MY + 8, MX + MW - 8, MY + MH - 8)
+    k = 1.44
+    P = SM.mk(MX - 292 * k, MY - 150 * k, k)
+    s += f'<clipPath id="mclip"><rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22"/></clipPath>\n'
+    body = f'<g clip-path="url(#mclip)">\n<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="{PARCH}" filter="url(#paper)"/>\n'
+    body += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" fill="#E6DCC6" opacity="0.3"/>\n'
+    body += SM.wall(P, SM.IV, "#9C97C2", fill_op=0.08, w=9)
+    body += SM.wall(P, SM.III, "#6FA3A8", fill_op=0.10, w=9)
+    body += SM.ghost_wall(P, SM.II, color=TIGLA, w=2.5)
+    body += SM.ghost_wall(P, SM.I_, color="#C99A2E", w=2.5)
+
+    # ---------------- repere reale ----------------
+    # pătratele piețelor sunt fundal: nu le înregistrăm ca obstacole (etichetele pot sta pe ele)
+    ctx = ""
+    ctx += SM.square(P, k, SM.P_MARE, "", size=19)
+    ctx += SM.square(P, k, SM.P_MICA, "", size=16)
+    ctx += SM.church(P, k * 0.66, *SM.HUET)
+    hx, hy = P(*SM.HUET)
+    B.add("Huet:icon", hx - 26, hy - 62, hx + 26, hy + 28)
+    for kk, (tx, ty) in {"tDulg": SM.T_DULG, "tOlar": SM.T_OLAR, "tArch": SM.T_ARCH}.items():
+        X, Y = P(tx, ty)
+        ctx += SM.tower_icon(X, Y, sc=0.95)
+        B.add(kk + ":icon", X - 14, Y - 25, X + 14, Y + 12)
+    # Pasajul Scărilor: trepte de la Turnul Scărilor spre Orașul de Jos
+    a0 = P(342, 240); a1 = P(320, 174)
+    ang = math.atan2(a1[1] - a0[1], a1[0] - a0[0]); nx_, ny_ = -math.sin(ang), math.cos(ang)
+    ctx += f'<path d="M{a0[0]:.1f},{a0[1]:.1f} L{a1[0]:.1f},{a1[1]:.1f}" stroke="#D8C9A8" stroke-width="20" stroke-linecap="round"/>'
+    for i in range(13):
+        t = i / 12
+        px, py = a0[0] + (a1[0] - a0[0]) * t, a0[1] + (a1[1] - a0[1]) * t
+        ctx += f'<line x1="{px-9*nx_:.1f}" y1="{py-9*ny_:.1f}" x2="{px+9*nx_:.1f}" y2="{py+9*ny_:.1f}" stroke="{INK2}" stroke-width="1.5"/>'
+    B.add("Scari:icon", min(a0[0], a1[0]) - 10, a1[1] - 8, max(a0[0], a1[0]) + 10, a0[1])
+    sx_, sy_ = P(*SM.T_SCARI)
+    tsb = (sx_, sy_ + 14)
+    tower_svg, bb = stair_tower(*tsb, 0.95)
+    B.add("TScari:icon", *bb)
+    # Podul Minciunilor (între Piața Huet și Piața Mică – poziție orientativă)
+    bxp, byp = P(470, 338)
+    svg, bb = bridge(bxp, byp)
+    ctx += svg
+    B.add("Pod:icon", *bb)
+    # Sala Thalia (zona Turnului Gros)
+    thx, thy = P(900, 572)
+    svg, bb = thalia(thx, thy, 1.0)
+    ctx += svg
+    B.add("Thal:icon", *bb)
+    pmx, pmy = P(SM.P_MICA[0] + SM.P_MICA[2] / 2, SM.P_MICA[1] + SM.P_MICA[3] / 2)
+    pMx, pMy = P(SM.P_MARE[0] + SM.P_MARE[2] / 2, SM.P_MARE[1] + SM.P_MARE[3] / 2)
+    s6x, s6y = P(935, 452)
+
+    # ---------------- traseul imaginar (puncte pe ecran) ----------------
+    rpts = [a1, a0, (tsb[0], tsb[1] - 6), (tsb[0] + 40, tsb[1] + 26), (hx + 34, hy + 8), (bxp - 46, byp - 4),
+            (bxp, byp - 4), (bxp + 46, byp - 10), (pmx - 18, pmy + 10), (pmx, pmy), (pmx + 50, pmy + 56),
+            (pMx - 50, pMy - 44), (pMx, pMy), (pMx + 110, pMy + 22), (s6x - 160, s6y - 6), (s6x, s6y),
+            (s6x + 2, s6y + 60), (thx + 6, thy - 70), (thx, thy - 44)]
+    rd = smooth_path(rpts, closed=False, tension=0.5)
+    route = (f'<path d="{rd}" fill="none" stroke="#FBF7EE" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>\n'
+             f'<path d="{rd}" fill="none" stroke="{VIOLET}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="13 8"/>\n')
+    cv = curve_pts(rpts, 0.5, 24)
+    arrows = ""
+    for f in (0.08, 0.36, 0.5, 0.66, 0.82):
+        (ax_, ay_), an = along(cv, f)
+        ca, sa = math.cos(an), math.sin(an)
+        tip = (ax_ + ca * 9, ay_ + sa * 9)
+        arrows += poly([tip, (ax_ - ca * 5 - sa * 8, ay_ - sa * 5 + ca * 8), (ax_ - ca * 5 + sa * 8, ay_ - sa * 5 - ca * 8)],
+                       fill=VIO_D, stroke="#FBF7EE", stroke_width=1.5)
+    route += arrows
+    add_curve(B, "route", cv, step=8, r=4)
+    st = a1
+
+    # ---------------- opririle: ace numerotate + medalioane ----------------
+    pins = ""
+    meds = ""
+    PIN = {1: (tsb[0] + 37, tsb[1] - 16), 2: (hx + 44, hy - 18), 3: (bxp, byp - 15), 4: (pmx, pmy), 5: (pMx, pMy),
+           6: (s6x, s6y), 7: (thx, thy - 44)}
+    for n, *_rest in STOPS:
+        x, y = PIN[n]
+        svg, bb = fpin(x, y, n)
+        pins += svg
+        B.add(f"pin{n}:icon", *bb)
+    MEDC = {
+        1: [(66, -78), (76, -60), (60, -96)],
+        2: [(-60, 96), (-64, 104), (-70, 90)],
+        3: [(-6, 112), (10, 110), (-30, 112)],
+        4: [(0, -116), (24, -112), (-24, -112)],
+        5: [(-80, 14), (-80, 22), (-84, 30)],
+        6: [(-74, -64), (-84, -56), (-60, -80)],
+        7: [(-96, -8), (-96, 4), (-96, -20)],
+    }
+    for n, *_rest in STOPS:
+        x, y = PIN[n]
+        chosen = None
+        for dx, dy in MEDC[n]:
+            box = (x + dx - 31, y + dy - 41, x + dx + 41, y + dy + 31)
+            inside = BOUNDS[0] <= box[0] and BOUNDS[1] <= box[1] and box[2] <= BOUNDS[2] and box[3] <= BOUNDS[3]
+            if inside and not hits(B, box):
+                chosen = (dx, dy); break
+        if chosen is None:
+            chosen = MEDC[n][0]
+            print("  ! medalion fără loc liber:", n, hits(B, (x + chosen[0] - 31, y + chosen[1] - 31, x + chosen[0] + 31, y + chosen[1] + 31)))
+        mx, my = x + chosen[0], y + chosen[1]
+        meds += medallion(mx, my, STOPS[n - 1][6], num=n)
+        B.add(f"med{n}:icon", mx - 29, my - 39, mx + 39, my + 29)
+
+    # ---------------- cartușul festivalului ----------------
+    BX, BY, BW, BH = MX + 18, MY + MH - 172, 420, 154
+    ban = (f'<g filter="url(#sh)"><rect x="{BX}" y="{BY}" width="{BW}" height="{BH}" rx="16" fill="#FBF7EE" '
+           f'stroke="{VIOLET}" stroke-width="2.5"/></g>')
+    ban += f'<rect x="{BX+6}" y="{BY+6}" width="{BW-12}" height="{BH-12}" rx="12" fill="none" stroke="{VIOLET}" stroke-width="1" stroke-dasharray="5 4"/>'
+    ban += G(BX + 52, BY + 52, 1.25, ic_eye(), filt=False)
+    ban += text(BX + 98, BY + 36, "FESTIVALUL", 14, VIO_D, "sans", 700, extra='letter-spacing="3"')
+    ban += text(BX + 98, BY + 66, "Lucarnelor Curioase", 27, INK, "serif", 700)
+    assert BX + 98 + measure("Lucarnelor Curioase", 27, "serif", 700) <= BX + BW - 12
+    ban += text(BX + 98, BY + 88, "festival imaginar · ediția zero", 14, VIO_D, "sans", 600, True)
+    assert BX + 98 + measure("festival imaginar · ediția zero", 14, "sans", 600, True) <= BX + BW - 12
+    p, _ = para(BX + 22, BY + 114, "Inventat de AI: nu e FITS și nici alt festival real. Spectacolele sunt inventate; locurile și faptele sunt reale.",
+                13.5, BW - 40, INK2, lh=17)
+    ban += p
+    B.add("banner", BX, BY, BX + BW, BY + BH)
+
+    # mini-legendă (sus, dreapta)
+    LX, LY, LW, LH = MX + MW - 318, MY + 16, 302, 112
+    leg = (f'<rect x="{LX}" y="{LY}" width="{LW}" height="{LH}" rx="12" fill="#FBF7EE" fill-opacity="0.95" '
+           f'stroke="#C9B48E" stroke-width="1.5"/>')
+    svg, _ = fpin(LX + 28, LY + 42, 1, r=11)
+    leg += svg.replace('font-size="18"', 'font-size="13"').replace(f'y="{LY+42-31+6.5:.1f}"', f'y="{LY+42-31+4.6:.1f}"')
+    leg += text(LX + 54, LY + 30, "oprire a festivalului (1–7)", 15, INK, "sans", 600)
+    leg += (f'<path d="M{LX+12},{LY+62} H{LX+44}" stroke="#FBF7EE" stroke-width="10" stroke-linecap="round"/>'
+            f'<path d="M{LX+12},{LY+62} H{LX+44}" stroke="{VIOLET}" stroke-width="4.5" stroke-dasharray="9 5"/>')
+    leg += text(LX + 54, LY + 67, "traseul, pe jos (imaginar)", 15, INK, "sans", 600)
+    leg += (f'<circle cx="{LX+28}" cy="{LY+93}" r="11" fill="#FBF7EE" stroke="{VIOLET}" stroke-width="2.2" stroke-dasharray="4 3"/>')
+    leg += text(LX + 54, LY + 98, "spectacol imaginar", 15, INK, "sans", 600)
+    assert LX + 54 + measure("oprire a festivalului (1–7)", 15, "sans", 600) <= LX + LW - 8
+    B.add("legend", LX, LY, LX + LW, LY + LH)
+
+    # busolă și mențiune
+    CX, CY = MX + 62, MY + MH - 236
+    comp = SM.compass(CX, CY, r=24)
+    B.add("compass", CX - 44, CY - 46, CX + 44, CY + 46)
+    note = "Festival și spectacole imaginare · hartă schematică, poziții orientative"
+    nt = halo(MX + MW - 20, MY + MH - 20, note, 16, INK2, 400, True, "end", hw=5)
+    B.text("note", MX + MW - 20, MY + MH - 20, measure(note, 16, "sans", 400, True), 16, "end")
+
+    # ---------------- etichete ----------------
+    labels = ""
+
+    def put(name, x, y, lines, cands, **kw):
+        nonlocal labels
+        svg, p_ = place(B, name, x, y, lines, cands, BOUNDS, **kw)
+        labels += svg
+        return p_
+
+    def NM(t):
+        return L(t, 16, INK, 700)
+
+    lab_c = {
+        1: [(20, -26, "start"), (20, -38, "start"), (-20, -60, "end")],
+        2: [(20, -26, "start"), (20, -12, "start"), (-20, -40, "end")],
+        3: [(0, 56, "middle"), (6, 60, "middle"), (-50, 52, "end")],
+        4: [(20, -28, "start"), (20, -38, "start"), (0, 26, "middle")],
+        5: [(0, 26, "middle"), (0, 34, "middle"), (24, -30, "start")],
+        6: [(-18, 26, "end"), (-22, 24, "end"), (0, 26, "middle")],
+        7: [(0, 74, "middle"), (40, 30, "start"), (36, -26, "start")],
+    }
+    for n, nm_map, *_ in STOPS:
+        x, y = PIN[n]
+        put(f"lab{n}", x, y, [NM(nm_map)], lab_c[n])
+    sx0, sy0 = st
+    put("start", sx0, sy0, [L("start", 14, VIO_D, 700, True)], [(16, 6, "start"), (-14, 6, "end"), (0, -12, "middle")], hw=4)
+    put("ODS", *P(470, 520), [L("ORAȘUL DE SUS", 22, C_SUS, 700, False, "serif")],
+        [(0, 0, "middle"), (30, 20, "middle"), (60, -20, "middle"), (90, 10, "middle"), (120, 40, "middle")])
+    put("ODJ", *P(620, 192), [L("ORAȘUL DE JOS", 22, C_JOS, 700, False, "serif")],
+        [(0, 0, "middle"), (-40, 0, "middle"), (40, 10, "middle"), (80, 20, "middle")])
+
+    body += ctx + route + tower_svg + pins + meds + labels + ban + leg + comp + nt
+    body += "</g>\n"
+    s += body
+    s += f'<rect x="{MX}" y="{MY}" width="{MW}" height="{MH}" rx="22" fill="none" stroke="#2A3845" stroke-width="2"/>\n'
+
+    # ---------------- coloana dreaptă: cele 7 opriri ----------------
+    RX, RW = 1100, 740
+    CH, GAP = 106, 4
+    col = ""
+    for i, (n, nm_map, nm_card, src, (sh_t, sh_d), fact, ic) in enumerate(STOPS):
+        y0c = 230 + i * (CH + GAP)
+        col += card(RX, y0c, RW, CH, rx=14)
+        # număr + pictograma spectacolului
+        col += f'<circle cx="{RX+32}" cy="{y0c+31}" r="19" fill="{VIOLET}" stroke="{VAR}" stroke-width="2"/>'
+        col += text(RX + 32, y0c + 38, str(n), 20, VAR, "sans", 700, anchor="middle")
+        col += (f'<circle cx="{RX+32}" cy="{y0c+77}" r="18" fill="#FBF7EE" stroke="{VIOLET}" stroke-width="2" '
+                f'stroke-dasharray="5 3"/>')
+        col += G(RX + 32, y0c + 77, 14 / 29, ICONS[ic](), filt=False)
+        tx = RX + 66
+        tw = RW - (tx - RX) - 18
+        col += text(tx, y0c + 29, nm_card, 19, VAR, "serif", 700)
+        col += text(RX + RW - 18, y0c + 28, src, 12, CEATA, "sans", 400, True, "end")
+        assert tx + measure(nm_card, 19, "serif", 700) + 16 <= RX + RW - 18 - measure(src, 12, "sans", 400, True), nm_card
+        # spectacolul imaginar
+        pv, pw = pill(tx, y0c + 53, "IMAGINAR", VIOLET, VAR)
+        col += pv
+        sh_parts = [(sh_t, VIO_L, 700, True), (" – " + sh_d, CEATA, 400, True)]
+        col += rich(tx + pw + 8, y0c + 53, sh_parts, 15)
+        assert tx + pw + 8 + rich_width(sh_parts, 15) <= RX + RW - 18, sh_t
+        # faptul real
+        pf, fw = pill(tx, y0c + 77, "FAPT REAL", OCRU, BG)
+        col += pf
+        p, nl = para_after(tx, y0c + 77, fw + 8, fact, 14.5, tw, VAR, lh=19)
+        col += p
+        assert nl <= 2, ("fact lines", n, nl)
+    s += col
+
+    s += frame_foot()
+    write(OUT, s)
+    print(OUT)
+    bad = check(B, BOUNDS)
+    ok = {"route", "TScari", "Scari", "Pod", "Thal"}
+    real = [p for p in bad if not ((p[0].split(":")[0] in ok or p[1].split(":")[0] in ok)
+                                   and p[0].endswith((":icon", ":pt")) and p[1].endswith((":icon", ":pt")))]
+    print("overlaps (fără cele intenționate):", len(real), real)
+
+
+if __name__ == "__main__":
+    main()

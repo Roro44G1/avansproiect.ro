@@ -1,0 +1,367 @@
+# -*- coding: utf-8 -*-
+"""D16 – De la 19 bresle (1376) la 52 de meserii (1810) – infografic AI.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md („Bresle și meșteșuguri” și
+„Meșteșuguri și gastronomie – completări pentru Calupul 5 / Breslele Sibiului”).
+- 1810 numără MESERII, nu bresle: coloana e hașurată și marcată „unitate diferită”.
+- Desființarea: decretul din 1872 (limbaromana.org) SAU 18 aprilie 1875 (documentarea inițială) – DIVERGENȚĂ.
+- Lista celor 19 bresle din 1376 NU e dată de surse într-un singur loc; limbaromana.org pomenește multe meserii din statut (corecție 8 oct. 2026); aurarii nu erau printre cele 19.
+Axa are repere la distanțe egale (nu la scară), cu un salt marcat între 1568 și 1719."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c5/06_date/D16_de_la_19_bresle_la_52_meserii.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+AXIS = "#4A5B6C"
+PETROL_T = "#3FB0BA"
+TIGLA_L = "#D8775A"
+DISC = "#132029"
+WOOD = "#7A5232"
+WOOD_D = "#5A3B24"
+TIN = "#B9C3CC"
+TIN_D = "#7F8B96"
+
+s = frame_head("DATE · D16", BLUE, "De la 19 bresle (1376) la 52 de meserii (1810)",
+               "infografic AI · breslele Sibiului, secolele XIV–XIX · bresle și meserii sunt unități diferite",
+               title_size=60)
+s += ('<pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
+      f'<rect width="10" height="10" fill="#12313A"/><rect width="4" height="10" fill="{PETROL_T}" opacity="0.75"/></pattern>\n')
+
+
+def pill(x, y, lab, col, txt=BG, size=15):
+    w = measure(lab, size, "sans", 700, letter_spacing=1.5) + 28
+    o = f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="30" rx="15" fill="{col}"/>\n'
+    o += text(x + w / 2, y + 20, lab, size, txt, "sans", 700, anchor="middle", extra='letter-spacing="1.5"')
+    return o, w
+
+
+def head(x, y, w, lab, col, sub=None, txt=BG):
+    o, pw = pill(x + 22, y + 20, lab, col, txt)
+    if sub:
+        assert x + 22 + pw + 12 + measure(sub, 14, "sans", 400, True) <= x + w - 16, sub
+        o += text(x + 22 + pw + 12, y + 40, sub, 14, MUTED, "sans", 400, True)
+    return o
+
+
+def block(cx, y, body, maxw, size=14, fill=CEATA, lh=17, weight=400, anchor="middle"):
+    """Text centrat (sau aliniat) pe mai multe rânduri; întoarce (svg, y_ultim_rând, lățime_max)."""
+    lines = wrap(body, maxw, size, "sans", weight)
+    o = ""
+    wmax = 0
+    for k, ln in enumerate(lines):
+        o += text(cx, y + k * lh, ln, size, fill, "sans", weight, anchor=anchor)
+        wmax = max(wmax, measure(ln, size, "sans", weight))
+    return o, y + (len(lines) - 1) * lh, wmax
+
+
+# ================================================================== A. axa timpului cu coloane
+AX, AY, AW, AH = 80, 228, 1760, 444
+s += card(AX, AY, AW, AH)
+s += head(AX, AY, AW, "NUMĂRUL BRESLELOR ȘI REPERELE LOR", OCRU,
+          "axa nu e la scară: reperele sunt puse doar în ordine")
+
+AXY = 490                       # linia axei
+YR = AXY + 26                   # rândul anilor
+T1 = AXY + 50                   # primul etaj de text
+T2 = AXY + 116                  # al doilea etaj de text
+SCALE = 150 / 52                # px pe unitate (52 -> 150 px)
+BW_ = 52                        # lățimea unei coloane
+
+# poziții ordinale (nu la scară)
+X = {1346: 196, 1367: 296, 1376: 396, 1455: 496, 1494: 596, 1512: 696, 1559: 796, 1568: 896,
+     1719: 1040, 1724: 1120, 1750: 1220, 1769: 1330, 1780: 1440, 1810: 1540}
+BREAK_X = 968
+END_X = 1600                    # caseta desființării
+
+# --- axa
+s += f'<line x1="110" y1="{AXY}" x2="{END_X-14}" y2="{AXY}" stroke="{AXIS}" stroke-width="4" stroke-linecap="round"/>\n'
+s += poly([(END_X - 16, AXY - 9), (END_X - 2, AXY), (END_X - 16, AXY + 9)], fill=AXIS)
+# saltul 1568 -> 1719
+s += f'<rect x="{BREAK_X-11}" y="{AXY-8}" width="22" height="16" fill="{CARD}"/>\n'
+for dx in (-8, 4):
+    s += f'<line x1="{BREAK_X+dx-4}" y1="{AXY+11}" x2="{BREAK_X+dx+8}" y2="{AXY-11}" stroke="{AXIS}" stroke-width="3"/>\n'
+s += text(BREAK_X, AXY - 40, "salt de", 13, MUTED, "sans", 400, True, anchor="middle")
+s += text(BREAK_X, AXY - 22, "≈ 150 de ani", 13, MUTED, "sans", 400, True, anchor="middle")
+
+
+# --- coloane
+def bar(cx, val, kind="bresle", w=BW_, unit=None):
+    h = val * SCALE
+    top = AXY - h
+    o = ""
+    if kind == "bresle":
+        o += f'<rect x="{cx-w/2:.1f}" y="{top:.1f}" width="{w}" height="{h:.1f}" rx="5" fill="{OCRU}"/>\n'
+        o += f'<rect x="{cx-w/2:.1f}" y="{top:.1f}" width="{w}" height="6" rx="3" fill="#F2C766" opacity="0.8"/>\n'
+        col = OCRU
+    else:
+        o += (f'<rect x="{cx-w/2:.1f}" y="{top:.1f}" width="{w}" height="{h:.1f}" rx="5" fill="url(#hatch)" '
+              f'stroke="{PETROL_T}" stroke-width="2.5" stroke-dasharray="7 4"/>\n')
+        col = PETROL_T
+    o += text(cx, top - 26, str(val), 28, col, "serif", 700, anchor="middle")
+    o += text(cx, top - 8, unit or kind, 13, col, "sans", 600, anchor="middle")
+    return o, top
+
+
+# 1376: 19 bresle + 25 de meserii (aceeași sursă: „25 de meserii grupate în 19 bresle”)
+o, top19 = bar(X[1376] - 23, 19, "bresle", 40); s += o
+o, top25 = bar(X[1376] + 23, 25, "meserii", 40); s += o
+for yr, v in [(1719, 26), (1724, 34), (1780, 40)]:
+    o, _ = bar(X[yr], v); s += o
+o, top52 = bar(X[1810], 52, "meserii"); s += o
+# eticheta „unitate diferită” deasupra coloanei din 1810
+lab = "UNITATE DIFERITĂ"
+LW = measure(lab, 13, "sans", 700, letter_spacing=1.5) + 28
+p, pw = pill(END_X - 14 - LW, int(top52 - 86), lab, PETROL_T, BG, 13)
+s += p
+s += f'<line x1="{X[1810]}" y1="{top52-56}" x2="{X[1810]}" y2="{top52-50}" stroke="{PETROL_T}" stroke-width="2"/>\n'
+assert top52 - 86 > AY + 14
+assert END_X - 14 - LW < X[1810] - 10
+
+# --- anii pe axă
+for yr, x in X.items():
+    isbar = yr in (1376, 1719, 1724, 1780, 1810)
+    if not isbar:
+        s += f'<circle cx="{x}" cy="{AXY}" r="8" fill="{BG}" stroke="{VAR}" stroke-width="3"/>\n'
+    s += text(x, YR, str(yr), 17, OCRU if isbar else VAR, "sans", 700, anchor="middle")
+
+# --- reperele (două etaje, cu tijă pentru etajul al doilea)
+MIL = [
+    (1346, 1, "aurarii (monstranța aurarului Kunz) și cizmarul Breut"),
+    (1367, 2, "tăbăcarii cumpără o moară de tăbăcit; prima mențiune a unei bresle (pielarii)"),
+    (1455, 1, "statut propriu pentru cizmari"),
+    (1494, 2, "statutul aurarilor"),
+    (1512, 1, "călătoria calfelor devine obligatorie"),
+    (1559, 2, "2 decembrie: Uniunea Breslelor de Aurari"),
+    (1568, 1, "statutul cositorarilor, reînnoit"),
+    (1750, 1, "conscripția: Sibiul, pe primul loc după numărul de meșteșugari și meserii"),
+    (1769, 2, "croitorii germani pot înființa bresle separate"),
+]
+MAXW = {1750: 196, 1769: 210}
+spans = {1: [], 2: []}
+for yr, tier, body in MIL:
+    x = X[yr]
+    y0 = T1 if tier == 1 else T2
+    if tier == 2:
+        s += (f'<line x1="{x}" y1="{YR+8}" x2="{x}" y2="{y0-17}" stroke="{AXIS}" stroke-width="1.5" '
+              f'stroke-dasharray="3 3"/>\n')
+    o, ylast, wmax = block(x, y0, body, MAXW.get(yr, 178))
+    assert len(wrap(body, MAXW.get(yr, 178), 14)) <= 3, body
+    if tier == 1:
+        assert ylast + 4 < T2 - 14, (yr, ylast)
+    else:
+        assert ylast + 4 < AY + AH - 10, (yr, ylast)
+    spans[tier].append((x - wmax / 2, x + wmax / 2, yr))
+    s += o
+for t in (1, 2):
+    sp = sorted(spans[t])
+    for a, b in zip(sp, sp[1:]):
+        assert a[1] + 10 <= b[0], ("suprapunere", a, b)
+# tijele etajului 2 nu trec prin textele etajului 1
+for yr, tier, body in MIL:
+    if tier == 2:
+        for a0, a1, y1 in spans[1]:
+            assert not (a0 - 6 < X[yr] < a1 + 6), ("tijă prin text", yr, y1)
+
+# --- caseta 1376 (deasupra coloanelor)
+CBX, CBY, CBW, CBH = 110, 290, 470, 70
+s += f'<rect x="{CBX}" y="{CBY}" width="{CBW}" height="{CBH}" rx="14" fill="{DISC}" stroke="{OCRU}" stroke-width="1.5"/>\n'
+s += text(CBX + 16, CBY + 26, "9 noiembrie 1376 · statutul comun al breslelor", 16, VAR, "sans", 700)
+s += text(CBX + 16, CBY + 47, "din Sibiu, Sebeș, Sighișoara și Orăștie (limbaromana.org)", 14, CEATA)
+assert measure("9 noiembrie 1376 · statutul comun al breslelor", 16, "sans", 700) < CBW - 30
+assert measure("din Sibiu, Sebeș, Sighișoara și Orăștie (limbaromana.org)", 14) < CBW - 30
+s += text(CBX + 16, CBY + 64, "premieră: prima reglementare a breslelor (patrimoniu.sibiu.ro)", 12, MUTED, "sans", 400, True)
+assert measure("premieră: prima reglementare a breslelor (patrimoniu.sibiu.ro)", 12, "sans", 400, True) < CBW - 30
+s += f'<line x1="{X[1376]}" y1="{CBY+CBH}" x2="{X[1376]}" y2="{top25-50}" stroke="{OCRU}" stroke-width="2"/>\n'
+assert CBY + CBH < top25 - 50
+
+# --- cum citești graficul
+KX, KY = 598, 294
+s += text(KX, KY + 6, "Cum citești graficul", 16, VAR, "sans", 700)
+s += f'<rect x="{KX}" y="{KY+22}" width="18" height="18" rx="4" fill="{OCRU}"/>\n'
+s += text(KX + 28, KY + 37, "bresle (limbaromana.org)", 14, VAR, "sans", 600)
+s += (f'<rect x="{KX}" y="{KY+50}" width="18" height="18" rx="4" fill="url(#hatch)" stroke="{PETROL_T}" '
+      f'stroke-width="1.5" stroke-dasharray="4 2"/>\n')
+s += text(KX + 28, KY + 65, "meserii – altă unitate de măsură", 14, VAR, "sans", 600)
+s += f'<circle cx="{KX+9}" cy="{KY+87}" r="7" fill="{BG}" stroke="{VAR}" stroke-width="2.5"/>\n'
+s += text(KX + 28, KY + 92, "reper din documente", 14, VAR, "sans", 600)
+o, ny = para(KX, KY + 120, "În 1376, 25 de meserii erau grupate în 19 bresle (mnir.ro): o breaslă putea cuprinde mai multe "
+             "meserii. Cele 52 de meserii din 1810 nu înseamnă 52 de bresle.", 14, 318, CEATA, lh=18)
+s += o
+assert ny - 18 < AXY - 14, ny
+assert KX + 318 < BREAK_X - 45
+assert KX > CBX + CBW + 12
+
+# --- caseta desființării (DIVERGENȚĂ)
+EX, EY, EW, EH = END_X, 250, 1820 - END_X, 406
+s += f'<rect x="{EX}" y="{EY}" width="{EW}" height="{EH}" rx="16" fill="{DISC}" stroke="{TIGLA}" stroke-width="2"/>\n'
+s += text(EX + 16, EY + 30, "DIVERGENȚĂ", 13, TIGLA_L, "sans", 700, extra='letter-spacing="1.5"')
+s += text(EX + 16, EY + 58, "Desființarea", 20, VAR, "serif", 700)
+s += text(EX + 16, EY + 82, "breslelor", 20, VAR, "serif", 700)
+ey = EY + 128
+s += text(EX + 16, ey, "1872", 36, OCRU, "serif", 700)
+o, ey2, _ = block(EX + 16, ey + 26, "decretul transformă breslele în cooperative meșteșugărești", EW - 32, 15, VAR, 19,
+                  anchor="start")
+s += o
+s += text(EX + 16, ey2 + 20, "limbaromana.org", 13, MUTED, "sans", 400, True)
+ey = ey2 + 54
+s += text(EX + EW / 2, ey, "sau", 16, CEATA, "sans", 600, True, anchor="middle")
+s += f'<line x1="{EX+16}" y1="{ey-5}" x2="{EX+EW/2-26}" y2="{ey-5}" stroke="{LINE}" stroke-width="1.5"/>\n'
+s += f'<line x1="{EX+EW/2+26}" y1="{ey-5}" x2="{EX+EW-16}" y2="{ey-5}" stroke="{LINE}" stroke-width="1.5"/>\n'
+ey += 44
+s += text(EX + 16, ey, "18 aprilie 1875", 25, OCRU, "serif", 700)
+assert measure("18 aprilie 1875", 25, "serif", 700) < EW - 28
+o, ey2, _ = block(EX + 16, ey + 26, "desființarea oficială", EW - 32, 15, VAR, 19, anchor="start")
+s += o
+o, ey3, _ = block(EX + 16, ey2 + 20, "documentarea inițială a proiectului", EW - 32, 13, MUTED, 17, anchor="start")
+s += o.replace('font-weight="400"', 'font-weight="400" font-style="italic"')
+assert ey3 + 6 < EY + EH - 8, ey3
+
+# ================================================================== B. rândul de jos
+BY, BH = 688, 280
+B1X, B1W = 80, 812
+B2X, B2W = B1X + B1W + 16, 420
+B3X = B2X + B2W + 16
+B3W = 1840 - B3X
+assert B3W >= 480, B3W
+
+# ---------- B1. drumul spre meșter
+s += card(B1X, BY, B1W, BH)
+s += head(B1X, BY, B1W, "DRUMUL SPRE MEȘTER", PETROL, "organizarea breslelor, după limbaromana.org", VAR)
+
+
+def ic_apprentice(cx, cy):          # ciocan mic
+    o = f'<rect x="{cx-3}" y="{cy-6}" width="6" height="24" rx="2" fill="#B9853F" transform="rotate(-35 {cx} {cy})"/>'
+    o += f'<rect x="{cx-13}" y="{cy-14}" width="26" height="10" rx="2" fill="{TIN}" transform="rotate(-35 {cx} {cy})"/>'
+    return o + "\n"
+
+
+def ic_journeyman(cx, cy):          # monede + cană (taxa și masa)
+    o = ""
+    for k in range(3):
+        o += f'<ellipse cx="{cx-8}" cy="{cy+12-k*6}" rx="11" ry="4.5" fill="{OCRU}" stroke="#9C7016" stroke-width="1.2"/>'
+    o += f'<path d="M{cx+6},{cy-10} h14 l-2,22 h-10 Z" fill="{TIN}"/>'
+    o += f'<path d="M{cx+19},{cy-6} q8,1 6,9 q-1,4 -6,4" stroke="{TIN}" stroke-width="2.5" fill="none"/>'
+    return o + "\n"
+
+
+def ic_journey(cx, cy):             # toiag cu bocceluță
+    o = f'<line x1="{cx-14}" y1="{cy+18}" x2="{cx+10}" y2="{cy-16}" stroke="#B9853F" stroke-width="3.5" stroke-linecap="round"/>'
+    o += f'<circle cx="{cx+12}" cy="{cy-8}" r="9" fill="{TIGLA}"/>'
+    o += f'<path d="M{cx+5},{cy-14} l5,-6 l4,5" fill="{TIGLA}"/>'
+    o += f'<path d="M{cx-20},{cy+20} q12,-4 24,0 t20,-2" stroke="{CEATA}" stroke-width="2" fill="none" stroke-dasharray="4 3"/>'
+    return o + "\n"
+
+
+def ic_masterpiece(cx, cy):         # cană cu picior (proba cositorarilor)
+    o = f'<path d="M{cx-9},{cy-14} h18 l-2,16 q-7,6 -14,0 Z" fill="{TIN}"/>'
+    o += f'<rect x="{cx-2}" y="{cy+2}" width="4" height="9" fill="{TIN_D}"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy+13}" rx="10" ry="3.5" fill="{TIN_D}"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy-14}" rx="9" ry="2.5" fill="#DDE3E8"/>'
+    o += poly([(cx + 14, cy - 18), (cx + 16, cy - 13), (cx + 21, cy - 13), (cx + 17, cy - 10), (cx + 19, cy - 5),
+               (cx + 14, cy - 8), (cx + 9, cy - 5), (cx + 11, cy - 10), (cx + 7, cy - 13), (cx + 12, cy - 13)], fill=OCRU)
+    return o + "\n"
+
+
+def ic_master(cx, cy):              # sigiliu generic (cerc cu ciocan) – nu reproduce un sigiliu real
+    o = f'<circle cx="{cx}" cy="{cy}" r="17" fill="{TIGLA}"/>'
+    o += f'<circle cx="{cx}" cy="{cy}" r="13" fill="none" stroke="{VAR}" stroke-width="1.2" stroke-dasharray="2 2"/>'
+    o += f'<rect x="{cx-1.5}" y="{cy-4}" width="3" height="12" fill="{VAR}"/>'
+    o += f'<rect x="{cx-6}" y="{cy-8}" width="12" height="5" rx="1" fill="{VAR}"/>'
+    return o + "\n"
+
+
+STEPS = [
+    (ic_apprentice, "Ucenic", "probă de 2–6 săptămâni, apoi 2–4 ani la un meșter; la final, un certificat"),
+    (ic_journeyman, "Calfă", "plătește o taxă și dă o masă breslei; primește salariu, casă și masă la meșter"),
+    (ic_journey, "Călătoria", "2–4 ani prin alte orașe, obligatorie din 1512; calfa se prezintă la „părintele calfelor”"),
+    (ic_masterpiece, "Capodopera", "proba de meșter; la cositorari: castron, cană cu picior, ploscă și vas de spălat, "
+                                   "în două săptămâni"),
+    (ic_master, "Meșter", "dă o masă breslei și trebuie să se căsătorească; breasla e condusă de staroste"),
+]
+SX0 = B1X + 22
+SSTEP = (B1W - 44) / 5
+ICY = BY + 92
+for k, (ic, ttl, body) in enumerate(STEPS):
+    cx = SX0 + SSTEP * (k + 0.5)
+    s += f'<circle cx="{cx:.1f}" cy="{ICY}" r="29" fill="{DISC}" stroke="{PETROL}" stroke-width="2.5"/>\n'
+    s += ic(cx, ICY)
+    s += text(cx, ICY + 54, ttl, 17, VAR, "sans", 700, anchor="middle")
+    o, ylast, _ = block(cx, ICY + 76, body, SSTEP - 12, 14, CEATA, 17)
+    assert ylast + 4 <= BY + BH - 10, (ttl, ylast)
+    s += o
+    if k < 4:
+        ax0, ax1 = cx + 36, cx + SSTEP - 36
+        s += f'<line x1="{ax0:.1f}" y1="{ICY}" x2="{ax1-6:.1f}" y2="{ICY}" stroke="{PETROL_T}" stroke-width="3"/>\n'
+        s += poly([(ax1 - 9, ICY - 6), (ax1, ICY), (ax1 - 9, ICY + 6)], fill=PETROL_T)
+
+# ---------- B2. taxa de intrare (izotip: 1 cerc = 1 florin)
+s += card(B2X, BY, B2W, BH)
+s += head(B2X, BY, B2W, "TAXA DE INTRARE", OCRU, "limbaromana.org")
+
+
+def coin(cx, cy, r=10.5):
+    return (f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r}" fill="{OCRU}" stroke="#9C7016" stroke-width="1.5"/>'
+            f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r-4}" fill="none" stroke="#F2C766" stroke-width="1.2"/>\n')
+
+
+ROWS = [("măcelari", 10), ("brutari, fierari", 6), ("țesători, croitori", 2)]
+ry = BY + 84
+for lab, n in ROWS:
+    s += text(B2X + 22, ry, lab, 16, VAR, "sans", 600)
+    for k in range(n):
+        s += coin(B2X + 34 + k * 26, ry + 22)
+    nx = B2X + 34 + (n - 1) * 26 + 22
+    s += text(nx, ry + 30, f"{n} florini", 20, OCRU, "serif", 700)
+    assert nx + measure(f"{n} florini", 20, "serif", 700) <= B2X + B2W - 14, lab
+    ry += 62
+s += text(B2X + 22, BY + BH - 16, "1 cerc = 1 florin", 13, MUTED, "sans", 400, True)
+assert ry - 62 + 34 < BY + BH - 34
+
+# ---------- B3. cele 19 bresle din 1376
+s += card(B3X, BY, B3W, BH)
+s += head(B3X, BY, B3W, "CELE 19 BRESLE DIN 1376", VIOLET, "ilustrativ", VAR)
+
+
+def shield(x, y, w, h, named, num=None):
+    d = (f"M{x},{y} h{w} v{h*0.5:.1f} q0,{h*0.35:.1f} -{w/2:.1f},{h*0.5:.1f} "
+         f"q-{w/2:.1f},-{h*0.15:.1f} -{w/2:.1f},-{h*0.5:.1f} Z")
+    if named:
+        o = f'<path d="{d}" fill="{OCRU}" stroke="#F2C766" stroke-width="1.5"/>'
+        o += text(x + w / 2, y + h * 0.58, str(num), 17, BG, "sans", 700, anchor="middle")
+    else:
+        o = f'<path d="{d}" fill="none" stroke="{MUTED}" stroke-width="1.8" stroke-dasharray="4 3"/>'
+        o += text(x + w / 2, y + h * 0.58, "?", 16, MUTED, "sans", 700, anchor="middle")
+    return o + "\n"
+
+
+SHW, SHH = 34, 40
+NCOL = 10
+gap = (B3W - 44 - NCOL * SHW) / (NCOL - 1)
+for k in range(19):
+    r, c = divmod(k, NCOL)
+    sx = B3X + 22 + c * (SHW + gap) + (0 if r == 0 else (SHW + gap) / 2)
+    sy = BY + 64 + r * (SHH + 10)
+    s += shield(sx, sy, SHW, SHH, k < 4, k + 1)
+ly = BY + 64 + 2 * (SHH + 10) + 14
+leg = "Exemple pe scuturi: 1 brutarii · 2 pielarii · 3 cuțitarii (mnir.ro) · 4 fierarii, „Fabrorum fraternitatis” (ULBS)"
+o, ny = para(B3X + 22, ly, leg, 14, B3W - 44, VAR, lh=18)
+s += o
+# precizarea vizibilă
+iy = ny + 10
+s += f'<circle cx="{B3X+33}" cy="{iy-6}" r="11" fill="none" stroke="{OCRU}" stroke-width="2"/>\n'
+s += text(B3X + 33, iy - 1, "i", 15, OCRU, "serif", 700, anchor="middle")
+o, ny2 = para(B3X + 52, iy, "Statutul din 1376 pomenește multe meserii (măcelari, croitori, olari, cizmari…), "
+              "dar sursele nu dau lista clară a celor 19 bresle.", 15, B3W - 74, OCRU, weight=600, lh=19)
+s += o
+assert ny2 - 19 + 5 <= BY + BH - 8, ny2
+
+# ================================================================== surse
+src = ("Surse: limbaromana.org („Din istoria breslelor sibiene, sec. XIV–XIX”); mnir.ro („Însemne de breaslă din Transilvania”, 2015); "
+       "magazines.ulbsibiu.ro; capitalcultural.ro; patrimoniu.sibiu.ro (premiere). 1810 și 18 aprilie 1875 – din documentarea inițială a proiectului.")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

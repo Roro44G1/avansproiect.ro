@@ -1,0 +1,313 @@
+# -*- coding: utf-8 -*-
+"""D19 – Linia timpului culturii sibiene, de la 1525 la 2019 – ilustrată AI.
+Fapte: /home/claude/expo/_brief/fapte_verificate.md – „Cultură vie: teatru, muzică, cărți, muzee –
+completări pentru Calupul 6”, „Premierele Sibiului – lista completă”, „Teatrul din 1788”,
+„Muzeul ASTRA în aer liber”. Fără fapte noi (vezi _fapte_noi_D18_D20.md).
+- 20 de repere; axa principală NU e la scară (repere la distanțe egale, salt marcat 1550 → 1774);
+  dedesubt, o riglă LA SCARĂ cu aceleași repere (1 an = aceeași lungime peste tot).
+- Divergențe arătate: Sala Thalia 1787–1788 / 1788; Muzeul de Istorie Naturală 1894 / 1895.
+- Fără persoane în viață; persoanele istorice apar doar cu faptele din fișă."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c6/06_date/D19_linia_timpului_culturii.svg"
+BLUE = "#3E63DD"
+BLUE_L = "#8DA4F2"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+AXIS = "#4A5B6C"
+DISC = "#132029"
+PETROL_T = "#3FB0BA"
+TIGLA_L = "#D8775A"
+VIOL_T = "#9B86EA"
+
+DOM = {
+    "carte": (OCRU, "carte și tipar"),
+    "teatru": (TIGLA_L, "teatru"),
+    "muzica": (PETROL_T, "muzică"),
+    "muzeu": (VIOL_T, "muzee"),
+    "toate": (BLUE_L, "toate domeniile"),
+}
+
+s = frame_head("DATE · D19", BLUE, "Linia timpului culturii sibiene, de la 1525 la 2019",
+               "linie a timpului ilustrată · 20 de repere · axa principală nu e la scară", title_size=58)
+
+
+# ------------------------------------------------------------------ pictograme
+def ic_book(cx, cy, col, k=1.0):
+    o = f'<g transform="translate({cx},{cy}) scale({k})">'
+    o += f'<path d="M-17,-10 q8,-5 17,0 v20 q-9,-5 -17,0 Z" fill="{col}"/>'
+    o += f'<path d="M17,-10 q-8,-5 -17,0 v20 q9,-5 17,0 Z" fill="{col}" opacity="0.75"/>'
+    for j in range(3):
+        o += f'<line x1="-13" y1="{-4+j*5}" x2="-4" y2="{-6+j*5}" stroke="{DISC}" stroke-width="1.4"/>'
+        o += f'<line x1="4" y1="{-6+j*5}" x2="13" y2="{-4+j*5}" stroke="{DISC}" stroke-width="1.4"/>'
+    o += f'<path d="M-17,12 q8,-5 17,0 q9,-5 17,0" fill="none" stroke="{col}" stroke-width="2"/>'
+    return o + "</g>\n"
+
+
+def ic_masks(cx, cy, col, k=1.0):
+    o = f'<g transform="translate({cx},{cy}) scale({k})">'
+    o += f'<path d="M-18,-14 h19 v10 q0,13 -9.5,15 q-9.5,-2 -9.5,-15 Z" fill="{VAR}"/>'
+    o += f'<circle cx="-13" cy="-7" r="2" fill="{DISC}"/><circle cx="-4" cy="-7" r="2" fill="{DISC}"/>'
+    o += f'<path d="M-13,1 q4.5,4.5 9,0" stroke="{DISC}" stroke-width="1.8" fill="none"/>'
+    o += f'<path d="M-1,-7 h19 v10 q0,13 -9.5,15 q-9.5,-2 -9.5,-15 Z" fill="{col}"/>'
+    o += f'<circle cx="4" cy="0" r="2" fill="{DISC}"/><circle cx="13" cy="0" r="2" fill="{DISC}"/>'
+    o += f'<path d="M4,11 q4.5,-4.5 9,0" stroke="{DISC}" stroke-width="1.8" fill="none"/>'
+    return o + "</g>\n"
+
+
+def ic_notes(cx, cy, col, k=1.0):
+    o = f'<g transform="translate({cx},{cy}) scale({k})">'
+    o += f'<ellipse cx="-9" cy="10" rx="6" ry="4.5" fill="{col}" transform="rotate(-20 -9 10)"/>'
+    o += f'<ellipse cx="10" cy="6" rx="6" ry="4.5" fill="{col}" transform="rotate(-20 10 6)"/>'
+    o += f'<line x1="-3.8" y1="9" x2="-3.8" y2="-13" stroke="{col}" stroke-width="2.6"/>'
+    o += f'<line x1="15.2" y1="5" x2="15.2" y2="-17" stroke="{col}" stroke-width="2.6"/>'
+    o += f'<path d="M-5,-14 L16.5,-18 v6 L-5,-8 Z" fill="{col}"/>'
+    return o + "</g>\n"
+
+
+def ic_museum(cx, cy, col, k=1.0):
+    o = f'<g transform="translate({cx},{cy}) scale({k})">'
+    o += poly([(-19, -7), (0, -18), (19, -7)], fill=col)
+    o += f'<rect x="-17" y="-6" width="34" height="3.5" fill="{col}"/>'
+    for j in range(4):
+        o += f'<rect x="{-14+j*8.5}" y="-1" width="4.5" height="14" fill="{col}" opacity="0.85"/>'
+    o += f'<rect x="-19" y="13" width="38" height="4" fill="{col}"/>'
+    return o + "</g>\n"
+
+
+def ic_star(cx, cy, col, k=1.0):
+    import math
+    pts = []
+    for j in range(10):
+        r = 18 if j % 2 == 0 else 7.5
+        a = -math.pi / 2 + j * math.pi / 5
+        pts.append((r * math.cos(a), r * math.sin(a) + 1))
+    o = f'<g transform="translate({cx},{cy}) scale({k})">' + poly(pts, fill=col) + "</g>\n"
+    return o
+
+
+ICON = {"carte": ic_book, "teatru": ic_masks, "muzica": ic_notes, "muzeu": ic_museum, "toate": ic_star}
+
+# ------------------------------------------------------------------ legenda
+lx = 80
+LY = 252
+s += text(lx, LY, "Pictograme:", 16, CEATA, "sans", 600)
+lx += measure("Pictograme:", 16, "sans", 600) + 22
+for key in ("carte", "teatru", "muzica", "muzeu", "toate"):
+    col, lab = DOM[key]
+    s += f'<circle cx="{lx+16}" cy="{LY-6}" r="16" fill="{DISC}" stroke="{col}" stroke-width="2"/>\n'
+    s += ICON[key](lx + 16, LY - 6, col, 0.62)
+    s += text(lx + 40, LY, lab, 16, VAR, "sans", 600)
+    lx += 40 + measure(lab, 16, "sans", 600) + 30
+
+
+def badge(x, y, lab="2 surse", col=TIGLA_L):
+    w = measure(lab, 13, "sans", 700) + 18
+    o = f'<rect x="{x:.1f}" y="{y-15}" width="{w:.1f}" height="22" rx="11" fill="{DISC}" stroke="{col}" stroke-width="1.5"/>\n'
+    o += text(x + w / 2, y + 1, lab, 13, col, "sans", 700, anchor="middle")
+    return o, w
+
+
+o, bw = badge(lx, LY)
+s += o
+s += text(lx + bw + 10, LY, "două surse, două date", 16, VAR, "sans", 600)
+lx += bw + 10 + measure("două surse, două date", 16, "sans", 600)
+assert lx < 1840, lx
+
+# ------------------------------------------------------------------ repere
+# (an_afișat, domeniu, titlu, text, divergență)
+EV = [
+    ("1525", "carte", "Prima tipografie din Transilvania",
+     "Lukas Trapoldner și Valentinus Corvinus; cel mai vechi tipar datat: un calendar de perete, în latină", False),
+    ("1544", "carte", "Prima carte în limba română",
+     "de pe actualul teritoriu al României: Catehismul, tipărit de Filip Moldoveanul", False),
+    ("1550", "carte", "Tetraevanghelul slavo-român",
+     "primul, tipărit tot la Sibiu de Filip Moldoveanul", False),
+    ("1774", "muzica", "Primul concert al unei orchestre profesioniste",
+     "la curtea lui Samuel von Brukenthal", False),
+    ("1787–1788", "teatru", "Prima clădire de teatru din țară",
+     "ridicată de Martin Hochmeister, în zona Turnului Gros; azi, Sala Thalia", True),
+    ("1792", "muzica", "Mozart, cântat la Sibiu",
+     "„Răpirea din Serai”; în 1800 urmează „Creațiunea” de Haydn", False),
+    ("1817", "muzeu", "Primul muzeu din România",
+     "Muzeul Brukenthal se deschide oficial; colecțiile pot fi vizitate din 1790", False),
+    ("1849", "muzeu", "Societatea Ardeleană de Științe ale Naturii",
+     "fondată de naturaliști sași; începuturile Muzeului de Istorie Naturală", False),
+    ("1861", "carte", "Se înființează ASTRA",
+     "Asociațiunea Transilvană; primul președinte: Andrei Șaguna", False),
+    ("1868", "teatru", "Primul spectacol în limba română",
+     "la Sibiu, cu trupa lui Mihai Pascaly", False),
+    ("1869", "carte", "Prima bibliotecă publică românească",
+     "din Transilvania: Biblioteca Asociațiunii (ASTRA)", False),
+    ("1894 / 1895", "muzeu", "Prima clădire ridicată pentru un muzeu",
+     "Muzeul de Istorie Naturală: „gata în 1894” (cimec) sau 1895 (patrimoniu.sibiu.ro)", True),
+    ("1898–1904", "carte", "Enciclopedia Română",
+     "prima enciclopedie românească, în trei volume, sub îngrijirea lui Cornel Diaconovici", False),
+    ("1944", "muzica", "„Junii Sibiului”",
+     "primul ansamblu folcloric din România", False),
+    ("1949", "muzica", "Filarmonica de Stat",
+     "fondată la 1 ianuarie; tot în 1949 apare Teatrul „Gong”, pentru copii și tineret", False),
+    ("1963 / 1967", "muzeu", "Muzeul ASTRA în aer liber",
+     "înființat în 1963, deschis publicului în 1967, în Pădurea Dumbrava", False),
+    ("1993", "teatru", "Începuturile FITS",
+     "în martie, un festival de teatru studențesc; tot în 1993: Astra Film Festival și Muzeul „Franz Binder”", False),
+    ("2007", "toate", "Capitală Culturală Europeană",
+     "împreună cu Luxemburg; primul oraș din România și din Europa de Est cu titlul", False),
+    ("2013", "teatru", "Aleea Celebrităților",
+     "primele stele, la a 20-a ediție FITS, între Sala Thalia și Teatrul „Radu Stanca”", False),
+    ("2019", "teatru", "FITS, ediția 2019",
+     "circa 3.300 de artiști din 73 de țări; peste 500 de evenimente în 75 de spații", False),
+]
+assert len(EV) == 20
+PITCH = 1760 / 10
+TW = PITCH - 14
+NR = 28
+
+ROWS = [
+    dict(axis=372, items=EV[:10],
+         sections=[(0, 3, "SECOLUL AL XVI-LEA"), (3, 6, "SECOLUL AL XVIII-LEA"), (6, 10, "SECOLUL AL XIX-LEA")]),
+    dict(axis=656, items=EV[10:],
+         sections=[(0, 3, "SECOLUL AL XIX-LEA (CONTINUARE)"), (3, 7, "SECOLUL AL XX-LEA"), (7, 10, "SECOLUL AL XXI-LEA")]),
+]
+BREAK_AFTER = {(0, 2): "salt de 224 de ani"}     # (rând, index) -> eticheta
+bottoms = []
+for ri, row in enumerate(ROWS):
+    AY = row["axis"]
+    xs = [80 + PITCH * (k + 0.5) for k in range(10)]
+    # secțiuni (secolele)
+    HY = AY - 78
+    for a, b, lab in row["sections"]:
+        x0 = 80 + PITCH * a + (0 if a == 0 else 10)
+        x1 = 80 + PITCH * b - (0 if b == 10 else 10)
+        s += text(x0, HY, lab, 15, CEATA, "sans", 700, extra='letter-spacing="1.5"')
+        lw = measure(lab, 15, "sans", 700, letter_spacing=1.5)
+        s += f'<line x1="{x0+lw+12:.1f}" y1="{HY-5}" x2="{x1:.1f}" y2="{HY-5}" stroke="{LINE}" stroke-width="1.5"/>\n'
+    # axa
+    s += f'<line x1="80" y1="{AY}" x2="{1826}" y2="{AY}" stroke="{AXIS}" stroke-width="4" stroke-linecap="round"/>\n'
+    s += poly([(1824, AY - 9), (1840, AY), (1824, AY + 9)], fill=AXIS)
+    for (rr, idx), lab in BREAK_AFTER.items():
+        if rr != ri:
+            continue
+        bx = (xs[idx] + xs[idx + 1]) / 2
+        s += f'<rect x="{bx-12}" y="{AY-8}" width="24" height="16" fill="{BG}"/>\n'
+        for dx in (-8, 4):
+            s += f'<line x1="{bx+dx-4}" y1="{AY+11}" x2="{bx+dx+8}" y2="{AY-11}" stroke="{AXIS}" stroke-width="3"/>\n'
+        s += text(bx, AY - 50, "salt de", 13, MUTED, "sans", 400, True, anchor="middle")
+        s += text(bx, AY - 34, "224 de ani", 13, MUTED, "sans", 400, True, anchor="middle")
+        brk = (bx - measure("224 de ani", 13, "sans", 400, True) / 2, bx + measure("224 de ani", 13, "sans", 400, True) / 2)
+    spans = []
+    for k, (yr, dom, ttl, body, div) in enumerate(row["items"]):
+        cx = xs[k]
+        col = DOM[dom][0]
+        s += f'<circle cx="{cx:.1f}" cy="{AY}" r="{NR}" fill="{DISC}" stroke="{col}" stroke-width="3"/>\n'
+        s += ICON[dom](cx, AY, col, 0.95)
+        ysz = 26 if len(yr) <= 4 else 22
+        s += text(cx, AY - NR - 14, yr, ysz, col, "serif", 700, anchor="middle")
+        yw = measure(yr, ysz, "serif", 700)
+        spans.append((cx - yw / 2, cx + yw / 2))
+        if div:
+            o, bw = badge(cx + NR + 4, AY + 4)
+            s += o
+            assert cx + NR + 4 + bw < xs[k] + PITCH - NR - 8, yr
+        tl = wrap(ttl, TW, 16, "sans", 700)
+        assert len(tl) <= 3, ttl
+        ty = AY + NR + 28
+        for j, ln in enumerate(tl):
+            s += text(cx, ty + j * 19, ln, 16, VAR, "sans", 700, anchor="middle")
+        by = ty + (len(tl) - 1) * 19 + 22
+        bl = wrap(body, TW, 14, "sans", 400)
+        assert len(bl) + len(tl) <= 7, (body, bl)
+        for j, ln in enumerate(bl):
+            s += text(cx, by + j * 18, ln, 14, CEATA, "sans", 400, anchor="middle")
+        bottoms.append(by + (len(bl) - 1) * 18)
+    for a, b in zip(spans, spans[1:]):
+        assert a[1] + 8 < b[0], ("ani suprapuși", a, b)
+    if ri == 0:
+        assert spans[2][1] + 6 < brk[0] and brk[1] + 6 < spans[3][0], (spans[2], brk, spans[3])
+    if ri == 0:
+        s += text(1840, AY + 28, "continuă", 13, MUTED, "sans", 400, True, anchor="end")
+        assert 1840 - measure("continuă", 13, "sans", 400, True) > xs[9] + NR + 4
+row_bottom = [max(bottoms[:10]), max(bottoms[10:])]
+assert row_bottom[0] + 14 < ROWS[1]["axis"] - 78 - 18, row_bottom
+print("rânduri până la", row_bottom)
+
+# ------------------------------------------------------------------ rigla la scară + divergențe
+RY = row_bottom[1] + 24
+RH = 972 - RY
+assert RH >= 112, RH
+RW = 1180
+s += card(80, RY, RW, RH)
+s += text(102, RY + 30, "Aceleași 20 de repere, la scară", 17, VAR, "sans", 700)
+s += text(102 + measure("Aceleași 20 de repere, la scară", 17, "sans", 700) + 12, RY + 30,
+          "· 1 an = aceeași lungime pe toată rigla · reperele apropiate se suprapun", 14, MUTED, "sans", 400, True)
+Y0, Y1 = 1500, 2025
+RX0, RX1 = 116, 80 + RW - 36
+PX = (RX1 - RX0) / (Y1 - Y0)
+LYR = RY + RH - 40
+
+
+def rx(y):
+    return RX0 + (y - Y0) * PX
+
+
+s += f'<line x1="{RX0}" y1="{LYR}" x2="{RX1}" y2="{LYR}" stroke="{AXIS}" stroke-width="3"/>\n'
+for y in range(1500, 2001, 100):
+    s += f'<line x1="{rx(y):.1f}" y1="{LYR}" x2="{rx(y):.1f}" y2="{LYR+9}" stroke="{AXIS}" stroke-width="2"/>\n'
+    s += text(rx(y), LYR + 27, str(y), 14, CEATA, "sans", 600, anchor="middle")
+for y in range(1550, 2001, 100):
+    s += f'<line x1="{rx(y):.1f}" y1="{LYR}" x2="{rx(y):.1f}" y2="{LYR+5}" stroke="{AXIS}" stroke-width="1.5"/>\n'
+# ani reali (interval -> bară scurtă)
+REAL = [((1525,), "carte"), ((1544,), "carte"), ((1550,), "carte"), ((1774,), "muzica"), ((1787, 1788), "teatru"),
+        ((1792,), "muzica"), ((1817,), "muzeu"), ((1849,), "muzeu"), ((1861,), "carte"), ((1868,), "teatru"),
+        ((1869,), "carte"), ((1894, 1895), "muzeu"), ((1898, 1904), "carte"), ((1944,), "muzica"), ((1949,), "muzica"),
+        ((1963, 1967), "muzeu"), ((1993,), "teatru"), ((2007,), "toate"), ((2013,), "teatru"), ((2019,), "teatru")]
+assert len(REAL) == 20
+DOTY = LYR - 16
+for yrs, dom in REAL:
+    col = DOM[dom][0]
+    if len(yrs) == 2:
+        s += (f'<rect x="{rx(yrs[0])-5:.1f}" y="{DOTY-5}" width="{(yrs[1]-yrs[0])*PX+10:.1f}" height="10" rx="5" '
+              f'fill="{col}" opacity="0.85"/>\n')
+    else:
+        s += f'<circle cx="{rx(yrs[0]):.1f}" cy="{DOTY}" r="5" fill="{col}" opacity="0.85"/>\n'
+    s += f'<line x1="{rx(yrs[0]):.1f}" y1="{DOTY+5}" x2="{rx(yrs[0]):.1f}" y2="{LYR}" stroke="{col}" stroke-width="1" opacity="0.6"/>\n'
+# goluri
+s += text((rx(1550) + rx(1774)) / 2, DOTY - 14, "1550–1774: niciun reper în această selecție", 13, MUTED,
+          "sans", 400, True, anchor="middle")
+assert measure("1550–1774: niciun reper în această selecție", 13, "sans", 400, True) < rx(1774) - rx(1550) - 20
+
+# divergențe
+DX = 80 + RW + 16
+DW = 1840 - DX
+s += f'<rect x="{DX}" y="{RY}" width="{DW}" height="{RH}" rx="22" fill="{DISC}" stroke="{TIGLA}" stroke-width="1.5"/>\n'
+s += text(DX + 20, RY + 28, "DIVERGENȚE", 13, TIGLA_L, "sans", 700, extra='letter-spacing="1.5"')
+DIVS = [("1787–1788", "construcția începe în 1787 și se termină în iunie 1788 (en.wikipedia); "
+                      "tnrs.ro: inaugurat la 1 iunie 1788, după un an de lucru."),
+        ("1894 / 1895", "clădirea muzeului „gata în 1894” (cimec) / 1895 (patrimoniu.sibiu.ro).")]
+dy = RY + 52
+for yr, body in DIVS:
+    lab = yr + ": "
+    lw = measure(lab, 14, "sans", 700)
+    s += text(DX + 20, dy, lab, 14, OCRU, "sans", 700)
+    lines = wrap(body, DW - 40 - lw, 14)
+    # primul rând după etichetă, restul de la margine
+    first = lines[0]
+    s += text(DX + 20 + lw, dy, first, 14, VAR)
+    rest = " ".join(lines[1:])
+    if rest:
+        for j, ln in enumerate(wrap(rest, DW - 40, 14)):
+            dy += 18
+            s += text(DX + 20, dy, ln, 14, VAR)
+    dy += 24
+assert dy - 24 < RY + RH - 8, (dy, RY + RH)
+
+# ------------------------------------------------------------------ surse
+src = ("Surse (preluate din fișa de fapte a proiectului): patrimoniu.sibiu.ro (premiere); en.wikipedia (Sala Thalia, Teatrul „Radu Stanca”, FITS, "
+       "Filarmonica, ASTRA, Muzeul Brukenthal); typographia.oszk.hu; konferencijos.lnb.lt; tnrs.ro; zilesinopti.ro; cimec; bursa.ro.")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

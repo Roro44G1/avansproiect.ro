@@ -1,0 +1,207 @@
+# -*- coding: utf-8 -*-
+"""P15 – Angajamentul micului ecologist sibian – afiș AI cu 7 promisiuni legate de locuri reale (fapte din fișă)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math, random
+
+OUT = "/home/claude/expo/c4/08_identitate/P15_angajamentul_ecologistului.svg"
+ORANGE = "#F76B15"
+TITLE = "Angajamentul micului ecologist sibian"
+s = frame_head("IDENTITATE · P15", ORANGE, TITLE, "afiș-model · promisiuni propuse, de completat și semnat")
+s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— afiș AI cu 7 promisiuni", 30, CEATA, "serif", 400, True)
+
+INK = "#2B2622"; INK2 = "#5E554B"; SEPIA = "#8A5A2B"
+GREEN = "#3D7A4A"; BLUE = "#3E63DD"; RIVER = "#4E8FB0"
+
+s += ('<defs>'
+      '<linearGradient id="pg15" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8F3E9"/><stop offset="1" stop-color="#EFE6D3"/></linearGradient>'
+      '<pattern id="dots15" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="13" cy="13" r="1.2" fill="#C9B994" opacity="0.5"/></pattern>'
+      '</defs>\n')
+
+# ---------- foaia afișului
+SX0, SY0, SX1, SY1 = 80, 228, 1840, 1004
+s += f'<g filter="url(#sh)"><rect x="{SX0}" y="{SY0}" width="{SX1-SX0}" height="{SY1-SY0}" rx="14" fill="url(#pg15)"/></g>\n'
+s += f'<rect x="{SX0}" y="{SY0}" width="{SX1-SX0}" height="{SY1-SY0}" rx="14" fill="url(#pg15)" filter="url(#paper)"/>\n'
+s += f'<rect x="{SX0}" y="{SY0}" width="{SX1-SX0}" height="{SY1-SY0}" rx="14" fill="url(#dots15)"/>\n'
+s += f'<rect x="{SX0+12}" y="{SY0+12}" width="{SX1-SX0-24}" height="{SY1-SY0-24}" rx="8" fill="none" stroke="{GREEN}" stroke-width="1.6" stroke-dasharray="10 6" opacity="0.55"/>\n'
+# pioneze
+for px, py in ((SX0 + 30, SY0 + 30), (SX1 - 30, SY0 + 30)):
+    s += f'<circle cx="{px}" cy="{py+2}" r="9" fill="#000" opacity="0.18"/><circle cx="{px}" cy="{py}" r="9" fill="{ORANGE}"/><circle cx="{px-3}" cy="{py-3}" r="3" fill="#FFD2B0"/>\n'
+
+# ---------- antetul afișului
+HX = SX0 + 56
+s += text(HX, SY0 + 52, "EU, MICUL ECOLOGIST SIBIAN,", 17, SEPIA, "sans", 700, extra='letter-spacing="3"')
+s += text(HX, SY0 + 98, "promit să am grijă de locurile mele:", 40, INK, "serif", 700, True)
+
+# mică panoramă stilizată (munte → pădure → râu → oraș), în dreapta antetului
+PX0, PY0, PX1, PY1 = 1150, SY0 + 26, 1790, SY0 + 112
+s += f'<clipPath id="pan15"><rect x="{PX0}" y="{PY0}" width="{PX1-PX0}" height="{PY1-PY0}" rx="12"/></clipPath>\n'
+o = f'<g clip-path="url(#pan15)">'
+o += f'<rect x="{PX0}" y="{PY0}" width="{PX1-PX0}" height="{PY1-PY0}" fill="#DCE9E6"/>'
+o += f'<circle cx="{PX0+70}" cy="{PY0+26}" r="13" fill="{OCRU}" opacity="0.85"/>'
+o += f'<path d="M{PX0},{PY1-22} L{PX0+60},{PY0+34} L{PX0+96},{PY0+52} L{PX0+150},{PY0+18} L{PX0+214},{PY0+56} L{PX0+260},{PY0+44} L{PX0+330},{PY1-20} V{PY1} H{PX0} Z" fill="#7D97A6"/>'
+o += f'<path d="M{PX0+142},{PY0+26} L{PX0+150},{PY0+18} L{PX0+160},{PY0+26} L{PX0+154},{PY0+30} Z" fill="#F3EFE6"/>'
+rnd = random.Random(15)
+for k in range(16):            # brazi
+    x = PX0 + 10 + k * 17; h = rnd.uniform(18, 28); yb = PY1 - 8
+    o += f'<polygon points="{x-6:.1f},{yb} {x:.1f},{yb-h:.1f} {x+6:.1f},{yb}" fill="#2F5E46"/>'
+for k in range(10):            # stejăret (Dumbrava)
+    x = PX0 + 300 + k * 15; r = rnd.uniform(9, 13)
+    o += f'<circle cx="{x:.1f}" cy="{PY1-14:.1f}" r="{r:.1f}" fill="#5E8C46"/>'
+# orașul (siluete generice de acoperișuri și turnuri)
+cx0 = PX0 + 470
+o += f'<rect x="{cx0}" y="{PY1-30}" width="170" height="30" fill="#B9583A" opacity="0.9"/>'
+for k, (dx, w, h) in enumerate(((0, 30, 20), (34, 26, 30), (64, 34, 18), (102, 24, 26), (130, 40, 16))):
+    o += f'<polygon points="{cx0+dx},{PY1-30} {cx0+dx+w/2},{PY1-30-h} {cx0+dx+w},{PY1-30}" fill="#9C4A30"/>'
+o += f'<rect x="{cx0+76}" y="{PY1-68}" width="12" height="40" fill="#E9DFCB"/><polygon points="{cx0+72},{PY1-68} {cx0+82},{PY1-88} {cx0+92},{PY1-68}" fill="#9C4A30"/>'
+# râul: din munte spre oraș
+o += f'<path d="M{PX0+120},{PY1} q60,-20 140,-6 t170,-4 t200,-6 t120,4" fill="none" stroke="{RIVER}" stroke-width="7" stroke-linecap="round"/>'
+o += '</g>'
+o += f'<rect x="{PX0}" y="{PY0}" width="{PX1-PX0}" height="{PY1-PY0}" rx="12" fill="none" stroke="#C9B994" stroke-width="1.5"/>'
+s += o + "\n"
+s += text(PX1, PY1 + 20, "panoramă stilizată, nu hartă", 13, INK2, "sans", 400, True, anchor="end")
+
+# ---------- pictogramele (în jurul originii, ~ ±30 px, culoare var)
+W_ = "#FFFFFF"
+
+
+def ic_dumbrava():
+    o = f'<g fill="{W_}">'
+    for dx in (-22, 22):
+        o += f'<rect x="{dx-2.5}" y="4" width="5" height="16"/><circle cx="{dx}" cy="-6" r="13"/>'
+    o += '</g>'
+    o += f'<path d="M-5,26 q4,-14 2,-30 M5,26 q-2,-16 2,-30" fill="none" stroke="{W_}" stroke-width="2.4" stroke-dasharray="4 3"/>'
+    # o floare mică, protejată
+    o += f'<g transform="translate(0,-26)"><circle r="3" fill="{OCRU}"/>'
+    for a in range(0, 360, 72):
+        o += f'<ellipse cx="0" cy="-5" rx="2.6" ry="4" fill="{W_}" transform="rotate({a})"/>'
+    return o + '</g>'
+
+
+def ic_cibin():
+    o = f'<g fill="none" stroke="{W_}" stroke-width="3.4" stroke-linecap="round">'
+    for y in (12, 22):
+        o += f'<path d="M-30,{y} q7.5,-7 15,0 t15,0 t15,0 t15,0"/>'
+    o += '</g>'
+    o += f'<g fill="{W_}"><rect x="-11" y="-22" width="22" height="26" rx="3"/><rect x="-14" y="-28" width="28" height="5" rx="2"/><rect x="-4" y="-32" width="8" height="4" rx="1.5"/></g>'
+    o += f'<g stroke="#000" stroke-opacity="0.25" stroke-width="2"><line x1="-5" y1="-17" x2="-5" y2="-1"/><line x1="0" y1="-17" x2="0" y2="-1"/><line x1="5" y1="-17" x2="5" y2="-1"/></g>'
+    return o
+
+
+def ic_cuib():
+    # pasărea, cocoțată deasupra cuibului
+    o = f'<path d="M-24,-14 l12,-3 l2,6 Z" fill="{W_}"/>'                       # coada
+    o += f'<ellipse cx="-2" cy="-14" rx="15" ry="10" fill="{W_}"/>'              # corpul
+    o += f'<circle cx="13" cy="-23" r="8" fill="{W_}"/>'                          # capul
+    o += f'<path d="M20,-25 l8,2 l-8,3 Z" fill="{OCRU}"/>'                        # ciocul
+    o += f'<circle cx="15" cy="-25" r="1.8" fill="#222"/>'
+    o += f'<path d="M-12,-16 q8,-8 18,-2 q-8,6 -18,2 Z" fill="#000" opacity="0.18"/>'  # aripa
+    # ouăle, apoi marginea cuibului peste ele
+    o += f'<ellipse cx="-8" cy="6" rx="6" ry="7.5" fill="#CFE6F3"/><ellipse cx="6" cy="5" rx="6" ry="7.5" fill="#CFE6F3"/>'
+    o += f'<path d="M-30,6 h60 q-4,20 -30,20 q-26,0 -30,-20 Z" fill="{W_}"/>'
+    o += f'<g stroke="#000" stroke-opacity="0.22" stroke-width="1.6" fill="none"><path d="M-26,11 q26,8 52,0"/><path d="M-20,18 q20,6 40,0"/>'
+    o += '<path d="M-22,6 l6,6 M-8,6 l6,7 M6,6 l6,7 M18,6 l5,6"/></g>'
+    return o
+
+
+def ic_munte():
+    o = f'<path d="M-32,22 L-10,-20 L2,-4 L12,-14 L32,22 Z" fill="{W_}" opacity="0.95"/>'
+    o += f'<path d="M-16,-8 L-10,-20 L-4,-8 L-8,-5 L-12,-8 Z" fill="#000" opacity="0.18"/>'
+    # rucsacul
+    o += f'<g transform="translate(6,8)"><path d="M-7,-10 q7,-9 14,0" fill="none" stroke="#2B2622" stroke-width="3"/>'
+    o += f'<rect x="-12" y="-10" width="24" height="26" rx="7" fill="#2B2622"/>'
+    o += f'<rect x="-7" y="3" width="14" height="8" rx="2.5" fill="{W_}" opacity="0.9"/></g>'
+    # săgeata „dus-întors”
+    o += f'<path d="M-14,26 a11,11 0 0 1 0,-22 h4" fill="none" stroke="#2B2622" stroke-width="3" stroke-linecap="round"/>'
+    o += f'<path d="M-11,-1 l9,5 l-9,5 Z" fill="#2B2622"/>'
+    return o
+
+
+def ic_apa():
+    o = f'<g fill="{W_}"><rect x="-26" y="-22" width="30" height="10" rx="3"/><rect x="-2" y="-22" width="10" height="20" rx="3"/>'
+    o += f'<rect x="-16" y="-30" width="10" height="9" rx="2"/><rect x="-22" y="-34" width="22" height="5" rx="2.5"/></g>'
+    o += f'<path d="M3,4 q-8,12 0,16 q8,-4 0,-16 Z" fill="#CFE6F3" stroke="{W_}" stroke-width="2"/>'
+    o += f'<path d="M14,10 a14,14 0 0 1 4,18" fill="none" stroke="{W_}" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>'
+    return o
+
+
+def ic_planteaza():
+    o = f'<path d="M-28,24 q28,-18 56,0 Z" fill="{W_}"/>'
+    o += f'<path d="M0,16 V-6" stroke="#2B2622" stroke-width="3.4" stroke-linecap="round"/>'
+    o += f'<path d="M0,-2 q-20,-4 -22,-22 q18,0 22,22 Z" fill="#2B2622"/>'
+    o += f'<path d="M0,-6 q16,-6 18,-24 q-16,2 -18,24 Z" fill="#2B2622"/>'
+    return o
+
+
+def ic_bicicleta():
+    o = f'<g fill="none" stroke="{W_}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">'
+    o += '<circle cx="-17" cy="10" r="12"/><circle cx="17" cy="10" r="12"/>'
+    o += '<path d="M-17,10 L-5,-10 L12,-10 L17,10 M-5,-10 L2,10 L12,-10 M-9,-16 h8 M12,-10 l-3,-8 h7"/>'
+    return o + '</g><circle cx="2" cy="10" r="3" fill="' + W_ + '"/>'
+
+
+items = [
+    (GREEN, ic_dumbrava, "PĂDUREA DUMBRAVA", "Rămân pe alei și nu culeg plante.",
+     "Parc natural de 993 ha, la limita sud-vestică a Sibiului; aici cresc orhidee, brândușe și opaița, o plantă endemică.",
+     "sibiul.ro; ecomagazin.ro"),
+    (PETROL, ic_cibin, "CIBINUL ȘI MALURILE LUI", "Nu las gunoi pe malul râului.",
+     "Cibinul are 82 km: coboară din Munții Cindrel, trece prin Sibiu și se varsă în Olt, lângă Tălmaciu. Ce ajunge în apă pleacă la vale.",
+     "en.wikipedia"),
+    (VIOLET, ic_cuib, "PARCUL SUB ARINI", "Nu deranjez cuiburile și păsările.",
+     "Parcul, înființat în 1856, are 95 de specii de păsări și arbori de peste 150 de ani – arin, tei, castan, platan.",
+     "zilesinopti.ro"),
+    (TIGLA, ic_munte, "PE MUNTE, LA PĂLTINIȘ", "Ce aduc pe munte, iau înapoi acasă.",
+     "Păltiniș (1894), cea mai veche stațiune montană din România, e înconjurat de pădure de conifere.",
+     "turistintransilvania.com; en.wikipedia"),
+    (BLUE, ic_apa, "APA DE LA GURA RÂULUI", "Economisesc apa: închid robinetul.",
+     "Barajul de lângă Gura Râului este cea mai mare sursă de apă potabilă pentru orașul Sibiu.",
+     "en.wikipedia"),
+    (OCRU, ic_planteaza, "UN COPAC NOU", "Plantez un copac și am grijă de el.",
+     "În 1754, pentru Dumbrava, Martin von Seeberg propunea ca fiecare tânăr de 10 ani să planteze doi puieți de stejar și să-i îngrijească.",
+     "ecomagazin.ro"),
+    (ORANGE, ic_bicicleta, "PROMENADA CIBINULUI", "Merg pe jos sau cu bicicleta când pot.",
+     "Promenada Cibinului din Sibiu are aproape 4 km de piste pentru biciclete, trotuare, pontoane și zone de relaxare.",
+     "zilesinopti.ro, 2024"),
+]
+
+GX0 = SX0 + 40; GY0 = SY0 + 140
+GAPX, GAPY = 24, 14
+CW = (SX1 - SX0 - 80 - GAPX) / 2
+CH = (SY1 - 30 - GY0 - 3 * GAPY) / 4
+ends = []
+for i, (col, ic, tag, prom, fact, src) in enumerate(items):
+    r, c = divmod(i, 2)
+    x = GX0 + c * (CW + GAPX); y = GY0 + r * (CH + GAPY)
+    s += f'<rect x="{x:.1f}" y="{y:.1f}" width="{CW:.1f}" height="{CH:.1f}" rx="14" fill="#FFFDF8" stroke="#E0D2B4" stroke-width="1.4"/>\n'
+    s += f'<rect x="{x:.1f}" y="{y+14:.1f}" width="5" height="{CH-28:.1f}" rx="2.5" fill="{col}"/>\n'
+    icx, icy = x + 78, y + CH / 2
+    s += f'<g filter="url(#shs)"><circle cx="{icx:.1f}" cy="{icy:.1f}" r="50" fill="{col}"/></g>'
+    s += f'<g transform="translate({icx:.1f},{icy:.1f})">{ic()}</g>'
+    # numărul
+    s += f'<circle cx="{icx+38:.1f}" cy="{icy-38:.1f}" r="17" fill="{INK}" stroke="#FFFDF8" stroke-width="3"/>'
+    s += text(icx + 38, icy - 31.5, str(i + 1), 18, "#FFFDF8", "sans", 700, anchor="middle") + "\n"
+    tx = x + 158; tw = x + CW - 24 - tx
+    s += text(tx, y + 30, tag, 13, col if col != OCRU else "#9A6B10", "sans", 700, extra='letter-spacing="2.2"')
+    s += text(tx, y + 61, prom, 24, INK, "serif", 700)
+    assert measure(prom, 24, "serif", 700) < tw, prom
+    p, y2 = para(tx, y + 88, fact, 16, tw, INK2, "sans", 400, lh=20)
+    s += p
+    s += text(tx, y2 + 1, "sursa: " + src, 13, "#8C8172", "sans", 400, True)
+    ends.append((y2 + 1, y + CH))
+
+# ---------- a 8-a căsuță: semnătura
+x = GX0 + CW + GAPX; y = GY0 + 3 * (CH + GAPY)
+s += f'<rect x="{x:.1f}" y="{y:.1f}" width="{CW:.1f}" height="{CH:.1f}" rx="14" fill="none" stroke="{SEPIA}" stroke-width="1.8" stroke-dasharray="8 6"/>\n'
+s += text(x + 32, y + 52, "Semnătura mea:", 24, INK, "serif", 700, True)
+lx = x + 32 + measure("Semnătura mea:", 24, "serif", 700, True) + 16
+s += f'<line x1="{lx:.1f}" y1="{y+54}" x2="{x+CW-32:.1f}" y2="{y+54}" stroke="{INK}" stroke-width="1.6"/>\n'
+s += text(x + 32, y + 98, "Data:", 20, INK, "serif", 700, True)
+lx2 = x + 32 + measure("Data:", 20, "serif", 700, True) + 14
+s += f'<line x1="{lx2:.1f}" y1="{y+100}" x2="{lx2+220:.1f}" y2="{y+100}" stroke="{INK}" stroke-width="1.4"/>\n'
+s += text(lx2 + 250, y + 88, "Afiș-model generat cu AI.", 15, INK2, "sans", 400, True)
+s += text(lx2 + 250, y + 108, "Promisiunile sunt propuse – adaug-o și pe a ta.", 15, INK2, "sans", 400, True)
+assert lx2 + 250 + measure("Promisiunile sunt propuse – adaug-o și pe a ta.", 15, "sans", 400, True) < x + CW - 24
+
+s += frame_foot()
+write(OUT, s)
+print(OUT, "CH", round(CH, 1), "ends", [(round(a), round(b)) for a, b in ends])

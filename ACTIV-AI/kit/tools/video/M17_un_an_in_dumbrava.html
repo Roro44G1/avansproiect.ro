@@ -1,0 +1,446 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M17</title></head><body>
+<script src="lib.js"></script>
+<script>
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const T0 = 4, MD = 4, TEND = 52; // 12 luni × 4 s (4–52 s); cartela finală 52–58 s
+const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
+const SEAS = ['iarna', 'iarna', 'primăvara', 'primăvara', 'primăvara', 'vara', 'vara', 'vara', 'toamna', 'toamna', 'toamna', 'iarna'];
+const SEASCOL = { 'iarna': '#A9C8E8', 'primăvara': '#9CC46A', 'vara': '#4FA35A', 'toamna': '#D98A3A' };
+const CAP = [
+  { title: '993 de hectare de pădure', line: 'Pădurea Dumbrava se întinde pe 993 ha, la limita de sud-vest a Sibiului. Din secolul al XVII-lea, sibienii vin aici la plimbare.', src: 'sibiul.ro; ecomagazin.ro; dssibiu.ro' },
+  { title: 'Un stejăret de terasă', line: 'Pădurea este mai ales un stejăret de terasă, cu gorun, carpen, ulm, cireș pădureț, jugastru și tei.', src: 'dssibiu.ro; sibiul.ro' },
+  { title: 'Primele flori', line: 'Brândușele și porumbarul înfloresc de regulă primăvara devreme; florile albe ale porumbarului apar înaintea frunzelor.', src: 'sibiul.ro (specii); en.wikipedia (Crocus, Prunus spinosa)' },
+  { title: 'Frunze noi și flori de cireș', line: 'Cireșul pădureț înflorește de regulă odată cu frunzele noi. Mugurii stejarului se deschid mai târziu.', src: 'en.wikipedia (Prunus avium, Quercus robur)' },
+  { title: 'Păducelul în floare', line: 'Păducelul înflorește de regulă la sfârșitul primăverii, cu flori albe. Florile stejarului sunt amenți mici, polenizați de vânt.', src: 'en.wikipedia (Crataegus monogyna, Quercus robur)' },
+  { title: 'Teiul în floare', line: 'Teiul înflorește de regulă la începutul verii, cu flori mici, galben-verzui, foarte parfumate.', src: 'en.wikipedia (Tilia cordata)' },
+  { title: 'Arbori bătrâni', line: 'Peste jumătate din pădure are arbori de peste 100 de ani, iar câteva zeci de stejari trec de 200 de ani.', src: 'dssibiu.ro; sibiul.ro' },
+  { title: 'Cine trăiește în pădure', line: 'Sursele amintesc căpriorul, veverița, mistrețul și vulpea. În animație, animalele sunt desenate schematic.', src: 'sibiul.ro; ecomagazin.ro' },
+  { title: 'Păsările pădurii', line: 'Pițigoiul, mierla, presura, ciocănitoarea, gaița, bufnița și corbul sunt păsări amintite de surse în Dumbrava.', src: 'sibiul.ro; ecomagazin.ro' },
+  { title: 'Toamna ruginie', line: 'Frunzele se colorează și cad. Ghinda gorunului se coace în circa șase luni de la înflorire.', src: 'en.wikipedia (Quercus petraea)' },
+  { title: '1754: doi puieți de stejar', line: 'Martin von Seeberg propune ca fiecare tânăr care împlinește 10 ani să planteze doi puieți de stejar, să-i îngrădească și să-i îngrijească până la căsătorie.', src: 'ecomagazin.ro' },
+  { title: 'Iarna, sub zăpadă', line: 'Unii stejari, mai ales cei tineri, își păstrează peste iarnă frunzele uscate – fenomen numit marcescență.', src: 'en.wikipedia (Marcescence)' },
+];
+const MM = t => clamp((t - T0) / MD, 0, 12);
+function kf(K, m) { if (m <= K[0][0]) return K[0][1]; for (let i = 1; i < K.length; i++) if (m <= K[i][0]) return lerp(K[i - 1][1], K[i][1], inv(K[i - 1][0], K[i][0], m)); return K[K.length - 1][1]; }
+function kfc(K, m) { if (m <= K[0][0]) return K[0][1]; for (let i = 1; i < K.length; i++) if (m <= K[i][0]) return mix(K[i - 1][1], K[i][1], inv(K[i - 1][0], K[i][0], m)); return K[K.length - 1][1]; }
+
+// curbe sezoniere (m = 0 la 1 ianuarie, 12 la 31 decembrie) – perioade orientative
+const C = {
+  snow: [[0, 1], [1.7, 1], [2.15, .55], [2.5, 0], [10.75, 0], [11.05, .5], [11.35, 1], [12, 1]],
+  snowfall: [[0, .8], [.5, .35], [.9, .85], [1.4, .5], [1.9, .15], [2.2, 0], [10.8, 0], [11.0, .6], [11.6, 1], [12, .8]],
+  oak: [[0, 0], [3.55, 0], [3.9, .18], [4.4, .7], [4.85, 1], [9.35, 1], [9.85, .85], [10.4, .4], [10.85, .08], [11.1, 0], [12, 0]],
+  early: [[0, 0], [3.05, 0], [3.35, .2], [3.9, .75], [4.4, 1], [9.2, 1], [9.7, .8], [10.2, .35], [10.6, .05], [10.9, 0], [12, 0]],
+  lph: [[0, 0], [3.4, 0], [4.5, .15], [5.3, 1], [8.7, 1], [9.3, 1.7], [9.9, 2.3], [10.6, 3], [12, 3]],
+  crocus: [[0, 0], [1.95, 0], [2.3, 1], [3.0, 1], [3.35, 0], [12, 0]],
+  porumbar: [[0, 0], [2.2, 0], [2.5, 1], [3.15, 1], [3.5, 0], [12, 0]],
+  cires: [[0, 0], [3.0, 0], [3.25, 1], [3.8, 1], [4.15, 0], [12, 0]],
+  paducel: [[0, 0], [4.0, 0], [4.3, 1], [4.95, 1], [5.35, 0], [12, 0]],
+  tei: [[0, 0], [5.0, 0], [5.3, 1], [5.85, 1], [6.2, 0], [12, 0]],
+  acorn: [[0, 0], [7.8, 0], [8.4, 1], [9.9, 1], [10.4, 0], [12, 0]],
+  fall: [[0, 0], [9.4, 0], [9.8, .6], [10.3, 1], [10.8, .6], [11.1, 0], [12, 0]],
+  litter: [[0, 0], [9.5, 0], [10.4, .8], [10.9, 1], [12, 1]],
+  marc: [[0, 1], [3.4, 1], [3.9, 0], [10.5, 0], [10.95, 1], [12, 1]],
+  grass: [[0, .2], [2.5, .3], [4, .7], [6, 1], [8.5, .9], [10, .6], [11, .3], [12, .2]],
+  petals: [[0, 0], [2.6, 0], [3.0, .7], [3.4, .9], [3.9, .6], [4.3, .3], [4.7, .7], [5.2, .6], [5.5, 0], [12, 0]],
+};
+const SKY = { top: [[0, '#9AB0C6'], [2, '#86AED6'], [4, '#6AAAE0'], [6.5, '#5AA4E6'], [8.5, '#74A8D6'], [10, '#8CA4BE'], [11, '#98A6B6'], [12, '#9AB0C6']],
+  bot: [[0, '#E2E9F0'], [2, '#DAE7F0'], [4, '#D2EAF6'], [6.5, '#C4E4F8'], [8.5, '#E4DCC6'], [10, '#E8D3B4'], [11, '#D9DDE2'], [12, '#E2E9F0']] };
+const FOREST = [[0, '#80776E'], [3.3, '#83796C'], [3.9, '#A9C680'], [5, '#6E9A58'], [8.8, '#678F52'], [9.5, '#B88C40'], [10.3, '#A26A3A'], [10.9, '#80776E'], [12, '#80776E']];
+const GROUND = [[0, '#7D8A5A'], [2.5, '#8A9A5A'], [3.5, '#8DBE58'], [5, '#76A84A'], [7.5, '#86A050'], [9, '#9A9A4E'], [10, '#A0883E'], [11, '#8A7046'], [12, '#7D8A5A']];
+const LC = {
+  oak: ['#B5D46E', '#4E7A3A', ['#C9852E', '#B9683A', '#A8742E', '#D49A3A'], '#8A5E36'],
+  carpen: ['#B8D878', '#4F8240', ['#D9B23A', '#CFA330', '#E0C050', '#C49A2E'], '#9A7A40'],
+  tei: ['#BEDC7A', '#5A8A3E', ['#D8C04A', '#E0CC5A', '#C8B040', '#D4B848'], '#9A8040'],
+  cires: ['#B0D070', '#55823E', ['#C8503A', '#D9763A', '#B8443A', '#E08A3A'], '#8A4A34'],
+  shrub: ['#B8D878', '#4E7A3A', ['#A8562E', '#B8703A', '#8E4A2E', '#C08040'], '#7A4A30'],
+};
+function leafCol(sp, ph, v) {
+  const L = LC[sp], aut = L[2][Math.floor(v * 4) % 4];
+  if (ph <= 1) return mix(L[0], L[1], ph);
+  if (ph <= 2) return mix(L[1], aut, ph - 1);
+  return mix(aut, L[3], Math.min(1, ph - 2));
+}
+
+// ---------- copaci deterministici ----------
+function makeTree(o) {
+  const r = rng(o.seed), segs = [], tips = [];
+  function br(x0, y0, ang, len, w, d) {
+    ang = clamp(ang, -Math.PI + .1, -.1);
+    const x1 = x0 + Math.cos(ang) * len, y1 = y0 + Math.sin(ang) * len, bend = (r() - .5) * len * o.gnarl;
+    segs.push({ x0, y0, cx: (x0 + x1) / 2 - Math.sin(ang) * bend, cy: (y0 + y1) / 2 + Math.cos(ang) * bend, x1, y1, w, w1: w * o.wr, d, hz: Math.abs(Math.cos(ang)) });
+    if (d >= o.depth) { tips.push([x1, y1, d]); return; }
+    const n = d === 0 ? o.n0 : (r() < o.p3 ? 3 : 2);
+    for (let i = 0; i < n; i++) {
+      const a = ang + (i - (n - 1) / 2) * o.spread * (.75 + r() * .5) + (r() - .5) * .35;
+      br(x1, y1, a, len * (o.lr + r() * .16), w * o.wr, d + 1);
+    }
+    if (d >= o.depth - 2) tips.push([x1, y1, d]);
+  }
+  for (const s of o.stems) br(o.x + s[0], o.base, -Math.PI / 2 + s[1], o.h * s[2], o.tw * s[3], 0);
+  const blobs = [], flowers = [];
+  for (const [x, y, d] of tips) {
+    const k = d >= o.depth ? o.bpt : 1;
+    for (let i = 0; i < k; i++) { const a = r() * 7, rr = r() * o.br * .9; blobs.push({ x: x + Math.cos(a) * rr, y: y + Math.sin(a) * rr * .8 - o.br * .25, r: o.br * (.55 + r() * .6), th: r() * .9 + .05, v: r(), o: r(), sh: 0 }); }
+    for (let i = 0; i < o.fpt; i++) { const a = r() * 7, rr = r() * o.br * 1.05; flowers.push({ x: x + Math.cos(a) * rr, y: y + Math.sin(a) * rr * .8 - o.br * .1, r: 2.6 + r() * 3.2, th: r() * .9 + .05, p: r() }); }
+  }
+  let y0 = 1e9, y1 = -1e9; for (const b of blobs) { y0 = Math.min(y0, b.y); y1 = Math.max(y1, b.y); }
+  for (const b of blobs) b.sh = .04 + .32 * (b.y - y0) / (y1 - y0 + 1) + r() * .08;
+  blobs.sort((a, b) => b.y - a.y);
+  return Object.assign(o, { segs, tips, blobs, flowers });
+}
+function qpt(s, u) { const v = 1 - u; return [v * v * s.x0 + 2 * v * u * s.cx + u * u * s.x1, v * v * s.y0 + 2 * v * u * s.cy + u * u * s.y1]; }
+function drawBranches(T, snow) {
+  ctx.fillStyle = T.bark;
+  for (const s of T.segs) {
+    const L = [], R = [];
+    for (let i = 0; i <= 6; i++) {
+      const u = i / 6, p = qpt(s, u), q = qpt(s, Math.min(1, u + .01)), p0 = qpt(s, Math.max(0, u - .01));
+      let dx = q[0] - p0[0], dy = q[1] - p0[1]; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l;
+      const w = lerp(s.w, s.w1, u) / 2 + .6; L.push([p[0] - dy * w, p[1] + dx * w]); R.push([p[0] + dy * w, p[1] - dx * w]);
+    }
+    ctx.beginPath(); ctx.moveTo(L[0][0], L[0][1]); for (const p of L) ctx.lineTo(p[0], p[1]); for (let i = R.length - 1; i >= 0; i--) ctx.lineTo(R[i][0], R[i][1]); ctx.closePath(); ctx.fill();
+  }
+  // lumină pe trunchi
+  ctx.save(); ctx.strokeStyle = 'rgba(255,240,220,.10)'; ctx.lineCap = 'round';
+  for (const s of T.segs) if (s.d <= 1) { ctx.lineWidth = s.w * .22; ctx.beginPath(); ctx.moveTo(s.x0 - s.w * .22, s.y0); ctx.quadraticCurveTo(s.cx - s.w * .2, s.cy, s.x1 - s.w1 * .2, s.y1); ctx.stroke(); }
+  ctx.restore();
+  if (snow > .02) {
+    ctx.save(); ctx.lineCap = 'round';
+    for (const s of T.segs) {
+      if (s.hz < .25) continue; const a = snow * Math.min(1, s.hz * 1.3) * .95; ctx.strokeStyle = `rgba(250,252,255,${a})`; ctx.lineWidth = Math.max(1.6, s.w * .42);
+      const o = s.w * .42; ctx.beginPath(); ctx.moveTo(s.x0, s.y0 - o); ctx.quadraticCurveTo(s.cx, s.cy - o, s.x1, s.y1 - s.w1 * .42); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+function drawCrown(T, dens, ph, alphaMul, forceCol) {
+  if (dens <= 0) return;
+  for (const b of T.blobs) {
+    if (b.th > dens) continue;
+    const grow = clamp((dens - b.th) / .12);
+    let p = ph; if (ph > 1) p = clamp(ph + (b.o - .5) * .55, 1, 3);
+    const col = forceCol ? mix(forceCol, '#5A3A22', b.o * .35) : leafCol(T.sp, p, b.v);
+    ctx.globalAlpha = alphaMul;
+    ctx.fillStyle = mix(col, '#18222A', b.sh);
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r * (.35 + .65 * grow) * (.5 + .5 * dens), 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawFlowers(T, amt, col, t) {
+  if (amt <= 0) return;
+  for (const f of T.flowers) {
+    if (f.th > amt) continue; const g = clamp((amt - f.th) / .15);
+    ctx.fillStyle = f.p < .15 && T.pink ? '#F2C8D4' : col; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * g, 0, 7); ctx.fill();
+    if (f.r > 4.6 && g > .7 && col === '#FFFFFF') { ctx.fillStyle = '#E8C860'; ctx.beginPath(); ctx.arc(f.x, f.y, 1.4, 0, 7); ctx.fill(); }
+  }
+}
+const TREES = {
+  cires: makeTree({ seed: 31, x: 1060, base: 628, h: 300, tw: 22, stems: [[0, 0, .36, 1]], n0: 3, depth: 4, spread: .5, lr: .66, wr: .64, gnarl: .25, p3: .4, br: 22, bpt: 3, fpt: 7, bark: '#5E3A32', sp: 'cires' }),
+  tei: makeTree({ seed: 47, x: 760, base: 620, h: 370, tw: 28, stems: [[0, 0, .36, 1]], n0: 3, depth: 5, spread: .42, lr: .66, wr: .64, gnarl: .2, p3: .3, br: 22, bpt: 2, fpt: 2, bark: '#55463A', sp: 'tei' }),
+  carpen: makeTree({ seed: 53, x: 1290, base: 624, h: 320, tw: 24, stems: [[0, 0, .34, 1]], n0: 3, depth: 5, spread: .48, lr: .64, wr: .64, gnarl: .22, p3: .3, br: 20, bpt: 2, fpt: 0, bark: '#7A7D78', sp: 'carpen' }),
+  oakR: makeTree({ seed: 61, x: 1600, base: 672, h: 470, tw: 50, stems: [[0, 0, .3, 1]], n0: 3, depth: 5, spread: .62, lr: .68, wr: .6, gnarl: .45, p3: .3, br: 30, bpt: 3, fpt: 0, bark: '#4A3A2E', sp: 'oak' }),
+  oakL: makeTree({ seed: 7, x: 420, base: 700, h: 560, tw: 66, stems: [[0, 0, .3, 1]], n0: 3, depth: 5, spread: .64, lr: .7, wr: .6, gnarl: .45, p3: .35, br: 34, bpt: 3, fpt: 0, bark: '#463629', sp: 'oak' }),
+  young: makeTree({ seed: 83, x: 1380, base: 742, h: 200, tw: 13, stems: [[0, 0, .36, 1]], n0: 3, depth: 4, spread: .55, lr: .68, wr: .62, gnarl: .3, p3: .3, br: 15, bpt: 3, fpt: 0, bark: '#4E3E30', sp: 'oak' }),
+  porumbar: makeTree({ seed: 97, x: 640, base: 748, h: 150, tw: 9, stems: [[-18, -.45, .45, .8], [0, -.05, .55, 1], [16, .4, .45, .8]], n0: 2, depth: 4, spread: .55, lr: .7, wr: .65, gnarl: .4, p3: .3, br: 12, bpt: 2, fpt: 6, bark: '#2E2626', sp: 'shrub' }),
+  paducel: makeTree({ seed: 101, x: 1760, base: 768, h: 175, tw: 10, stems: [[-16, -.4, .45, .8], [0, 0, .55, 1], [18, .45, .45, .8]], n0: 2, depth: 4, spread: .55, lr: .7, wr: .65, gnarl: .4, p3: .3, br: 13, bpt: 2, fpt: 5, bark: '#4A3A30', sp: 'shrub', pink: true }),
+};
+function perch(T, dx, dy, minD) { let best = null, bd = 1e9; for (const s of T.segs) { if (s.d < (minD || 2)) continue; const d = Math.hypot(s.x1 - (T.x + dx), s.y1 - (T.base + dy)); if (d < bd) { bd = d; best = s; } } return best; }
+
+// ---------- fundal: pădure, sol ----------
+function crownRow(seed, y, rmin, rmax, step, n) { const r = rng(seed), out = []; let x = -60; while (x < W + 60) { const rr = rmin + r() * (rmax - rmin); out.push({ x, y: y + (r() - .5) * 26 - rr * .3, r: rr, v: r() }); x += step * (.6 + r() * .7); } return out; }
+const FAR = crownRow(5, 560, 28, 50, 46), NEAR = crownRow(9, 606, 40, 70, 60);
+function drawRow(row, col, haze, hazeCol, snow) {
+  for (const c of row) { ctx.fillStyle = mix(mix(col, '#2A3424', c.v * .25), hazeCol, haze); ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, 7); ctx.fill(); }
+  if (snow > .02) { ctx.fillStyle = `rgba(248,251,255,${snow * .8})`; for (const c of row) { ctx.beginPath(); ctx.ellipse(c.x - c.r * .1, c.y - c.r * .62, c.r * .62, c.r * .3, 0, 0, 7); ctx.fill(); } }
+}
+function edgeY(x) { return 628 + 9 * Math.sin(x * .004 + 1) + 6 * Math.sin(x * .011); }
+const PATCH = (() => { const r = rng(17), a = []; for (let i = 0; i < 70; i++) a.push({ x: r() * W, y: 640 + r() * 420, rx: 60 + r() * 160, ry: 14 + r() * 30, th: r() * .7 + .05 }); return a; })();
+const LIT = (() => { const r = rng(19), a = []; for (let i = 0; i < 420; i++) a.push({ x: r() * W, y: 640 + Math.pow(r(), .8) * 440, r: 2 + r() * 3.5, v: r(), a: r() * 3 }); return a; })();
+const TUFT = (() => { const r = rng(23), a = []; for (let i = 0; i < 190; i++) a.push({ x: r() * W, y: 650 + Math.pow(r(), .7) * 420, h: 10 + r() * 18, n: 3 + Math.floor(r() * 3), v: r() }); return a; })();
+const CROC = (() => { const r = rng(29), a = []; for (const [cx, cy, n] of [[260, 790, 9], [560, 812, 7], [880, 770, 8], [1180, 808, 9], [1480, 790, 7], [1690, 815, 6], [740, 700, 5], [1050, 712, 5]]) for (let i = 0; i < n; i++) a.push({ x: cx + (r() - .5) * 150, y: cy + (r() - .5) * 40, s: .8 + r() * .5, th: r() * .7 + .05, col: r() < .62 ? '#8E6AD8' : r() < .6 ? '#F4F0FA' : '#B49AE8', ph: r() * 6 }); return a.sort((p, q) => p.y - q.y); })();
+function drawGround(m, t, snow) {
+  const gc = kfc(GROUND, m);
+  const g = ctx.createLinearGradient(0, 620, 0, H); g.addColorStop(0, mix(gc, '#3A4A2A', .18)); g.addColorStop(1, mix(gc, '#2A3A20', .35));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, H); for (let x = 0; x <= W; x += 20) ctx.lineTo(x, edgeY(x)); ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+  // poteca
+  const pc = mix(mix('#BCA67C', gc, .25), '#E4EAF0', snow * .85);
+  ctx.fillStyle = pc; ctx.beginPath(); ctx.moveTo(1010, H); ctx.bezierCurveTo(960, 930, 1180, 820, 1110, 700); ctx.quadraticCurveTo(1090, 660, 1150, 640); ctx.lineTo(1166, 640); ctx.quadraticCurveTo(1112, 666, 1132, 702); ctx.bezierCurveTo(1220, 830, 1040, 930, 1150, H); ctx.closePath(); ctx.fill();
+  // frunze căzute
+  const lit = kf(C.litter, m) * (1 - snow);
+  if (lit > .02) for (const l of LIT) { if (l.v > lit) continue; ctx.fillStyle = ['#B9683A', '#C9852E', '#8A5E36', '#D49A3A', '#A8742E'][Math.floor(l.a * 1.66)]; ctx.beginPath(); ctx.ellipse(l.x, l.y, l.r * 1.4, l.r * .7, l.a, 0, 7); ctx.fill(); }
+  // zăpadă pe sol
+  if (snow > .01) {
+    const full = smooth(.72, 1, snow);
+    if (full > 0) { const sg = ctx.createLinearGradient(0, 620, 0, H); sg.addColorStop(0, `rgba(226,234,242,${full})`); sg.addColorStop(1, `rgba(244,247,250,${full})`); ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(0, H); for (let x = 0; x <= W; x += 20) ctx.lineTo(x, edgeY(x) - 2); ctx.lineTo(W, H); ctx.closePath(); ctx.fill(); }
+    ctx.fillStyle = 'rgba(242,246,250,.96)';
+    for (const p of PATCH) { const k = smooth(p.th, p.th + .3, snow); if (k <= 0) continue; ctx.beginPath(); ctx.ellipse(p.x, p.y, p.rx * k, p.ry * k, 0, 0, 7); ctx.fill(); }
+  }
+}
+function drawTufts(m, t, snow) {
+  const gh = kf(C.grass, m), a = 1 - smooth(.3, .8, snow); if (a <= 0) return;
+  const gc = mix(kfc(GROUND, m), '#2E4A22', .35);
+  ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = gc; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+  for (const tf of TUFT) { const h = tf.h * (.4 + gh) * (.7 + (tf.y - 640) / 900); const sw = Math.sin(t * 1.6 + tf.x * .02) * 2.5; ctx.beginPath(); for (let i = 0; i < tf.n; i++) { const dx = (i - (tf.n - 1) / 2) * 4; ctx.moveTo(tf.x + dx, tf.y); ctx.quadraticCurveTo(tf.x + dx * 1.4, tf.y - h * .6, tf.x + dx * 2.2 + sw, tf.y - h); } ctx.stroke(); }
+  ctx.restore();
+}
+function drawCrocus(m, t) {
+  const amt = kf(C.crocus, m); if (amt <= 0) return;
+  for (const f of CROC) {
+    const g = smooth(f.th, f.th + .25, amt); if (g <= 0) continue; const s = f.s * g * 1.15, sw = Math.sin(t * 1.4 + f.ph) * 1.5;
+    ctx.strokeStyle = '#6E9A45'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.x + sw, f.y - 22 * s); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(f.x - 2, f.y); ctx.quadraticCurveTo(f.x - 8 * s, f.y - 10 * s, f.x - 6 * s, f.y - 18 * s); ctx.stroke();
+    ctx.save(); ctx.translate(f.x + sw, f.y - 22 * s);
+    ctx.fillStyle = mix(f.col, '#3A2A5A', .25); ctx.beginPath(); ctx.ellipse(-4 * s, -9 * s, 4 * s, 10 * s, -.25, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(4 * s, -9 * s, 4 * s, 10 * s, .25, 0, 7); ctx.fill();
+    ctx.fillStyle = f.col; ctx.beginPath(); ctx.ellipse(0, -10 * s, 4.6 * s, 11 * s, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#F2C230'; ctx.fillRect(-1 * s, -19 * s, 2 * s, 5 * s);
+    ctx.restore();
+  }
+}
+
+// ---------- animale și păsări (schematice) ----------
+function tag(x, y, s, a, col) {
+  if (a <= 0) return; ctx.save(); ctx.globalAlpha = a; ctx.font = '600 22px Inter'; const w = ctx.measureText(s).width + 30;
+  ctx.fillStyle = 'rgba(15,23,32,.82)'; roundRect(ctx, x - w / 2, y - 21, w, 40, 20); ctx.fill(); ctx.strokeStyle = col || PAL.ocru; ctx.lineWidth = 2; ctx.stroke();
+  ctx.restore(); text(ctx, s, x, y + 7, { size: 22, weight: 600, align: 'center', alpha: a });
+}
+function legs4(ph, xs, top, len, col, w) { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round'; xs.forEach(([lx, o]) => { const a = Math.sin(ph + o) * .42; ctx.beginPath(); ctx.moveTo(lx, top); ctx.lineTo(lx + Math.sin(a) * len * .9, top + Math.cos(a) * len); ctx.stroke(); }); }
+function fox(x, y, s, dir, ph, moving) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s * dir, s);
+  legs4(moving ? ph : 0, [[-22, 0], [-14, Math.PI], [16, Math.PI], [24, 0]], -22, 23, '#3A2A22', 5);
+  ctx.fillStyle = '#D9752E'; ctx.beginPath(); ctx.moveTo(-26, -32); ctx.quadraticCurveTo(-60, -34 + Math.sin(ph * .5) * 4, -76, -14); ctx.quadraticCurveTo(-54, -14, -28, -22); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#F3EFE6'; ctx.beginPath(); ctx.ellipse(-71, -15, 8, 5, .4, 0, 7); ctx.fill();
+  ctx.fillStyle = '#D9752E'; ctx.beginPath(); ctx.ellipse(0, -31, 32, 12, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(22, -40); ctx.lineTo(40, -52); ctx.lineTo(62, -38); ctx.lineTo(38, -28); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#3A2A22'; ctx.beginPath(); ctx.moveTo(34, -50); ctx.lineTo(37, -64); ctx.lineTo(44, -51); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.arc(62, -38, 2.6, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(45, -44, 2, 0, 7); ctx.fill();
+  ctx.fillStyle = '#F3EFE6'; ctx.beginPath(); ctx.moveTo(38, -30); ctx.lineTo(58, -36); ctx.lineTo(30, -24); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function deer(x, y, s, dir, ph, graze, winter) {
+  const body = winter ? '#7E6A58' : '#A8683A';
+  ctx.save(); ctx.translate(x, y); ctx.scale(s * dir, s);
+  legs4(0, [[-20, 0], [-14, 0], [18, 0], [24, 0]], -40, 42, mix(body, '#000000', .35), 4);
+  ctx.fillStyle = body; ctx.beginPath(); ctx.ellipse(0, -48, 30, 14, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#F3EFE6'; ctx.beginPath(); ctx.ellipse(-29, -48, 6, 8, 0, 0, 7); ctx.fill();
+  const hy = lerp(0, 34, graze);
+  ctx.fillStyle = body; ctx.beginPath(); ctx.moveTo(18, -56); ctx.lineTo(30, -80 + hy); ctx.lineTo(38, -78 + hy); ctx.lineTo(30, -46); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(40, -82 + hy, 11, 6.5, .35, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(32, -92 + hy, 3.5, 7, -.4, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#4A3424'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(36, -88 + hy); ctx.lineTo(37, -104 + hy); ctx.moveTo(37, -98 + hy); ctx.lineTo(42, -101 + hy); ctx.stroke();
+  ctx.fillStyle = '#1A1A1A'; ctx.beginPath(); ctx.arc(50, -80 + hy, 2.2, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(41, -85 + hy, 1.6, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function boar(x, y, s, dir, ph) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s * dir, s);
+  legs4(ph, [[-20, 0], [-12, Math.PI], [16, Math.PI], [24, 0]], -16, 17, '#2A2420', 6);
+  ctx.fillStyle = '#4A3E36'; ctx.beginPath(); ctx.moveTo(-34, -20); ctx.quadraticCurveTo(-36, -50, -6, -52); ctx.quadraticCurveTo(26, -54, 34, -36); ctx.lineTo(54, -28); ctx.lineTo(54, -18); ctx.lineTo(30, -12); ctx.quadraticCurveTo(0, -8, -34, -20); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#2E2622'; ctx.lineWidth = 3; ctx.beginPath(); for (let i = 0; i < 9; i++) { const xx = -24 + i * 5.5; ctx.moveTo(xx, -48 - (i % 2) * 2); ctx.lineTo(xx + 2, -56 - (i % 2) * 3); } ctx.stroke();
+  ctx.fillStyle = '#2A2420'; ctx.beginPath(); ctx.moveTo(22, -46); ctx.lineTo(24, -58); ctx.lineTo(30, -46); ctx.closePath(); ctx.fill(); ctx.fillRect(52, -28, 4, 10);
+  ctx.strokeStyle = '#F3EFE6'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(44, -20); ctx.quadraticCurveTo(48, -28, 44, -32); ctx.stroke();
+  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(38, -38, 2, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#4A3E36'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-34, -24); ctx.quadraticCurveTo(-42, -26 + Math.sin(ph) * 3, -42, -18); ctx.stroke();
+  ctx.restore();
+}
+function squirrel(x, y, s, dir, rot, ph) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s * dir, s);
+  ctx.fillStyle = '#B8552A';
+  ctx.beginPath(); ctx.moveTo(-8, -6); ctx.bezierCurveTo(-34, -6, -40, -40, -22, -50 + Math.sin(ph) * 2); ctx.bezierCurveTo(-8, -58, -10, -34, -18, -30); ctx.bezierCurveTo(-24, -24, -18, -12, -4, -10); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(0, -12, 11, 10, -.3, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(10, -24, 7.5, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(6, -30); ctx.lineTo(7, -40); ctx.lineTo(11, -31); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#F3EFE6'; ctx.beginPath(); ctx.ellipse(6, -10, 4, 7, -.2, 0, 7); ctx.fill();
+  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(13, -26, 1.8, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#8A3E20'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-2, -4); ctx.lineTo(4, 0); ctx.moveTo(8, -12); ctx.lineTo(14, -14); ctx.stroke();
+  ctx.restore();
+}
+function bird(x, y, s, dir, o, rot) {
+  ctx.save(); ctx.translate(x, y); if (rot) ctx.rotate(rot); ctx.scale(s * dir, s);
+  const tl = o.tl || 1;
+  ctx.fillStyle = o.tail; ctx.beginPath(); ctx.moveTo(-8, -10); ctx.lineTo(-30 * tl, -4 + (o.tu || 0)); ctx.lineTo(-29 * tl, 3 + (o.tu || 0)); ctx.lineTo(-6, -2); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = o.body; ctx.beginPath(); ctx.ellipse(0, -10, 16, 10, -.25, 0, 7); ctx.fill();
+  if (o.belly) { ctx.fillStyle = o.belly; ctx.beginPath(); ctx.ellipse(5, -6, 11, 6, -.2, 0, 7); ctx.fill(); }
+  ctx.fillStyle = o.wing; ctx.beginPath(); ctx.ellipse(-5, -11, 12, 6, -.28, 0, 7); ctx.fill();
+  if (o.patch) { ctx.fillStyle = o.patch; ctx.fillRect(-2, -14, 7, 4); }
+  ctx.fillStyle = o.head; ctx.beginPath(); ctx.arc(13 + (o.hx || 0), -20 + (o.hy || 0), 7.5, 0, 7); ctx.fill();
+  if (o.cheek) { ctx.fillStyle = o.cheek; ctx.beginPath(); ctx.ellipse(14 + (o.hx || 0), -18 + (o.hy || 0), 4, 3, 0, 0, 7); ctx.fill(); }
+  if (o.extra) o.extra();
+  ctx.fillStyle = o.beak; ctx.beginPath(); ctx.moveTo(19 + (o.hx || 0), -22.5 + (o.hy || 0)); ctx.lineTo(19 + (o.bl || 7) + (o.hx || 0), -19.5 + (o.hy || 0)); ctx.lineTo(19 + (o.hx || 0), -16.5 + (o.hy || 0)); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(15 + (o.hx || 0), -21.5 + (o.hy || 0), 1.7, 0, 7); ctx.fill();
+  if (!o.noLegs) { ctx.strokeStyle = '#3A3A3A'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(1, -2); ctx.lineTo(1, 4); ctx.moveTo(5, -2); ctx.lineTo(6, 4); ctx.stroke(); }
+  ctx.restore();
+}
+const BIRDS = {
+  pitigoi: { body: '#7A9A5A', belly: '#E8C83A', wing: '#5E7A8A', tail: '#4A5A6A', head: '#1A1A1A', cheek: '#F3EFE6', beak: '#1A1A1A', bl: 5 },
+  mierla: { body: '#161616', wing: '#222222', tail: '#121212', head: '#161616', beak: '#E8A02A', bl: 7, tl: 1.15 },
+  ciocanitoare: { body: '#1A1A1A', belly: '#EDE6DA', wing: '#1E1E1E', patch: '#F3EFE6', tail: '#151515', head: '#1A1A1A', cheek: '#F3EFE6', beak: '#3A3A3A', bl: 9, noLegs: true, extra: () => { ctx.fillStyle = '#D8302E'; ctx.beginPath(); ctx.arc(9, -25, 3, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(-8, -3, 5, 3, 0, 0, 7); ctx.fill(); } },
+  gaita: { body: '#C49A84', belly: '#D8B8A4', wing: '#2A2A2A', patch: '#3A6AD8', tail: '#1A1A1A', head: '#C9A890', beak: '#2A2A2A', bl: 7, extra: () => { ctx.strokeStyle = '#1A1A1A'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(16, -17); ctx.lineTo(12, -13); ctx.stroke(); } },
+  corb: { body: '#121417', wing: '#1A1D22', tail: '#0E1013', head: '#121417', beak: '#1E2126', bl: 11, tl: 1.1 },
+};
+function owl(x, y, s, blink) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = '#7A5A3A'; ctx.beginPath(); ctx.ellipse(0, -22, 16, 22, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-14, -36); ctx.lineTo(-12, -52); ctx.lineTo(-5, -40); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(14, -36); ctx.lineTo(12, -52); ctx.lineTo(5, -40); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#C8A47A'; ctx.beginPath(); ctx.ellipse(0, -32, 13, 10, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#9A7A54'; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(-6 + (i % 2) * 12, -14 + Math.floor(i / 2) * 9, 2, 0, 7); ctx.fill(); }
+  const e = 1 - blink;
+  for (const sx of [-6, 6]) { ctx.fillStyle = '#E8A030'; ctx.beginPath(); ctx.ellipse(sx, -33, 5, 5 * e + .5, 0, 0, 7); ctx.fill(); if (e > .3) { ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(sx, -33, 2.2, 0, 7); ctx.fill(); } }
+  ctx.fillStyle = '#3A2A1A'; ctx.beginPath(); ctx.moveTo(-2, -29); ctx.lineTo(2, -29); ctx.lineTo(0, -24); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function sapling(x, y, g, m, snow) {
+  if (g <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(1.45, 1.45 * easeOut(g)); ctx.translate(-x, -y);
+  ctx.strokeStyle = '#5A4430'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 60); ctx.moveTo(x, y - 36); ctx.lineTo(x - 14, y - 52); ctx.moveTo(x, y - 44); ctx.lineTo(x + 12, y - 58); ctx.stroke();
+  ctx.fillStyle = '#9A6A3A'; for (const [dx, dy] of [[-15, -54], [13, -60], [2, -64]]) { ctx.beginPath(); ctx.ellipse(x + dx, y + dy, 6, 3.5, .5, 0, 7); ctx.fill(); }
+  // gărduleț
+  ctx.strokeStyle = '#D8B47A'; ctx.lineWidth = 4;
+  for (const dx of [-34, -12, 12, 34]) { ctx.beginPath(); ctx.moveTo(x + dx, y + 6); ctx.lineTo(x + dx, y - 42); ctx.stroke(); }
+  ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(x - 38, y - 14); ctx.lineTo(x + 38, y - 14); ctx.moveTo(x - 38, y - 34); ctx.lineTo(x + 38, y - 34); ctx.stroke();
+  if (snow > .05) { ctx.strokeStyle = `rgba(248,251,255,${snow})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 38, y - 37); ctx.lineTo(x + 38, y - 37); ctx.moveTo(x - 38, y - 17); ctx.lineTo(x + 38, y - 17); ctx.stroke(); }
+  ctx.restore();
+}
+
+// ---------- particule ----------
+const FLAKES = (() => { const r = rng(41), a = []; for (let i = 0; i < 260; i++) a.push({ x: r() * W, y: r() * H, s: 1.5 + r() * 3.2, v: 40 + r() * 70, ph: r() * 7, th: r() }); return a; })();
+const LEAVES = (() => { const r = rng(43), a = []; const src = [[420, 260, 300], [1600, 300, 240], [1290, 380, 120], [760, 330, 140], [1060, 400, 110]]; for (let i = 0; i < 130; i++) { const s = src[Math.floor(r() * src.length)]; a.push({ x0: s[0] + (r() - .5) * s[2] * 2, y0: s[1] + (r() - .5) * 120, v: 50 + r() * 60, ph: r() * 7, col: ['#C9852E', '#B9683A', '#D49A3A', '#D9B23A', '#A8742E', '#C8503A'][Math.floor(r() * 6)], th: r(), off: r() }); } return a; })();
+const PETALS = (() => { const r = rng(47), a = []; const src = [[640, 640], [1060, 420], [1760, 650]]; for (let i = 0; i < 70; i++) { const s = src[Math.floor(r() * 3)]; a.push({ x0: s[0] + (r() - .5) * 160, y0: s[1] + (r() - .5) * 80, v: 22 + r() * 30, ph: r() * 7, th: r(), off: r() }); } return a; })();
+function particles(m, t) {
+  const sf = kf(C.snowfall, m);
+  if (sf > .01) { ctx.fillStyle = 'rgba(255,255,255,.9)'; for (const f of FLAKES) { if (f.th > sf) continue; const y = (f.y + t * f.v) % (H + 20) - 10, x = (f.x + Math.sin(t * .8 + f.ph) * 26 + t * 8) % W; ctx.beginPath(); ctx.arc(x, y, f.s, 0, 7); ctx.fill(); } }
+  const fa = kf(C.fall, m);
+  if (fa > .01) for (const l of LEAVES) {
+    if (l.th > fa) continue; const span = 820 - l.y0, u = ((t * l.v / span) + l.off) % 1, y = l.y0 + u * span, x = l.x0 + Math.sin(t * 1.3 + l.ph) * 40 + u * 60;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(t * 2 + l.ph); ctx.globalAlpha = Math.min(1, (1 - u) * 4); ctx.fillStyle = l.col; ctx.beginPath(); ctx.ellipse(0, 0, 8, 4, 0, 0, 7); ctx.fill(); ctx.restore();
+  }
+  const pa = kf(C.petals, m);
+  if (pa > .01) for (const p of PETALS) {
+    if (p.th > pa) continue; const u = ((t * p.v / 260) + p.off) % 1, y = p.y0 + u * 260, x = p.x0 + Math.sin(t * 1.1 + p.ph) * 30 + u * 90;
+    ctx.save(); ctx.globalAlpha = Math.min(1, (1 - u) * 3) * .95; ctx.fillStyle = '#FFFFFF'; ctx.translate(x, y); ctx.rotate(t + p.ph); ctx.beginPath(); ctx.ellipse(0, 0, 4, 2.4, 0, 0, 7); ctx.fill(); ctx.restore();
+  }
+}
+
+// ---------- programul animalelor: [luna, desen(lt, a)] ----------
+function win(m, i) { const lt = m - i; return { lt, a: smooth(.1, .25, lt) * (1 - smooth(.86, .98, lt)) }; }
+const PERCH = { corb: perch(TREES.oakL, 250, -380, 2), pit: perch(TREES.porumbar, 30, -120, 2), gaita: perch(TREES.oakR, -190, -300, 2) };
+function animals(m, t, layer) {
+  const mi = Math.min(11, Math.floor(m)), { lt, a } = win(m, mi); if (a <= 0 || t >= TEND + .5) return;
+  ctx.save(); ctx.globalAlpha = a;
+  if (layer === 'edge') {
+    if (mi === 4) { const g = (Math.sin(t * 1.3) + 1) / 2; deer(1170, 676, 1.15, -1, 0, smooth(.3, .8, g), false); ctx.restore(); tag(1150, 548, 'căprior', a); return; }
+    if (mi === 7) { const x = lerp(840, 1220, lt); boar(x, 690, 1.15, 1, t * 9); ctx.restore(); tag(x, 596, 'mistreț', a); return; }
+  }
+  if (layer === 'front') {
+    if (mi === 0) {
+      const x = lerp(1560, 980, inv(.1, .95, lt));
+      ctx.fillStyle = 'rgba(120,140,160,.45)'; for (let k = 0; k < 30; k++) { const tx = 1560 - k * 22; if (tx < x + 40) break; ctx.beginPath(); ctx.ellipse(tx, 806 + (k % 2) * 8, 4, 2.5, 0, 0, 7); ctx.fill(); }
+      fox(x, 806, 1.35, -1, t * 9, true); ctx.restore(); tag(x - 10, 690, 'vulpe', a); return;
+    }
+    if (mi === 3) { const hop = Math.abs(Math.sin(t * 3)) * (Math.sin(t * .7) > 0 ? 8 : 0), peck = Math.sin(t * .7) <= 0 ? Math.max(0, Math.sin(t * 6)) * .5 : 0; bird(1210 + Math.sin(t * .35) * 50, 800 - hop, 2.1, -1, BIRDS.mierla, peck); ctx.restore(); tag(1200, 718, 'mierlă', a); return; }
+    if (mi === 9) { squirrel(1250, 812, 1.7, 1, 0, t * 2); ctx.restore(); tag(1245, 700, 'veveriță', a); return; }
+    if (mi === 11) { deer(1480, 800, 1.3, -1, 0, smooth(.4, .6, (Math.sin(t * .9) + 1) / 2) * .6, true); ctx.restore(); tag(1500, 650, 'căprior', a); return; }
+  }
+  if (layer === 'tree') {
+    if (mi === 1) { const p = PERCH.corb, bob = Math.sin(t * 2.2) * 2; bird(p.x1, p.y1 - 3, 2.3, 1, Object.assign({}, BIRDS.corb, { hy: bob }), 0); ctx.restore(); tag(p.x1 + 20, p.y1 - 104, 'corb', a); return; }
+    if (mi === 2) { const p = PERCH.pit, hopx = Math.sin(t * 1.7) > 0 ? 0 : -14; bird(p.x1 + hopx, p.y1 - 2, 1.5, -1, BIRDS.pitigoi, 0); ctx.restore(); tag(p.x1 - 10, p.y1 - 78, 'pițigoi', a); return; }
+    if (mi === 5) { const T = TREES.oakL, y = T.base - 230, pk = Math.max(0, Math.sin(t * 14)) * 3; bird(T.x + 26 + pk, y, 2, -1, BIRDS.ciocanitoare, Math.PI / 2 * .9); ctx.restore(); tag(T.x + 190, y + 46, 'ciocănitoare', a); return; }
+    if (mi === 6) { const T = TREES.oakR, y = T.base - 40 - 200 * easeInOut(inv(.15, .8, lt)); squirrel(T.x - 22, y, 1.5, 1, -Math.PI / 2, t * 3); ctx.restore(); tag(T.x - 200, y + 20, 'veveriță', a); return; }
+    if (mi === 8) { const p = PERCH.gaita; bird(p.x1, p.y1 - 2, 1.9, 1, BIRDS.gaita, 0); ctx.restore(); tag(p.x1 + 6, p.y1 - 66, 'gaiță', a); return; }
+    if (mi === 10) {
+      const T = TREES.oakL, x = T.x + 4, y = T.base - 260;
+      ctx.fillStyle = '#1E1610'; ctx.beginPath(); ctx.ellipse(x, y - 30, 26, 42, 0, 0, 7); ctx.fill();
+      const bl = ((t % 3.3) < .16) ? 1 : 0; owl(x, y + 4, 1.45, bl); ctx.restore(); tag(x + 120, y - 40, 'bufniță', a); return;
+    }
+  }
+  ctx.restore();
+}
+
+// ---------- caseta de jos: contorul lunilor și textul ----------
+function bottomBox(t, m) {
+  const A = smooth(T0 - .4, T0 + .3, t) * (1 - smooth(TEND, TEND + .6, t)); if (A <= 0) return;
+  ctx.save(); ctx.globalAlpha = A; ctx.fillStyle = 'rgba(10,16,28,.87)'; roundRect(ctx, 80, 834, 1760, 180, 28); ctx.fill(); ctx.restore();
+  const mi = Math.min(11, Math.floor(m)), lt = m - mi;
+  const cx = 170, cy = 924, R = 56;
+  ctx.save(); ctx.lineCap = 'butt';
+  for (let i = 0; i < 12; i++) {
+    const a0 = -Math.PI / 2 + i * Math.PI / 6 + .05, a1 = a0 + Math.PI / 6 - .1, done = clamp(m - i);
+    ctx.globalAlpha = A; ctx.strokeStyle = 'rgba(169,180,192,.22)'; ctx.lineWidth = 16; ctx.beginPath(); ctx.arc(cx, cy, R, a0, a1); ctx.stroke();
+    if (done > 0) { ctx.strokeStyle = SEASCOL[SEAS[i]]; ctx.beginPath(); ctx.arc(cx, cy, R, a0, a0 + (a1 - a0) * done); ctx.stroke(); }
+  }
+  ctx.restore();
+  const fa = (mi === 0 ? 1 : smooth(0, .07, lt)) * (mi === 11 ? 1 : 1 - smooth(.93, 1, lt)) * A;
+  text(ctx, String(mi + 1), cx, cy + 13, { size: 38, weight: 800, align: 'center', color: PAL.var, alpha: fa });
+  text(ctx, `luna ${mi + 1} din 12`, 254, 882, { size: 22, weight: 600, color: PAL.ceata, alpha: fa });
+  serif(ctx, MONTHS[mi], 250, 946, { size: 58, color: PAL.ocru, alpha: fa });
+  text(ctx, SEAS[mi], 254, 988, { size: 24, color: SEASCOL[SEAS[mi]], weight: 600, alpha: fa });
+  ctx.save(); ctx.globalAlpha = A; ctx.fillStyle = 'rgba(169,180,192,.25)'; ctx.fillRect(640, 860, 2, 128); ctx.restore();
+  const c = CAP[mi], ca = (mi === 0 ? smooth(T0, T0 + .5, t) : smooth(.04, .14, lt)) * (mi === 11 ? 1 - smooth(TEND - .3, TEND + .2, t) : 1 - smooth(.9, .98, lt)) * A;
+  serif(ctx, c.title, 676, 882, { size: 34, alpha: ca });
+  text(ctx, c.line, 676, 924, { size: 25, maxW: 1130, lh: 33, color: PAL.var, alpha: ca * smooth(.1, .2, mi === 0 ? (t - T0) / MD + .1 : lt) });
+  text(ctx, 'Surse: ' + c.src, 1812, 996, { size: 20, color: PAL.ceata, align: 'right', alpha: ca });
+}
+
+window.render = function (t) {
+  const m = MM(t), snow = kf(C.snow, m), mi = Math.min(11, Math.floor(m));
+  // cer
+  const g = ctx.createLinearGradient(0, 0, 0, 640); g.addColorStop(0, kfc(SKY.top, m)); g.addColorStop(1, kfc(SKY.bot, m)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const summer = .5 - .5 * Math.cos(2 * Math.PI * (m - .5) / 12), sx = 1240, sy = 300 - 150 * summer;
+  const sg = ctx.createRadialGradient(sx, sy, 10, sx, sy, 200); sg.addColorStop(0, rgba('#FFF4D0', .75)); sg.addColorStop(1, rgba('#FFF4D0', 0)); ctx.fillStyle = sg; ctx.fillRect(sx - 200, sy - 200, 400, 400);
+  ctx.fillStyle = '#FFF6DA'; ctx.beginPath(); ctx.arc(sx, sy, 34, 0, 7); ctx.fill();
+  { const r = rng(5); for (let i = 0; i < 5; i++) { const y = 150 + r() * 200, sp = 6 + r() * 8, w = 160 + r() * 200; const x = ((r() * (W + 500) + t * sp) % (W + 500)) - 250; ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.ellipse(x, y, w * .5, w * .12, 0, 0, 7); ctx.ellipse(x - w * .16, y - w * .07, w * .2, w * .11, 0, 0, 7); ctx.ellipse(x + w * .12, y - w * .09, w * .23, w * .13, 0, 0, 7); ctx.fill(); } }
+  // pădurea din fundal
+  const fc = kfc(FOREST, m), hb = kfc(SKY.bot, m);
+  drawRow(FAR, fc, .45, hb, snow * .9);
+  drawRow(NEAR, mix(fc, '#24301E', .2), .18, hb, snow * .9);
+  drawGround(m, t, snow);
+  // copacii din planul mijlociu
+  const ph = kf(C.lph, m), early = kf(C.early, m), oak = kf(C.oak, m);
+  for (const k of ['cires', 'tei', 'carpen']) { const T = TREES[k]; drawBranches(T, snow); drawCrown(T, early, ph, 1); }
+  drawFlowers(TREES.cires, kf(C.cires, m), '#FFFFFF', t);
+  drawFlowers(TREES.tei, kf(C.tei, m), '#E4E08A', t);
+  animals(m, t, 'edge');
+  // stejarii
+  for (const k of ['oakR', 'oakL']) { const T = TREES[k]; drawBranches(T, snow); drawCrown(T, oak, ph, 1); }
+  // ghinde
+  const ac = kf(C.acorn, m); if (ac > .02) for (const k of ['oakR', 'oakL']) { const T = TREES[k]; let i = 0; for (const b of T.blobs) { if (i++ % 5) continue; if (b.v > ac || b.th > oak) continue; ctx.fillStyle = mix('#7A8A3A', '#7A5228', clamp((m - 8.6) / 1.2)); ctx.beginPath(); ctx.ellipse(b.x + 6, b.y + 8, 3.2, 4.4, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#5A4028'; ctx.beginPath(); ctx.ellipse(b.x + 6, b.y + 4.6, 3.6, 1.8, 0, 0, 7); ctx.fill(); } }
+  // stejarul tânăr (frunze uscate peste iarnă) și arbuștii
+  { const T = TREES.young; drawBranches(T, snow); drawCrown(T, .62 * kf(C.marc, m), 3, 1, '#A8743E'); drawCrown(T, oak, ph, 1); }
+  for (const k of ['porumbar', 'paducel']) { const T = TREES[k]; drawBranches(T, snow); drawCrown(T, early, ph, 1); }
+  drawFlowers(TREES.porumbar, kf(C.porumbar, m), '#FFFFFF', t);
+  drawFlowers(TREES.paducel, kf(C.paducel, m), '#FFFFFF', t);
+  drawTufts(m, t, snow);
+  drawCrocus(m, t);
+  // puieții (1754 – ilustrație)
+  const sp = smooth(10.1, 10.5, m); sapling(860, 788, sp, m, snow); sapling(1010, 800, smooth(10.25, 10.65, m), m, snow);
+  tag(935, 660, 'doi puieți de stejar · ilustrație', smooth(10.25, 10.45, m) * (1 - smooth(10.9, 10.98, m)));
+  animals(m, t, 'tree');
+  animals(m, t, 'front');
+  particles(m, t);
+  bottomBox(t, m);
+  // intro
+  const ia = 1 - smooth(3.3, 4, t);
+  if (ia > 0) {
+    ctx.save(); ctx.globalAlpha = ia * .8; const gg = ctx.createLinearGradient(0, 300, 0, 720); gg.addColorStop(0, 'rgba(15,23,32,0)'); gg.addColorStop(.25, 'rgba(15,23,32,.9)'); gg.addColorStop(.75, 'rgba(15,23,32,.9)'); gg.addColorStop(1, 'rgba(15,23,32,0)'); ctx.fillStyle = gg; ctx.fillRect(0, 300, W, 420); ctx.restore();
+    serif(ctx, 'Un an în Dumbrava Sibiului', W / 2, 480, { size: 96, align: 'center', alpha: ia * smooth(.2, 1, t) });
+    text(ctx, 'time-lapse animat AI al pădurii de stejar · aceeași poiană, 12 luni', W / 2, 550, { size: 36, align: 'center', color: PAL.var, alpha: ia * smooth(.6, 1.4, t) });
+    text(ctx, 'pădure imaginată, desen schematic · perioadele sunt orientative', W / 2, 610, { size: 26, align: 'center', color: PAL.ceata, alpha: ia * smooth(1, 1.8, t) });
+  }
+  // cartela finală
+  const ea = smooth(TEND, TEND + 1, t);
+  if (ea > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.96 * ea})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Un an în Dumbrava Sibiului', W / 2, 270, { size: 72, align: 'center', alpha: ea });
+    text(ctx, '993 ha · stejăret de terasă · peste jumătate din pădure are arbori de peste 100 de ani · 1754: propunerea lui Martin von Seeberg – doi puieți de stejar pentru fiecare tânăr de 10 ani', W / 2, 340, { size: 28, align: 'center', color: PAL.var, alpha: ea, maxW: 1500, lh: 40 });
+    text(ctx, 'Surse: dssibiu.ro (Direcția Silvică Sibiu); sibiul.ro; ecomagazin.ro · perioadele de înflorire: en.wikipedia.org (paginile speciilor)', W / 2, 460, { size: 26, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1500, lh: 36 });
+    serif(ctx, 'Pădure imaginată, desen schematic; perioadele sunt orientative', W / 2, 590, { size: 44, align: 'center', color: PAL.ocru, alpha: ea });
+    text(ctx, 'Poiana, copacii și animalele sunt desenate și nu reproduc un loc anume din Dumbrava. Lunile în care apar animalele sunt alese pentru poveste.', W / 2, 650, { size: 26, align: 'center', color: PAL.var, alpha: ea, maxW: 1500, lh: 36 });
+    text(ctx, 'Animație generată cu AI · muzică: temă originală, sintetizată în cod; păsările din sunet sunt aproximări sintetizate, nu înregistrări · artefact-model ACTIV AI', W / 2, 770, { size: 24, align: 'center', color: PAL.ceata, alpha: ea, maxW: 1600, lh: 34 });
+    // inel complet
+    ctx.save(); ctx.globalAlpha = ea; for (let i = 0; i < 12; i++) { const a0 = -Math.PI / 2 + i * Math.PI / 6 + .05; ctx.strokeStyle = SEASCOL[SEAS[i]]; ctx.lineWidth = 14; ctx.beginPath(); ctx.arc(W / 2, 910, 42, a0, a0 + Math.PI / 6 - .1); ctx.stroke(); } ctx.restore();
+    text(ctx, '12', W / 2, 922, { size: 30, weight: 800, align: 'center', alpha: ea });
+  }
+  ctx.fillStyle = 'rgba(10,16,28,.55)'; ctx.fillRect(0, 0, W, 110);
+  chip(ctx, 'VIDEO · M17', 60, 36, PAL.red);
+  text(ctx, 'Un an în Dumbrava Sibiului · time-lapse animat al pădurii de stejar', 270, 64, { size: 30, weight: 600 });
+  ctx.fillStyle = 'rgba(10,16,28,.6)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M17');
+};
+window.READY = true;
+</script></body></html>

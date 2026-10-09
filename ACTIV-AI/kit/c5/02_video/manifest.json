@@ -1,0 +1,30 @@
+[
+ {
+  "cod": "M20",
+  "categorie": "Video",
+  "titlu": "Rețeta animată AI a unui preparat transilvănean — stop-motion digital de 60 sec",
+  "fisiere": [
+   "02_video/M20_reteta_animata_sarmale.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "Sarmalele, pas cu pas, în stop-motion digital: ingredientele intră pe masă, frunza de varză se desface, se umple și se rulează, iar sarmalele ajung în oala de lut, cu afumături printre ele, ca în Transilvania.",
+  "status": "realizat",
+  "durata_s": 60.0,
+  "nota": "Fapte: fișa de fapte – „Meșteșuguri și gastronomie – completări pentru Calupul 5”, subsecțiunea „Preparate” (en.wikipedia, Romanian cuisine): frunze de varză umplute cu carne tocată, orez, ceapă și verdețuri, fierte câteva ore („ore în șir”), tradițional în oale de ceramică; în Transilvania se pun în oală, printre sarmale, picioare de porc afumate sau șorici. Fapt nou, verificat pe en.wikipedia (Sarma (food)) și notat în 02_video/_fapte_noi_M20.md: servirea obișnuită cu mămăligă sau pâine și smântână (pe ecran: „de obicei”). Pe fișa finală: „Rețetă generală după en.wikipedia (Romanian cuisine); cantitățile și timpii exacți nu sunt dați de sursă – cereți rețeta familiei” și „Animație imaginată, desene în cod”. Nicio cantitate, niciun timp exact, fără alcool, fără mărci. Ceasul arată doar trecerea timpului (eticheta: „durata exactă nu e dată de sursă”; sursa spune „câteva ore”). Imaginat/stilizat: masa de lemn, prosopul, vasele, tocătorul, ordinea plierii (jos, margini, rulare), așezarea în cerc în oală, aburii, farfuria și furculița – desene în cod văzute de sus, nu fotografii; mișcarea sacadată simulează stop-motion-ul (timp cuantizat la 12 cadre/s, mici tremurături și pâlpâiri de lumină). Muzica: temă originală, sintetizată în cod, în stil de muzică de bucătărie (Sol major, 120 BPM; țambal/instrument ciupit stilizat, bas ciupit, percuție cu „lingura de lemn”, efecte de bucătărie sintetizate, sincronizate cu imaginea); nu citează și nu imită melodii populare; −14 LUFS; scriptul și MP3-ul: 02_video/_audio/M20_tema_bucatarie.py și .mp3. Text pe ecran, fără voce. Sursă HTML: _tools/video/M20_reteta_animata_sarmale.html."
+ },
+ {
+  "cod": "M21",
+  "categorie": "Video",
+  "titlu": "Breslele defilează — paradă animată AI a celor 19 bresle din 1376",
+  "fisiere": [
+   "02_video/M21_breslele_defileaza.mp4"
+  ],
+  "tip": "video",
+  "instrument": "Claude (Anthropic) – scenariu și animație procedurală (HTML Canvas); muzică originală sintetizată în cod",
+  "descriere": "Purtători de steaguri defilează pe o stradă a cetății: 4 bresle din 1376 au nume, 15 poartă semnul întrebării; apoi trec alte bresle atestate în alți ani. Final: de la 19 la 40 de bresle.",
+  "status": "realizat",
+  "durata_s": 64.0,
+  "nota": "REGULA DE ONESTITATE: sursele nu dau lista completă a celor 19 bresle din 1376, deci nu e inventată. Doar 4 steaguri au nume – brutari, pielari, cuțitari („precum brutarii, pielarii și cuțitarii”, mnir.ro) și fierari („Fabrorum fraternitatis”, magazines.ulbsibiu.ro); celelalte 15 au semnul întrebării și eticheta „breaslă din 1376 – nu știm sigur care”. Formularea cerută, „nenumită în sursele noastre”, nu a fost folosită: la reverificare, articolul limbaromana.org pomenește în statutul din 1376 și alte meserii (pielari, tăbăcari, cizmari, cojocari, croitori, țesători de lână, butnari, arămari ș.a.), dar nu dă lista celor 19 bresle; pe ecran se spune asta explicit (detalii și citate: 02_video/_fapte_noi_M21.md). Partea a II-a („Alte bresle atestate la Sibiu, în alți ani”), cu anul și sursa pe fiecare steag: aurari 1346, tăbăcari 1367, cositorari și olari – bastionul Haller 1556, țesători – bastionul Soldisch 1556, croitori – Poarta Turnului, măcelari – Poarta Cisnădiei (limbaromana.org); dulgheri – însemn 1450, croitori – însemn 1695 (mnir.ro). CORECȚIE: cizmarii apar cu statutul propriu din 1455 (limbaromana.org), nu 1457 cum scria fișa. Divergențe arătate pe ecran: bastionul Soldisch 1556 (limbaromana.org) / 1622–1629 (patrimoniu.sibiu.ro); desființarea – decretul din 1872 (limbaromana.org) / 18 aprilie 1875 (fișa mai veche). Contorul 19 (1376) → 26 (1719) → 34 (1724) → 40 (1780): limbaromana.org; barele au anii la distanțe egale („anii nu sunt la scară”). Parada este imaginată: purtătorii și muzicanții (fluieraș, toboșar) sunt siluete fără fețe; steagurile poartă unelte desenate în cod, nu reproduc însemne reale; strada, zidul și turnul sunt generice. Muzica: temă originală, sintetizată în cod, în stil de marș (tobe, alămuri sintetizate, fifă), 120 BPM, fără melodii existente (script: 02_video/_audio/M21_mars_breslelor.py; MP3 −14 LUFS; în MP4: −14,1 LUFS, true peak −1,1 dBTP). Sursă HTML: _tools/video/M21_breslele_defileaza.html."
+ }
+]

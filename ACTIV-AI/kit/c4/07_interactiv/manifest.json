@@ -1,0 +1,30 @@
+[
+ {
+  "cod": "I15",
+  "categorie": "Interactiv",
+  "titlu": "Ierbar digital AI: 12 plante din Dumbrava, cu fișe ilustrate",
+  "fisiere": [
+   "07_interactiv/I15_ierbar_dumbrava.html",
+   "07_interactiv/I15_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS, ilustrații SVG",
+  "descriere": "Un ierbar digital cu 12 plante din Pădurea Dumbrava – 6 arbori, 4 arbuști și 2 plante ierboase –, fiecare cu planșă desenată, trei indicii de recunoaștere, perioade orientative și o curiozitate. La final, mini-jocul „Recunoaște frunza” (5 întrebări, scor, „Joacă din nou”).",
+  "status": "realizat",
+  "nota": "Plantele sunt alese doar din listele fișei de fapte (dssibiu.ro, sibiul.ro, ecomagazin.ro); evitate opaița, iarba albastră, pufulița și orhideele. Informațiile botanice sunt verificate pe en.wikipedia (pentru salata iepurelui, pe de.wikipedia – articolul englez nu descrie planta), iar corespondența dintre numele popular și cel științific pe dexonline (DEX, DLRLC, DFL); sursele și citatele sunt în 07_interactiv/_fapte_noi_I15.md. Unde numele popular acoperă mai multe specii (tei, brândușă), fișa vorbește despre gen; pentru păducel, măceș și salata iepurelui se spune că sursele despre Dumbrava nu precizează specia. Perioadele de înflorire/rodire sunt orientative. Desenele SVG sunt schematice, generate în cod, nu redau exemplare reale. Mențiunea de pe ecran: identificarea sigură se face cu un atlas botanic; nu se culeg plante din rezervație. Filtrul se numește „Plante ierboase”, nu „plante mici”, pentru că salata iepurelui poate ajunge la 150 cm."
+ },
+ {
+  "cod": "I16",
+  "categorie": "Interactiv",
+  "titlu": "Aventură de text AI: rătăcit la Păltiniș — alege drumul spre casă",
+  "fisiere": [
+   "07_interactiv/I16_ratacit_la_paltinis.html",
+   "07_interactiv/I16_preview.png"
+  ],
+  "tip": "html",
+  "instrument": "Claude (Anthropic) – HTML/CSS/JS",
+  "descriere": "O poveste ramificată în care îl ajuți pe Matei (15 ani, personaj fictiv), plecat de la telescaunul din Păltiniș pe traseul cu cruce roșie, să găsească drumul înapoi: 12 momente de decizie, 5 finaluri, inventar (hartă, frontală, apă, baterie externă), lumina rămasă, bateria telefonului și o hartă schematică a traseelor. La final: „Ce am învățat” – 5 reguli de siguranță pe munte, cu ce ai aplicat și ce mai ai de exersat.",
+  "status": "realizat",
+  "nota": "Poveste imaginată; personajele (Matei, familia lui, operatorul 112, salvamontiștii) sunt fictive. Decorul real vine din fișa de fapte (Păltiniș: 1894, SKV, 1.440 sau 1.442 m după sursă, pădure de conifere, zăpadă circa 120 de zile pe an, schitul din anii 1930; traseele cu cruce roșie – 5,8 km, 2 h – 2 h 30 min, Șaua Bătrâna 1.863 m – și cu triunghi albastru – 8,6 km, 3 h 15 min – 3 h 45 min; în septembrie oile coboară în sate) și din fișele muntii-nostri.ro verificate pe 8 octombrie 2026 (izvorul Dorul Clujului cu bănci, serpentinele spre Poiana Găujoara, priveliștea spre Făgăraș și Sibiu, stâna cu izvor, reperele circuitului), notate cu sursa în 07_interactiv/_fapte_noi_I16.md. Imaginate și declarate pe ecran: poteca nemarcată, valea necunoscută, drumul forestier din finalul „Ai pierdut timp”, vremea (ceața), orele de lumină și procentele bateriei. Harta este schematică, cu poziții aproximative, nu la scară. Singurul număr de telefon din piesă este 112; nu se dau sfaturi de supraviețuire, iar finalurile riscante („Ai pierdut timp”, „Găsit de salvamontiști, dar…”) nu descriu răniri. Mențiune vizibilă permanent: „Poveste imaginată; traseele și marcajele după muntii-nostri.ro. În realitate: verificați vremea, mergeți însoțiți, urgențe – 112.” Testat cu Playwright la 1920×1080 și 390×844: toate cele 17 noduri și cele 80 de drumuri complete parcurse automat, fără legături moarte și fără erori în consolă."
+ }
+]

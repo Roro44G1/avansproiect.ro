@@ -1,0 +1,460 @@
+# -*- coding: utf-8 -*-
+"""D13 – Calendarul naturii în Sibiu: ce înflorește și ce se vede în fiecare lună (grilă de 12 luni).
+Fapte: /home/claude/expo/_brief/fapte_verificate.md („Natură și împrejurimi – completări pentru Calupul 4”)
++ perioade de înflorire verificate pe en.wikipedia: /home/claude/expo/c4/06_date/_fapte_noi.md.
+Perioadele sunt orientative (declarat pe piesă)."""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+
+OUT = "/home/claude/expo/c4/06_date/D13_calendarul_naturii.svg"
+BLUE = "#3E63DD"
+MUTED = "#7E8A96"
+LINE = "#2A3845"
+ICE = "#8FB8DE"
+GREEN = "#5DAA74"
+GREEN_D = "#3E8E5A"
+BROWN = "#6B4E2E"
+PINK = "#E89AB5"
+VIOL_L = "#9B7FE6"
+TIGLA_L = "#D8775A"
+VIOL_T = "#8F7BE0"
+DISC = "#132029"
+
+TYPE = {  # tipul elementului -> culoarea titlului / a cercului
+    "flori": GREEN,
+    "fructe": TIGLA_L,
+    "pastorit": OCRU,
+    "obicei": VIOL_T,
+    "zapada": ICE,
+}
+SEASON = {"iarnă": ICE, "primăvară": GREEN, "vară": OCRU, "toamnă": TIGLA_L}
+
+s = frame_head("DATE · D13", BLUE,
+               "Calendarul naturii în Sibiu: ce înflorește și ce se vede în fiecare lună",
+               "infografic AI · 12 luni · flori, fructe, păstorit și zăpadă", title_size=50)
+
+# mențiunea vizibilă (obligatorie)
+MY = 238
+s += f'<circle cx="92" cy="{MY-7}" r="12" fill="none" stroke="{OCRU}" stroke-width="2.5"/>\n'
+s += text(92, MY - 1, "i", 17, OCRU, "serif", 700, anchor="middle")
+s += text(114, MY, "Perioade orientative pentru zona Sibiului – variază de la an la an; "
+          "datele sărbătorilor după sibiu-turism.ro", 20, OCRU, "sans", 600, True)
+
+
+# ------------------------------------------------------------------ pictograme (centrate în cx, cy; ~44 px)
+def flower5(cx, cy, r, col, ctr=OCRU, n=5, rot=-90):
+    o = ""
+    for k in range(n):
+        a = math.radians(rot + k * 360 / n)
+        o += f'<circle cx="{cx + r*0.62*math.cos(a):.1f}" cy="{cy + r*0.62*math.sin(a):.1f}" r="{r*0.5:.1f}" fill="{col}"/>'
+    o += f'<circle cx="{cx}" cy="{cy}" r="{r*0.32:.1f}" fill="{ctr}"/>\n'
+    return o
+
+
+def leaf(cx, cy, l, w, ang, col=GREEN):
+    return (f'<ellipse cx="0" cy="0" rx="{l/2:.1f}" ry="{w/2:.1f}" fill="{col}" '
+            f'transform="translate({cx:.1f},{cy:.1f}) rotate({ang})"/>\n')
+
+
+def ic_snow(cx, cy):
+    """Munte cu zăpadă + fulg (Păltiniș)."""
+    o = poly([(cx - 22, cy + 16), (cx - 6, cy - 8), (cx + 4, cy + 4), (cx + 12, cy - 4), (cx + 24, cy + 16)], fill="#4E6A86")
+    o += poly([(cx - 6, cy - 8), (cx - 12, cy + 1), (cx - 8, cy - 1), (cx - 4, cy + 2), (cx - 1, cy - 1)], fill=VAR)
+    o += poly([(cx + 12, cy - 4), (cx + 8, cy + 1), (cx + 12, cy + 0), (cx + 16, cy + 2)], fill=VAR)
+    fx, fy, fr = cx + 9, cy - 15, 8
+    for k in range(3):
+        a = math.radians(k * 60)
+        o += (f'<line x1="{fx - fr*math.cos(a):.1f}" y1="{fy - fr*math.sin(a):.1f}" x2="{fx + fr*math.cos(a):.1f}" '
+              f'y2="{fy + fr*math.sin(a):.1f}" stroke="{ICE}" stroke-width="2.4" stroke-linecap="round"/>')
+    return o + "\n"
+
+
+def ic_crocus(cx, cy):
+    o = f'<path d="M{cx},{cy+18} L{cx},{cy+2}" stroke="{GREEN}" stroke-width="2.5"/>'
+    o += f'<path d="M{cx-2},{cy+18} Q{cx-12},{cy+6} {cx-14},{cy-2}" fill="none" stroke="{GREEN}" stroke-width="2.5" stroke-linecap="round"/>'
+    o += f'<path d="M{cx+2},{cy+18} Q{cx+12},{cy+6} {cx+14},{cy-2}" fill="none" stroke="{GREEN}" stroke-width="2.5" stroke-linecap="round"/>'
+    o += f'<ellipse cx="{cx-6}" cy="{cy-7}" rx="6" ry="12" fill="{VIOLET}" transform="rotate(-18 {cx-6} {cy-7})"/>'
+    o += f'<ellipse cx="{cx+6}" cy="{cy-7}" rx="6" ry="12" fill="{VIOLET}" transform="rotate(18 {cx+6} {cy-7})"/>'
+    o += f'<ellipse cx="{cx}" cy="{cy-8}" rx="6.5" ry="13" fill="{VIOL_L}"/>'
+    o += f'<path d="M{cx},{cy-14} L{cx},{cy-2}" stroke="{OCRU}" stroke-width="2"/>\n'
+    return o
+
+
+def ic_blackthorn(cx, cy):
+    """Ramură închisă, cu spini, și flori albe fără frunze (porumbar)."""
+    o = f'<path d="M{cx-18},{cy+16} L{cx+16},{cy-14}" stroke="{BROWN}" stroke-width="3.5" stroke-linecap="round"/>'
+    o += f'<path d="M{cx-4},{cy+4} l-7,-4 M{cx+6},{cy-5} l6,5 M{cx-11},{cy+10} l5,6" stroke="{BROWN}" stroke-width="2" stroke-linecap="round"/>'
+    o += flower5(cx - 9, cy - 2, 10, VAR, OCRU)
+    o += flower5(cx + 9, cy - 14, 9, VAR, OCRU)
+    o += flower5(cx + 8, cy + 9, 8, VAR, OCRU)
+    return o
+
+
+def ic_cherryflower(cx, cy):
+    o = leaf(cx + 10, cy + 10, 22, 10, -30, GREEN)
+    o += leaf(cx - 12, cy + 12, 18, 8, 30, GREEN_D)
+    o += flower5(cx - 7, cy - 4, 12, VAR, "#E7C04F")
+    o += flower5(cx + 10, cy - 10, 9, "#F6E7EC", "#E7C04F")
+    return o
+
+
+def ic_hawthorn(cx, cy):
+    o = leaf(cx - 13, cy + 12, 18, 9, 25, GREEN_D) + leaf(cx + 13, cy + 12, 18, 9, -25, GREEN)
+    for dx, dy in [(-12, -2), (0, -8), (12, -2), (-6, 6), (6, 6), (0, -1)]:
+        o += flower5(cx + dx, cy + dy - 4, 7, VAR, "#C94F6D")
+    return o
+
+
+def ic_chestnut(cx, cy):
+    """Floare-„lumânare” de castan peste o frunză palmată."""
+    o = ""
+    for ang in (-70, -35, 0, 35, 70):
+        a = math.radians(ang + 90)
+        o += leaf(cx + 10 * math.cos(a) * 1.1, cy + 12 + 10 * math.sin(a) * 0.5 - 2, 22, 8, ang + 90, GREEN_D if ang % 70 else GREEN)
+    o += poly([(cx - 9, cy + 6), (cx, cy - 22), (cx + 9, cy + 6)], fill=VAR)
+    for dx, dy in [(-3, -10), (3, -4), (-4, 1), (2, -15), (4, 3)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="1.8" fill="#D9637E"/>'
+    return o + "\n"
+
+
+def ic_rose(cx, cy):
+    o = leaf(cx - 14, cy + 12, 16, 8, 30, GREEN_D) + leaf(cx + 14, cy + 12, 16, 8, -30, GREEN)
+    o += flower5(cx, cy - 2, 21, PINK, "#E7C04F")
+    o += f'<circle cx="{cx}" cy="{cy-2}" r="4" fill="#F2D27A"/>\n'
+    return o
+
+
+def ic_linden(cx, cy):
+    """Bractee alungită, cu florile mici ale teiului."""
+    o = f'<path d="M{cx-14},{cy-18} Q{cx+2},{cy-6} {cx+4},{cy+18}" stroke="{BROWN}" stroke-width="2" fill="none"/>'
+    o += leaf(cx - 4, cy - 2, 34, 9, 62, "#B7D36B")
+    o += leaf(cx + 12, cy - 8, 26, 16, -35, GREEN)
+    o += f'<path d="M{cx+2},{cy+6} L{cx-6},{cy+14} M{cx+2},{cy+6} L{cx+4},{cy+16} M{cx+2},{cy+6} L{cx+12},{cy+12}" stroke="#B7D36B" stroke-width="1.6"/>'
+    for dx, dy in [(-6, 14), (4, 16), (12, 12)]:
+        o += flower5(cx + dx, cy + dy, 6, "#F2E28A", OCRU)
+    return o
+
+
+def ic_cherries(cx, cy):
+    o = f'<path d="M{cx-8},{cy+6} Q{cx-4},{cy-10} {cx+6},{cy-16} M{cx+10},{cy+8} Q{cx+8},{cy-6} {cx+6},{cy-16}" stroke="{GREEN_D}" stroke-width="2.5" fill="none"/>'
+    o += leaf(cx + 13, cy - 16, 16, 7, -20, GREEN)
+    o += f'<circle cx="{cx-9}" cy="{cy+10}" r="8.5" fill="#B3263A"/><circle cx="{cx+10}" cy="{cy+12}" r="8.5" fill="#8E1C2E"/>'
+    o += f'<circle cx="{cx-12}" cy="{cy+7}" r="2.2" fill="{VAR}" opacity="0.7"/><circle cx="{cx+7}" cy="{cy+9}" r="2.2" fill="{VAR}" opacity="0.6"/>\n'
+    return o
+
+
+def ic_hips(cx, cy):
+    o = f'<path d="M{cx-18},{cy-14} Q{cx-2},{cy-6} {cx+16},{cy-16}" stroke="{BROWN}" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    for dx, ang, col in [(-8, 10, "#D8452B"), (8, -12, "#E2622A")]:
+        o += f'<ellipse cx="{cx+dx}" cy="{cy+5}" rx="7" ry="11" fill="{col}" transform="rotate({ang} {cx+dx} {cy+5})"/>'
+        o += f'<path d="M{cx+dx-3},{cy-6} l3,3 l3,-3" stroke="{BG}" stroke-width="1.6" fill="none"/>'
+        o += f'<line x1="{cx+dx}" y1="{cy-6}" x2="{cx+dx*0.6:.1f}" y2="{cy-11}" stroke="{BROWN}" stroke-width="2"/>'
+    return o + "\n"
+
+
+def ic_sloes(cx, cy):
+    o = f'<path d="M{cx-18},{cy-12} L{cx+18},{cy-6}" stroke="{BROWN}" stroke-width="3" stroke-linecap="round"/>'
+    o += f'<path d="M{cx-6},{cy-10} l-3,-7 M{cx+8},{cy-8} l4,-7" stroke="{BROWN}" stroke-width="2" stroke-linecap="round"/>'
+    for dx, dy in [(-9, 4), (5, 2), (-2, 14), (13, 13)]:
+        o += f'<circle cx="{cx+dx}" cy="{cy+dy}" r="7.5" fill="#3F4A8A"/><circle cx="{cx+dx-2.5}" cy="{cy+dy-2.5}" r="2.4" fill="#A9B4E0" opacity="0.75"/>'
+    return o + "\n"
+
+
+OAK_LEAF = ("M0,-20 C5,-19 4,-14 7,-13 C11,-12 11,-8 8,-6 C12,-5 13,0 9,2 C13,4 12,9 7,9 "
+            "C8,13 5,16 2,15 L1,22 L-1,22 L-2,15 C-5,16 -8,13 -7,9 C-12,9 -13,4 -9,2 "
+            "C-13,0 -12,-5 -8,-6 C-11,-8 -11,-12 -7,-13 C-4,-14 -5,-19 0,-20 Z")
+
+
+def oak_leaf(cx, cy, sc, ang, col):
+    return (f'<path d="{OAK_LEAF}" fill="{col}" transform="translate({cx:.1f},{cy:.1f}) rotate({ang}) scale({sc})"/>'
+            f'<path d="M0,-16 L0,20" stroke="{BG}" stroke-width="1.2" opacity="0.5" transform="translate({cx:.1f},{cy:.1f}) rotate({ang}) scale({sc})"/>\n')
+
+
+def ic_oakleaves(cx, cy):
+    o = oak_leaf(cx - 8, cy - 2, 0.85, -25, "#C98A2E")
+    o += oak_leaf(cx + 9, cy + 4, 0.8, 30, TIGLA_L)
+    o += f'<path d="M{cx-20},{cy+19} q4,-3 8,0 M{cx+12},{cy-18} q4,-3 8,0" stroke="{CEATA}" stroke-width="1.6" fill="none" opacity="0.7"/>\n'
+    return o
+
+
+def acorn(cx, cy, sc=1.0):
+    o = f'<g transform="translate({cx:.1f},{cy:.1f}) scale({sc})">'
+    o += '<ellipse cx="0" cy="5" rx="8" ry="11" fill="#B9853F"/>'
+    o += '<ellipse cx="-2.5" cy="3" rx="2" ry="5" fill="#E0B36A" opacity="0.7"/>'
+    o += f'<path d="M-10,-2 Q-10,-11 0,-11 Q10,-11 10,-2 Z" fill="{BROWN}"/>'
+    o += '<path d="M-7,-6 L7,-6 M-8,-3 L8,-3 M-4,-10 L-6,-2 M2,-11 L0,-2 M6,-9 L5,-2" stroke="#4A3520" stroke-width="1"/>'
+    o += f'<line x1="0" y1="-11" x2="2" y2="-16" stroke="{BROWN}" stroke-width="2.4" stroke-linecap="round"/>'
+    return o + "</g>\n"
+
+
+def ic_acorns(cx, cy):
+    return oak_leaf(cx + 10, cy - 6, 0.6, 35, GREEN_D) + acorn(cx - 7, cy + 2, 1.05) + acorn(cx + 10, cy + 8, 0.8)
+
+
+def sheep(cx, cy, sc=1.0, face="#7A6656"):
+    o = f'<g transform="translate({cx:.1f},{cy:.1f}) scale({sc})">'
+    o += f'<rect x="-9" y="6" width="3.5" height="9" fill="{face}"/><rect x="5" y="6" width="3.5" height="9" fill="{face}"/>'
+    for dx, dy, r in [(-8, 0, 7), (0, -4, 8), (8, 0, 7), (0, 4, 7), (-4, 2, 6), (5, 3, 6)]:
+        o += f'<circle cx="{dx}" cy="{dy}" r="{r}" fill="{VAR}"/>'
+    o += f'<ellipse cx="14" cy="-3" rx="5" ry="6.5" fill="{face}" transform="rotate(-15 14 -3)"/>'
+    o += f'<ellipse cx="11" cy="-7" rx="3" ry="1.6" fill="{face}" transform="rotate(-30 11 -7)"/>'
+    return o + "</g>\n"
+
+
+def arrow_v(x, y0, y1, col=OCRU):
+    up = y1 < y0
+    o = f'<line x1="{x}" y1="{y0}" x2="{x}" y2="{y1 + (6 if up else -6)}" stroke="{col}" stroke-width="3"/>'
+    o += poly([(x - 5, y1 + (7 if up else -7)), (x, y1), (x + 5, y1 + (7 if up else -7))], fill=col)
+    return o
+
+
+def ic_sheep_up(cx, cy):
+    o = poly([(cx - 22, cy + 18), (cx + 2, cy - 18), (cx + 24, cy + 18)], fill="#2F4B3E")
+    o += poly([(cx + 2, cy - 18), (cx - 4, cy - 9), (cx + 8, cy - 9)], fill=VAR, opacity="0.85")
+    o += sheep(cx - 6, cy + 8, 0.72)
+    o += arrow_v(cx + 15, cy + 12, cy - 10)
+    return o
+
+
+def ic_sheep_down(cx, cy):
+    o = f'<path d="M{cx-22},{cy+18} L{cx+22},{cy+18}" stroke="{GREEN_D}" stroke-width="3"/>'
+    o += f'<rect x="{cx-21}" y="{cy-6}" width="13" height="10" fill="#E3D9C6"/>'
+    o += poly([(cx - 23, cy - 6), (cx - 14.5, cy - 13), (cx - 6, cy - 6)], fill=TIGLA)
+    o += sheep(cx + 2, cy + 6, 0.72)
+    o += arrow_v(cx + 16, cy - 16, cy + 6)
+    return o
+
+
+def ic_jina(cx, cy):
+    o = poly([(cx - 24, cy + 16), (cx - 6, cy - 16), (cx + 8, cy + 2), (cx + 14, cy - 6), (cx + 24, cy + 16)], fill="#2F4B3E")
+    o += poly([(cx - 6, cy - 16), (cx - 11, cy - 7), (cx - 1, cy - 7)], fill=VAR, opacity="0.85")
+    o += sheep(cx + 2, cy + 8, 0.6)
+    o += sheep(cx - 13, cy + 11, 0.5)
+    return o
+
+
+def ic_crook(cx, cy):
+    """Bâtă ciobănească + oaie (sărbătoarea oierilor)."""
+    o = sheep(cx - 4, cy + 6, 0.78)
+    o += (f'<path d="M{cx+16},{cy+20} L{cx+16},{cy-12} Q{cx+16},{cy-20} {cx+9},{cy-20} Q{cx+3},{cy-20} {cx+3},{cy-14}" '
+          f'stroke="{OCRU}" stroke-width="3.5" fill="none" stroke-linecap="round"/>')
+    return o + "\n"
+
+
+def ic_cheese(cx, cy):
+    """Roată de brânză cu o felie scoasă + o sticluță (țuica)."""
+    o = f'<ellipse cx="{cx-4}" cy="{cy+10}" rx="16" ry="6" fill="#B8862C"/>'
+    o += f'<rect x="{cx-20}" y="{cy-2}" width="32" height="12" fill="#D9A23A"/>'
+    o += f'<ellipse cx="{cx-4}" cy="{cy-2}" rx="16" ry="6" fill="#F2D27A"/>'
+    o += poly([(cx - 4, cy - 2), (cx + 12, cy - 2), (cx + 8, cy + 2.5)], fill=DISC)
+    o += f'<circle cx="{cx-10}" cy="{cy-2}" r="1.6" fill="#D9A23A"/><circle cx="{cx-1}" cy="{cy-5}" r="1.3" fill="#D9A23A"/>'
+    o += f'<rect x="{cx+13}" y="{cy-14}" width="9" height="26" rx="3" fill="#CFE3E6" opacity="0.85"/>'
+    o += f'<rect x="{cx+15}" y="{cy-20}" width="5" height="7" fill="#CFE3E6" opacity="0.85"/>'
+    o += f'<rect x="{cx+13}" y="{cy-2}" width="9" height="14" rx="2" fill="#E9D9A6" opacity="0.9"/>\n'
+    return o
+
+
+def ic_water(cx, cy):
+    o = ""
+    for k, yy in enumerate([cy + 6, cy + 14]):
+        d = f"M{cx-22},{yy}"
+        for i in range(4):
+            d += f" q{5.5},{-5 if i % 2 == 0 else 5} 11,0"
+        o += f'<path d="{d}" stroke="{ICE if k == 0 else PETROL}" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    for dx, dy, r in [(-8, -10, 4), (2, -16, 5), (11, -8, 3.5)]:
+        o += f'<path d="M{cx+dx},{cy+dy-r*1.6} Q{cx+dx+r},{cy+dy} {cx+dx},{cy+dy+r} Q{cx+dx-r},{cy+dy} {cx+dx},{cy+dy-r*1.6} Z" fill="{ICE}"/>'
+    return o + "\n"
+
+
+def ic_lads(cx, cy):
+    """Trei feciori stilizați, cu pălării rotunde (port alb-negru)."""
+    o = ""
+    for dx, sc in [(-13, 0.85), (13, 0.85), (0, 1.0)]:
+        x = cx + dx
+        o += f'<g transform="translate({x},{cy}) scale({sc})">'
+        o += f'<path d="M-9,20 L-7,2 Q0,-2 7,2 L9,20 Z" fill="{VAR}"/>'
+        o += f'<rect x="-7" y="4" width="14" height="4" fill="{BG}"/>'
+        o += '<circle cx="0" cy="-6" r="6" fill="#E8C9A6"/>'
+        o += f'<path d="M-7,-9 Q-7,-18 0,-18 Q7,-18 7,-9 Z" fill="{BG}" stroke="#56657A" stroke-width="1"/>'
+        o += '</g>'
+    return o + "\n"
+
+
+ICONS = dict(snow=ic_snow, crocus=ic_crocus, blackthorn=ic_blackthorn, cherryflower=ic_cherryflower,
+             hawthorn=ic_hawthorn, chestnut=ic_chestnut, rose=ic_rose, linden=ic_linden, cherries=ic_cherries,
+             hips=ic_hips, sloes=ic_sloes, oakleaves=ic_oakleaves, acorns=ic_acorns, sheep_up=ic_sheep_up,
+             sheep_down=ic_sheep_down, jina=ic_jina, crook=ic_crook, cheese=ic_cheese, water=ic_water, lads=ic_lads)
+
+# ------------------------------------------------------------------ conținutul lunilor
+# (lună, anotimp, [(tip, pictogramă, titlu, explicație)])
+MONTHS = [
+    ("Ianuarie", "iarnă", [
+        ("zapada", "snow", "Zăpadă la Păltiniș", "sezonul de schi e în toi"),
+        ("obicei", "water", "7 ianuarie", "„Scăldatul Sfinților Ioni”, la Tălmăcel"),
+    ]),
+    ("Februarie", "iarnă", [
+        ("zapada", "snow", "Schi la Păltiniș", "de regulă, până în aprilie"),
+        ("flori", "crocus", "Brândușe", "primele apar la sfârșitul iernii"),
+    ]),
+    ("Martie", "primăvară", [
+        ("flori", "crocus", "Brândușe", "înfloresc la începutul primăverii"),
+        ("flori", "blackthorn", "Porumbar", "flori albe, înaintea frunzelor"),
+    ]),
+    ("Aprilie", "primăvară", [
+        ("flori", "blackthorn", "Porumbar", "încă în floare la început de primăvară"),
+        ("flori", "cherryflower", "Cireș pădureț", "flori albe, odată cu frunzele noi"),
+    ]),
+    ("Mai", "primăvară", [
+        ("pastorit", "sheep_up", "Urcarea oilor", "turmele pleacă la munte"),
+        ("flori", "hawthorn", "Păducel", "flori albe, mai – început de iunie"),
+        ("flori", "chestnut", "Castan", "„lumânări” de flori, primăvara"),
+    ]),
+    ("Iunie", "vară", [
+        ("flori", "rose", "Măceș", "flori roz, iunie–iulie"),
+        ("flori", "linden", "Tei", "flori parfumate la începutul verii"),
+    ]),
+    ("Iulie", "vară", [
+        ("fructe", "cherries", "Cireșe pădurețe", "coapte la mijlocul verii"),
+        ("pastorit", "jina", "30 iulie", "„Sus pe muntele din Jina”"),
+    ]),
+    ("August", "vară", [
+        ("pastorit", "crook", "15 august", "Sărbătoarea oierilor, la Tilișca"),
+        ("pastorit", "cheese", "31 august", "Festivalul brânzei și al țuicii, la Rășinari"),
+    ]),
+    ("Septembrie", "toamnă", [
+        ("pastorit", "sheep_down", "Coborârea oilor", "turmele se întorc în sate"),
+        ("fructe", "hips", "Măceșe", "fructe roșii-portocalii, până în octombrie"),
+    ]),
+    ("Octombrie", "toamnă", [
+        ("fructe", "oakleaves", "Frunzele stejarului", "arbore foios: le pierde toamna"),
+        ("fructe", "acorns", "Ghinde de gorun", "coapte la circa șase luni de la înflorire"),
+    ]),
+    ("Noiembrie", "toamnă", [
+        ("fructe", "sloes", "Porumbe", "culese după primele înghețuri, octombrie–noiembrie"),
+    ]),
+    ("Decembrie", "iarnă", [
+        ("zapada", "snow", "Începe schiul", "la Păltiniș, de regulă din decembrie"),
+        ("obicei", "lads", "28 decembrie", "„Adunarea feciorilor”, la Săliște"),
+    ]),
+]
+
+# ------------------------------------------------------------------ grilă 6 × 2
+CW, G = 280, 16
+CH = 328
+ROWY = [256, 256 + CH + 16]
+XS = [80 + i * (CW + G) for i in range(6)]
+TXT_X = 86             # deplasarea textului față de marginea cardului
+TXT_W = CW - TXT_X - 12
+LANE = 40              # înălțimea benzii de jos (bare continue)
+ITEM_TOP, ITEM_BOT = 62, CH - LANE - 14
+
+
+def item_block(x, y, kind, icon, title, expl):
+    """Returnează (svg, înălțime) pentru un element al lunii."""
+    lines = wrap(expl, TXT_W, 15)
+    assert len(lines) <= 3, (title, lines)
+    assert measure(title, 18, "sans", 700) <= TXT_W, title
+    h = max(60, 24 + 19 * len(lines) + 4)
+    o = f'<circle cx="{x+44}" cy="{y+30}" r="27" fill="{DISC}" stroke="{TYPE[kind]}" stroke-width="2.5"/>\n'
+    o += ICONS[icon](x + 44, y + 30)
+    o += text(x + TXT_X, y + 21, title, 18, TYPE[kind], "sans", 700)
+    yy = y + 42
+    for ln in lines:
+        o += text(x + TXT_X, yy, ln, 15, CEATA)
+        yy += 19
+    return o, h
+
+
+for i, (mname, season, items) in enumerate(MONTHS):
+    r, c = divmod(i, 6)
+    x, y = XS[c], ROWY[r]
+    scol = SEASON[season]
+    s += card(x, y, CW, CH)
+    s += f'<rect x="{x}" y="{y}" width="{CW}" height="7" rx="3" fill="{scol}"/>\n'
+    s += text(x + 22, y + 46, mname, 27, VAR, "serif", 700)
+    sw_ = measure(season.upper(), 13, "sans", 700, letter_spacing=1.5)
+    assert x + 22 + measure(mname, 27, "serif", 700) + 12 < x + CW - 18 - sw_, mname
+    s += text(x + CW - 18, y + 42, season.upper(), 13, scol, "sans", 700, anchor="end", extra='letter-spacing="1.5"')
+    # elementele
+    blocks, hs = [], []
+    for it in items:
+        b, h = item_block(x, 0, *it)
+        blocks.append(b); hs.append(h)
+    total = sum(hs) + 6 * (len(hs) - 1)
+    zone = ITEM_BOT - ITEM_TOP
+    assert total <= zone, (mname, total, zone)
+    yy = y + ITEM_TOP + (zone - total) / 2 if len(items) < 3 else y + ITEM_TOP
+    for it, h in zip(items, hs):
+        b, _ = item_block(x, yy, *it)
+        s += b
+        yy += h + 6
+    # banda de jos
+    ly = y + CH - LANE - 4
+    s += f'<line x1="{x+16}" y1="{ly}" x2="{x+CW-16}" y2="{ly}" stroke="{LINE}" stroke-width="1.5"/>\n'
+
+
+# ------------------------------------------------------------------ bare continue (zăpadă, oi la munte)
+def mx(c, frac):
+    return XS[c] + frac * CW
+
+
+def bar(r, c0, f0, c1, f1, col, label, txtcol=BG, left="round", right="round", icon=None):
+    y = ROWY[r] + CH - LANE + 4
+    h = 26
+    x0, x1 = mx(c0, f0), mx(c1, f1)
+    o = f'<rect x="{x0:.1f}" y="{y}" width="{x1-x0:.1f}" height="{h}" rx="13" fill="{col}"/>\n'
+    if left == "flat":   # continuă din rândul de sus / de jos: capăt drept, cu un chevron discret
+        o += f'<rect x="{x0:.1f}" y="{y}" width="20" height="{h}" fill="{col}"/>\n'
+        o += poly([(x0, y), (x0 + 7, y + h / 2), (x0, y + h)], fill=BG, opacity="0.35")
+    if right == "arrow":
+        o += f'<rect x="{x1-20:.1f}" y="{y}" width="20" height="{h}" fill="{col}"/>\n'
+        o += poly([(x1 - 1, y - 4), (x1 + 14, y + h / 2), (x1 - 1, y + h + 4)], fill=col)
+    tx = x0 + 16
+    if icon:
+        o += icon(x0 + 24, y + h / 2)
+        tx = x0 + 44
+    assert tx + measure(label, 15, "sans", 700) <= x1 - 10, label
+    o += text(tx, y + 18, label, 15, txtcol, "sans", 700)
+    return o
+
+
+def mini_flake(cx, cy, col=BG):
+    o = ""
+    for k in range(3):
+        a = math.radians(k * 60 + 90)
+        o += (f'<line x1="{cx - 8*math.cos(a):.1f}" y1="{cy - 8*math.sin(a):.1f}" x2="{cx + 8*math.cos(a):.1f}" '
+              f'y2="{cy + 8*math.sin(a):.1f}" stroke="{col}" stroke-width="2.2" stroke-linecap="round"/>')
+    return o + "\n"
+
+
+def mini_sheep(cx, cy):
+    return sheep(cx - 2, cy + 1, 0.62, face=BG).replace(f'fill="{VAR}"', 'fill="#FFF8E6"')
+
+
+s += bar(0, 0, 0.0, 3, 1.0, ICE, "zăpadă la Păltiniș: circa 120 de zile pe an · schi de regulă din decembrie până în aprilie",
+         left="flat", icon=mini_flake)
+s += bar(1, 5, 0.0, 5, 0.94, ICE, "sezonul de schi", right="arrow", icon=mini_flake)
+s += bar(0, 4, 0.12, 5, 0.94, OCRU, "oile la munte, din mai până în septembrie", right="arrow", icon=mini_sheep)
+s += bar(1, 0, 0.0, 2, 0.88, OCRU, "oile la munte (transhumanță) · coboară în septembrie", left="flat", icon=mini_sheep)
+
+# ------------------------------------------------------------------ legendă + surse
+ly = 962
+lx = 80
+s += text(lx, ly, "Culori:", 16, VAR, "sans", 700)
+lx += measure("Culori:", 16, "sans", 700) + 16
+for lab, col in [("flori", GREEN), ("fructe și frunze", TIGLA_L), ("păstorit", OCRU), ("obiceiuri", VIOL_T), ("zăpadă", ICE)]:
+    s += f'<circle cx="{lx+7}" cy="{ly-5}" r="7" fill="{col}"/>\n'
+    s += text(lx + 21, ly, lab, 16, CEATA)
+    lx += 21 + measure(lab, 16) + 22
+note = "Plantele sunt din listele pentru Pădurea Dumbrava, iar castanul e din Parcul Sub Arini. Sunt pictograme, nu ilustrații botanice exacte."
+assert lx + measure(note, 15, "sans", 400, True) < 1840, lx
+s += text(1840, ly, note, 15, MUTED, "sans", 400, True, anchor="end")
+
+src = ("Surse: en.wikipedia – paginile speciilor (Crocus, Prunus spinosa, P. avium, Crataegus monogyna, Aesculus hippocastanum, Rosa canina, "
+       "Tilia, Quercus robur, Q. petraea), Păltiniș; gandul.ro; sibiu-turism.ro (păstorit, obiceiuri); sibiul.ro; ecomagazin.ro; zilesinopti.ro.")
+assert measure(src, 14, "sans", 400, True) < 1760, measure(src, 14, "sans", 400, True)
+s += text(80, 994, src, 14, MUTED, "sans", 400, True)
+s += frame_foot()
+write(OUT, s)
+print(OUT)

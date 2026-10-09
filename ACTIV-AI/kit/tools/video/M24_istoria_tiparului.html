@@ -1,0 +1,771 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>M24</title></head><body>
+<script src="lib.js"></script>
+<script>
+// M24 – Istoria tiparului la Sibiu (1525, 1544) – animație AI (74 s)
+// Partea I: procesul GENERAL al tiparului cu litere mobile (en.wikipedia: Movable type, Type metal, Composing stick,
+//           Printing press, Papermaking, Letterpress printing, Bookbinding) – nu atelierul din Sibiu.
+// Partea a II-a: cronologia de la Sibiu – doar din fișa de fapte („Tiparul la Sibiu”).
+// Fără portrete ale persoanelor istorice; cărțile și calendarul sunt desene cu aspect imaginat (declarat pe ecran).
+const W = 1920, H = 1080, ctx = setupCanvas(W, H);
+const TEND = 74;
+const P1 = 4.0, STEP = 3.5;          // Partea I: 8 pași × 3,5 s  (4–32 s)
+const TR0 = 32.0, P2 = 34.0;          // carton 32–34 s; Partea a II-a: 8 intrări (34–66 s), durate după lungimea textului
+const EDUR = [5.5, 4.0, 4.0, 4.5, 3.0, 3.5, 4.5, 3.0];
+const ESTART = EDUR.map((_, i) => P2 + EDUR.slice(0, i).reduce((a, b) => a + b, 0));
+const FIN = 66.0;                    // cadrul de onestitate 66–74 s
+// (muzica și efectele sonore din _audio/M24_tema_tiparului.py folosesc exact aceleași momente)
+
+const METAL = '#9AA3AD', METAL_D = '#5F6873', METAL_L = '#D3D9DE';
+const WOOD = '#7A5233', WOOD_D = '#4A3120', WOOD_L = '#A0714A';
+const IRON = '#3A4048', PAPER = '#F1E9D6', PAPER_D = '#D9CDB2', INK = '#17120E';
+const LEATHER = '#7A4A2E', MOLTEN = '#FF9A3C', GLOW = '#FFD27A', COPPER = '#B87333';
+const L = PAL.var;
+let GA = 1; // opacitatea scenei curente
+
+// ------------------------------------------------------------------ utilitare de desen
+function T(s, x, y, o = {}) { return text(ctx, s, x, y, Object.assign({}, o, { alpha: (o.alpha == null ? 1 : o.alpha) * GA })); }
+function S(s, x, y, o = {}) { return T(s, x, y, Object.assign({ family: 'Noto Serif', weight: 700 }, o)); }
+function fitSize(str, weight, size, maxW, family) {
+  let s = size; ctx.font = `${weight} ${s}px ${family || 'Inter'}`;
+  while (ctx.measureText(str).width > maxW && s > 12) { s -= 1; ctx.font = `${weight} ${s}px ${family || 'Inter'}`; }
+  return s;
+}
+function A(a) { ctx.globalAlpha = GA * a; }
+function glyph(ch, x, y, size, mode, color, rotY) {
+  ctx.save(); ctx.translate(x, y);
+  if (mode === 'm') ctx.scale(-1, 1);
+  if (mode === 'v') ctx.scale(1, -1);
+  if (rotY != null) ctx.scale(1, rotY);
+  ctx.fillStyle = color; ctx.font = `700 ${size}px "Noto Serif"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(ch, 0, size * 0.04); ctx.restore();
+}
+// literă turnată, văzută din față (fața care tipărește)
+function tile(x, y, w, h, ch, mode, inked, rotY) {
+  ctx.fillStyle = METAL_D; roundRect(ctx, x, y, w, h, 5); ctx.fill();
+  ctx.fillStyle = METAL; roundRect(ctx, x + 3, y + 3, w - 6, h - 6, 4); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(x + 4, y + 4, w - 8, 4);
+  if (ch) glyph(ch, x + w / 2, y + h / 2 + 1, h * 0.66, mode, inked ? INK : METAL_L, rotY);
+}
+// linie de rând cules (văzută de sus): fâșie de metal cu „fețe de litere”
+function typeRow(x, y, w, h, seed, inkFn) {
+  const r = rng(seed);
+  ctx.fillStyle = METAL_D; ctx.fillRect(x, y, w, h);
+  let xx = x + 6;
+  while (xx < x + w - 14) {
+    const wl = 10 + r() * 16;
+    if (r() < 0.16) { xx += 14; continue; }      // spațiu între cuvinte
+    const cx = xx + wl / 2, cy = y + h / 2;
+    ctx.fillStyle = inkFn && inkFn(cx, cy) ? INK : METAL_L;
+    ctx.fillRect(xx, y + h * 0.22, Math.min(wl, x + w - 8 - xx), h * 0.56);
+    xx += wl + 4;
+  }
+}
+function table() { // tăblia mesei de lucru, la baza scenei
+  A(1); ctx.fillStyle = WOOD_D; ctx.fillRect(80, 760, 1760, 35);
+  ctx.fillStyle = 'rgba(255,220,180,.10)'; ctx.fillRect(80, 760, 1760, 3);
+}
+function leader(x0, y0, x1, y1, a = 1) {
+  ctx.save(); A(a * .8); ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.arc(x1, y1, 4.5, 0, 7); ctx.fill(); ctx.restore();
+}
+function tag(s, x, y, a = 1, align = 'left', size = 24, color = L) { T(s, x, y, { size, weight: 600, color, align, alpha: a, shadow: 6 }); }
+
+// ------------------------------------------------------------------ elemente comune
+function inkBall(x, y, r, press) {
+  const k = 1 - 0.08 * press;
+  ctx.save(); ctx.translate(x, y);
+  // mânerul de lemn (în sus)
+  ctx.fillStyle = WOOD_L; roundRect(ctx, -13, -r * 1.9, 26, r * 1.25, 9); ctx.fill();
+  ctx.fillStyle = WOOD; roundRect(ctx, -22, -r * 0.85, 44, r * 0.32, 8); ctx.fill();
+  // tamponul de piele
+  ctx.scale(1 / k * 1.0, k);
+  ctx.fillStyle = LEATHER; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,220,180,.16)'; ctx.beginPath(); ctx.arc(-r * .3, -r * .3, r * .45, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(30,15,8,.55)'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.arc(0, 0, r * .78, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = INK; ctx.globalAlpha *= .55; ctx.beginPath(); ctx.ellipse(0, r * .25, r * .7, r * .5, 0, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function sheet(x, y, w, h, o = {}) {
+  ctx.fillStyle = o.color || PAPER; ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = 'rgba(0,0,0,.06)'; ctx.fillRect(x, y + h - 4, w, 4);
+  if (o.lines) {
+    const r = rng(o.seed || 3), m = w * 0.12;
+    ctx.fillStyle = rgba(INK, o.lineA == null ? .78 : o.lineA);
+    const nl = o.lines, lh = (h - 2 * m) / nl;
+    for (let i = 0; i < nl; i++) { const ww = (w - 2 * m) * (i === nl - 1 ? .55 : .86 + r() * .14); ctx.fillRect(x + m, y + m + i * lh, ww, Math.max(2, lh * .42)); }
+  }
+}
+// presa cu șurub, văzută din lateral; s = scară; press 0..1 (placa coboară); carX = centrul carului; barTh = unghiul barei
+function drawPress(cx, base, s, press, carX, barTh, shake, pkg) {
+  ctx.save(); ctx.translate(cx, base); ctx.scale(s, s); ctx.translate(-960, -760);
+  ctx.translate(shake || 0, 0);
+  // șinele carului
+  ctx.fillStyle = WOOD_D; ctx.fillRect(660, 690, 1080, 16); ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.fillRect(660, 706, 1080, 4);
+  // carul cu forma (și coala, sub rama închisă)
+  const cw = 420;
+  ctx.fillStyle = '#6E6A63'; ctx.fillRect(carX - cw / 2, 656, cw, 34);        // „piatra” patului
+  ctx.fillStyle = WOOD; ctx.fillRect(carX - cw / 2 - 12, 650, cw + 24, 8);
+  if (pkg) { ctx.fillStyle = '#CDB892'; ctx.fillRect(carX - cw / 2 + 20, 628, cw - 40, 22); ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(carX - cw / 2 + 20, 646, cw - 40, 4); }
+  // stâlpii (în față)
+  ctx.fillStyle = WOOD; ctx.fillRect(700, 300, 46, 460); ctx.fillRect(1174, 300, 46, 460);
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(728, 300, 18, 460); ctx.fillRect(1202, 300, 18, 460);
+  // capul presei
+  ctx.fillStyle = WOOD_L; ctx.fillRect(676, 318, 568, 64); ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.fillRect(676, 370, 568, 12);
+  ctx.fillStyle = WOOD_D; ctx.fillRect(676, 740, 568, 22);
+  // șurubul (dungi elicoidale care se mișcă la rotire)
+  const pY = lerp(548, 626, press);
+  ctx.save(); ctx.beginPath(); ctx.rect(940, 382, 40, pY - 382 - 40); ctx.clip();
+  ctx.fillStyle = '#8B6B45'; ctx.fillRect(940, 382, 40, 400);
+  ctx.strokeStyle = 'rgba(40,25,10,.55)'; ctx.lineWidth = 6;
+  const ph = (barTh || 0) * 40;
+  for (let y = 360 + (ph % 26); y < 620; y += 26) { ctx.beginPath(); ctx.moveTo(940, y); ctx.lineTo(980, y + 12); ctx.stroke(); }
+  ctx.restore();
+  // butucul și bara
+  const by = pY - 70;
+  ctx.fillStyle = IRON; ctx.fillRect(926, by - 14, 68, 32);
+  const bl = 270 * Math.cos(barTh || 0), bdy = 26 * Math.sin(barTh || 0);
+  ctx.strokeStyle = '#2E3238'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(990, by); ctx.lineTo(990 + bl, by + bdy); ctx.stroke();
+  ctx.fillStyle = WOOD_L; ctx.beginPath(); ctx.ellipse(990 + bl, by + bdy, 16, 22, 0, 0, 7); ctx.fill();
+  // placa
+  ctx.fillStyle = '#5A3D26'; ctx.fillRect(840, pY - 40, 240, 12);
+  ctx.fillStyle = WOOD_L; ctx.fillRect(820, pY - 28, 280, 30); ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.fillRect(820, pY - 2, 280, 4);
+  ctx.restore();
+  return { pY, by, barEnd: [990 + bl, by + bdy] };
+}
+function bookClosed(cx, cy, w, h, o = {}) {
+  ctx.save(); ctx.translate(cx, cy); if (o.rot) ctx.rotate(o.rot);
+  // paginile (muchia)
+  ctx.fillStyle = PAPER_D; ctx.fillRect(-w / 2 + 10, -h / 2 + 8, w - 4, h);
+  for (let i = 0; i < 6; i++) { ctx.fillStyle = 'rgba(0,0,0,.08)'; ctx.fillRect(-w / 2 + 12, h / 2 + 2 - i * 3, w - 8, 1); }
+  // coperta
+  ctx.fillStyle = o.color || LEATHER; roundRect(ctx, -w / 2, -h / 2, w, h, 8); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(-w / 2, -h / 2, w * .08, h);
+  ctx.strokeStyle = 'rgba(255,215,160,.45)'; ctx.lineWidth = 3;
+  ctx.strokeRect(-w / 2 + w * .16, -h / 2 + h * .1, w * .74, h * .8);
+  ctx.strokeRect(-w / 2 + w * .24, -h / 2 + h * .17, w * .58, h * .66);
+  if (o.emblem === 'scales') {
+    ctx.strokeStyle = 'rgba(255,215,160,.8)'; ctx.lineWidth = 4; const ex = w * .03;
+    ctx.beginPath(); ctx.moveTo(ex, -h * .2); ctx.lineTo(ex, h * .18); ctx.moveTo(ex - w * .2, -h * .12); ctx.lineTo(ex + w * .2, -h * .12); ctx.moveTo(ex - w * .1, h * .18); ctx.lineTo(ex + w * .1, h * .18); ctx.stroke();
+    for (const sx of [-1, 1]) { const px = ex + sx * w * .2; ctx.beginPath(); ctx.moveTo(px, -h * .12); ctx.lineTo(px - w * .07, h * .02); ctx.moveTo(px, -h * .12); ctx.lineTo(px + w * .07, h * .02); ctx.stroke(); ctx.beginPath(); ctx.arc(px, h * .02, w * .07, 0, Math.PI); ctx.stroke(); }
+  } else if (o.emblem === 'q') {
+    ctx.fillStyle = 'rgba(255,215,160,.85)'; ctx.font = `700 ${h * .36}px "Noto Serif"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('?', w * .03, 4);
+  } else {
+    ctx.fillStyle = 'rgba(255,215,160,.6)'; ctx.beginPath(); const ex = w * .03;
+    ctx.moveTo(ex, -h * .14); ctx.lineTo(ex + w * .1, 0); ctx.lineTo(ex, h * .14); ctx.lineTo(ex - w * .1, 0); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+function bookOpen(cx, cy, w, h) {
+  ctx.save(); ctx.translate(cx, cy);
+  ctx.fillStyle = LEATHER; roundRect(ctx, -w / 2 - 14, -h / 2 - 8, w + 28, h + 22, 10); ctx.fill();
+  for (const sd of [-1, 1]) {
+    ctx.fillStyle = PAPER; ctx.beginPath();
+    ctx.moveTo(0, -h / 2 + 10); ctx.quadraticCurveTo(sd * w * .25, -h / 2 - 8, sd * w / 2, -h / 2); ctx.lineTo(sd * w / 2, h / 2);
+    ctx.quadraticCurveTo(sd * w * .25, h / 2 - 10, 0, h / 2 + 6); ctx.closePath(); ctx.fill();
+    // rânduri (fără litere: aspect imaginat)
+    ctx.fillStyle = rgba('#5B4A3A', .45);
+    for (let i = 0; i < 9; i++) { const yy = -h / 2 + 34 + i * (h - 70) / 9; const x0 = sd > 0 ? w * .08 : -w * .44; ctx.fillRect(x0, yy, w * .36 * (i === 8 ? .5 : 1), 6); }
+  }
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(-3, -h / 2 + 8, 6, h);
+  ctx.restore();
+}
+
+// ------------------------------------------------------------------ Partea I: cei 8 pași
+const STEPS = [
+  { k: 'literele', t: 'Literele turnate', b: 'Fiecare literă se toarnă dintr-un aliaj de plumb, staniu și stibiu, într-un tipar de mână cu matriță.', s: 'en.wikipedia: Movable type · Type metal' },
+  { k: 'culegerea', t: 'Culegerea în vingalac', b: 'Culegătorul (zețarul) așază literele în vingalac, de la stânga la dreapta, cu susul în jos; spațiile umplu rândul.', s: 'en.wikipedia: Composing stick · dexonline: vingalac' },
+  { k: 'forma', t: 'Forma', b: 'Rândurile trec pe galion, apoi se strâng bine într-o ramă de metal: forma – imaginea unei pagini.', s: 'en.wikipedia: Composing stick · Movable type · Letterpress printing · Chase (printing)' },
+  { k: 'cerneala', t: 'Cerneala', b: 'Forma se acoperă cu cerneală pe bază de ulei, cu două tampoane de piele umplute cu lână sau păr de cal.', s: 'en.wikipedia: Movable type · Printing press' },
+  { k: 'coala', t: 'Coala', b: 'Coala – de regulă din cârpe de cânepă și in – se umezește, se prinde în rame și se coboară pe formă.', s: 'en.wikipedia: Printing press · Papermaking' },
+  { k: 'presa', t: 'Presa manuală', b: 'Se trage de bară: șurubul coboară placa, care apasă coala pe forma cu cerneală.', s: 'en.wikipedia: Printing press' },
+  { k: 'uscarea', t: 'Uscarea', b: 'Colile tipărite se pun la uscat; literele se pot folosi din nou, pentru alte pagini.', s: 'en.wikipedia: Letterpress printing' },
+  { k: 'legarea', t: 'Legarea', b: 'Colile se împăturesc în caiete, care se cos la cotor; coperțile – plăci îmbrăcate de obicei în piele sau pergament.', s: 'en.wikipedia: Bookbinding' },
+];
+
+function step1(u) { // literele turnate
+  table();
+  const mx = 760, top = 450, bot = 710, o = easeInOut(smooth(2.0, 2.4, u)) * 70;
+  // lingura cu aliaj topit
+  const tilt = smooth(0.15, 0.55, u) * (1 - smooth(1.45, 1.8, u));
+  const ang = lerp(-0.15, 0.85, tilt);
+  const lx = 640, ly = 392;
+  ctx.save(); A(1); ctx.translate(lx, ly); ctx.rotate(ang);
+  ctx.strokeStyle = IRON; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-50, -10); ctx.lineTo(-250, -70); ctx.stroke();
+  ctx.fillStyle = WOOD; roundRect(ctx, -300, -100, 90, 30, 12); ctx.fill();
+  ctx.fillStyle = IRON; ctx.beginPath(); ctx.arc(0, 0, 58, 0, Math.PI); ctx.lineTo(-58, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = MOLTEN; ctx.beginPath(); ctx.ellipse(0, 2, 50, 10 + 4 * (1 - tilt), 0, 0, 7); ctx.fill();
+  ctx.fillStyle = rgba(GLOW, .7); ctx.beginPath(); ctx.ellipse(-8, 0, 26, 5, 0, 0, 7); ctx.fill();
+  ctx.restore();
+  // jetul de metal topit
+  const pour = smooth(0.5, 0.65, u) * (1 - smooth(1.4, 1.55, u));
+  if (pour > 0.01) {
+    const sx = lx + Math.cos(ang) * 56, sy = ly + Math.sin(ang) * 56;
+    ctx.save(); A(pour);
+    const g = ctx.createLinearGradient(sx, sy, mx, top + 10); g.addColorStop(0, GLOW); g.addColorStop(1, MOLTEN);
+    ctx.strokeStyle = g; ctx.lineWidth = 9 + 2 * Math.sin(u * 40); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(sx + 50, sy + 10, mx, top + 6); ctx.stroke();
+    ctx.globalAlpha = GA * pour * .35; ctx.fillStyle = GLOW; ctx.beginPath(); ctx.arc(mx, top + 10, 30, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+  // tiparul de mână: două jumătăți (lemn peste fier), cavitatea în secțiune
+  A(1);
+  for (const sd of [-1, 1]) {
+    const x0 = sd < 0 ? mx - 100 - o : mx + o;
+    ctx.fillStyle = WOOD; ctx.fillRect(x0, top, 100, bot - top);
+    ctx.fillStyle = IRON; ctx.fillRect(sd < 0 ? x0 + 58 : x0, top + 30, 42, bot - top - 80);
+    ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.fillRect(sd < 0 ? x0 : x0 + 88, top, 12, bot - top);
+    // pâlnia
+    ctx.fillStyle = IRON; ctx.beginPath();
+    if (sd < 0) { ctx.moveTo(x0 + 40, top); ctx.lineTo(x0 + 100, top); ctx.lineTo(x0 + 100, top + 30); ctx.lineTo(x0 + 78, top + 30); ctx.closePath(); }
+    else { ctx.moveTo(x0, top); ctx.lineTo(x0 + 60, top); ctx.lineTo(x0 + 22, top + 30); ctx.lineTo(x0, top + 30); ctx.closePath(); }
+    ctx.fill();
+  }
+  // matrița (cupru) la baza cavității
+  ctx.fillStyle = COPPER; ctx.fillRect(mx - 48 - o * .2, bot - 50, 96, 40);
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(mx - 16 - o * .2, bot - 50, 32, 10);
+  // metalul din cavitate
+  const fill = smooth(0.6, 1.45, u), cool = smooth(1.5, 2.1, u);
+  const cavTop = top + 30, cavBot = bot - 50, ch = (cavBot - cavTop) * fill;
+  // litera turnată pleacă spre dreapta după deschidere
+  const mv = easeInOut(smooth(2.35, 2.95, u));
+  const sxp = lerp(mx, 1040, mv), syb = lerp(cavBot, 760, mv);
+  if (ch > 0) {
+    const col = mix(MOLTEN, METAL, cool);
+    if (mv <= 0) { ctx.fillStyle = col; ctx.fillRect(mx - 20, cavBot - ch, 40, ch); if (cool < 1) { A(1 - cool); ctx.fillStyle = rgba(GLOW, .5); ctx.fillRect(mx - 20, cavBot - ch, 40, 8); A(1); } }
+    else {
+      const hh = cavBot - cavTop;
+      ctx.fillStyle = METAL_D; ctx.fillRect(sxp - 22, syb - hh, 44, hh);
+      ctx.fillStyle = METAL; ctx.fillRect(sxp - 18, syb - hh, 36, hh);
+      ctx.fillStyle = METAL_D; ctx.fillRect(sxp - 22, syb - hh * .3, 44, 6); // crestătura
+      ctx.fillStyle = METAL_L; ctx.fillRect(sxp - 14, syb - hh - 8, 28, 10); // fața literei, în relief
+    }
+  }
+  // lupa: fața literei, în oglindă
+  const za = smooth(2.7, 3.05, u);
+  if (za > 0) {
+    ctx.save(); A(za);
+    ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 3; ctx.setLineDash([8, 8]); ctx.beginPath(); ctx.moveTo(1068, 600); ctx.lineTo(1300, 540); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#26323F'; ctx.beginPath(); ctx.arc(1440, 520, 140, 0, 7); ctx.fill();
+    ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(1440, 520, 140, 0, 7); ctx.stroke();
+    tile(1370, 450, 140, 140, 'R', 'm', false);
+    ctx.restore();
+    tag('fața literei: în oglindă', 1440, 712, za, 'center');
+    T('pe hârtie se tipărește corect: R', 1440, 748, { size: 22, color: PAL.ceata, align: 'center', alpha: za });
+  }
+  // etichete
+  tag('aliaj topit: plumb + staniu + stibiu', 820, 372, smooth(0.3, 0.7, u));
+  const la = smooth(0.4, 0.8, u);
+  tag('tipar de mână', 540, 560, la, 'right'); leader(548, 552, mx - 100 - o, 552, la);
+  tag('matrița (litera adâncită)', 540, 690, la, 'right'); leader(548, 682, mx - 48, 682, la);
+  tag('litera turnată', 1040, 552, smooth(2.75, 3.0, u), 'center', 22, PAL.ceata);
+}
+
+const WORD = ['S', 'I', 'B', 'I', 'U'];
+const CASE = { x: 380, y: 320, cols: 12, rows: 2, cw: 96.6, chh: 76 };
+const CASE_LET = 'ABCDEFGHILMNOPRSTUVXZ.,;:-!?';
+function caseCell(ch) { const i = CASE_LET.indexOf(ch); return [i % CASE.cols, Math.floor(i / CASE.cols)]; }
+function drawCase(x, y, cols, rows, cw, chh, labels) {
+  ctx.fillStyle = WOOD; roundRect(ctx, x - 12, y - 12, cols * cw + 24, rows * chh + 24, 8); ctx.fill();
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+    const cx = x + i * cw, cy = y + j * chh;
+    ctx.fillStyle = '#2A1D12'; ctx.fillRect(cx + 3, cy + 3, cw - 6, chh - 6);
+    ctx.fillStyle = 'rgba(160,170,180,.55)'; for (let k = 0; k < 4; k++) ctx.fillRect(cx + 10 + k * (cw - 26) / 4, cy + chh - 24, (cw - 26) / 4 - 4, 14);
+    if (labels) { const c = CASE_LET[i + j * cols]; if (c) T(c, cx + 10, cy + 26, { size: 18, weight: 600, color: PAL.ceata }); }
+  }
+}
+function step2(u) { // culegerea în vingalac
+  table(); A(1);
+  drawCase(CASE.x, CASE.y, CASE.cols, CASE.rows, CASE.cw, CASE.chh, true);
+  // vingalacul
+  const sx0 = 560, sx1 = 1360, sy = 620;
+  ctx.fillStyle = '#B9C1C8'; ctx.fillRect(sx0, sy + 70, sx1 - sx0, 16);
+  ctx.fillStyle = '#8E979F'; ctx.fillRect(sx0, sy - 6, sx1 - sx0, 8);
+  ctx.fillStyle = '#7C858E'; ctx.fillRect(sx0 - 22, sy - 20, 24, 106);
+  ctx.fillStyle = '#9AA3AD'; ctx.fillRect(sx1 - 4, sy - 14, 22, 100); ctx.fillStyle = IRON; ctx.beginPath(); ctx.arc(sx1 + 7, sy - 26, 12, 0, 7); ctx.fill();
+  // literele
+  for (let k = 0; k < WORD.length; k++) {
+    const t0 = 0.25 + k * 0.4, p = easeInOut(smooth(t0, t0 + 0.34, u));
+    if (u < t0) continue;
+    const [ci, cj] = caseCell(WORD[k]);
+    const fx = CASE.x + ci * CASE.cw + CASE.cw / 2, fy = CASE.y + cj * CASE.chh + CASE.chh / 2;
+    const tx = sx0 + 6 + k * 74 + 35, ty = sy + 35;
+    const x = lerp(fx, tx, p), y = lerp(fy, ty, p) - Math.sin(p * Math.PI) * 60;
+    // în zbor litera se întoarce: ajunge în vingalac cu susul în jos
+    const flip = Math.cos(p * Math.PI);
+    ctx.fillStyle = METAL_D; roundRect(ctx, x - 35, y - 35, 70, 70, 5); ctx.fill();
+    ctx.fillStyle = METAL; roundRect(ctx, x - 32, y - 32, 64, 64, 4); ctx.fill();
+    glyph(WORD[k], x, y + 1, 46, 'm', METAL_L, flip);
+  }
+  // spațiile (fără literă, mai joase)
+  const SP = [118, 98, 80, 60, 39];
+  let xx = sx0 + 6 + 5 * 74;
+  SP.forEach((w, i) => {
+    const t0 = 2.3 + i * 0.12, p = easeOut(smooth(t0, t0 + 0.2, u));
+    if (p > 0) { const x = lerp(xx + 260, xx, p); ctx.save(); A(p); ctx.fillStyle = METAL_D; ctx.fillRect(x + 1, sy + 18, w - 3, 52); ctx.fillStyle = '#838C96'; ctx.fillRect(x + 3, sy + 20, w - 7, 48); ctx.restore(); }
+    xx += w;
+  });
+  tag('casetă cu litere', 352, 404, 1, 'right');
+  tag('vingalac', 520, 668, 1, 'right');
+  const sa = smooth(2.45, 2.75, u);
+  tag('spații – umplu rândul exact', 1170, 594, sa, 'center', 22, PAL.ceata);
+  T('rândul se culege de la stânga la dreapta, cu literele cu susul în jos', 960, 744, { size: 23, weight: 600, align: 'center', alpha: smooth(0.6, 1.0, u), color: PAL.ceata });
+  const pa = smooth(2.8, 3.1, u);
+  T('pe hârtie:', 1420, 640, { size: 22, color: PAL.ceata, alpha: pa });
+  S('SIBIU', 1420, 694, { size: 50, alpha: pa });
+}
+
+function step3(u) { // forma
+  table(); A(1);
+  const gx = 250, gy = 360, gw = 580, gh = 380;
+  // galionul
+  ctx.fillStyle = WOOD; ctx.fillRect(gx, gy, gw, gh); ctx.fillStyle = '#5E4029'; ctx.fillRect(gx + 14, gy + 14, gw - 14, gh - 28);
+  // rama (forma)
+  const fx = 1080, fy = 350, fw = 620, fh = 400;
+  ctx.fillStyle = IRON; ctx.fillRect(fx, fy, fw, fh); ctx.fillStyle = '#222830'; ctx.fillRect(fx + 22, fy + 22, fw - 44, fh - 44);
+  // blocul paginii
+  const mv = easeInOut(smooth(1.15, 2.05, u));
+  const bx = lerp(gx + 24, fx + 70, mv), by = lerp(gy + 24, fy + 40, mv);
+  const NR = 8, rh = 34, rg = 6, bw = 480;
+  for (let j = 0; j < NR; j++) {
+    let x = bx, y = by + j * (rh + rg);
+    if (j === 0) { const p = easeOut(smooth(0.15, 0.85, u)); x = bx - (1 - p) * 700; if (p <= 0) continue; }
+    typeRow(x, y, bw, rh, 100 + j);
+  }
+  // lemnul de umplutură și penele
+  const fa = smooth(2.05, 2.4, u);
+  if (fa > 0) {
+    ctx.save(); A(fa); ctx.fillStyle = WOOD_L;
+    ctx.fillRect(fx + 22, fy + 22, fw - 44, 14); ctx.fillRect(fx + 22, fy + fh - 36, fw - 44, 14);
+    ctx.fillRect(fx + 22, fy + 36, 44, fh - 72);
+    const wq = (1 - easeOut(smooth(2.45, 2.85, u))) * 30;
+    ctx.fillStyle = WOOD; ctx.fillRect(fx + 556 + wq, fy + 36, 42, fh - 72);
+    ctx.fillStyle = WOOD_L; for (let i = 0; i < 2; i++) { const y0 = fy + 90 + i * 170; ctx.beginPath(); ctx.moveTo(fx + 552 + wq, y0); ctx.lineTo(fx + 598, y0); ctx.lineTo(fx + 598, y0 + 80); ctx.closePath(); ctx.fill(); }
+    ctx.restore();
+  }
+  tag('galion', gx + gw / 2, 340, 1, 'center');
+  tag('forma: rama de metal cu literele strânse – o pagină', fx + fw / 2, 330, smooth(1.6, 2.1, u), 'center');
+  T('rândurile vin din vingalac, unul după altul', gx + gw / 2, 778, { size: 21, align: 'center', color: PAL.ceata, alpha: 1 - smooth(1.0, 1.4, u) });
+}
+
+const DABS = [];
+for (let k = 0; k < 5; k++) { DABS.push({ b: 0, x: 790 + k * 105, y: 465, t: 1.05 + k * 0.36 }); DABS.push({ b: 1, x: 1210 - k * 105, y: 635, t: 1.05 + k * 0.36 }); }
+function step4(u) { // cerneala
+  table(); A(1);
+  const fx = 680, fy = 350, fw = 560, fh = 400;
+  ctx.fillStyle = IRON; ctx.fillRect(fx, fy, fw, fh); ctx.fillStyle = '#222830'; ctx.fillRect(fx + 20, fy + 20, fw - 40, fh - 40);
+  const inked = (x, y) => DABS.some(d => u >= d.t + 0.06 && Math.hypot(x - d.x, (y - d.y) * 0.9) < 100);
+  for (let j = 0; j < 8; j++) typeRow(fx + 40, fy + 36 + j * 42, fw - 80, 34, 100 + j, inked);
+  // tampoanele: se freacă întâi unul de altul, apoi tamponează forma
+  for (const b of [0, 1]) {
+    let x = 420, y = b ? 640 : 470;
+    const rub = smooth(0.2, 0.45, u) * (1 - smooth(0.8, 0.95, u));
+    y += (b ? -1 : 1) * rub * (32 + 14 * Math.sin(u * 30));
+    let press = 0;
+    const mine = DABS.filter(d => d.b === b);
+    for (let k = 0; k < mine.length; k++) {
+      const d = mine[k], prev = k ? mine[k - 1] : { x: 420, y: b ? 640 : 470 };
+      const mvp = easeInOut(smooth(d.t - 0.24, d.t - 0.02, u));
+      if (u >= d.t - 0.24) { x = lerp(prev.x, d.x, mvp); y = lerp(prev.y, d.y, mvp); }
+      const pp = Math.max(0, 1 - Math.abs(u - (d.t + 0.06)) / 0.08); press = Math.max(press, pp);
+    }
+    const back = easeInOut(smooth(2.85, 3.25, u));
+    if (back > 0) { x = lerp(x, 420, back); y = lerp(y, b ? 640 : 470, back); }
+    inkBall(x, y + press * 6, 66, press);
+  }
+  const la = smooth(0.3, 0.7, u);
+  T('două tampoane de piele, umplute cu lână sau păr de cal', 1310, 430, { size: 24, weight: 600, alpha: la, maxW: 500, lh: 32, shadow: 6 });
+  T('cerneală pe bază de ulei', 1310, 560, { size: 24, weight: 600, color: PAL.ocru, alpha: smooth(1.1, 1.5, u), shadow: 6 });
+}
+
+function step5(u) { // coala
+  table(); A(1);
+  // forma cu cerneală, pe pat
+  const fx = 330, fy = 370, fw = 520, fh = 370;
+  ctx.fillStyle = '#6E6A63'; ctx.fillRect(fx - 20, fy - 20, fw + 40, fh + 40);
+  ctx.fillStyle = IRON; ctx.fillRect(fx, fy, fw, fh); ctx.fillStyle = '#222830'; ctx.fillRect(fx + 18, fy + 18, fw - 36, fh - 36);
+  for (let j = 0; j < 7; j++) typeRow(fx + 36, fy + 34 + j * 44, fw - 72, 34, 100 + j, () => true);
+  // ramele (de pergament) prinse în balama, la x = 880
+  const hx = 880, tw = 520, ty = 370, th = 370;
+  const fold = easeInOut(smooth(2.0, 2.85, u)), sxF = Math.cos(fold * Math.PI);
+  ctx.save(); ctx.translate(hx, 0); ctx.scale(sxF, 1); ctx.translate(-hx, 0);
+  const back = sxF < 0;
+  ctx.fillStyle = back ? '#B9A57E' : '#CDB892'; ctx.fillRect(hx + 10, ty, tw, th);
+  ctx.fillStyle = 'rgba(0,0,0,.15)'; ctx.fillRect(hx + 10, ty, tw, 6);
+  if (!back) {
+    // coala vine din dreapta-sus
+    const sp = easeOut(smooth(0.1, 0.65, u));
+    if (sp > 0) {
+      const damp = smooth(0.75, 1.2, u);
+      const sx = lerp(hx + 600, hx + 50, sp), sy = lerp(ty - 220, ty + 30, sp);
+      ctx.save(); ctx.translate(sx, sy); ctx.rotate((1 - sp) * 0.25);
+      sheet(0, 0, tw - 80, th - 60, { color: mix(PAPER, '#D9D2C0', damp * .6) });
+      ctx.restore();
+      // picături de apă
+      for (let i = 0; i < 6; i++) {
+        const t0 = 0.6 + i * 0.08, q = smooth(t0, t0 + 0.25, u); if (q <= 0 || q >= 1) continue;
+        const dx = hx + 110 + i * 70, dy = lerp(ty - 120, ty + 90 + (i % 3) * 70, q);
+        ctx.fillStyle = 'rgba(140,200,235,.85)'; ctx.beginPath(); ctx.ellipse(dx, dy, 7, 11, 0, 0, 7); ctx.fill();
+      }
+    }
+    // rama cu ferestre (apără marginile) – se închide peste coală
+    const fr = easeInOut(smooth(1.2, 1.7, u));
+    if (fr > 0) {
+      const wv = fr;
+      ctx.save(); A(wv);
+      ctx.fillStyle = '#3B2E22';
+      ctx.fillRect(hx + 30, ty + 20, tw - 40, 30); ctx.fillRect(hx + 30, ty + th - 50, tw - 40, 30);
+      ctx.fillRect(hx + 30, ty + 20, 30, th - 40); ctx.fillRect(hx + tw - 40, ty + 20, 30, th - 40);
+      ctx.restore();
+    }
+    ctx.fillStyle = IRON; for (const yy of [ty + 70, ty + th - 70]) { ctx.beginPath(); ctx.arc(hx + 30, yy, 7, 0, 7); ctx.fill(); }
+  } else {
+    ctx.strokeStyle = 'rgba(60,40,20,.4)'; ctx.lineWidth = 4; ctx.strokeRect(hx + 30, ty + 20, tw - 40, th - 40);
+  }
+  ctx.restore();
+  // balamaua
+  ctx.fillStyle = IRON; ctx.fillRect(hx - 6, ty + 40, 16, 60); ctx.fillRect(hx - 6, ty + th - 100, 16, 60);
+  tag('forma, cu cerneală', fx + fw / 2, 345, 1 - smooth(2.2, 2.6, u), 'center');
+  tag('coala, umezită', hx + 280, 345, smooth(0.5, 0.9, u) * (1 - smooth(1.9, 2.2, u)), 'center');
+  tag('rama cu ferestre – apără marginile de cerneală', hx + 280, 778, smooth(1.4, 1.8, u) * (1 - smooth(2.0, 2.3, u)), 'center', 22, PAL.ceata);
+  tag('ramele se coboară: coala stă pe literele cu cerneală', 960, 345, smooth(2.6, 2.95, u), 'center');
+}
+
+function step6(u) { // presa
+  table();
+  const inA = easeInOut(smooth(0.0, 0.7, u)), outA = easeInOut(smooth(2.4, 3.1, u));
+  const carX = lerp(lerp(1520, 960, inA), 1520, outA);
+  const down = easeIn(smooth(0.8, 1.35, u)) * (1 - easeOut(smooth(1.85, 2.3, u)));
+  const barTh = -1.15 * (smooth(0.8, 1.35, u) * (1 - smooth(1.85, 2.3, u)));
+  const shake = Math.max(0, 1 - Math.abs(u - 1.38) / 0.12) * 4 * Math.sin(u * 140);
+  A(1);
+  const P = drawPress(960, 760, 1, down, carX, barTh, shake, true);
+  const la = smooth(0.2, 0.6, u);
+  tag('șurubul', 660, 450, la, 'right'); leader(666, 442, 938, 440, la);
+  tag('placa', 660, 556, la, 'right'); leader(666, 548, 818, P.pY - 14, la);
+  tag('forma, cu coala deasupra', 660, 676, la, 'right'); leader(666, 668, Math.max(700, carX - 190), 642, la);
+  tag('bara', P.barEnd[0], P.barEnd[1] - 34, la, 'center');
+  const na = smooth(0.5, 0.9, u);
+  T('presa cu șurub – înrudită cu teascurile de vin și de ulei', 1310, 400, { size: 23, weight: 600, maxW: 520, lh: 31, alpha: na, shadow: 6 });
+  T('în jurul anului 1600, o presă: 1.500–3.600 de imprimări pe zi', 1310, 500, { size: 22, color: PAL.ocru, weight: 600, maxW: 520, lh: 30, alpha: smooth(1.4, 1.8, u), shadow: 6 });
+}
+
+function step7(u) { // uscarea
+  table(); A(1);
+  // sfoara
+  ctx.strokeStyle = '#BFAF95'; ctx.lineWidth = 3; ctx.beginPath();
+  const sy = x => 330 + 14 * Math.sin(Math.PI * (x - 100) / 1720);
+  for (let x = 100; x <= 1820; x += 20) ctx.lineTo(x, sy(x)); ctx.stroke();
+  for (let k = 0; k < 8; k++) {
+    const t0 = 0.12 + k * 0.28, p = easeOut(smooth(t0, t0 + 0.35, u)); if (p <= 0) continue;
+    const xT = 200 + k * 210, x = lerp(-120, xT, p), yy = sy(xT);
+    const sw = Math.sin(u * 3 + k * 1.3) * 0.03 * p + (1 - p) * 0.12;
+    ctx.save(); ctx.translate(x, yy); ctx.rotate(sw);
+    sheet(-75, 4, 150, 196, { lines: 9, seed: 30 + k, lineA: .7 });
+    ctx.fillStyle = WOOD_L; ctx.fillRect(-6, -8, 12, 22);
+    ctx.restore();
+  }
+  // literele se întorc în casetă
+  drawCase(300, 612, 6, 2, 70, 56, false);
+  const fx = 1180, fy = 610, fw = 420, fh = 130;
+  ctx.fillStyle = IRON; ctx.fillRect(fx, fy, fw, fh); ctx.fillStyle = '#222830'; ctx.fillRect(fx + 14, fy + 14, fw - 28, fh - 28);
+  const left = Math.round(lerp(3, 0, smooth(1.0, 3.2, u)));
+  for (let j = 0; j < left; j++) typeRow(fx + 26, fy + 22 + j * 30, fw - 52, 24, 300 + j);
+  for (let i = 0; i < 9; i++) {
+    const t0 = 1.0 + i * 0.25, p = easeInOut(smooth(t0, t0 + 0.45, u)); if (p <= 0 || p >= 1) continue;
+    const x = lerp(fx + 60 + (i % 5) * 70, 335 + (i % 6) * 70, p), y = lerp(fy + 50, 640 + (i % 2) * 56, p) - Math.sin(p * Math.PI) * 36;
+    tile(x - 20, y - 20, 40, 40, null);
+  }
+  tag('colile tipărite, la uscat', 960, 576, smooth(0.4, 0.8, u), 'center');
+  tag('literele se pot folosi din nou', 960, 744, smooth(1.1, 1.5, u), 'center', 23, PAL.ceata);
+}
+
+function step8(u) { // legarea
+  table(); A(1);
+  const cx = 520, cy = 520, sw = 400, sh = 300;
+  // faza A: coala se împăturește de două ori
+  const f1 = easeInOut(smooth(0.05, 0.45, u)), f2 = easeInOut(smooth(0.5, 0.9, u));
+  const toPile = easeInOut(smooth(0.95, 1.4, u));
+  const px = 1000, pb = 700;
+  if (toPile <= 0) {
+    if (f2 <= 0) {
+      sheet(cx - sw / 2, cy - sh / 2, sw / 2, sh, { lines: 8, seed: 41 });
+      const k = Math.cos(f1 * Math.PI);
+      ctx.save(); ctx.translate(cx, 0); ctx.scale(k, 1);
+      if (k >= 0) sheet(0, cy - sh / 2, sw / 2, sh, { lines: 8, seed: 42 }); else sheet(0, cy - sh / 2, sw / 2, sh, { color: PAPER_D });
+      ctx.restore();
+    } else {
+      const k = Math.cos(f2 * Math.PI);
+      sheet(cx - sw / 2, cy, sw / 2, sh / 2, { color: PAPER_D });
+      ctx.save(); ctx.translate(0, cy); ctx.scale(1, k); ctx.translate(0, -cy);
+      sheet(cx - sw / 2, cy - sh / 2, sw / 2, sh / 2, { color: k >= 0 ? PAPER_D : '#CFC3A8' });
+      ctx.restore();
+    }
+  } else if (toPile < 1) { // caietul se mută pe grămadă
+    const x = lerp(cx - sw / 2, px, toPile), y = lerp(cy, pb - 5 * 30, toPile), w = lerp(sw / 2, 300, toPile), h = lerp(sh / 2, 28, toPile);
+    ctx.fillStyle = '#E9E0CB'; roundRect(ctx, x, y, w, h, Math.min(12, h / 2)); ctx.fill();
+  }
+  // grămada de caiete (văzută din lateral): cotorul în stânga
+  const nS = toPile >= 1 ? 5 : 4;
+  for (let i = 0; i < nS; i++) {
+    const y = pb - (i + 1) * 30;
+    ctx.fillStyle = i % 2 ? PAPER : '#E9E0CB'; roundRect(ctx, px, y, 300, 28, 12); ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(px + 30, y + 13, 262, 2);
+  }
+  // cusutul la cotor
+  const sew = smooth(1.45, 2.05, u), top = pb - 5 * 30;
+  if (sew > 0) {
+    ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 3; ctx.setLineDash([10, 8]);
+    ctx.beginPath(); ctx.moveTo(px + 14, pb); ctx.lineTo(px + 14, lerp(pb, top, sew)); ctx.stroke(); ctx.setLineDash([]);
+    if (sew < 1) { const ny = lerp(pb, top, sew); ctx.strokeStyle = METAL_L; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(px + 14, ny - 50); ctx.lineTo(px + 14, ny + 10); ctx.stroke(); }
+  }
+  // coperțile: plăci îmbrăcate în piele, se închid peste caiete
+  const cover = easeInOut(smooth(2.05, 2.5, u));
+  if (cover > 0) {
+    ctx.fillStyle = LEATHER;
+    roundRect(ctx, px - 10, pb, 320 * cover, 14, 4); ctx.fill();
+    roundRect(ctx, px - 10, top - 14, 320 * cover, 14, 4); ctx.fill();
+    ctx.fillStyle = mix(LEATHER, '#000000', .2); roundRect(ctx, px - 14, top - 14, 18, pb - top + 28, 8); ctx.fill();
+  }
+  const ba = smooth(2.45, 2.8, u);
+  if (ba > 0) { ctx.save(); A(ba); bookClosed(1560, 530, 230, 300, { rot: -0.06 }); ctx.restore(); }
+  tag('coala împăturită: un caiet', cx - 100, 735, smooth(0.2, 0.5, u) * (1 - smooth(0.95, 1.2, u)), 'center');
+  tag('caietele se cos la cotor', 1150, 735, smooth(1.45, 1.75, u), 'center');
+  tag('coperți îmbrăcate în piele', 1560, 735, ba, 'center');
+  T('desen generic', 1560, 772, { size: 19, color: PAL.ceata, align: 'center', alpha: ba });
+}
+const STEPF = [step1, step2, step3, step4, step5, step6, step7, step8];
+
+function tracker(cur, a) {
+  const y = 212, x0 = 190, dx = 220;
+  ctx.save(); A(a); ctx.strokeStyle = rgba(PAL.ceata, .35); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x0 + 7 * dx, y); ctx.stroke(); ctx.restore();
+  for (let i = 0; i < 8; i++) {
+    const x = x0 + i * dx, done = i < cur, now = i === cur;
+    ctx.save(); A(a); ctx.fillStyle = now ? PAL.ocru : done ? PAL.petrol : PAL.slate; ctx.beginPath(); ctx.arc(x, y, now ? 24 : 19, 0, 7); ctx.fill();
+    ctx.strokeStyle = rgba(PAL.ceata, .5); ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+    T(String(i + 1), x, y + 7, { size: now ? 22 : 19, weight: 800, align: 'center', color: now ? PAL.night : L, alpha: a });
+    T(STEPS[i].k, x, y + 52, { size: 20, weight: now ? 700 : 500, align: 'center', color: now ? PAL.ocru : PAL.ceata, alpha: a });
+  }
+}
+function captionCard(i, a) {
+  const s = STEPS[i];
+  ctx.save(); A(a); ctx.fillStyle = 'rgba(27,39,51,.96)'; roundRect(ctx, 80, 808, 1760, 200, 20); ctx.fill(); ctx.fillStyle = PAL.ocru; ctx.fillRect(80, 830, 6, 156); ctx.restore();
+  S(`${i + 1} · ${s.t}`, 116, 862, { size: 40, alpha: a });
+  T(s.b, 116, 910, { size: 29, weight: 500, maxW: 1700, lh: 38, alpha: a });
+  T('sursa: ' + s.s, 116, 990, { size: 20, color: PAL.ceata, alpha: a });
+}
+
+// ------------------------------------------------------------------ Partea a II-a: cronologia de la Sibiu (fișa de fapte)
+const ENTRIES = [
+  { y: 1525, yl: '1525', t: 'Prima tipografie din Transilvania', b: 'A doua ca vechime de pe actualul teritoriu al României. Fondatori: Lukas Trapoldner, dascăl și notar al orașului, și Valentinus Corvinus, preot.', s: 'patrimoniu.sibiu.ro · konferencijos.lnb.lt · typographia.oszk.hu', ic: 'press', note: 'pictogramă simbolică' },
+  { y: 1525, yl: '5 ianuarie 1525', t: 'Cel mai vechi tipar datat al tipografiei', b: 'Un calendar de perete, în latină. După typographia.oszk.hu, „trebuie să fi fost” primul produs al acestei tipografii.', s: 'typographia.oszk.hu', ic: 'cal', note: 'calendar desenat, aspect imaginat' },
+  { y: 1529, yl: '1529', t: 'Gramatica latină a lui Thomas Gemmarius', b: 'Prima carte tipărită la Sibiu, după konferencijos.lnb.lt.', s: 'konferencijos.lnb.lt · typographia.oszk.hu', ic: 'bookq', note: 'carte desenată, aspect imaginat', div: 'Sursele diferă: o sursă o datează 1529, alta nu o datează.' },
+  { y: 1544, yl: '1544', t: 'Catehismul – prima carte în limba română', b: 'Prima de pe actualul teritoriu al României. A fost tipărit la Sibiu de Filip Moldoveanul (Philippus Pictor).', s: 'patrimoniu.sibiu.ro · konferencijos.lnb.lt · en.wikipedia (Filip Moldoveanul)', ic: 'bookopen', note: 'carte desenată, aspect imaginat', div: 'Sursele consultate nu spun cum arăta cartea.' },
+  { y: 1550, yl: '1550', t: 'Primul Tetraevanghel slavo-român', b: 'Tipărit tot la Sibiu, de Filip Moldoveanul.', s: 'en.wikipedia (Filip Moldoveanul)', ic: 'book', note: 'carte desenată, aspect imaginat' },
+  { y: 1573, yl: '1573', t: 'Moara de hârtie a orașului', b: 'Permisiunea a fost dată la 12 martie 1573; moara a fost distrusă în 1599.', s: 'typographia.oszk.hu', ic: 'paper', note: 'pictogramă simbolică' },
+  { y: 1575, yl: '1575', t: 'Tipografia orașului, refondată', b: 'După o pauză de aproape 50 de ani. În 25 de ani – circa 30 de cărți, mai ales pentru școli și administrație.', s: 'typographia.oszk.hu', ic: 'books', note: 'pictogramă simbolică' },
+  { y: 1583, yl: '1583', t: 'Cartea de legi a sașilor transilvăneni', b: 'Tipărită de Georg Greus, în latină și germană.', s: 'typographia.oszk.hu', ic: 'law', note: 'carte desenată, aspect imaginat' },
+];
+const YX = y => 160 + (y - 1520) / 70 * 1600;
+
+function timeline(cur, a, tl) {
+  const y = 262;
+  ctx.save(); A(a); ctx.strokeStyle = rgba(PAL.ceata, .5); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(YX(1520), y); ctx.lineTo(YX(1590), y); ctx.stroke();
+  for (let yr = 1520; yr <= 1590; yr += 10) { ctx.fillStyle = rgba(PAL.ceata, .5); ctx.fillRect(YX(yr) - 1, y - 6, 2, 12); }
+  ctx.restore();
+  // capetele axei
+  T('1520', YX(1520), y + 34, { size: 18, color: PAL.ceata, align: 'center', alpha: a * .8 });
+  T('1590', YX(1590), y + 34, { size: 18, color: PAL.ceata, align: 'center', alpha: a * .8 });
+  const seen = {};
+  ENTRIES.forEach((e, i) => {
+    if (seen[e.y] != null && i !== cur) return;
+    const x = YX(e.y), done = i < cur, now = i === cur || (e.y === ENTRIES[cur].y);
+    if (i > cur && !(e.y === ENTRIES[cur].y)) { ctx.save(); A(a * .5); ctx.fillStyle = PAL.slate; ctx.beginPath(); ctx.arc(x, y, 10, 0, 7); ctx.fill(); ctx.restore(); }
+    else {
+      ctx.save(); A(a); ctx.fillStyle = now ? PAL.ocru : PAL.petrol; ctx.beginPath(); ctx.arc(x, y, now ? 15 + 3 * Math.max(0, 1 - tl / 0.4) : 11, 0, 7); ctx.fill(); ctx.restore();
+    }
+    seen[e.y] = i;
+  });
+  // anii (alternativ deasupra / dedesubt)
+  const YEARS = [[1525, -1], [1529, 1], [1544, -1], [1550, 1], [1573, -1], [1575, 1], [1583, -1]];
+  for (const [yr, sd] of YEARS) {
+    const idx = ENTRIES.findIndex(e => e.y === yr), on = idx <= cur || ENTRIES[cur].y === yr;
+    T(String(yr), YX(yr), sd < 0 ? y - 24 : y + 40, { size: 22, weight: 700, align: 'center', color: ENTRIES[cur].y === yr ? PAL.ocru : on ? L : PAL.ceata, alpha: a * (on ? 1 : .45) });
+  }
+}
+function icon(kind, cx, cy, tl) {
+  ctx.save(); A(1);
+  if (kind === 'press') { drawPress(cx, cy + 150, 0.62, Math.max(0, 1 - Math.abs(tl - 0.3) / 0.25), 960, -0.9 * Math.max(0, 1 - Math.abs(tl - 0.3) / 0.25), 0, true); }
+  else if (kind === 'cal') {
+    ctx.fillStyle = IRON; ctx.beginPath(); ctx.arc(cx, cy - 190, 8, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#8E7A5C'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, cy - 190); ctx.lineTo(cx - 120, cy - 160); ctx.moveTo(cx, cy - 190); ctx.lineTo(cx + 120, cy - 160); ctx.stroke();
+    sheet(cx - 150, cy - 160, 300, 380, {});
+    ctx.fillStyle = rgba('#8A2F2A', .75); ctx.fillRect(cx - 120, cy - 135, 240, 36);
+    ctx.fillStyle = rgba('#5B4A3A', .5);
+    for (let c = 0; c < 3; c++) for (let r = 0; r < 12; r++) ctx.fillRect(cx - 120 + c * 84, cy - 80 + r * 23, 70 * (0.6 + ((r * 7 + c * 3) % 5) / 12), 8);
+  }
+  else if (kind === 'bookq') bookClosed(cx, cy, 240, 310, { emblem: 'q', rot: -0.05 });
+  else if (kind === 'book') bookClosed(cx, cy, 250, 330, { rot: 0.04, color: '#6A3B2A' });
+  else if (kind === 'law') bookClosed(cx, cy, 250, 320, { emblem: 'scales', rot: -0.04, color: '#5E3A2A' });
+  else if (kind === 'bookopen') {
+    const rg = ctx.createRadialGradient(cx, cy, 40, cx, cy, 260); rg.addColorStop(0, rgba(GLOW, .28)); rg.addColorStop(1, rgba(GLOW, 0)); ctx.fillStyle = rg; ctx.beginPath(); ctx.ellipse(cx, cy, 260, 210, 0, 0, 7); ctx.fill();
+    bookOpen(cx, cy, 400, 270);
+  }
+  else if (kind === 'paper') {
+    for (let i = 0; i < 9; i++) { const yy = cy + 120 - i * 16; ctx.fillStyle = i % 2 ? PAPER : '#E7DEC8'; ctx.fillRect(cx - 150 + (i % 3) * 4, yy, 300, 14); }
+    ctx.fillStyle = '#4A5663'; ctx.beginPath(); ctx.moveTo(cx - 130, cy - 20); ctx.lineTo(cx - 130, cy - 120); ctx.lineTo(cx - 40, cy - 190); ctx.lineTo(cx + 50, cy - 120); ctx.lineTo(cx + 50, cy - 20); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = PAL.night; ctx.fillRect(cx - 62, cy - 80, 40, 60);
+    sheet(cx + 70, cy - 170, 90, 120, {}); sheet(cx + 90, cy - 150, 90, 120, {});
+  }
+  else if (kind === 'books') {
+    const cols = ['#7A4A2E', '#5E3A2A', '#2F4858', '#6B2F2F', '#4A3B5C', '#3F5A3A', '#8A5A2E', '#33415C'];
+    for (let i = 0; i < 8; i++) { const h = 200 + ((i * 37) % 70), w = 38; ctx.fillStyle = cols[i]; roundRect(ctx, cx - 170 + i * 42, cy + 140 - h, w, h, 4); ctx.fill(); ctx.fillStyle = 'rgba(255,215,160,.4)'; ctx.fillRect(cx - 170 + i * 42 + 6, cy + 160 - h, w - 12, 4); ctx.fillRect(cx - 170 + i * 42 + 6, cy + 120, w - 12, 4); }
+    ctx.fillStyle = WOOD; ctx.fillRect(cx - 190, cy + 140, 380, 14);
+  }
+  ctx.restore();
+}
+function entryCard(i, tl, a) {
+  const e = ENTRIES[i];
+  ctx.save(); A(a); ctx.fillStyle = 'rgba(27,39,51,.96)'; roundRect(ctx, 80, 330, 1760, 670, 24); ctx.fill(); ctx.restore();
+  // ilustrația
+  const ia = a * smooth(0.05, 0.45, tl);
+  const gaS = GA; GA = gaS * ia; ctx.save(); ctx.beginPath(); ctx.rect(100, 350, 540, 560); ctx.clip(); icon(e.ic, 370, 610, tl); ctx.restore(); GA = gaS;
+  T(e.note, 370, 950, { size: 20, color: PAL.ceata, align: 'center', alpha: ia });
+  // anul – „ștampilat”
+  const st = smooth(0.0, 0.25, tl), sc = lerp(1.5, 1, easeOut(st));
+  ctx.save(); ctx.translate(680, 452); ctx.scale(sc, sc);
+  const ysz = e.yl.length > 6 ? 76 : 110;
+  serif(ctx, e.yl, 0, 0, { size: ysz, color: PAL.ocru, alpha: a * st });
+  ctx.restore();
+  const ta = a * smooth(0.2, 0.55, tl);
+  const n1 = S(e.t, 680, 540, { size: 46, maxW: 1110, lh: 56, alpha: ta });
+  const by = 540 + n1 * 56 + 8;
+  const n2 = T(e.b, 680, by, { size: 30, weight: 500, maxW: 1110, lh: 41, alpha: ta });
+  if (e.div) {
+    const dy = by + n2 * 41 + 18;
+    ctx.save(); ctx.font = '600 25px Inter'; const w = Math.min(1110, ctx.measureText(e.div).width + 36);
+    A(ta); ctx.strokeStyle = PAL.ocru; ctx.lineWidth = 2; roundRect(ctx, 680, dy - 2, w, 48, 24); ctx.stroke(); ctx.restore();
+    T(e.div, 698, dy + 31, { size: 25, weight: 600, color: PAL.ocru, alpha: ta });
+  }
+  T('surse: ' + e.s, 680, 960, { size: 22, color: PAL.ceata, alpha: ta });
+}
+
+// ------------------------------------------------------------------ fundal (pre-randat): rânduri de litere în oglindă, foarte discrete
+const BG = document.createElement('canvas'); BG.width = W; BG.height = H;
+(function () {
+  const b = BG.getContext('2d');
+  b.fillStyle = PAL.night; b.fillRect(0, 0, W, H);
+  const r = rng(1525), letters = 'ABCDEFGHILMNOPRSTUVZ';
+  b.font = '700 34px "Noto Serif"'; b.textAlign = 'center'; b.textBaseline = 'middle';
+  for (let y = 40; y < H; y += 54) for (let x = 30; x < W; x += 46) {
+    b.save(); b.translate(x + (y % 108 ? 0 : 23), y); b.scale(-1, 1);
+    b.fillStyle = `rgba(169,180,192,${0.018 + r() * 0.018})`; b.fillText(letters[Math.floor(r() * letters.length)], 0, 0); b.restore();
+  }
+})();
+let BG_OK = false;
+
+// ------------------------------------------------------------------ randare
+function pill(str, x, y, o = {}) {
+  ctx.save(); ctx.font = `${o.weight || 600} ${o.size || 26}px Inter`;
+  const w = ctx.measureText(str).width + 40, xx = o.align === 'right' ? x - w : x;
+  ctx.globalAlpha = (o.alpha == null ? 1 : o.alpha); ctx.fillStyle = o.bg || 'rgba(15,23,32,.82)'; roundRect(ctx, xx, y, w, (o.size || 26) + 24, ((o.size || 26) + 24) / 2); ctx.fill(); ctx.restore();
+  text(ctx, str, xx + 20, y + (o.size || 26) + 5, { size: o.size || 26, weight: o.weight || 600, color: o.color || L, alpha: o.alpha });
+  return w;
+}
+
+window.render = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; GA = 1;
+  if (!BG_OK) { // refacem fundalul după încărcarea fonturilor
+    const b = BG.getContext('2d'); b.clearRect(0, 0, W, H); b.fillStyle = PAL.night; b.fillRect(0, 0, W, H);
+    const r = rng(1525), letters = 'ABCDEFGHILMNOPRSTUVZ'; b.font = '700 34px "Noto Serif"'; b.textAlign = 'center'; b.textBaseline = 'middle';
+    for (let y = 40; y < H; y += 54) for (let x = 30; x < W; x += 46) { b.save(); b.translate(x + (y % 108 ? 0 : 23), y); b.scale(-1, 1); b.fillStyle = `rgba(169,180,192,${0.018 + r() * 0.018})`; b.fillText(letters[Math.floor(r() * letters.length)], 0, 0); b.restore(); }
+    BG_OK = true;
+  }
+  ctx.drawImage(BG, 0, 0);
+
+  // ---------------- Partea I
+  if (t >= P1 - 0.6 && t < TR0 + 0.6) {
+    const pa = smooth(P1 - 0.6, P1, t) * (1 - smooth(TR0 - 0.2, TR0 + 0.4, t));
+    const i = clamp(Math.floor((t - P1) / STEP), 0, 7), u = t - P1 - i * STEP;
+    GA = pa;
+    // scena
+    ctx.save(); A(1); const g = ctx.createLinearGradient(0, 290, 0, 795); g.addColorStop(0, '#1F2D3A'); g.addColorStop(1, '#16212C');
+    ctx.fillStyle = g; roundRect(ctx, 80, 290, 1760, 505, 22); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.beginPath(); roundRect(ctx, 80, 290, 1760, 505, 22); ctx.clip();
+    const sa = (i === 0 ? 1 : smooth(0, 0.3, u)) * (i === 7 ? 1 : 1 - smooth(STEP - 0.25, STEP, u));
+    GA = pa * sa; STEPF[i](Math.max(0, u)); GA = pa;
+    ctx.restore();
+    tracker(i, pa);
+    const ca = (i === 0 ? 1 : smooth(0, 0.3, u)) * (i === 7 ? 1 : 1 - smooth(STEP - 0.2, STEP, u));
+    captionCard(i, pa * ca);
+    GA = 1;
+    pill('Partea I · cum funcționa tiparul cu litere mobile', 80, 124, { size: 26, alpha: pa });
+    pill('proces general, în linii mari (sec. XV–XVI) – nu atelierul din Sibiu', 1840, 128, { size: 20, align: 'right', alpha: pa, color: PAL.ceata, weight: 500 });
+  }
+
+  // ---------------- Partea a II-a
+  if (t >= P2 - 0.6 && t < FIN + 0.6) {
+    const pa = smooth(P2 - 0.6, P2 - 0.1, t) * (1 - smooth(FIN - 0.3, FIN + 0.4, t));
+    let i = 0; for (let k = 0; k < 8; k++) if (t >= ESTART[k]) i = k;
+    const tl = Math.max(0, t - ESTART[i]), ED = EDUR[i];
+    GA = 1;
+    timeline(i, pa, tl);
+    const ea = (i === 0 ? 1 : smooth(0, 0.2, tl)) * (i === 7 ? 1 : 1 - smooth(ED - 0.22, ED, tl));
+    GA = pa; entryCard(i, tl, ea); GA = 1;
+    pill('Partea a II-a · tiparul la Sibiu, 1525–1583', 80, 124, { size: 26, alpha: pa });
+    pill('fără portrete: persoanele istorice apar doar cu numele', 1840, 128, { size: 20, align: 'right', alpha: pa, color: PAL.ceata, weight: 500 });
+  }
+
+  // ---------------- carton între părți
+  const ta = smooth(TR0 - 0.3, TR0 + 0.3, t) * (1 - smooth(P2 - 0.5, P2, t));
+  if (ta > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.9 * ta})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Partea a II-a', W / 2, 430, { size: 64, align: 'center', color: PAL.ocru, alpha: ta });
+    serif(ctx, 'Tiparul la Sibiu, 1525–1583', W / 2, 540, { size: 84, align: 'center', alpha: ta });
+    text(ctx, 'prima tipografie din Transilvania, prima carte în limba română și ce a urmat', W / 2, 620, { size: 34, align: 'center', color: PAL.ceata, alpha: ta });
+  }
+
+  // ---------------- deschiderea
+  const ia = 1 - smooth(P1 - 0.6, P1, t);
+  if (ia > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.55 * ia})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Istoria tiparului la Sibiu', W / 2, 420, { size: 100, align: 'center', alpha: ia * smooth(0.3, 1.0, t) });
+    serif(ctx, '1525 · 1544', W / 2, 530, { size: 70, align: 'center', color: PAL.ocru, alpha: ia * smooth(0.8, 1.5, t) });
+    text(ctx, 'Partea I: cum se tipărea o carte cu litere mobile · Partea a II-a: ce s-a tipărit la Sibiu', W / 2, 625, { size: 32, align: 'center', color: PAL.var, alpha: ia * smooth(1.3, 2.0, t) });
+  }
+
+  // ---------------- final: cadrul de onestitate
+  const fa = smooth(FIN - 0.2, FIN + 0.6, t);
+  if (fa > 0) {
+    ctx.fillStyle = `rgba(15,23,32,${.97 * fa})`; ctx.fillRect(0, 0, W, H);
+    serif(ctx, 'Cum a fost făcută această animație', 120, 230, { size: 58, alpha: fa });
+    const lines = [
+      ['Animație desenată în cod (HTML Canvas), cu AI – fără imagini de arhivă; cărțile, calendarul și atelierul sunt desene cu aspect imaginat.', 0.3],
+      ['Partea I arată, în linii mari, procesul general al tiparului cu litere mobile (sec. XV–XVI), nu atelierul de la Sibiu.', 0.6],
+      ['Persoanele istorice apar doar cu numele, fără portrete. Sursele consultate nu spun cum arăta Catehismul din 1544.', 0.9],
+      ['Muzică: temă originală în stil renascentist; sunetele de presă, de litere și de hârtie – sintetizate în cod.', 1.2],
+    ];
+    let y = 345;
+    for (const [s, d] of lines) {
+      const la = fa * smooth(FIN + d, FIN + d + 0.5, t);
+      ctx.save(); ctx.globalAlpha = la; ctx.fillStyle = PAL.ocru; ctx.beginPath(); ctx.arc(132, y - 10, 7, 0, 7); ctx.fill(); ctx.restore();
+      const n = text(ctx, s, 160, y, { size: 30, weight: 500, maxW: 1640, lh: 40, alpha: la });
+      y += n * 40 + 30;
+    }
+    const sa = fa * smooth(FIN + 1.6, FIN + 2.2, t);
+    ctx.save(); ctx.globalAlpha = sa; ctx.fillStyle = PAL.slate; roundRect(ctx, 120, y + 6, 1680, 226, 20); ctx.fill(); ctx.fillStyle = PAL.petrol; ctx.fillRect(120, y + 28, 6, 182); ctx.restore();
+    text(ctx, 'Surse', 156, y + 52, { size: 26, weight: 700, color: PAL.ocru, alpha: sa });
+    text(ctx, 'patrimoniu.sibiu.ro (Premiere) · typographia.oszk.hu (The press of the town Szeben, 1525–1530, 1575–1601) · konferencijos.lnb.lt (Early Printing in the Three Romanian Principalities)', 156, y + 90, { size: 23, color: PAL.var, maxW: 1610, lh: 31, alpha: sa });
+    text(ctx, 'en.wikipedia: Movable type · Type metal · Composing stick · Chase (printing) · Printing press · Papermaking · Letterpress printing · Bookbinding · Filip Moldoveanul', 156, y + 170, { size: 23, color: PAL.var, maxW: 1610, lh: 31, alpha: sa });
+  }
+
+  // antet și subsol
+  ctx.fillStyle = 'rgba(10,16,28,.8)'; ctx.fillRect(0, 0, W, 104);
+  chip(ctx, 'VIDEO · M24', 60, 32, PAL.red);
+  text(ctx, 'Istoria tiparului la Sibiu (1525, 1544) · animație AI', 266, 60, { size: 30, weight: 600 });
+  ctx.fillStyle = 'rgba(10,16,28,.8)'; ctx.fillRect(0, H - 60, W, 60);
+  footer(ctx, W, H, 'M24');
+  const fb = 1 - smooth(0, .7, t);
+  if (fb > 0) { ctx.fillStyle = `rgba(0,0,0,${fb})`; ctx.fillRect(0, 0, W, H); }
+};
+document.fonts.load('700 40px "Noto Serif"').then(() => document.fonts.load('600 20px Inter')).then(() => document.fonts.load('500 20px Inter')).then(() => { BG_OK = false; window.READY = true; });
+</script></body></html>

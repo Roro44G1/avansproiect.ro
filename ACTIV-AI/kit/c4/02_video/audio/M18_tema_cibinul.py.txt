@@ -1,0 +1,280 @@
+"""M18 – fundal sonor pentru „Drumul apei: Cibinul în 60 de secunde” (temă originală, sintetizată în cod, 60 s).
+
+Temă originală în Sol major (nu e o melodie populară și nu imită o piesă cunoscută).
+Ideea: râul crește pe drum, deci și muzica „crește” – la fiecare afluent intră încă o voce.
+  0–4 s     intro: pad, harpă (arpegii ciupite, Karplus-Strong), susur de izvor
+  4–54 s    8 opriri × 6,25 s; tempo 76,8 BPM -> o măsură de 4/4 = 3,125 s, deci 2 măsuri pe oprire
+            izvor (G|Em) · chei (Am|D, harpă în șaisprezecimi, apă repede) · lac (C|G, liniștit)
+            Orlat (Em|C, intră a doua voce = râul Săliște) · Sibiu (G|D, intră basul)
+            Veștem (Em|Bm, intră celesta = Hârtibaciul) · Tălmaciu (C|D, clopoței = Sadul)
+            Podu Olt (G|C) · final (G, acord lung, Oltul = pad grav)
+Instrumente: harpă (Karplus-Strong), flaut sintetizat (sinus + respirație) pentru „cântecul picăturii”,
+a doua voce (flaut mai grav), celestă (sinteză modală), bas moale, pad.
+Apa: zgomot filtrat și bule (sinusoide scurte ascendente) – APROXIMĂRI SINTETIZATE, nu înregistrări.
+
+Folosește biblioteca comună /home/claude/expo/04_audio/_src/audiolib.py (prin sys.path).
+Rulare: python3 M18_tema_cibinul.py  -> M18_tema_cibinul.mp3 (în același folder)
+"""
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, "/home/claude/expo/04_audio/_src")
+from audiolib import (SR, add, additive, bp, colored_noise, env_adsr, env_exp, finalize, hp, hz, ks_pluck,
+                      lp, make_ir, match_lufs, modal, ns, peaking, report, reverb, rng_of, smooth_random,
+                      stereo, t_axis)
+
+DUR = 60.0
+T0 = 4.0
+BEAT = 60.0 / 76.8          # 0,78125 s
+BAR = 4 * BEAT              # 3,125 s
+E8 = BEAT / 2
+OUT = os.path.join(HERE, "M18_tema_cibinul.mp3")
+
+# acorduri: o măsură fiecare, de la T0 (măsura 0) încolo; măsura 16 = final (ține până la capăt)
+CH = ["G", "Em", "Am", "D", "C", "G", "Em", "C", "G", "D", "Em", "Bm", "C", "D", "G", "C", "G"]
+TONES = {"G": ["G", "B", "D"], "Em": ["E", "G", "B"], "Am": ["A", "C", "E"], "D": ["D", "F#", "A"],
+         "C": ["C", "E", "G"], "Bm": ["B", "D", "F#"]}
+ROOT = {"G": "G2", "Em": "E2", "Am": "A2", "D": "D3", "C": "C3", "Bm": "B2"}
+PADV = {"G": ["G3", "B3", "D4"], "Em": ["G3", "B3", "E4"], "Am": ["A3", "C4", "E4"], "D": ["F#3", "A3", "D4"],
+        "C": ["G3", "C4", "E4"], "Bm": ["F#3", "B3", "D4"]}
+# „cântecul picăturii” (flaut): 8 optimi pe măsură
+MEL = [
+    ["D5", None, "G5", "A5", "B5", None, None, None],
+    ["B5", "A5", "G5", None, "E5", None, None, None],
+    ["C6", "B5", "A5", "B5", "C6", "B5", "A5", "E5"],
+    ["F#5", "A5", "D6", "C6", "B5", "A5", "F#5", None],
+    ["E5", None, None, None, "G5", None, None, None],
+    ["D5", None, None, None, "B4", None, None, None],
+    ["E5", None, "G5", "B5", "A5", None, "G5", None],
+    ["E5", None, "G5", "C6", "B5", None, "G5", None],
+    ["B5", None, "D6", "B5", "A5", "G5", "A5", "B5"],
+    ["A5", None, "F#5", "A5", "D6", None, None, None],
+    ["G5", None, "B5", "G5", "E5", None, "G5", "A5"],
+    ["B5", None, "D6", None, "F#5", None, None, None],
+    ["E6", None, "D6", "C6", "G5", None, "E5", "G5"],
+    ["F#5", None, "A5", "D6", "C6", "B5", "A5", None],
+    ["B5", None, "A5", "G5", "D5", None, "G5", None],
+    ["E5", None, "G5", None, "C6", None, "B5", None],
+    ["G5", None, None, None, None, None, None, None],
+]
+# a doua voce (râul Săliște, de la Orlat): note lungi (măsură, pătrimea de start, notă, durata în pătrimi)
+VOICE2 = [(6, 0, "B4", 4), (7, 0, "C5", 2), (7, 2, "E5", 2), (8, 0, "D5", 4), (9, 0, "F#4", 2), (9, 2, "A4", 2),
+          (10, 0, "B4", 4), (11, 0, "D5", 4), (12, 0, "C5", 4), (13, 0, "A4", 2), (13, 2, "D5", 2),
+          (14, 0, "B4", 4), (15, 0, "E5", 4), (16, 0, "D5", 6)]
+
+
+def bar_t(b):
+    return T0 + b * BAR
+
+
+def note(name, octave):
+    return f"{name}{octave}"
+
+
+# ------------------------------------------------------------------ instrumente
+def harp_layer(rng):
+    buf = stereo(DUR)
+    # intro: glissando ascendent pe Gadd9
+    for i, nm in enumerate(["G3", "D4", "A4", "B4", "D5", "G5", "A5"]):
+        add(buf, ks_pluck(hz(nm), 3.5, t60=3.0, bright=0.45, rng=rng), 0.6 + i * 0.11, gain=0.55, pan=-0.3 + i * 0.1)
+    for b, c in enumerate(CH):
+        tones = TONES[c]
+        fast = b in (2, 3)            # cheile: șaisprezecimi
+        sparse = b in (4, 5)          # lacul: rar
+        if b == 16:
+            pat = [(0, note(tones[0], 3)), (1, note(tones[2], 3)), (2, note(tones[0], 4)), (3, note(tones[1], 4)),
+                   (4, note(tones[2], 4)), (6, note(tones[0], 5))]
+            step = E8
+        elif fast:
+            seq = [note(tones[0], 3), note(tones[1], 3), note(tones[2], 3), note(tones[0], 4)]
+            pat = [(i, seq[i % 4] if i % 8 < 4 else seq[3 - i % 4]) for i in range(16)]
+            step = E8 / 2
+        elif sparse:
+            pat = [(0, note(tones[0], 3)), (2, note(tones[2], 3)), (4, note(tones[1], 4)), (6, note(tones[2], 3))]
+            step = E8
+        else:
+            seq = [note(tones[0], 3), note(tones[2], 3), note(tones[0], 4), note(tones[1], 4)]
+            pat = [(i, seq[i % 4] if i < 4 else seq[(7 - i) % 4]) for i in range(8)]
+            step = E8
+        for i, nm in pat:
+            f = hz(nm)
+            if f < 100:
+                f *= 2
+            vel = (0.9 if i % 4 == 0 else 0.7) * (0.8 if fast else 1.0)
+            add(buf, ks_pluck(f, 2.4, t60=2.2, bright=0.4, rng=rng), bar_t(b) + i * step + rng.uniform(-0.005, 0.005),
+                gain=vel, pan=rng.uniform(-0.35, 0.35))
+    return buf
+
+
+def flute(seq_events, rng, pan=0.1, bright=1.0):
+    buf = stereo(DUR)
+    for t0, dur, nm in seq_events:
+        n = ns(dur + 0.2)
+        tt = t_axis(n)
+        f = hz(nm) * 2 ** (0.16 * np.clip((tt - 0.2) / 0.3, 0, 1) * np.sin(2 * np.pi * 5.3 * tt) / 12)
+        ph = 2 * np.pi * np.cumsum(f) / SR
+        tone = np.sin(ph) + 0.1 * bright * np.sin(2 * ph) + 0.03 * np.sin(3 * ph)
+        breath = bp(rng.standard_normal(n), 1800, 7000) * 0.05
+        x = lp(tone + breath, 7000) * env_adsr(n, 0.05, 0.15, 0.85, 0.18)
+        add(buf, x, t0, gain=1.0, pan=pan)
+    return buf
+
+
+def melody_events():
+    ev = []
+    for b, bar in enumerate(MEL):
+        i = 0
+        while i < 8:
+            nm = bar[i]
+            if nm is None:
+                i += 1
+                continue
+            j = i + 1
+            while j < 8 and bar[j] is None and j - i < 4:
+                j += 1
+            d = (j - i) * E8 * 0.95
+            if b == 16:
+                d = 4.5
+            ev.append((bar_t(b) + i * E8, d, nm))
+            i = j
+    return ev
+
+
+def voice2_events():
+    return [(bar_t(b) + q * BEAT, d * BEAT * 0.97, nm) for b, q, nm, d in VOICE2]
+
+
+def celesta(f, dur, rng, vel=1.0):
+    return modal([f, 2.0 * f, 3.98 * f], [1.0, 0.12, 0.2], [2.0, 1.1, 0.5], dur, rng=rng, attack=0.0015) * vel
+
+
+def celesta_layer(rng):
+    """Celesta (Hârtibaciul, de la Veștem): sclipiri pe timpii 2 și 4, o octavă peste melodie."""
+    buf = stereo(DUR)
+    for b in range(10, 17):
+        tones = TONES[CH[b]]
+        for q, k in ((1, 2), (3, 0), (2.5, 1)):
+            if b == 16 and q > 2:
+                continue
+            nm = note(tones[k], 6 if k == 0 else 5)
+            add(buf, celesta(hz(nm), 2.4, rng, 0.8), bar_t(b) + q * BEAT, gain=1.0, pan=rng.uniform(-0.5, 0.5))
+    return buf
+
+
+def bells_layer(rng):
+    """Clopoței (Sadul, de la Tălmaciu): câte un acord arpegiat moale la începutul măsurii."""
+    buf = stereo(DUR)
+    for b in range(12, 17):
+        tones = TONES[CH[b]]
+        for i, k in enumerate((0, 1, 2)):
+            f = hz(note(tones[k], 5))
+            x = modal([f, 2.76 * f, 5.4 * f], [1.0, 0.35, 0.12], [2.6, 1.2, 0.5], 3.0, rng=rng, beat_hz=0.8)
+            add(buf, x, bar_t(b) + i * 0.09, gain=0.7, pan=-0.4 + i * 0.4)
+    return buf
+
+
+def bass_layer(rng):
+    buf = stereo(DUR)
+    for b in range(8, 17):  # de la Sibiu
+        n = ns(BAR + 0.6 if b < 16 else DUR - bar_t(b))
+        f = hz(ROOT[CH[b]])
+        x = additive(f, [1.0, 0.3, 0.08], n=n, phase0=rng.uniform()) * env_adsr(n, 0.12, 0.5, 0.7, 0.6)
+        add(buf, lp(x, 380), bar_t(b), gain=1.0 if b < 16 else 0.9)
+    return buf
+
+
+def pad_layer(rng):
+    buf = stereo(DUR)
+    segs = [(0.0, T0 + 0.3, "G")] + [(bar_t(b), BAR + 0.3, c) for b, c in enumerate(CH[:16])] + [(bar_t(16), DUR - bar_t(16), "G")]
+    for t0, d, c in segs:
+        n = ns(d + 1.4)
+        for k, nm in enumerate(PADV[c] + (["A4"] if t0 == 0.0 else [])):
+            for det, pan in ((-0.002, -0.5), (0.002, 0.5)):
+                fv = hz(nm) * (1 + det)
+                x = additive(fv, [1.0, 0.4, 0.2, 0.1, 0.05], n=n, phase0=rng.uniform())
+                add(buf, lp(x, 1200) * env_adsr(n, 0.8, 0.4, 0.8, 1.3), t0 - 0.2, gain=0.45, pan=pan)
+    # Oltul: pad grav la final
+    n = ns(DUR - bar_t(14) + 0.5)
+    for nm in ("G2", "D3"):
+        x = additive(hz(nm), [1.0, 0.5, 0.25, 0.1], n=n, phase0=rng.uniform())
+        add(buf, lp(x, 500) * env_adsr(n, 3.0, 1.0, 0.9, 2.5), bar_t(14), gain=0.8)
+    return buf
+
+
+# ------------------------------------------------------------------ apa (aproximări sintetizate)
+def bubbles(rng, t0, t1, rate, fmin, fmax, gain):
+    buf = stereo(DUR)
+    t = t0
+    while t < t1:
+        d = rng.uniform(0.02, 0.07)
+        n = ns(d)
+        tt = t_axis(n)
+        f0 = rng.uniform(fmin, fmax)
+        f = f0 * (1 + 1.6 * tt / d)
+        x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt / (d * 0.35)) * np.clip(tt / 0.002, 0, 1)
+        add(buf, x, t, gain=gain * rng.uniform(0.3, 1.0), pan=rng.uniform(-0.7, 0.7))
+        t += rng.exponential(1.0 / rate)
+    return buf
+
+
+def water_layer(rng):
+    n = ns(DUR)
+    t = t_axis(n)
+
+    def env(points):
+        xs, ys = zip(*points)
+        return np.interp(t, xs, ys)
+
+    buf = stereo(DUR)
+    # susur de izvor și pârâu (0–16,5 s), repezișuri în chei (10,25–16,5 s), lac liniștit (16,5–22,75 s)
+    brook = env([(0, 0.6), (4, 0.8), (10, 0.7), (16.5, 0.15), (22.75, 0.1), (24, 0.0), (60, 0.0)])
+    rapids = env([(0, 0), (10, 0), (11, 1.0), (16, 1.0), (17, 0.0), (60, 0)])
+    river = env([(0, 0), (21, 0), (23.5, 0.45), (29, 0.6), (41.5, 0.75), (48, 0.85), (54, 0.9), (60, 0.8)])
+    deep = env([(0, 0), (47, 0), (50, 0.6), (54, 1.0), (60, 0.9)])
+    for ch, seed in ((0, 811), (1, 812)):
+        pink = colored_noise(n, rng_of(seed), 1.0)
+        brown = colored_noise(n, rng_of(seed + 10), 1.7)
+        mod = smooth_random(n, rng, 6.0, 0.5, 1.0)
+        x = bp(pink, 900, 5000) * mod * brook * 0.5
+        x += bp(pink, 500, 6000) * smooth_random(n, rng, 10.0, 0.6, 1.0) * rapids * 1.1
+        x += bp(brown, 120, 1400) * smooth_random(n, rng, 0.6, 0.75, 1.0) * river
+        x += lp(brown, 450) * deep * 0.9
+        buf[ch] = x
+    buf += bubbles(rng, 0.2, 17.0, 14, 500, 1300, 0.07)
+    buf += bubbles(rng, 17.0, 23.0, 2, 300, 700, 0.05)   # lacul: rar, grav
+    return buf
+
+
+def render(seed=1896):
+    rng = rng_of(seed)
+    ir = make_ir(t60=2.4, predelay=0.02, seed=81, hf_ratio=0.45)
+    ir_far = make_ir(t60=1.6, predelay=0.03, seed=82, hf_ratio=0.35)
+    layers = {
+        "pad": (pad_layer(rng), -25.0, ir, 0.3),
+        "harpa": (harp_layer(rng), -21.5, ir, 0.3),
+        "flaut": (flute(melody_events(), rng, pan=0.12), -21.5, ir, 0.3),
+        "voce2": (flute(voice2_events(), rng, pan=-0.3, bright=0.6), -27.5, ir, 0.35),
+        "celesta": (celesta_layer(rng), -28.5, ir, 0.4),
+        "clopotei": (bells_layer(rng), -29.0, ir, 0.4),
+        "bas": (bass_layer(rng), -28.5, ir, 0.1),
+        "apa": (water_layer(rng), -28.0, ir_far, 0.15),
+    }
+    mix = stereo(DUR)
+    for name, (x, target, irx, wet) in layers.items():
+        x = match_lufs(x, target)
+        report(x, name)
+        mix += reverb(x, irx, wet=wet, dry=1.0)
+    mix = peaking(mix, 250, -1.0, 0.8)
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "M18 – temă originală, sintetizată în cod",
+                   "Fundal sonor original pentru M18 „Drumul apei: Cibinul în 60 de secunde”; sunetele de apă sunt aproximări sintetizate – ACTIV AI",
+                   target_lufs=-14.0, fin=0.8, fout=2.5)
+    report(out, "M18 final")
+    print("scris:", OUT)

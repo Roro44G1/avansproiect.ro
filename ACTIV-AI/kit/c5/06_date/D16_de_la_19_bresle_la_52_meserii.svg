@@ -1,0 +1,288 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="6" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="shs" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="3" result="o"/>
+  <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="paper" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.10 0" result="nc"/>
+  <feComposite in="nc" in2="SourceGraphic" operator="in" result="t"/>
+  <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="t"/></feMerge>
+</filter>
+<filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="#0F1720"/>
+<g transform="translate(80,70)">
+<rect x="0" y="0" rx="22" ry="22" width="170" height="44" fill="#3E63DD"/>
+<text x="85.2" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="#0F1720">DATE · D16</text>
+<text x="0" y="120" font-family="'Noto Serif', serif" font-weight="700" font-size="60" fill="#F3EFE6">De la 19 bresle (1376) la 52 de meserii (1810)</text>
+</g>
+<text x="1840.0" y="100.0" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#A9B4C0" text-anchor="end" font-style="italic">infografic AI · breslele Sibiului, secolele XIV–XIX · bresle și meserii sunt unități diferite</text>
+<pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="#12313A"/><rect width="4" height="10" fill="#3FB0BA" opacity="0.75"/></pattern>
+<rect x="80" y="228" width="1760" height="444" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="102.0" y="248" width="370.7" height="30" rx="15" fill="#E2A62B"/>
+<text x="287.4" y="268.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0F1720" text-anchor="middle" letter-spacing="1.5">NUMĂRUL BRESLELOR ȘI REPERELE LOR</text>
+<text x="484.7" y="268.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">axa nu e la scară: reperele sunt puse doar în ordine</text>
+<line x1="110" y1="490" x2="1586" y2="490" stroke="#4A5B6C" stroke-width="4" stroke-linecap="round"/>
+<polygon points="1584.0,481.0 1598.0,490.0 1584.0,499.0" fill="#4A5B6C"/>
+<rect x="957" y="482" width="22" height="16" fill="#1B2733"/>
+<line x1="956" y1="501" x2="968" y2="479" stroke="#4A5B6C" stroke-width="3"/>
+<line x1="968" y1="501" x2="980" y2="479" stroke="#4A5B6C" stroke-width="3"/>
+<text x="968.0" y="450.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#7E8A96" text-anchor="middle" font-style="italic">salt de</text>
+<text x="968.0" y="468.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#7E8A96" text-anchor="middle" font-style="italic">≈ 150 de ani</text>
+<rect x="353.0" y="435.2" width="40" height="54.8" rx="5" fill="#E2A62B"/>
+<rect x="353.0" y="435.2" width="40" height="6" rx="3" fill="#F2C766" opacity="0.8"/>
+<text x="373.0" y="409.2" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#E2A62B" text-anchor="middle">19</text>
+<text x="373.0" y="427.2" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#E2A62B" text-anchor="middle">bresle</text>
+<rect x="399.0" y="417.9" width="40" height="72.1" rx="5" fill="url(#hatch)" stroke="#3FB0BA" stroke-width="2.5" stroke-dasharray="7 4"/>
+<text x="419.0" y="391.9" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#3FB0BA" text-anchor="middle">25</text>
+<text x="419.0" y="409.9" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#3FB0BA" text-anchor="middle">meserii</text>
+<rect x="1014.0" y="415.0" width="52" height="75.0" rx="5" fill="#E2A62B"/>
+<rect x="1014.0" y="415.0" width="52" height="6" rx="3" fill="#F2C766" opacity="0.8"/>
+<text x="1040.0" y="389.0" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#E2A62B" text-anchor="middle">26</text>
+<text x="1040.0" y="407.0" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#E2A62B" text-anchor="middle">bresle</text>
+<rect x="1094.0" y="391.9" width="52" height="98.1" rx="5" fill="#E2A62B"/>
+<rect x="1094.0" y="391.9" width="52" height="6" rx="3" fill="#F2C766" opacity="0.8"/>
+<text x="1120.0" y="365.9" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#E2A62B" text-anchor="middle">34</text>
+<text x="1120.0" y="383.9" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#E2A62B" text-anchor="middle">bresle</text>
+<rect x="1414.0" y="374.6" width="52" height="115.4" rx="5" fill="#E2A62B"/>
+<rect x="1414.0" y="374.6" width="52" height="6" rx="3" fill="#F2C766" opacity="0.8"/>
+<text x="1440.0" y="348.6" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#E2A62B" text-anchor="middle">40</text>
+<text x="1440.0" y="366.6" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#E2A62B" text-anchor="middle">bresle</text>
+<rect x="1514.0" y="340.0" width="52" height="150.0" rx="5" fill="url(#hatch)" stroke="#3FB0BA" stroke-width="2.5" stroke-dasharray="7 4"/>
+<text x="1540.0" y="314.0" font-family="'Noto Serif', serif" font-size="28" font-weight="700" fill="#3FB0BA" text-anchor="middle">52</text>
+<text x="1540.0" y="332.0" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#3FB0BA" text-anchor="middle">meserii</text>
+<rect x="1418.8" y="254" width="167.2" height="30" rx="15" fill="#3FB0BA"/>
+<text x="1502.4" y="274.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#0F1720" text-anchor="middle" letter-spacing="1.5">UNITATE DIFERITĂ</text>
+<line x1="1540" y1="284.0" x2="1540" y2="290.0" stroke="#3FB0BA" stroke-width="2"/>
+<circle cx="196" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="196.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1346</text>
+<circle cx="296" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="296.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1367</text>
+<text x="396.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#E2A62B" text-anchor="middle">1376</text>
+<circle cx="496" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="496.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1455</text>
+<circle cx="596" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="596.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1494</text>
+<circle cx="696" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="696.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1512</text>
+<circle cx="796" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="796.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1559</text>
+<circle cx="896" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="896.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1568</text>
+<text x="1040.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#E2A62B" text-anchor="middle">1719</text>
+<text x="1120.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#E2A62B" text-anchor="middle">1724</text>
+<circle cx="1220" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="1220.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1750</text>
+<circle cx="1330" cy="490" r="8" fill="#0F1720" stroke="#F3EFE6" stroke-width="3"/>
+<text x="1330.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">1769</text>
+<text x="1440.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#E2A62B" text-anchor="middle">1780</text>
+<text x="1540.0" y="516.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#E2A62B" text-anchor="middle">1810</text>
+<text x="196.0" y="540.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">aurarii (monstranța</text>
+<text x="196.0" y="557.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">aurarului Kunz) și cizmarul</text>
+<text x="196.0" y="574.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">Breut</text>
+<line x1="296" y1="524" x2="296" y2="589" stroke="#4A5B6C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="296.0" y="606.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">tăbăcarii cumpără o moară</text>
+<text x="296.0" y="623.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">de tăbăcit; prima mențiune</text>
+<text x="296.0" y="640.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">a unei bresle (pielarii)</text>
+<text x="496.0" y="540.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">statut propriu pentru</text>
+<text x="496.0" y="557.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">cizmari</text>
+<line x1="596" y1="524" x2="596" y2="589" stroke="#4A5B6C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="596.0" y="606.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">statutul aurarilor</text>
+<text x="696.0" y="540.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">călătoria calfelor devine</text>
+<text x="696.0" y="557.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">obligatorie</text>
+<line x1="796" y1="524" x2="796" y2="589" stroke="#4A5B6C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="796.0" y="606.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">2 decembrie: Uniunea</text>
+<text x="796.0" y="623.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">Breslelor de Aurari</text>
+<text x="896.0" y="540.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">statutul cositorarilor,</text>
+<text x="896.0" y="557.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">reînnoit</text>
+<text x="1220.0" y="540.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">conscripția: Sibiul, pe primul</text>
+<text x="1220.0" y="557.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">loc după numărul de</text>
+<text x="1220.0" y="574.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">meșteșugari și meserii</text>
+<line x1="1330" y1="524" x2="1330" y2="589" stroke="#4A5B6C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="1330.0" y="606.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">croitorii germani pot înființa</text>
+<text x="1330.0" y="623.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">bresle separate</text>
+<rect x="110" y="290" width="470" height="70" rx="14" fill="#132029" stroke="#E2A62B" stroke-width="1.5"/>
+<text x="126.0" y="316.0" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#F3EFE6" text-anchor="start">9 noiembrie 1376 · statutul comun al breslelor</text>
+<text x="126.0" y="337.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="start">din Sibiu, Sebeș, Sighișoara și Orăștie (limbaromana.org)</text>
+<text x="126.0" y="354.0" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">premieră: prima reglementare a breslelor (patrimoniu.sibiu.ro)</text>
+<line x1="396" y1="360" x2="396" y2="367.88461538461536" stroke="#E2A62B" stroke-width="2"/>
+<text x="598.0" y="300.0" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#F3EFE6" text-anchor="start">Cum citești graficul</text>
+<rect x="598" y="316" width="18" height="18" rx="4" fill="#E2A62B"/>
+<text x="626.0" y="331.0" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#F3EFE6" text-anchor="start">bresle (limbaromana.org)</text>
+<rect x="598" y="344" width="18" height="18" rx="4" fill="url(#hatch)" stroke="#3FB0BA" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="626.0" y="359.0" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#F3EFE6" text-anchor="start">meserii – altă unitate de măsură</text>
+<circle cx="607" cy="381" r="7" fill="#0F1720" stroke="#F3EFE6" stroke-width="2.5"/>
+<text x="626.0" y="386.0" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#F3EFE6" text-anchor="start">reper din documente</text>
+<text x="598.0" y="414.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="start">În 1376, 25 de meserii erau grupate în 19 bresle</text>
+<text x="598.0" y="432.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="start">(mnir.ro): o breaslă putea cuprinde mai multe</text>
+<text x="598.0" y="450.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="start">meserii. Cele 52 de meserii din 1810 nu</text>
+<text x="598.0" y="468.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="start">înseamnă 52 de bresle.</text>
+<rect x="1600" y="250" width="220" height="406" rx="16" fill="#132029" stroke="#B9583A" stroke-width="2"/>
+<text x="1616.0" y="280.0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#D8775A" text-anchor="start" letter-spacing="1.5">DIVERGENȚĂ</text>
+<text x="1616.0" y="308.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="start">Desființarea</text>
+<text x="1616.0" y="332.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#F3EFE6" text-anchor="start">breslelor</text>
+<text x="1616.0" y="378.0" font-family="'Noto Serif', serif" font-size="36" font-weight="700" fill="#E2A62B" text-anchor="start">1872</text>
+<text x="1616.0" y="404.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#F3EFE6" text-anchor="start">decretul transformă</text>
+<text x="1616.0" y="423.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#F3EFE6" text-anchor="start">breslele în cooperative</text>
+<text x="1616.0" y="442.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#F3EFE6" text-anchor="start">meșteșugărești</text>
+<text x="1616.0" y="462.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">limbaromana.org</text>
+<text x="1710.0" y="496.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#A9B4C0" text-anchor="middle" font-style="italic">sau</text>
+<line x1="1616" y1="491" x2="1684.0" y2="491" stroke="#2A3845" stroke-width="1.5"/>
+<line x1="1736.0" y1="491" x2="1804" y2="491" stroke="#2A3845" stroke-width="1.5"/>
+<text x="1616.0" y="540.0" font-family="'Noto Serif', serif" font-size="25" font-weight="700" fill="#E2A62B" text-anchor="start">18 aprilie 1875</text>
+<text x="1616.0" y="566.0" font-family="Inter, sans-serif" font-size="15" font-weight="400" fill="#F3EFE6" text-anchor="start">desființarea oficială</text>
+<text x="1616.0" y="586.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" font-style="italic" fill="#7E8A96" text-anchor="start">documentarea inițială a</text>
+<text x="1616.0" y="603.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" font-style="italic" fill="#7E8A96" text-anchor="start">proiectului</text>
+<rect x="80" y="688" width="812" height="280" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="102.0" y="708" width="226.1" height="30" rx="15" fill="#0E7C86"/>
+<text x="215.0" y="728.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#F3EFE6" text-anchor="middle" letter-spacing="1.5">DRUMUL SPRE MEȘTER</text>
+<text x="340.1" y="728.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">organizarea breslelor, după limbaromana.org</text>
+<circle cx="178.8" cy="780" r="29" fill="#132029" stroke="#0E7C86" stroke-width="2.5"/>
+<rect x="175.8" y="774" width="6" height="24" rx="2" fill="#B9853F" transform="rotate(-35 178.8 780)"/><rect x="165.8" y="766" width="26" height="10" rx="2" fill="#B9C3CC" transform="rotate(-35 178.8 780)"/>
+<text x="178.8" y="834.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">Ucenic</text>
+<text x="178.8" y="856.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">probă de 2–6</text>
+<text x="178.8" y="873.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">săptămâni, apoi 2–4</text>
+<text x="178.8" y="890.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">ani la un meșter; la</text>
+<text x="178.8" y="907.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">final, un certificat</text>
+<line x1="214.8" y1="780" x2="290.4" y2="780" stroke="#3FB0BA" stroke-width="3"/>
+<polygon points="287.4,774.0 296.4,780.0 287.4,786.0" fill="#3FB0BA"/>
+<circle cx="332.4" cy="780" r="29" fill="#132029" stroke="#0E7C86" stroke-width="2.5"/>
+<ellipse cx="324.4" cy="792" rx="11" ry="4.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.2"/><ellipse cx="324.4" cy="786" rx="11" ry="4.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.2"/><ellipse cx="324.4" cy="780" rx="11" ry="4.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.2"/><path d="M338.4,770 h14 l-2,22 h-10 Z" fill="#B9C3CC"/><path d="M351.4,774 q8,1 6,9 q-1,4 -6,4" stroke="#B9C3CC" stroke-width="2.5" fill="none"/>
+<text x="332.4" y="834.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">Calfă</text>
+<text x="332.4" y="856.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">plătește o taxă și dă</text>
+<text x="332.4" y="873.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">o masă breslei;</text>
+<text x="332.4" y="890.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">primește salariu,</text>
+<text x="332.4" y="907.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">casă și masă la</text>
+<text x="332.4" y="924.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">meșter</text>
+<line x1="368.4" y1="780" x2="444.0" y2="780" stroke="#3FB0BA" stroke-width="3"/>
+<polygon points="441.0,774.0 450.0,780.0 441.0,786.0" fill="#3FB0BA"/>
+<circle cx="486.0" cy="780" r="29" fill="#132029" stroke="#0E7C86" stroke-width="2.5"/>
+<line x1="472.0" y1="798" x2="496.0" y2="764" stroke="#B9853F" stroke-width="3.5" stroke-linecap="round"/><circle cx="498.0" cy="772" r="9" fill="#B9583A"/><path d="M491.0,766 l5,-6 l4,5" fill="#B9583A"/><path d="M466.0,800 q12,-4 24,0 t20,-2" stroke="#A9B4C0" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+<text x="486.0" y="834.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">Călătoria</text>
+<text x="486.0" y="856.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">2–4 ani prin alte</text>
+<text x="486.0" y="873.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">orașe, obligatorie din</text>
+<text x="486.0" y="890.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">1512; calfa se</text>
+<text x="486.0" y="907.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">prezintă la „părintele</text>
+<text x="486.0" y="924.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">calfelor”</text>
+<line x1="522.0" y1="780" x2="597.6" y2="780" stroke="#3FB0BA" stroke-width="3"/>
+<polygon points="594.6,774.0 603.6,780.0 594.6,786.0" fill="#3FB0BA"/>
+<circle cx="639.6" cy="780" r="29" fill="#132029" stroke="#0E7C86" stroke-width="2.5"/>
+<path d="M630.6,766 h18 l-2,16 q-7,6 -14,0 Z" fill="#B9C3CC"/><rect x="637.6" y="782" width="4" height="9" fill="#7F8B96"/><ellipse cx="639.6" cy="793" rx="10" ry="3.5" fill="#7F8B96"/><ellipse cx="639.6" cy="766" rx="9" ry="2.5" fill="#DDE3E8"/><polygon points="653.6,762.0 655.6,767.0 660.6,767.0 656.6,770.0 658.6,775.0 653.6,772.0 648.6,775.0 650.6,770.0 646.6,767.0 651.6,767.0" fill="#E2A62B"/>
+
+<text x="639.6" y="834.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">Capodopera</text>
+<text x="639.6" y="856.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">proba de meșter; la</text>
+<text x="639.6" y="873.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">cositorari: castron,</text>
+<text x="639.6" y="890.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">cană cu picior,</text>
+<text x="639.6" y="907.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">ploscă și vas de</text>
+<text x="639.6" y="924.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">spălat, în două</text>
+<text x="639.6" y="941.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">săptămâni</text>
+<line x1="675.6" y1="780" x2="751.2" y2="780" stroke="#3FB0BA" stroke-width="3"/>
+<polygon points="748.2,774.0 757.2,780.0 748.2,786.0" fill="#3FB0BA"/>
+<circle cx="793.2" cy="780" r="29" fill="#132029" stroke="#0E7C86" stroke-width="2.5"/>
+<circle cx="793.1999999999999" cy="780" r="17" fill="#B9583A"/><circle cx="793.1999999999999" cy="780" r="13" fill="none" stroke="#F3EFE6" stroke-width="1.2" stroke-dasharray="2 2"/><rect x="791.6999999999999" y="776" width="3" height="12" fill="#F3EFE6"/><rect x="787.1999999999999" y="772" width="12" height="5" rx="1" fill="#F3EFE6"/>
+<text x="793.2" y="834.0" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#F3EFE6" text-anchor="middle">Meșter</text>
+<text x="793.2" y="856.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">dă o masă breslei și</text>
+<text x="793.2" y="873.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">trebuie să se</text>
+<text x="793.2" y="890.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">căsătorească;</text>
+<text x="793.2" y="907.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">breasla e condusă</text>
+<text x="793.2" y="924.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#A9B4C0" text-anchor="middle">de staroste</text>
+<rect x="908" y="688" width="420" height="280" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="930.0" y="708" width="183.9" height="30" rx="15" fill="#E2A62B"/>
+<text x="1021.9" y="728.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0F1720" text-anchor="middle" letter-spacing="1.5">TAXA DE INTRARE</text>
+<text x="1125.9" y="728.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">limbaromana.org</text>
+<text x="930.0" y="772.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#F3EFE6" text-anchor="start">măcelari</text>
+<circle cx="942.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="942.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="968.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="968.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="994.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="994.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1020.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1020.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1046.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1046.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1072.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1072.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1098.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1098.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1124.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1124.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1150.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1150.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1176.0" cy="794.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1176.0" cy="794.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<text x="1198.0" y="802.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#E2A62B" text-anchor="start">10 florini</text>
+<text x="930.0" y="834.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#F3EFE6" text-anchor="start">brutari, fierari</text>
+<circle cx="942.0" cy="856.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="942.0" cy="856.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="968.0" cy="856.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="968.0" cy="856.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="994.0" cy="856.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="994.0" cy="856.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1020.0" cy="856.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1020.0" cy="856.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1046.0" cy="856.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1046.0" cy="856.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="1072.0" cy="856.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="1072.0" cy="856.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<text x="1094.0" y="864.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#E2A62B" text-anchor="start">6 florini</text>
+<text x="930.0" y="896.0" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#F3EFE6" text-anchor="start">țesători, croitori</text>
+<circle cx="942.0" cy="918.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="942.0" cy="918.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<circle cx="968.0" cy="918.0" r="10.5" fill="#E2A62B" stroke="#9C7016" stroke-width="1.5"/><circle cx="968.0" cy="918.0" r="6.5" fill="none" stroke="#F2C766" stroke-width="1.2"/>
+<text x="990.0" y="926.0" font-family="'Noto Serif', serif" font-size="20" font-weight="700" fill="#E2A62B" text-anchor="start">2 florini</text>
+<text x="930.0" y="952.0" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">1 cerc = 1 florin</text>
+<rect x="1344" y="688" width="496" height="280" rx="22" fill="#1B2733" stroke="#2A3845" stroke-width="1.5" />
+<rect x="1366.0" y="708" width="246.3" height="30" rx="15" fill="#6E56CF"/>
+<text x="1489.2" y="728.0" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#F3EFE6" text-anchor="middle" letter-spacing="1.5">CELE 19 BRESLE DIN 1376</text>
+<text x="1624.3" y="728.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">ilustrativ</text>
+<path d="M1366.0,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="#E2A62B" stroke="#F2C766" stroke-width="1.5"/><text x="1383.0" y="775.2" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#0F1720" text-anchor="middle">1</text>
+
+<path d="M1412.4444444444443,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="#E2A62B" stroke="#F2C766" stroke-width="1.5"/><text x="1429.4" y="775.2" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#0F1720" text-anchor="middle">2</text>
+
+<path d="M1458.888888888889,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="#E2A62B" stroke="#F2C766" stroke-width="1.5"/><text x="1475.9" y="775.2" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#0F1720" text-anchor="middle">3</text>
+
+<path d="M1505.3333333333333,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="#E2A62B" stroke="#F2C766" stroke-width="1.5"/><text x="1522.3" y="775.2" font-family="Inter, sans-serif" font-size="17" font-weight="700" fill="#0F1720" text-anchor="middle">4</text>
+
+<path d="M1551.7777777777778,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1568.8" y="775.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1598.2222222222222,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1615.2" y="775.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1644.6666666666665,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1661.7" y="775.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1691.111111111111,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1708.1" y="775.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1737.5555555555557,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1754.6" y="775.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1784.0,752 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1801.0" y="775.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1389.2222222222222,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1406.2" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1435.6666666666665,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1452.7" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1482.111111111111,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1499.1" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1528.5555555555554,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1545.6" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1575.0,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1592.0" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1621.4444444444443,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1638.4" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1667.8888888888887,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1684.9" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1714.3333333333333,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1731.3" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<path d="M1760.7777777777778,802 h34 v20.0 q0,14.0 -17.0,20.0 q-17.0,-6.0 -17.0,-20.0 Z" fill="none" stroke="#7E8A96" stroke-width="1.8" stroke-dasharray="4 3"/><text x="1777.8" y="825.2" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#7E8A96" text-anchor="middle">?</text>
+
+<text x="1366.0" y="866.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#F3EFE6" text-anchor="start">Exemple pe scuturi: 1 brutarii · 2 pielarii · 3 cuțitarii (mnir.ro) · 4</text>
+<text x="1366.0" y="884.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#F3EFE6" text-anchor="start">fierarii, „Fabrorum fraternitatis” (ULBS)</text>
+<circle cx="1377" cy="906" r="11" fill="none" stroke="#E2A62B" stroke-width="2"/>
+<text x="1377.0" y="911.0" font-family="'Noto Serif', serif" font-size="15" font-weight="700" fill="#E2A62B" text-anchor="middle">i</text>
+<text x="1396.0" y="912.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#E2A62B" text-anchor="start">Statutul din 1376 pomenește multe meserii (măcelari,</text>
+<text x="1396.0" y="931.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#E2A62B" text-anchor="start">croitori, olari, cizmari…), dar sursele nu dau lista clară a</text>
+<text x="1396.0" y="950.0" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#E2A62B" text-anchor="start">celor 19 bresle.</text>
+<text x="80.0" y="994.0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#7E8A96" text-anchor="start" font-style="italic">Surse: limbaromana.org („Din istoria breslelor sibiene, sec. XIV–XIX”); mnir.ro („Însemne de breaslă din Transilvania”, 2015); magazines.ulbsibiu.ro; capitalcultural.ro; patrimoniu.sibiu.ro (premiere). 1810 și 18 aprilie 1875 – din documentarea inițială a proiectului.</text>
+<line x1="80" y1="1026" x2="1840" y2="1026" stroke="#1B2733" stroke-width="2"/>
+<text x="80.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#A9B4C0" text-anchor="start">ACTIV AI · Sibiul meu · Artefact-model generat cu AI</text>
+<text x="1840.0" y="1056.0" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E2A62B" text-anchor="end">#SibiulMeu</text>
+</svg>

@@ -1,0 +1,261 @@
+# -*- coding: utf-8 -*-
+"""P18 – Sigiliul personal al meșterului – design AI inspirat din sigiliile breslelor.
+Meșter fictiv: „meșterul Ilie V., lăcătuș”; an fictiv MMXXIV. Sigiliu imaginar, nu reproduce un sigiliu real.
+Afișat de trei ori: desenul vectorial, matricea (în oglindă, gravată) și impresiunea în ceară (relief simulat).
+Legenda circulară e așezată literă cu literă (librsvg nu redă textPath).
+Fapte: fapte_verificate.md (mnir.ro, limbaromana.org); informații generale despre sigilii: en.wikipedia,
+„Seal (emblem)” (vezi /home/claude/expo/c5/08_identitate/_fapte_noi_P17_P18.md)."""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import *
+import math, random
+
+OUT = "/home/claude/expo/c5/08_identitate/P18_sigiliul_mesterului.svg"
+ORANGE = "#F76B15"
+MUTED = "#7E8A96"
+TITLE = "Sigiliul personal al meșterului"
+s = frame_head("IDENTITATE · P18", ORANGE, TITLE, "meșter fictiv · sigiliu imaginar, nu reproduce un sigiliu real")
+s += text(80 + measure(TITLE, 60, "serif", 700) + 22, 190, "— design AI inspirat din sigiliile breslelor", 30, CEATA, "serif", 400, True)
+
+LEGEND = "SIGILIUL MEȘTERULUI ILIE V. * LĂCĂTUȘ *"   # „*” = romb desenat (separator)
+YEAR = "MMXXIV"
+R = 135                 # raza exterioară a sigiliului
+LS = 19                 # mărimea literelor din legendă
+R_BASE = R - 29         # raza liniei de bază a literelor (literele „stau” cu picioarele spre centru)
+F = R - 47              # raza câmpului central
+
+
+def legend_layout():
+    """Întoarce [(caracter, unghi_în_grade)] – sens orar, începând de sus, după steaua de început."""
+    cap = LS * 0.714
+    r_mid = R_BASE + cap / 2
+    items = [("STAR", 24)]
+    for ch in LEGEND:
+        if ch == "*":
+            items.append(("DIAM", 12))
+        else:
+            items.append((ch, measure(ch, LS, "serif", 700)))
+    circ = 2 * math.pi * r_mid
+    gap = (circ - sum(w for _, w in items)) / len(items)
+    out, pos = [], 0.0
+    for i, (ch, w) in enumerate(items):
+        centre = pos + w / 2 - items[0][1] / 2      # steaua e centrată sus (0°)
+        out.append((ch, math.degrees(centre / r_mid)))
+        pos += w + gap
+    return out, gap
+
+
+LAYOUT, GAP = legend_layout()
+
+
+def star(r_out, r_in, n=6):
+    pts = []
+    for k in range(2 * n):
+        rr = r_out if k % 2 == 0 else r_in
+        a = math.pi * k / n - math.pi / 2
+        pts.append((rr * math.cos(a), rr * math.sin(a)))
+    return " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+
+
+def design(c_line, c_text, c_key, sw=1.0):
+    """Sigiliul, centrat în (0,0). Culori: linii, text, cheie. sw = factor pentru grosimea liniilor."""
+    o = ""
+    # cercul dublu exterior
+    o += f'<circle r="{R}" fill="none" stroke="{c_line}" stroke-width="{4*sw:.1f}"/>'
+    o += f'<circle r="{R-7}" fill="none" stroke="{c_line}" stroke-width="{1.8*sw:.1f}"/>'
+    # cercul interior al legendei + șirul de perle
+    o += f'<circle r="{R-37}" fill="none" stroke="{c_line}" stroke-width="{1.8*sw:.1f}"/>'
+    nb = 60
+    for k in range(nb):
+        a = 2 * math.pi * k / nb
+        o += f'<circle cx="{(R-42)*math.sin(a):.1f}" cy="{-(R-42)*math.cos(a):.1f}" r="1.9" fill="{c_line}"/>'
+    # legenda, literă cu literă
+    for ch, deg in LAYOUT:
+        o += f'<g transform="rotate({deg:.2f})">'
+        if ch == "STAR":
+            o += f'<polygon transform="translate(0,{-(R_BASE+LS*0.36):.1f})" points="{star(9.5, 4.2)}" fill="{c_text}"/>'
+        elif ch == "DIAM":
+            yc = -(R_BASE + LS * 0.36)
+            o += f'<polygon points="0,{yc-5:.1f} 4,{yc:.1f} 0,{yc+5:.1f} -4,{yc:.1f}" fill="{c_text}"/>'
+        elif ch != " ":
+            o += (f'<text x="0" y="{-R_BASE:.1f}" font-family="{SERIF}" font-weight="700" font-size="{LS}" '
+                  f'fill="{c_text}" text-anchor="middle">{esc(ch)}</text>')
+        o += '</g>'
+    # câmpul: cheia (asimetrică – barba spre dreapta), inițialele, anul
+    k = F / 88.0
+    o += f'<g transform="scale({k:.3f})">'
+    o += f'<circle cx="0" cy="-46" r="17" fill="none" stroke="{c_key}" stroke-width="{6*sw:.1f}"/>'
+    o += f'<polygon points="0,-55 7,-46 0,-37 -7,-46" fill="{c_key}"/>'
+    o += f'<line x1="0" y1="-29" x2="0" y2="46" stroke="{c_key}" stroke-width="{7*sw:.1f}" stroke-linecap="round"/>'
+    o += f'<line x1="-9" y1="-20" x2="9" y2="-20" stroke="{c_key}" stroke-width="{5*sw:.1f}" stroke-linecap="round"/>'
+    o += f'<path d="M2,20 H30 V27 H22 V33 H30 V44 H2 Z" fill="{c_key}"/>'
+    for t_, x_ in (("I", -46), ("V", 46)):
+        o += (f'<text x="{x_}" y="12" font-family="{SERIF}" font-weight="700" font-size="34" fill="{c_text}" '
+              f'text-anchor="middle">{t_}</text>')
+    o += (f'<text x="0" y="74" font-family="{SERIF}" font-weight="700" font-size="15" letter-spacing="2" '
+          f'fill="{c_text}" text-anchor="middle">{YEAR}</text>')
+    for x_ in (-46, 46):
+        o += f'<polygon transform="translate({x_},-40)" points="{star(6, 2.6)}" fill="{c_text}"/>'
+    o += '</g>'
+    return o
+
+
+def mono(col, sw=1.0):
+    return design(col, col, col, sw)
+
+
+s += ('<defs>'
+      '<radialGradient id="wax18" cx="0.42" cy="0.38" r="0.7"><stop offset="0" stop-color="#A5402F"/><stop offset="0.7" stop-color="#86301F"/><stop offset="1" stop-color="#5E1C13"/></radialGradient>'
+      '<radialGradient id="waxgloss" cx="0.32" cy="0.26" r="0.5"><stop offset="0" stop-color="#FFE3D6" stop-opacity="0.32"/><stop offset="1" stop-color="#FFE3D6" stop-opacity="0"/></radialGradient>'
+      '<linearGradient id="rimwax" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3E100A"/><stop offset="0.5" stop-color="#7A2A1C"/><stop offset="1" stop-color="#D27A62"/></linearGradient>'
+      '<linearGradient id="ridgewax" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D98670"/><stop offset="0.5" stop-color="#8A3222"/><stop offset="1" stop-color="#4A150E"/></linearGradient>'
+      '<radialGradient id="brass" cx="0.38" cy="0.32" r="0.75"><stop offset="0" stop-color="#E9C978"/><stop offset="0.6" stop-color="#C39A43"/><stop offset="1" stop-color="#8C6524"/></radialGradient>'
+      '<linearGradient id="brassrim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6E1A6"/><stop offset="0.5" stop-color="#B78C3A"/><stop offset="1" stop-color="#6E4D18"/></linearGradient>'
+      '</defs>\n')
+
+Y_SEAL = 430
+XS = [80 + 1760 / 6 * (2 * i + 1) for i in range(3)]
+
+# ---------------------------------------------------------------- 1. desenul vectorial
+x1 = XS[0]
+s += f'<circle cx="{x1}" cy="{Y_SEAL}" r="{R+24}" fill="#16212C" stroke="#2A3845" stroke-width="1.5"/>\n'
+# linii de construcție (cercuri punctate și 12 raze – cum se împarte cercul)
+s += f'<g transform="translate({x1},{Y_SEAL})" opacity="0.55">'
+for k in range(12):
+    a = math.radians(30 * k)
+    s += (f'<line x1="{(R-37)*math.sin(a):.1f}" y1="{-(R-37)*math.cos(a):.1f}" x2="{(R+18)*math.sin(a):.1f}" y2="{-(R+18)*math.cos(a):.1f}" '
+          f'stroke="{PETROL}" stroke-width="1" stroke-dasharray="3 4"/>')
+s += f'<circle r="{R_BASE}" fill="none" stroke="{PETROL}" stroke-width="1" stroke-dasharray="2 4"/>'
+s += f'<line x1="{-R-18}" y1="0" x2="{R+18}" y2="0" stroke="{PETROL}" stroke-width="1" stroke-dasharray="6 4"/>'
+s += f'<line x1="0" y1="{-R-18}" x2="0" y2="{R+18}" stroke="{PETROL}" stroke-width="1" stroke-dasharray="6 4"/>'
+s += '</g>\n'
+s += f'<g transform="translate({x1},{Y_SEAL})">' + design(VAR, VAR, OCRU) + '</g>\n'
+
+# ---------------------------------------------------------------- 2. matricea (în oglindă, gravată)
+x2 = XS[1]
+s += f'<g filter="url(#sh)"><circle cx="{x2}" cy="{Y_SEAL}" r="{R+16}" fill="url(#brassrim)"/></g>\n'
+s += f'<circle cx="{x2}" cy="{Y_SEAL}" r="{R+9}" fill="url(#brass)" stroke="#5E4214" stroke-width="1.5"/>\n'
+# gravura: o margine luminoasă jos-dreapta (pereții adânciturii), apoi șanțul închis
+s += f'<g transform="translate({x2+1.3},{Y_SEAL+1.3}) scale(-1,1)" opacity="0.9">' + mono("#FBE7AE") + '</g>\n'
+s += f'<g transform="translate({x2},{Y_SEAL}) scale(-1,1)">' + mono("#4A3410") + '</g>\n'
+s += f'<circle cx="{x2}" cy="{Y_SEAL}" r="{R+9}" fill="url(#waxgloss)" opacity="0.5"/>\n'
+
+# ---------------------------------------------------------------- 3. impresiunea în ceară
+x3 = XS[2]
+rnd = random.Random(18)
+pts = []
+N = 40
+ph = [rnd.uniform(0, 6.28) for _ in range(3)]
+for i in range(N):
+    a = 2 * math.pi * i / N
+    rr = R + 26 + 6 * math.sin(3 * a + ph[0]) + 4 * math.sin(5 * a + ph[1]) + 3 * math.sin(8 * a + ph[2]) + rnd.uniform(-2, 2)
+    pts.append((x3 + rr * math.cos(a), Y_SEAL + rr * math.sin(a)))
+blob = smooth_path(pts, True, 0.9)
+s += f'<g filter="url(#sh)"><path d="{blob}" fill="url(#wax18)"/></g>\n'
+# creasta de ceară împinsă spre margine
+s += f'<circle cx="{x3}" cy="{Y_SEAL}" r="{R+10}" fill="none" stroke="url(#ridgewax)" stroke-width="10" opacity="0.85"/>\n'
+# discul apăsat (puțin mai jos decât creasta)
+s += f'<circle cx="{x3}" cy="{Y_SEAL}" r="{R+4}" fill="#8A3122"/>\n'
+s += f'<circle cx="{x3}" cy="{Y_SEAL}" r="{R+4}" fill="none" stroke="url(#rimwax)" stroke-width="4"/>\n'
+# relief: umbră jos-dreapta, lumină sus-stânga, apoi desenul în ceara ridicată
+s += f'<g transform="translate({x3+1.7},{Y_SEAL+1.9})" opacity="0.8">' + mono("#40120B", 1.1) + '</g>\n'
+s += f'<g transform="translate({x3-1.1},{Y_SEAL-1.1})" opacity="0.8">' + mono("#E39A82") + '</g>\n'
+s += f'<g transform="translate({x3},{Y_SEAL})">' + mono("#AE4634") + '</g>\n'
+s += f'<path d="{blob}" fill="url(#waxgloss)"/>\n'
+
+# ---------------------------------------------------------------- săgeți între stații
+def arrow(xa, xb, y, label):
+    o = f'<path d="M{xa},{y} C{xa+60},{y-34} {xb-60},{y-34} {xb},{y}" fill="none" stroke="{OCRU}" stroke-width="3" stroke-linecap="round"/>'
+    o += f'<polygon points="{xb},{y} {xb-16},{y-12} {xb-13},{y+5}" fill="{OCRU}"/>'
+    o += text((xa + xb) / 2, y - 40, label, 17, OCRU, "sans", 600, True, anchor="middle")
+    return o + "\n"
+s += arrow(x1 + R + 34, x2 - R - 30, Y_SEAL + 6, "se gravează în oglindă")
+s += arrow(x2 + R + 30, x3 - R - 40, Y_SEAL + 6, "se apasă în ceară")
+
+# ---------------------------------------------------------------- etichete sub sigilii
+caps = [("1 · DESENUL VECTORIAL", "Legenda se citește în sensul acelor de ceasornic, de la steluță."),
+        ("2 · MATRICEA, ÎN OGLINDĂ", "Desenul e gravat adâncit și întors: literele apar inversate."),
+        ("3 · IMPRESIUNEA ÎN CEARĂ", "În ceara roșu-maro, desenul iese în relief și se citește corect.")]
+CAP_END = []
+for x, (lab, cap) in zip(XS, caps):
+    s += text(x, Y_SEAL + R + 58, lab, 16, OCRU, "sans", 700, anchor="middle", extra='letter-spacing="2.5"')
+    lines = wrap(cap, 560, 16, "sans", 400)
+    yy = Y_SEAL + R + 84
+    for ln in lines:
+        s += text(x, yy, ln, 16, CEATA, "sans", 400, anchor="middle")
+        yy += 20
+    CAP_END.append(yy)
+
+# ---------------------------------------------------------------- carduri de jos
+CY0 = 676; CY1 = 1000
+CW = (1760 - 40) / 3
+def card_head(x, title, sub=None):
+    o = card(x, CY0, CW, CY1 - CY0)
+    o += f'<rect x="{x}" y="{CY0}" width="{CW}" height="7" rx="3.5" fill="{ORANGE}"/>'
+    o += text(x + 26, CY0 + 42, title, 22, VAR, "serif", 700)
+    if sub:
+        o += text(x + CW - 24, CY0 + 42, sub, 13, MUTED, "sans", 400, True, anchor="end")
+    return o
+
+ENDS = {}
+# A. ce era un sigiliu de breaslă
+xa = 80
+s += card_head(xa, "Ce era un sigiliu de breaslă")
+facts = ["Fiecare breaslă avea sigiliu și însemn propriu, cu valoare heraldică – puse și pe steaguri și pe lăzile de valori.",
+         "Un sigiliu întărea un document sau închidea un plic ori un pachet; legenda spunea de obicei „Sigiliul lui …”.",
+         "Sigiliile cu patronii spirituali apar din secolele XV–XVI; în secolele XVII–XVIII, patronii apar și pe ladă, steag, unelte.",
+         "Lăzile, semnele, steagurile și sigiliile breslelor desființate sunt păstrate la Muzeul Brukenthal."]
+yy = CY0 + 80
+for f_ in facts:
+    s += f'<circle cx="{xa+32}" cy="{yy-5}" r="3.5" fill="{OCRU}"/>'
+    p, yy = para(xa + 46, yy, f_, 15.5, CW - 72, VAR, "sans", 400, lh=20)
+    s += p
+    yy += 10
+ENDS["A"] = yy
+s += text(xa + 26, CY1 - 44, "Surse: mnir.ro; limbaromana.org; en.wikipedia, „Seal (emblem)”", 12.5, MUTED, "sans", 400, True)
+s += text(xa + 26, CY1 - 20, "Sigiliu imaginar, nu reproduce un sigiliu real.", 15, OCRU, "sans", 700)
+
+# B. cum a fost gândit
+xb = 80 + CW + 20
+s += card_head(xb, "Cum a fost gândit", "meșterul Ilie V. – personaj fictiv")
+choices = [("Cheia în centru", "produsul lăcătușului; asimetrică, ca să se vadă oglindirea. Unii orășeni medievali aveau pe sigiliu o imagine a meseriei."),
+           ("Legenda pe margine", "„Sigiliul meșterului Ilie V. · Lăcătuș”, în sens orar, de la steluța de sus."),
+           ("Inițiale și an", "I și V de o parte și de alta a cheii; anul fictiv MMXXIV, cu cifre romane, pentru aer de document vechi."),
+           ("Cerc dublu și perle", "chenare simple, care se gravează ușor și se văd bine și la dimensiune mică.")]
+yy = CY0 + 80
+for i, (a_, b_) in enumerate(choices, 1):
+    s += f'<circle cx="{xb+38}" cy="{yy-6}" r="12" fill="{BG}" stroke="{ORANGE}" stroke-width="2.2"/>' + text(xb + 38, yy - 1, str(i), 13, VAR, "sans", 700, anchor="middle")
+    aw = measure(a_ + ": ", 15.5, "sans", 700)
+    first = wrap(b_, CW - 84 - aw, 15.5, "sans", 400)[0]
+    rest = b_[len(first):].strip()
+    s += text(xb + 60, yy, a_ + ":", 15.5, VAR, "sans", 700)
+    s += text(xb + 60 + aw, yy, first, 15.5, CEATA, "sans", 400)
+    yy += 20
+    if rest:
+        p, yy = para(xb + 60, yy, rest, 15.5, CW - 84, CEATA, "sans", 400, lh=20)
+        s += p
+    yy += 9
+ENDS["B"] = yy
+s += text(xb + 26, CY1 - 20, "Lăcătușii, la Sibiu: în 1575 aveau în grijă un turn, cu cositorarii (limbaromana.org).", 13, MUTED, "sans", 400, True)
+
+# C. fă-ți propriul sigiliu
+xc = 80 + 2 * (CW + 20)
+s += f'<rect x="{xc}" y="{CY0}" width="{CW}" height="{CY1-CY0}" rx="22" fill="#0D3A40" stroke="{PETROL}" stroke-width="1.6"/>'
+s += f'<rect x="{xc}" y="{CY0}" width="{CW}" height="7" rx="3.5" fill="{PETROL}"/>'
+s += text(xc + 26, CY0 + 42, "Fă-ți propriul sigiliu", 22, VAR, "serif", 700)
+s += text(xc + CW - 24, CY0 + 42, "în 5 pași", 13, "#9CC9CD", "sans", 400, True, anchor="end")
+steps = ["Alege o singură unealtă a meseriei tale: o formă simplă, ușor de recunoscut.",
+         "Scrie legenda: „Sigiliul …”, numele sau inițialele și meseria. Numără semnele.",
+         "Împarte cercul: 360° : numărul de semne = cât rotești fiecare literă.",
+         "Desenează cercul dublu, unealta, inițialele și anul; verifică dacă se citesc la 4 cm.",
+         "Oglindește desenul, gravează-l în linoleum (cu un adult) și imprimă-l în plastilină sau lut."]
+yy = CY0 + 80
+for i, st in enumerate(steps, 1):
+    s += f'<circle cx="{xc+38}" cy="{yy-6}" r="12" fill="{PETROL}"/>' + text(xc + 38, yy - 1, str(i), 13, VAR, "sans", 700, anchor="middle")
+    p, yy = para(xc + 60, yy, st, 15.5, CW - 84, VAR, "sans", 400, lh=20)
+    s += p
+    yy += 10
+ENDS["C"] = yy
+
+s += frame_foot()
+write(OUT, s)
+print(OUT, "gap", round(GAP, 2), "caps", CAP_END, "/", CY0 - 8, "ends", ENDS, "/ A", CY1 - 62, "B", CY1 - 38, "C", CY1 - 8)

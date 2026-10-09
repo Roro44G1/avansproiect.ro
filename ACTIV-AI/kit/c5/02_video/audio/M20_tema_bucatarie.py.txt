@@ -1,0 +1,375 @@
+"""M20 – fundal muzical pentru „Rețeta animată AI a unui preparat transilvănean — stop-motion digital de 60 sec” (~61 s).
+
+Temă originală, compusă și sintetizată în cod pentru animația M20 (artefact-model ACTIV AI),
+în stil de muzică de bucătărie: veselă, săltăreață, „pas cu pas”.
+Nu citează și nu imită o melodie existentă (nici populară, nici de autor); nu are titlu de cântec popular.
+
+Instrumente (toate sintetizate din formule, fără eșantioane):
+  - țambal / instrument ciupit stilizat – Karplus-Strong cu două corzi ușor dezacordate + lovitura ciocănelului
+    (melodia; tremolo de 12 lovituri pe secundă, cât cadrele animației stop-motion);
+  - bas ciupit; acorduri scurte „pe contratimp” (stil oom-pah);
+  - percuție ușoară „lingura de lemn” (lovituri scurte de lemn pe castron/masă) și un shaker;
+  - efecte de bucătărie sincronizate cu imaginea (sintetizate): obiecte așezate pe masă, orezul turnat,
+    lingura care amestecă, foaia de varză pliată, sarmalele puse în oală, capacul de lut, ceasul, aburul,
+    farfuria și furculița.
+
+Tempo 120 BPM, 4/4 (o măsură = 2 s), Sol major. Secțiunile urmăresc pașii din video:
+   0 s  intro (acord rulat de țambal)            – fișa de titlu
+   4 s  tema A                                    – 1. Ingredientele (câte un „toc” la fiecare ingredient)
+  12 s  tema B, ușoară + glissando ascendent      – 2. Frunza de varză (frunza se desface)
+  18 s  tema A, plină + lingura care amestecă     – 3. Umplutura
+  24 s  tema C, săltăreață                        – 4. Rulăm sarmalele (plieri, rulare, „pop”-uri)
+  32 s  tema A, plină, dublată la octavă          – 5. În oala de lut (sarmalele și afumăturile cad în oală)
+  40 s  tremolo lung + tic-tac rapid              – 6. Fierb ore în șir (capacul, ceasul, aburii)
+  46 s  tema A, cadență + „Poftă bună!”           – 7. La masă
+  52 s  final liniștit, acord de Sol              – fișa finală
+
+Folosește biblioteca comună /home/claude/expo/04_audio/_src/audiolib.py.
+Rulare: python3 M20_tema_bucatarie.py  -> M20_tema_bucatarie.mp3 (în același folder)
+"""
+import os
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+LIB = "/home/claude/expo/04_audio/_src"
+if LIB not in sys.path:
+    sys.path.insert(0, LIB)
+
+from audiolib import (SR, add, bp, colored_noise, env_ar, env_exp, finalize, hp, hz, ks_pluck, lp,
+                      make_ir, match_lufs, modal, ns, peaking, report, reverb, rng_of, shaker, soft_knee, stereo, t_axis)
+
+BPM = 120
+BEAT = 60.0 / BPM          # 0,5 s
+BAR = 4 * BEAT             # 2,0 s
+DUR = 61.0
+TREM = 1.0 / 12            # tremolo: 12 lovituri pe secundă (= cadrele stop-motion)
+OUT = os.path.join(HERE, "M20_tema_bucatarie.mp3")
+
+
+def b2t(bar, beat=0.0):
+    return bar * BAR + beat * BEAT
+
+
+# ------------------------------------------------------------------ instrumente
+def ramp(x, ms):
+    """Atac rotunjit (cosinus) de câteva milisecunde: fără pornire „în treaptă”, care la recodarea AAC
+    din MP4 produce vârfuri (pre-ecou)."""
+    k = max(2, ns(ms / 1000.0))
+    x[:k] *= 0.5 - 0.5 * np.cos(np.linspace(0, np.pi, k))
+    return x
+
+
+_TCACHE = {}
+
+
+def tambal(nm, rng, var=0):
+    """Țambal stilizat: două corzi (dublură ușor dezacordată), ciupite strălucitor, + lovitura ciocănelului."""
+    key = (nm, var % 3)
+    if key not in _TCACHE:
+        r = rng_of(sum((i + 1) * ord(ch) for i, ch in enumerate(nm)) * 7 + key[1] + 1)   # sămânță deterministă
+        f = hz(nm)
+        dur = float(np.clip(2.0 * (300.0 / f) ** 0.5, 0.7, 2.2))
+        a = ks_pluck(f, dur, t60=dur * 0.75, bright=0.68, pos=0.11, rng=r)
+        b = ks_pluck(f * 2 ** (3.5 / 1200), dur, t60=dur * 0.7, bright=0.62, pos=0.14, rng=r)
+        x = a + 0.8 * b
+        n = len(x)
+        x += bp(r.standard_normal(n), 1200, 4000) * env_exp(n, 0.005) * 0.05
+        ramp(x, 3.0)                           # atac puțin rotunjit (mai puține vârfuri)
+        _TCACHE[key] = x / (np.max(np.abs(x)) + 1e-12)
+    return _TCACHE[key]
+
+
+def tambal_short(nm, rng, var=0, t60=0.28):
+    x = tambal(nm, rng, var).copy()
+    return x * env_ar(len(x), 0.0005, t60)
+
+
+def pizz_bass(f, rng, dur=0.9):
+    x = 0.8 * ks_pluck(f, dur, t60=0.8, bright=0.25, pos=0.22, rng=rng, damp=0.3)
+    n = len(x)
+    x += 0.7 * np.sin(2 * np.pi * f * t_axis(n)) * env_ar(n, 0.006, 0.5)
+    return ramp(lp(x, 1400), 5.0) / (np.max(np.abs(x)) + 1e-12)
+
+
+def spoon(rng, kind=0):
+    """Lingură de lemn: 0 = pe marginea castronului, 1 = pe masă (mai grav), 2 = lemn pe lemn (scurt)."""
+    f = (560.0, 330.0, 820.0)[kind]
+    x = modal([f, f * 2.31, f * 4.13, f * 6.7], [1.0, 0.45, 0.2, 0.08], [0.07, 0.04, 0.025, 0.015], 0.18,
+              rng=rng, attack=0.001)
+    n = len(x)
+    x += bp(rng.standard_normal(n), 1500, 4000) * env_exp(n, 0.004) * 0.12
+    return ramp(x, 1.5) / (np.max(np.abs(x)) + 1e-12)
+
+
+# ------------------------------------------------------------------ efecte de bucătărie (sintetizate)
+def tok(rng, f=170.0):            # obiect așezat pe masa de lemn
+    x = modal([f, f * 2.6, f * 5.2], [1.0, 0.35, 0.12], [0.12, 0.06, 0.03], 0.3, rng=rng, attack=0.0008)
+    n = len(x)
+    x += lp(rng.standard_normal(n), 900) * env_exp(n, 0.02) * 0.6
+    return ramp(x, 2.5) / (np.max(np.abs(x)) + 1e-12)
+
+
+def clay(rng, f=210.0, T=0.35):   # oală / capac de lut
+    x = modal([f, f * 2.35, f * 4.6, f * 7.1], [1.0, 0.55, 0.3, 0.15], [T, T * 0.6, T * 0.35, T * 0.2], T * 2.0,
+              rng=rng, attack=0.0006)
+    n = len(x)
+    x += lp(rng.standard_normal(n), 1200) * env_exp(n, 0.015) * 0.5
+    return ramp(x, 2.5) / (np.max(np.abs(x)) + 1e-12)
+
+
+def clink(rng, f=1720.0):          # porțelan / metal
+    x = modal([f, f * 2.43, f * 3.66], [1.0, 0.4, 0.2], [0.5, 0.25, 0.12], 0.8, rng=rng, attack=0.0003)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def swish(rng, dur=0.4, lo=700, hi=3500):   # hârtie / frunză care se mișcă
+    n = ns(dur)
+    x = bp(rng.standard_normal(n), lo, hi) * np.hanning(n) ** 1.5
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def plop(rng, f0=380.0):           # ceva moale pus în oală / pe frunză
+    n = ns(0.16)
+    t = t_axis(n)
+    f = f0 * (1 + 0.7 * np.exp(-t / 0.02))
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR) * env_ar(n, 0.002, 0.11)
+    x += lp(rng.standard_normal(n), 700) * env_exp(n, 0.015) * 0.4
+    return ramp(x, 2.5) / (np.max(np.abs(x)) + 1e-12)
+
+
+def tick(rng, hi=True):            # ceasul de bucătărie
+    f = 2300.0 if hi else 1750.0
+    x = modal([f, f * 2.7], [1.0, 0.3], [0.025, 0.012], 0.06, rng=rng, attack=0.0003)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+def rustle(rng, dur=0.5, dens=180):  # orez turnat: multe boabe mici
+    n = ns(dur)
+    x = np.zeros(n)
+    k = int(dens * dur)
+    for _ in range(k):
+        i = int(rng.uniform(0, n - 400))
+        g = rng.uniform(0.2, 1.0)
+        x[i:i + 400] += hp(rng.standard_normal(400), 3000) * env_exp(400, 0.003) * g
+    return x * np.hanning(n) ** 0.5 / (np.max(np.abs(x)) + 1e-12)
+
+
+def steam(rng, dur=1.2):           # abur
+    n = ns(dur)
+    x = bp(colored_noise(n, rng, 1.0), 900, 5000) * np.hanning(n)
+    return x / (np.max(np.abs(x)) + 1e-12)
+
+
+# ------------------------------------------------------------------ materialul muzical (Sol major)
+A1 = [("D5", .5), ("G5", .5), ("A5", .5), ("B5", .5), ("D6", 1), ("B5", 1)]
+A2 = [("C6", .5), ("B5", .5), ("A5", .5), ("G5", .5), ("F#5", .5), ("G5", .5), ("A5", 1)]
+A3 = [("B5", .5), ("D6", .5), ("G6", .5), ("D6", .5), ("E6", .5), ("D6", .5), ("B5", 1)]
+A4 = [("A5", .5), ("F#5", .5), ("D5", .5), ("F#5", .5), ("G5", 1), (None, 1)]
+A8 = [("B5", .5), ("A5", .5), ("F#5", .5), ("A5", .5), ("G5", 2)]
+B1 = [("E5", .5), ("G5", .5), ("B5", .5), ("E6", .5), ("D6", .5), ("B5", .5), ("G5", 1)]
+B2 = [("E5", .5), ("G5", .5), ("C6", .5), ("E6", .5), ("D6", .5), ("C6", .5), ("A5", 1)]
+B3 = [("F#5", .5), ("A5", .5), ("D6", .5), ("F#6", .5), ("E6", 1), ("D6", 1)]
+C1 = [("G5", .5), (None, .5), ("B5", .5), (None, .5), ("D6", .5), ("C6", .5), ("B5", 1)]
+C2 = [("A5", .5), (None, .5), ("C6", .5), (None, .5), ("F#5", .5), ("A5", .5), ("D6", 1)]
+C3 = [("B5", .5), ("A5", .5), ("G5", .5), ("A5", .5), ("B5", .5), ("D6", .5), ("G6", 1)]
+C4 = [("F#6", .5), ("E6", .5), ("D6", .5), ("C6", .5), ("B5", .5), ("A5", .5), ("G5", 1)]
+for ph in (A1, A2, A3, A4, A8, B1, B2, B3, C1, C2, C3, C4):
+    assert abs(sum(d for _, d in ph) - 4) < 1e-9
+
+CH = {"G": ["G4", "B4", "D5"], "C": ["G4", "C5", "E5"], "D": ["F#4", "A4", "D5"], "D7": ["F#4", "C5", "D5"],
+      "Em": ["G4", "B4", "E5"], "Am": ["A4", "C5", "E5"]}
+ROOT = {"G": "G2", "C": "C2", "D": "D2", "D7": "D2", "Em": "E2", "Am": "A2"}
+FIFTH = {"G": "D2", "C": "G2", "D": "A2", "D7": "A2", "Em": "B2", "Am": "E2"}
+
+# (bara, frază, (acord jumătatea 1, acord jumătatea 2), nivel 0 ușor / 1 normal / 2 plin)
+PLAN = [
+    (2, A1, ("G", "G"), 1), (3, A2, ("C", "D"), 1), (4, A3, ("G", "Em"), 1), (5, A4, ("D", "G"), 1),
+    (6, B1, ("Em", "Em"), 0), (7, B2, ("C", "C"), 0), (8, B3, ("D", "D"), 0),
+    (9, A1, ("G", "G"), 2), (10, A2, ("C", "D"), 2), (11, A4, ("D", "G"), 2),
+    (12, C1, ("G", "G"), 1), (13, C2, ("D7", "D7"), 1), (14, C3, ("G", "G"), 1), (15, C4, ("D", "G"), 1),
+    (16, A1, ("G", "G"), 2), (17, A2, ("C", "D"), 2), (18, A3, ("G", "Em"), 2), (19, A4, ("D", "G"), 2),
+    (23, A1, ("G", "G"), 2), (24, A2, ("C", "D"), 2), (25, A8, ("D", "G"), 2),
+    (26, B1, ("Em", "Em"), 0), (27, B2, ("C", "C"), 0),
+]
+
+
+def render(seed=2026):
+    rng = rng_of(seed)
+    mel, chd, bas, spn, shk, fx = (stereo(DUR) for _ in range(6))
+    v = [0]
+
+    def nv():
+        v[0] += 1
+        return v[0]
+
+    def phrase(buf, ph, bar, gain, pan, transpose_oct=False):
+        pos = 0.0
+        for nm, d in ph:
+            if nm is not None:
+                n2 = nm[:-1] + str(int(nm[-1]) + 1) if transpose_oct else nm
+                add(buf, tambal(n2, rng, nv()), b2t(bar, pos) + rng.uniform(-0.004, 0.004),
+                    gain=gain * rng.uniform(0.85, 1.0), pan=pan)
+            pos += d
+
+    def chord(buf, name, t0, gain, short=True, roll=0.012, pan=-0.25):
+        for k, nm in enumerate(CH[name]):
+            x = tambal_short(nm, rng, nv()) if short else tambal(nm, rng, nv())
+            add(buf, x, t0 + k * roll, gain=gain * (0.8 + 0.1 * k), pan=pan + 0.12 * k)
+
+    def tremolo(buf, nm, t0, dur, gain, pan=0.1):
+        k = 0
+        while k * TREM < dur - 1e-6:
+            acc = 1.0 if k % 2 == 0 else 0.72
+            fade = min(1.0, (dur - k * TREM) / 0.4)
+            add(buf, tambal_short(nm, rng, nv(), t60=0.35), t0 + k * TREM, gain=gain * acc * (0.75 + 0.25 * fade), pan=pan)
+            k += 1
+
+    # ---- intro: acord de Sol rulat, apoi Re7 – titlul
+    for k, nm in enumerate(["G4", "B4", "D5", "G5", "B5"]):
+        add(mel, tambal(nm, rng, nv()), 0.05 + k * 0.07, gain=0.75, pan=-0.3 + 0.15 * k)
+    tremolo(mel, "D6", 0.45, 1.5, 0.45)
+    add(bas, pizz_bass(hz("G2"), rng, 1.6), 0.05, gain=0.9)
+    for k, nm in enumerate(["A4", "C5", "F#5", "A5", "D6"]):
+        add(mel, tambal(nm, rng, nv()), b2t(1) + k * 0.07, gain=0.7, pan=0.3 - 0.15 * k)
+    add(bas, pizz_bass(hz("D2"), rng, 1.2), b2t(1), gain=0.85)
+    for bt in (1, 3):
+        add(spn, spoon(rng, 0), b2t(1, bt), gain=0.6, pan=0.3)
+    add(spn, spoon(rng, 2), b2t(1, 3.5), gain=0.5, pan=0.35)
+    for k, nm in enumerate(["G4", "A4", "B4", "C5"]):              # anacruză spre tema A
+        add(mel, tambal(nm, rng, nv()), b2t(1, 2) + k * BEAT * 0.5 + 0.5, gain=0.5 + 0.06 * k, pan=0.15)
+
+    # ---- teme + acompaniament
+    for bar, ph, (h1, h2), lvl in PLAN:
+        g = (0.62, 0.85, 1.0)[lvl]
+        phrase(mel, ph, bar, g, 0.12)
+        if lvl == 2 and bar >= 16:                      # dublare la octavă, discretă
+            phrase(chd, ph, bar, 0.22, -0.35, transpose_oct=True)
+        for half, ch in enumerate((h1, h2)):
+            t0 = b2t(bar, 2 * half)
+            # bas pe timpii 1 și 3, cvinta pe 2 și 4 doar la nivel plin
+            add(bas, pizz_bass(hz(ROOT[ch]), rng), t0, gain=0.95)
+            if lvl == 2:
+                add(bas, pizz_bass(hz(FIFTH[ch]), rng, 0.6), t0 + BEAT, gain=0.45)
+            # acorduri scurte pe contratimp („pah”)
+            if lvl >= 1:
+                chord(chd, ch, t0 + BEAT, 0.55 + 0.12 * lvl)
+            else:
+                chord(chd, ch, t0, 0.42, short=False, roll=0.03)
+        # lingura de lemn: pe 2 și 4; nivel plin – și „fantome” pe optimi
+        for beat in range(4):
+            t = b2t(bar, beat)
+            if lvl >= 1 and beat in (1, 3):
+                add(spn, spoon(rng, 0), t, gain=0.85 * rng.uniform(0.9, 1.0), pan=0.3)
+            if lvl >= 1 and beat in (0, 2):
+                add(spn, spoon(rng, 1), t, gain=0.55, pan=-0.2)
+            if lvl == 2:
+                add(spn, spoon(rng, 2), t + 0.5 * BEAT, gain=0.32 * rng.uniform(0.8, 1.0), pan=0.4)
+            for e in (0.0, 0.5):
+                add(shk, shaker(rng=rng), t + e * BEAT, gain=(0.3, 0.55, 0.75)[lvl] * (1.0 if e else 0.7), pan=-0.4)
+
+    # ---- secțiunea „ore în șir” (bare 20–22): tremolo lung, acorduri ținute, bas pedală
+    for bar, (n1, n2), ch in ((20, ("B5", "A5"), "G"), (21, ("G5", "E5"), "Em"), (22, ("F#5", "A5"), "D")):
+        tremolo(mel, n1, b2t(bar), 2 * BEAT, 0.55)
+        tremolo(mel, n2, b2t(bar, 2), 2 * BEAT, 0.55)
+        chord(chd, ch, b2t(bar), 0.5, short=False, roll=0.04)
+        chord(chd, ch, b2t(bar, 2), 0.38, short=False, roll=0.04)
+        add(bas, pizz_bass(hz(ROOT[ch]), rng, 1.5), b2t(bar), gain=0.85)
+        add(bas, pizz_bass(hz(ROOT[ch]), rng, 1.5), b2t(bar, 2), gain=0.6)
+
+    # ---- final (bara 28 = 56 s): acord de Sol rulat + tremolo care se stinge
+    t_end = b2t(28)
+    for k, nm in enumerate(["G3", "D4", "G4", "B4", "D5", "G5"]):
+        add(mel, tambal(nm, rng, nv()), t_end + k * 0.06, gain=0.8, pan=-0.35 + 0.14 * k)
+    tremolo(mel, "B5", t_end + 0.4, 2.6, 0.35)
+    add(bas, pizz_bass(hz("G2"), rng, 2.5), t_end, gain=1.0)
+    m = ns(4.0)
+    add(bas, np.sin(2 * np.pi * hz("G1") * t_axis(m)) * env_ar(m, 0.01, 3.0), t_end, gain=0.5)
+    add(spn, spoon(rng, 0), t_end, gain=0.7, pan=0.3)
+
+    # ---- efecte sincronizate cu imaginea
+    add(fx, tok(rng, 150), 1.0, gain=0.5)                               # fișa de titlu
+    add(fx, swish(rng, 0.5), 3.4, gain=0.35, pan=0.2)
+    for i, t0 in enumerate((5.0, 6.0, 7.0, 8.0, 9.0, 10.0)):            # ingredientele pe masă
+        add(fx, tok(rng, (160, 230, 250, 190, 140, 175)[i]), t0, gain=0.8, pan=(-0.5, -0.1, 0.25, 0.55, 0.2, -0.05)[i])
+        add(fx, swish(rng, 0.35, 900, 3000), t0 - 0.38, gain=0.18, pan=0.0)
+    add(fx, swish(rng, 0.5, 600, 2500), 12.0, gain=0.35)                 # ingredientele ies
+    add(fx, tok(rng, 120), 13.0, gain=0.95, pan=0.2)                     # tocătorul
+    add(fx, swish(rng, 0.45, 1200, 4500), 13.55, gain=0.3, pan=0.1)      # frunza zboară
+    gl = ["G5", "A5", "B5", "C6", "D6", "E6", "F#6", "G6", "A6", "B6", "D7", "G7"]
+    for k, nm in enumerate(gl):                                          # frunza se desface (14,0–15,5 s)
+        add(chd, tambal_short(nm, rng, nv(), t60=0.5), 14.0 + k * 0.125, gain=0.3 + 0.02 * k, pan=-0.5 + 0.09 * k)
+    for t0, f in ((18.5, 240), (18.75, 260), (19.0, 190), (19.25, 150)):  # castroanele sosesc
+        add(fx, tok(rng, f), t0, gain=0.6, pan=0.5)
+    add(fx, rustle(rng, 0.55), 19.5, gain=0.6, pan=0.55)                 # orezul
+    for k in range(5):                                                   # ceapa
+        add(fx, spoon(rng, 2), 20.0 + k * 0.083, gain=0.25, pan=0.5)
+    add(fx, swish(rng, 0.45, 2000, 6000), 20.5, gain=0.25, pan=0.3)      # verdețurile
+    add(fx, spoon(rng, 0), 21.25, gain=0.6, pan=0.4)                     # lingura intră în castron
+    for k in range(10):                                                  # lingura amestecă (21,25–22,5 s)
+        add(fx, spoon(rng, 1 if k % 2 else 2), 21.25 + k * 0.125, gain=0.32, pan=0.4 + 0.1 * np.sin(k))
+        add(fx, swish(rng, 0.12, 1500, 5000), 21.25 + k * 0.125, gain=0.12, pan=0.4)
+    add(fx, plop(rng, 300), 23.25, gain=0.7, pan=-0.2)                   # umplutura pe frunză
+    for t0, t1 in ((24.5, 25.5), (25.75, 26.75)):                        # plierile
+        add(fx, swish(rng, t1 - t0, 900, 3800), t0, gain=0.35, pan=0.0)
+        add(fx, tok(rng, 300), t1, gain=0.35, pan=0.0)
+    add(fx, swish(rng, 1.5, 700, 2600), 27.0, gain=0.3)                  # rularea
+    for k, nm in enumerate(["G4", "B4", "D5", "G5", "B5", "D6"]):
+        add(chd, tambal_short(nm, rng, nv(), t60=0.4), 27.0 + k * 0.25, gain=0.32, pan=0.3)
+    add(fx, clink(rng, 2100), 28.5, gain=0.35, pan=0.1)                  # sarmaua e gata
+    for k, t0 in enumerate((29.25, 29.75, 30.25, 30.75, 31.25, 31.75)):  # încă una, și încă una…
+        add(fx, plop(rng, 420 + 40 * k), t0, gain=0.45, pan=-0.4 + 0.15 * k)
+    add(fx, swish(rng, 0.5, 600, 2400), 32.0, gain=0.3, pan=0.5)
+    add(fx, clay(rng, 160, 0.4), 32.5, gain=0.8, pan=0.2)                # oala de lut
+    add(fx, tok(rng, 200), 33.0, gain=0.55, pan=0.6)                     # tocătorul cu afumături
+    kinds = "SSKSSKSSSSK"
+    for i, kd in enumerate(kinds):                                       # piesele cad în oală
+        t0 = 33.5 + 0.5 * i
+        add(fx, plop(rng, (330 + 18 * i) if kd == "S" else 210), t0, gain=0.55 if kd == "S" else 0.45, pan=0.1)
+    add(fx, swish(rng, 0.5, 600, 2400), 40.0, gain=0.3)
+    add(fx, clay(rng, 290, 0.45), 41.0, gain=0.9, pan=-0.2)             # capacul de lut
+    add(fx, tok(rng, 260), 41.5, gain=0.4, pan=0.5)                      # ceasul
+    k = 0
+    while 41.5 + k * 0.125 < 45.5:                                       # tic-tac rapid: trece timpul
+        add(fx, tick(rng, k % 2 == 0), 41.5 + k * 0.125, gain=0.3, pan=0.55)
+        k += 1
+    for j in range(5):                                                   # aburi
+        add(fx, steam(rng, 1.2), 41.3 + j * 0.95, gain=0.22, pan=-0.3 + 0.1 * j)
+    add(fx, clay(rng, 290, 0.3), 46.0, gain=0.45, pan=-0.2)              # capacul se ridică
+    add(fx, swish(rng, 0.5, 600, 2400), 46.25, gain=0.3, pan=-0.4)
+    add(fx, tok(rng, 210), 47.0, gain=0.5)                               # farfuria
+    add(fx, clink(rng, 1650), 47.0, gain=0.35)
+    for k, t0 in enumerate((47.5, 48.0, 48.5)):
+        add(fx, plop(rng, 360 + 30 * k), t0, gain=0.5, pan=-0.1)
+    add(fx, plop(rng, 260), 49.0, gain=0.45)                             # mămăliga
+    add(fx, plop(rng, 520), 49.5, gain=0.4)                              # smântâna
+    add(fx, clink(rng, 2350), 50.0, gain=0.45, pan=0.35)                 # furculița
+    for k, nm in enumerate(["D5", "G5", "B5", "D6", "G6"]):              # „Poftă bună!”
+        add(mel, tambal(nm, rng, nv()), 50.5 + k * 0.06, gain=0.5, pan=0.3 - 0.12 * k)
+    add(fx, swish(rng, 0.55, 500, 2200), 52.0, gain=0.45)               # fișa finală
+    add(fx, tok(rng, 140), 52.5, gain=0.4)
+
+    ir = make_ir(t60=0.9, predelay=0.012, seed=20)                       # o bucătărie mică
+    # straturile strălucitoare: fără zgomot în 3–10 kHz (codorul AAC din MP4 îl transformă în vârfuri)
+    mel, chd, shk, fx, spn = lp(mel, 7500), lp(chd, 7500), lp(shk, 6500), lp(fx, 7000), lp(spn, 8000)
+    mel, chd = peaking(mel, 4500, -4.0, 0.8), peaking(chd, 4500, -4.0, 0.8)   # țambal puțin mai catifelat
+    # (strat, LUFS țintă, reverb, cât se rotunjesc vârfurile în dB – mai puțină muncă pentru limitatorul final)
+    stems = [(mel, -17.5, 0.16, 9), (chd, -24.0, 0.2, 5), (bas, -20.5, 0.05, 5), (spn, -25.5, 0.1, 7),
+             (shk, -34.0, 0.1, 0), (fx, -24.5, 0.12, 9)]
+    mix = None
+    for x, target, wet, tame in stems:
+        y = match_lufs(hp(x, 30), target)
+        if tame:
+            y = match_lufs(soft_knee(y, np.max(np.abs(y)) * 10 ** (-tame / 20), 0.6), target)
+        y = reverb(y, ir, wet=wet)
+        mix = y if mix is None else mix + y
+    return mix
+
+
+if __name__ == "__main__":
+    mix = render()
+    out = finalize(mix, OUT, "M20 – temă originală de bucătărie pentru rețeta animată a sarmalelor",
+                   "Temă originală, sintetizată în cod (țambal stilizat, bas, lingura de lemn, efecte de bucătărie) – ACTIV AI",
+                   target_lufs=-14.0, fin=0.05, fout=2.5, ceiling_db=-3.6, max_tp=-3.0)  # rezervă pentru recodarea AAC din MP4
+    report(out, "M20 final")
