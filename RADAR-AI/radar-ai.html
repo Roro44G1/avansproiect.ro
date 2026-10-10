@@ -21,6 +21,33 @@
 
 <link rel="stylesheet" href="/fonts.css">
 <link rel="stylesheet" href="radar-ai.css">
+<style>
+/* ── Chestionare SRED-15: acces din pagina programului ── */
+.sred-acces{max-width:860px;margin:0 auto}
+.sred-acces__grupa{max-width:22rem;margin:0 auto 1.25rem;text-align:center}
+.sred-acces__grupa label{display:block;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--indigo,#3730A3);margin-bottom:.4rem}
+.sred-acces__grupa input{width:100%;height:3.25rem;padding:0 1rem;border:2px solid #CBD5E1;border-radius:12px;background:#fff;font:700 1.15rem 'Montserrat',sans-serif;letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1E1B4B;box-sizing:border-box}
+.sred-acces__grupa input::placeholder{font-weight:500;letter-spacing:0;text-transform:none;color:#94A3B8}
+.sred-acces__grupa input:focus{outline:none;border-color:var(--teal,#0D9488);box-shadow:0 0 0 3px rgba(13,148,136,.2)}
+.sred-acces__grupa.eroare input{border-color:#C24E12}
+.sred-acces__ajutor{font-size:.85rem;color:var(--light,#475569);margin:.4rem 0 0}
+.sred-acces__eroare{text-align:center;color:#C24E12;font-weight:600;margin:0 0 1rem}
+.sred-acces__eroare[hidden]{display:none}
+.sred-acces__carduri{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.sred-card{background:#fff;border-radius:var(--r-card,16px);box-shadow:var(--shadow-card,0 4px 20px rgba(0,0,0,.08));padding:1.5rem;border-top:4px solid var(--teal,#0D9488);display:flex;flex-direction:column}
+.sred-card--post{border-top-color:var(--indigo-mid,#4F46E5)}
+.sred-card h3{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.15rem;line-height:1.25;margin:0 0 .25rem;color:var(--indigo,#3730A3)}
+.sred-card__cand{font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--teal,#0D9488);margin:0 0 .75rem}
+.sred-card--post .sred-card__cand{color:var(--indigo-mid,#4F46E5)}
+.sred-card p{font-size:.92rem;line-height:1.7;color:var(--light,#475569)}
+.sred-card p:not(.sred-card__cand){margin:0 0 1.1rem}
+.sred-card .sred-btn{margin-top:auto;display:block;text-align:center;padding:.85rem 1rem;border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.95rem;text-decoration:none;color:#fff;background:var(--teal,#0D9488)}
+.sred-card--post .sred-btn{background:var(--indigo-mid,#4F46E5)}
+.sred-card .sred-btn:hover{filter:brightness(1.1)}
+.sred-card .sred-btn:focus-visible{outline:3px solid #1E1B4B;outline-offset:3px}
+.sred-acces__nota{text-align:center;font-size:.85rem;line-height:1.6;color:var(--light,#475569);margin:1.25rem auto 0;max-width:42rem}
+@media (max-width:700px){.sred-acces__carduri{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
@@ -40,6 +67,7 @@
       <a href="#module">Module</a>
       <a href="#dirigentie">Dirigenție</a>
       <a href="#parteneri">Parteneri</a>
+      <a href="#chestionare">Chestionare</a>
       <a href="#faq">FAQ</a>
       <a href="inscriere-radar-ai.html" class="nav-cta">Înscrie-te →</a>
     </div>
@@ -509,6 +537,42 @@
   </div>
 </section>
 
+<!-- ── CHESTIONARE SRED-15 ─────────────────────────────────────────────────── -->
+<section class="section section-alt" id="chestionare">
+  <div class="wrap">
+    <div class="section-center">
+      <span class="section-label">📝 Pentru elevii din program</span>
+      <h2 class="section-title center">Chestionarele SRED-15</h2>
+      <div class="title-bar"></div>
+      <p class="section-desc center">
+        Completezi chestionarul pe telefon, în aproximativ 10 minute: o dată la prima întâlnire și o dată la ultima. Ai nevoie de codul grupei, pe care îl primești de la psiholog.
+      </p>
+    </div>
+    <div class="sred-acces">
+      <div class="sred-acces__grupa" id="sred-grupa-cutie">
+        <label for="sred-grupa">Codul grupei</label>
+        <input type="text" id="sred-grupa" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="primit de la psiholog" aria-describedby="sred-eroare">
+      </div>
+      <p class="sred-acces__eroare" id="sred-eroare" role="alert" hidden>Scrie codul grupei primit de la psiholog.</p>
+      <div class="sred-acces__carduri">
+        <div class="sred-card sred-card--pre">
+          <h3>Evaluarea inițială</h3>
+          <p class="sred-card__cand">La prima întâlnire</p>
+          <p>La final primești un cod de participant, generat automat. Păstrează-l: îl folosești la evaluarea finală.</p>
+          <a class="sred-btn" href="/sred15-pre.html" data-pagina="/sred15-pre.html">Completează evaluarea inițială →</a>
+        </div>
+        <div class="sred-card sred-card--post">
+          <h3>Evaluarea finală</h3>
+          <p class="sred-card__cand">La ultima întâlnire</p>
+          <p>Ai nevoie de codul de participant primit la evaluarea inițială. Dacă nu îl mai găsești, spune psihologului.</p>
+          <a class="sred-btn" href="/sred15-post.html" data-pagina="/sred15-post.html">Completează evaluarea finală →</a>
+        </div>
+      </div>
+      <p class="sred-acces__nota">Chestionarul nu cere numele tău. Răspunsurile sunt analizate la nivel de grup; nu este un test și nu se notează. SRED-15 este un instrument de screening educațional, nu un instrument clinic.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ── CTA ─────────────────────────────────────────────────────────────────── -->
 <section class="section" id="contact">
   <div class="wrap">
@@ -541,6 +605,7 @@
         <li><a href="#dirigentie">Ghid Dirigenție</a></li>
         <li><a href="#parteneri">Licee partenere</a></li>
         <li><a href="#faq">Întrebări frecvente</a></li>
+        <li><a href="#chestionare">Chestionare SRED-15</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -944,5 +1009,39 @@ form.addEventListener('submit', function(e){
 })();
 </script>
 
+<script>
+(function () {
+  'use strict';
+  var camp = document.getElementById('sred-grupa');
+  var cutie = document.getElementById('sred-grupa-cutie');
+  var eroare = document.getElementById('sred-eroare');
+  if (!camp) return;
+  var butoane = Array.prototype.slice.call(document.querySelectorAll('.sred-btn'));
+  function cod() { return String(camp.value || '').toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9-]/g, '').slice(0, 20); }
+  function actualizeaza() {
+    var v = cod();
+    butoane.forEach(function (a) {
+      var baza = a.getAttribute('data-pagina');
+      a.setAttribute('href', v ? baza + '?g=' + encodeURIComponent(v) : baza);
+    });
+  }
+  camp.addEventListener('input', function () {
+    var v = cod();
+    if (camp.value !== v) camp.value = v;
+    cutie.classList.remove('eroare');
+    eroare.hidden = true;
+    actualizeaza();
+  });
+  butoane.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (cod()) return;
+      e.preventDefault();
+      cutie.classList.add('eroare');
+      eroare.hidden = false;
+      camp.focus();
+    });
+  });
+})();
+</script>
 </body>
 </html>
