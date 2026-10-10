@@ -86,22 +86,32 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
 .stare--ok{color:var(--ok)}.stare--ok::before{background:var(--ok)}
 .stare--eroare{color:var(--atentie);font-weight:600}.stare--eroare::before{background:var(--atentie)}
 
-/* Codul personal — elementul central al paginii */
-.cod{display:grid;grid-template-columns:1fr 1.2fr 1fr 1.2fr;gap:.55rem;max-width:26rem}
-.cod__casuta{display:flex;flex-direction:column;gap:.3rem}
-.cod__casuta label{font:600 .8rem/1.2 var(--titluri);color:var(--estompat);text-align:center}
-.cod__casuta input,.cod__casuta select{width:100%;height:4rem;border:2px solid var(--linie);border-radius:12px;background:#fff;
-  font:700 1.75rem/1 var(--titluri);text-align:center;text-align-last:center;color:var(--albastru);
-  -webkit-appearance:none;appearance:none;padding:0;text-transform:uppercase}
-.cod__casuta select{cursor:pointer}
-.cod__casuta input:focus,.cod__casuta select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tenta)}
-.cod__casuta .plin{border-color:var(--accent);background:var(--accent-tenta)}
-.cod.eroare .cod__casuta input:not(.plin),.cod.eroare .cod__casuta select:not(.plin){border-color:var(--atentie)}
-.cod__rezultat{margin:.9rem 0 .4rem;font-size:.95rem;color:var(--estompat)}
-.cod__rezultat output{display:inline-block;margin-left:.35rem;font:700 1.35rem/1 var(--titluri);letter-spacing:.14em;color:var(--albastru);
-  font-variant-numeric:tabular-nums}
-.cod__explicatii{font-size:.92rem;color:var(--estompat);margin:0}
-.cod__explicatii p{margin:0 0 .35rem}
+/* Codul de participant */
+.cod-input{width:100%;max-width:16rem;height:4.2rem;padding:0 .9rem;border:2px solid var(--linie);border-radius:12px;background:#fff;
+  font:700 1.9rem/1 var(--titluri);letter-spacing:.14em;text-align:center;text-transform:uppercase;color:var(--albastru)}
+.cod-input::placeholder{color:#B4BFCE;letter-spacing:.14em}
+.cod-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tenta)}
+.cod-input.plin{border-color:var(--accent);background:var(--accent-tenta)}
+fieldset.eroare .cod-input{border-color:var(--atentie)}
+.info-fara-cod{margin:0 0 1.25rem;padding:.9rem 1rem;border-radius:10px;background:var(--atentie-fundal);border:1px solid #F0C9AE;color:#6E2A07;font-size:.95rem}
+.info-fara-cod p{margin:0 0 .4rem}
+
+/* Cardul cu codul de participant (ecranul final al evaluării inițiale) */
+.cod-card{margin:1.25rem 0;padding:1.25rem;border-radius:var(--raza);background:var(--albastru);color:#E6ECF7}
+.cod-card p{margin:0 0 .6rem}
+.cod-card strong{color:#fff}
+.cod-card__eticheta{font:600 .9rem/1.3 var(--titluri);letter-spacing:.04em;opacity:.85}
+.cod-card__cod{font:700 clamp(1.7rem,8.4vw,3rem)/1.15 var(--titluri)!important;letter-spacing:.08em;white-space:nowrap;color:#fff;margin:0 0 .85rem!important;user-select:all;-webkit-user-select:all}
+.cod-card__actiuni{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem 0}
+.cod-card__trimite{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.cod-card__trimite .buton{font-size:.9rem;padding:.5rem .35rem;white-space:nowrap}
+.cod-card .buton{min-height:3rem;font-size:.98rem;text-decoration:none;padding:.6rem .75rem}
+.cod-card .buton:not(.buton--secundar){background:#fff;color:var(--albastru)}
+.cod-card .buton--secundar{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.cod-card__trimite-eticheta{margin-top:1.1rem!important;font-weight:600;color:#fff}
+.cod-card__discret{font-size:.85rem;margin:.8rem 0 0!important;color:#C9D5EA}
+.confirma-cod{display:flex;gap:.75rem;align-items:flex-start;margin:0 0 1rem;padding:.85rem 1rem;border:1.5px solid var(--linie);border-radius:10px;background:#fff;cursor:pointer}
+.confirma-cod input{width:1.3rem;height:1.3rem;margin:.15rem 0 0;accent-color:var(--accent);flex:none}
 
 /* Butoane segmentate (clasa, sex, scale) */
 .segmente{display:flex;gap:.5rem;flex-wrap:wrap}
@@ -143,13 +153,10 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
 .buton:hover{filter:brightness(1.08)}
 .buton:focus-visible{outline:3px solid var(--albastru);outline-offset:3px}
 .buton[disabled]{opacity:.55;cursor:not-allowed;filter:none}
+.cod-card .buton[disabled]{opacity:.55}
 .buton--secundar{background:#fff;color:var(--albastru);border:1.5px solid var(--linie)}
 .mesaj{margin:1rem 0 0;padding:.9rem 1rem;border-radius:10px;background:var(--atentie-fundal);border:1px solid #F0C9AE;color:#6E2A07}
 .mesaj:empty{display:none}
-.confirmare{margin:1rem 0 0;padding:1rem;border-radius:10px;border:1.5px solid var(--atentie);background:var(--atentie-fundal)}
-.confirmare p{color:#6E2A07}
-.confirmare__butoane{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.75rem}
-.confirmare__butoane .buton{min-height:3rem;font-size:.98rem}
 
 /* Ecranul final */
 .final{background:var(--suprafata);border:1px solid var(--linie);border-top:6px solid var(--accent);border-radius:var(--raza);padding:1.75rem 1.25rem}
@@ -168,8 +175,6 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
   .item{padding:1rem .85rem 1.05rem 2.6rem}
   .item__nr{left:.7rem;top:.95rem;font-size:1.1rem}
   .item .segmente{gap:.35rem}
-  .cod{gap:.4rem}
-  .cod__casuta input,.cod__casuta select{height:3.6rem;font-size:1.5rem}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media print{.progres,.subsol,#zona-trimitere{display:none}}
@@ -201,17 +206,17 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     <section class="sectiune" aria-labelledby="t-inceput">
       <h2 id="t-inceput">Înainte să începi</h2>
       <div class="panou">
-        <p>Este același chestionar de la prima întâlnire. Completează-l din nou, la fel de sincer: poate observi unele schimbări față de răspunsurile inițiale. <strong>Folosește același cod personal ca la evaluarea inițială.</strong></p>
+        <p>Este același chestionar de la prima întâlnire. Completează-l din nou, la fel de sincer: poate observi unele schimbări față de răspunsurile inițiale. <strong>Ai nevoie de codul de participant primit la evaluarea inițială.</strong></p>
         <p>Citește cu atenție fiecare afirmație și alege numărul care descrie cel mai bine cum ești <strong>tu</strong> în mod obișnuit. Nu există răspunsuri corecte sau greșite. Răspunde sincer: niciun profesor nu va vedea răspunsurile tale individuale. Răspunde la toate cele 15 afirmații.</p>
         <p>Chestionarul nu este un test și nu se notează.</p>
         <details>
           <summary>Ce se întâmplă cu răspunsurile tale</summary>
           <ul>
-            <li>Nu îți scrii numele. Răspunsurile sunt legate doar de codul tău personal, format din inițiale și din ziua și luna nașterii.</li>
-            <li>Registrul păstrează: codul grupei, codul personal, clasa, sexul, cele 15 răspunsuri, data și durata completării. Nu păstrează numele, adresa de e-mail sau adresa IP.</li>
+            <li>Nu îți scrii numele. Răspunsurile sunt legate doar de codul de participant primit la evaluarea inițială.</li>
+            <li>Registrul păstrează: codul grupei, codul de participant, clasa, sexul, cele 15 răspunsuri, data și durata completării. Nu păstrează numele, adresa de e-mail, numărul de telefon sau adresa IP.</li>
             <li>Răspunsurile se analizează la nivel de grup, ca să aflăm dacă programul RADAR AI a fost de folos. Scorurile individuale nu se discută în clasă și nu reprezintă un diagnostic.</li>
             <li>Răspunsurile individuale pot fi văzute doar de psihologul și de coordonatorul proiectului. Ele sunt păstrate într-un registru electronic al Asociației AVANS PROIECT Sibiu, cu acces restricționat, pe durata proiectului și a perioadei de arhivare prevăzute pentru documentele lui.</li>
-            <li>Participarea este voluntară: te poți opri oricând înainte să trimiți. Pentru întrebări sau pentru ștergerea răspunsurilor tale, scrie la <a href="mailto:asociatia.avapro@gmail.com">asociatia.avapro@gmail.com</a> și menționează codul personal și codul grupei.</li>
+            <li>Participarea este voluntară: te poți opri oricând înainte să trimiți. Pentru întrebări sau pentru ștergerea răspunsurilor tale, scrie la <a href="mailto:asociatia.avapro@gmail.com">asociatia.avapro@gmail.com</a> și menționează codul de participant și codul grupei.</li>
           </ul>
         </details>
         <label class="acord" id="acord-cutie">
@@ -224,7 +229,7 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
 
     <section class="sectiune" aria-labelledby="t-date">
       <h2 id="t-date">Datele tale</h2>
-      <p class="sectiune__nota">Fără nume: doar coduri, ca răspunsurile să rămână confidențiale.</p>
+      <p class="sectiune__nota">Fără nume: doar codul primit la evaluarea inițială.</p>
       <div class="panou panou--tenta">
 
         <div class="camp" id="camp-grupa">
@@ -241,34 +246,19 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
         </div>
 
         <fieldset class="camp" id="camp-cod" aria-describedby="cod-ajutor">
-          <legend class="camp__eticheta">Codul tău personal</legend>
-          <p class="camp__ajutor" id="cod-ajutor">Folosește același cod ca la evaluarea inițială. Îl refaci la fel: din aceleași inițiale și din aceeași zi și lună de naștere.</p>
-          <div class="cod" id="cod">
-            <div class="cod__casuta">
-              <label for="cod-mama">Mama</label>
-              <input type="text" id="cod-mama" maxlength="1" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Prima literă din prenumele mamei">
-            </div>
-            <div class="cod__casuta">
-              <label for="cod-ziua">Ziua</label>
-              <select id="cod-ziua" aria-label="Ziua ta de naștere"><option value="">–</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
-            </div>
-            <div class="cod__casuta">
-              <label for="cod-tata">Tata</label>
-              <input type="text" id="cod-tata" maxlength="1" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Prima literă din prenumele tatălui">
-            </div>
-            <div class="cod__casuta">
-              <label for="cod-luna">Luna</label>
-              <select id="cod-luna" aria-label="Luna ta de naștere"><option value="">–</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>
-            </div>
-          </div>
-          <p class="cod__rezultat">Codul tău: <output id="cod-afisat" for="cod-mama cod-ziua cod-tata cod-luna">?··?··</output></p>
-          <div class="cod__explicatii">
-            <p>Mama și tata: prima literă din prenumele lor. Ziua și luna: data ta de naștere. Exemplu: mama Maria, ziua 15, tata Ion, luna 03 dau codul M15I03.</p>
-            <p>Dacă nu poți completa una dintre litere, scrie X și folosește tot X la evaluarea următoare.</p>
-          </div>
-          <p class="camp__eroare" id="eroare-cod" hidden>Completează toate cele patru căsuțe ale codului.</p>
+          <legend class="camp__eticheta">Codul tău de participant</legend>
+          <p class="camp__ajutor" id="cod-ajutor">Codul primit la evaluarea inițială: 7 litere și cifre, de exemplu K7M-4TAH. L-ai păstrat pe telefon, pe e-mail sau pe hârtie.</p>
+          <input class="cod-input" type="text" id="cod" maxlength="8" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXX-XXXX" aria-label="Codul tău de participant, 7 caractere" aria-describedby="cod-ajutor cod-stare">
+          <p class="stare" id="cod-stare" role="status" hidden></p>
+          <p class="camp__eroare" id="eroare-cod" hidden>Introdu codul tău de participant.</p>
+          <p style="margin:.75rem 0 0"><button type="button" class="legatura" id="fara-cod">Nu îmi găsesc codul</button></p>
         </fieldset>
 
+        <div id="bloc-fara-cod" hidden>
+          <div class="info-fara-cod">
+            <p><strong>Nu-ți face griji.</strong> Completează clasa și sexul; psihologul va încerca să lege răspunsurile tale de cele de la evaluarea inițială.</p>
+            <p><button type="button" class="legatura" id="cu-cod">Mi-am găsit codul</button></p>
+          </div>
         <fieldset class="camp" id="camp-clasa">
           <legend class="camp__eticheta">Clasa</legend>
           <div class="segmente">
@@ -288,6 +278,7 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
           </div>
           <p class="camp__eroare" id="eroare-sex" hidden>Alege una dintre opțiuni.</p>
         </fieldset>
+        </div>
 
         <div class="ascuns-vizual" aria-hidden="true">
           <label for="website">Nu completați acest câmp</label>
@@ -483,18 +474,10 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
       <div class="panou">
         <ul class="verificare" id="verificare">
           <li data-ok="nu" id="v-acord"><span class="verificare__semn" aria-hidden="true">✕</span><span>Acordul de la început</span></li>
-          <li data-ok="nu" id="v-date"><span class="verificare__semn" aria-hidden="true">✕</span><span>Grupa, codul personal, clasa și sexul</span></li>
+          <li data-ok="nu" id="v-date"><span class="verificare__semn" aria-hidden="true">✕</span><span>Grupa și codul de participant</span></li>
           <li data-ok="nu" id="v-itemi"><span class="verificare__semn" aria-hidden="true">✕</span><span id="v-itemi-text">Răspunsuri: 0 din 15</span></li>
         </ul>
         <button type="submit" class="buton" id="trimite">Trimite răspunsurile</button>
-        <div class="confirmare" id="confirmare" hidden>
-          <p><strong>Nu am găsit codul <span id="confirmare-cod"></span> la evaluarea inițială a grupei tale.</strong></p>
-          <p>Verifică literele și cifrele: prima literă din prenumele mamei, ziua nașterii, prima literă din prenumele tatălui, luna nașterii. Dacă ești sigur(ă) că este corect, trimite oricum.</p>
-          <div class="confirmare__butoane">
-            <button type="button" class="buton" id="confirmare-verific">Verific codul</button>
-            <button type="button" class="buton buton--secundar" id="confirmare-trimite">Trimite oricum</button>
-          </div>
-        </div>
         <div class="mesaj" id="mesaj" role="alert" aria-live="assertive"></div>
       </div>
     </section>
@@ -503,6 +486,8 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
   <section class="final" id="final" hidden tabindex="-1" aria-labelledby="t-final">
     <h2 id="t-final">Evaluarea finală a fost trimisă</h2>
     <p>Mulțumim că ai parcurs programul RADAR AI! Confirmarea trimiterii: <span class="final__chitanta" id="final-chitanta"></span></p>
+    <p id="final-legat">Răspunsurile tale au fost legate de evaluarea inițială, prin codul tău de participant.</p>
+    <p id="final-fara-cod" hidden>Nu ți-ai găsit codul: psihologul va încerca să lege răspunsurile tale de cele de la evaluarea inițială.</p>
     <div class="sprijin">
       <p>Dacă unele afirmații ți-au trezit gânduri sau emoții grele, vorbește cu psihologul echipei sau cu psihologul școlii. Telefonul Copilului: <strong>116 111</strong> (gratuit, 24/7). În caz de urgență: <strong>112</strong>.</p>
     </div>
@@ -521,20 +506,35 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
 
   // ===== CONFIGURARE =====================================================
   // Adresa aplicației web Google Apps Script (Implementare > Aplicație web > URL, se termină în /exec).
-	var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxTVEVxksDpjtNeewuA1Wpn07vbPcCp1OAIhn5m3KirfuFCR1XLd53XhvhGqmIppin1DA/exec';
+  var ENDPOINT = 'https://script.google.com/macros/s/ADRESA_APLICATIEI_WEB/exec';
   // =======================================================================
 
   var ETAPA = 'POST';
+  var ESTE_POST = ETAPA === 'POST';
+  // Același alfabet și același algoritm ca în registru (caracter de control Luhn mod N).
+  var ALFABET = 'ACDEFHJKMNPRTUWXY34679';
   var CHEIE_CIORNA = 'sred15_' + ETAPA + '_ciorna';
   var VALABILITATE_CIORNA = 4 * 3600 * 1000;
   var CONFIGURAT = ENDPOINT.indexOf('ADRESA_APLICATIEI_WEB') < 0;
 
+  var MESAJE_COD = {
+    COD_INVALID: 'Codul nu pare corect: verifică literele și cifrele.',
+    COD_NECUNOSCUT: 'Codul nu a fost găsit la evaluarea inițială a acestei grupe. Verifică-l sau apasă „Nu îmi găsesc codul”.',
+    COD_ALTA_GRUPA: 'Codul aparține altei grupe. Verifică codul grupei de mai sus.',
+    COD_FOLOSIT: 'Pentru acest cod, evaluarea finală a fost deja trimisă. Dacă ai greșit ceva, spune psihologului.',
+    ETAPA_INCHISA: 'Evaluarea finală nu este deschisă acum pentru această grupă. Întreabă psihologul.',
+    GRUPA_INEXISTENTA: 'Codul grupei nu este recunoscut. Verifică-l cu psihologul.',
+    LIMITA: 'Prea multe încercări în ultimele minute. Așteaptă un minut și încearcă din nou.'
+  };
+
   var form = document.getElementById('formular');
   var el = function (id) { return document.getElementById(id); };
-  var grupaInput = el('grupa'), codMama = el('cod-mama'), codZiua = el('cod-ziua'), codTata = el('cod-tata'), codLuna = el('cod-luna');
+  var grupaInput = el('grupa');
+  var codInput = el('cod');                 // există doar la evaluarea finală
   var butonTrimite = el('trimite');
 
-  var stare = { start: null, trimis: false, ocupat: false, grupaDinLink: false, mesajValidare: false, clientId: idNou() };
+  var stare = { start: null, trimis: false, ocupat: false, grupaDinLink: false, mesajValidare: false,
+    faraCod: false, codFinal: '', clientId: idNou() };
 
   function idNou() {
     if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
@@ -543,37 +543,51 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     });
   }
 
-  function normLitera(v) {
-    v = String(v || '').toUpperCase().replace(/[ĂÂ]/g, 'A').replace(/Î/g, 'I').replace(/[ȘŞ]/g, 'S').replace(/[ȚŢ]/g, 'T');
-    var m = v.match(/[A-Z]/g);
-    return m ? m[m.length - 1] : '';
+  // ----- Codul de participant -------------------------------------------------
+  function caracterControl(baza) {
+    var n = ALFABET.length, factor = 2, suma = 0;
+    for (var i = baza.length - 1; i >= 0; i--) {
+      var adaos = factor * ALFABET.indexOf(baza.charAt(i));
+      factor = factor === 2 ? 1 : 2;
+      adaos = Math.floor(adaos / n) + (adaos % n);
+      suma += adaos;
+    }
+    return ALFABET.charAt((n - (suma % n)) % n);
   }
+  function codValid(c) {
+    if (c.length !== 7) return false;
+    for (var i = 0; i < 7; i++) if (ALFABET.indexOf(c.charAt(i)) < 0) return false;
+    return caracterControl(c.slice(0, 6)) === c.charAt(6);
+  }
+  function normCod(v) { return String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7); }
+  function formateazaCod(c) { return c.length > 3 ? c.slice(0, 3) + '-' + c.slice(3) : c; }
+  function codCurent() { return codInput ? normCod(codInput.value) : ''; }
+
+  // ----- Valori din formular -----------------------------------------------------
   function normGrupa(v) { return String(v || '').toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9-]/g, '').slice(0, 20); }
   function valoareRadio(nume) { var c = form.querySelector('input[name="' + nume + '"]:checked'); return c ? c.value : ''; }
   function grupaCurenta() { return normGrupa(grupaInput.value); }
-  function codCurent() { return (codMama.value || '') + (codZiua.value || '') + (codTata.value || '') + (codLuna.value || ''); }
-  function codComplet() { return /^[A-Z](0[1-9]|[12][0-9]|3[01])[A-Z](0[1-9]|1[0-2])$/.test(codCurent()); }
   function raspunsuri() {
     var r = [];
     for (var i = 1; i <= 15; i++) { var v = valoareRadio('i' + i); r.push(v === '' ? null : Number(v)); }
     return r;
   }
   function nrRaspunsuri() { return raspunsuri().filter(function (x) { return x !== null; }).length; }
-
-  // ----- Afișare -----------------------------------------------------------
-  function actualizeazaCod() {
-    var a = codMama.value || '?', b = codZiua.value || '··', c = codTata.value || '?', d = codLuna.value || '··';
-    el('cod-afisat').textContent = a + b + c + d;
-    [codMama, codZiua, codTata, codLuna].forEach(function (x) { x.classList.toggle('plin', !!x.value); });
+  function cereClasaSex() { return !ESTE_POST || stare.faraCod; }
+  function dateComplete() {
+    if (!grupaCurenta()) return false;
+    if (ESTE_POST && !stare.faraCod && !codValid(codCurent())) return false;
+    if (cereClasaSex() && !(valoareRadio('clasa') && valoareRadio('sex'))) return false;
+    return true;
   }
 
+  // ----- Afișare -----------------------------------------------------------
   function actualizeazaProgres() {
     var n = nrRaspunsuri();
     el('progres-numar').textContent = n + ' din 15';
     el('progres-bara').style.width = (n / 15 * 100) + '%';
     marcheaza('v-acord', el('acord').checked);
-    var dateOk = !!grupaCurenta() && codComplet() && !!valoareRadio('clasa') && !!valoareRadio('sex');
-    marcheaza('v-date', dateOk);
+    marcheaza('v-date', dateComplete());
     marcheaza('v-itemi', n === 15);
     el('v-itemi-text').textContent = 'Răspunsuri: ' + n + ' din 15';
   }
@@ -582,13 +596,14 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     li.setAttribute('data-ok', ok ? 'da' : 'nu');
     li.querySelector('.verificare__semn').textContent = ok ? '✓' : '✕';
   }
-
-  function arataStareGrupa(tip, text) {
-    var p = el('grupa-stare');
+  function arataStare(idElement, tip, text) {
+    var p = el(idElement);
     p.hidden = !text;
     p.className = 'stare' + (tip ? ' stare--' + tip : '');
     p.textContent = text || '';
   }
+  function arataStareGrupa(tip, text) { arataStare('grupa-stare', tip, text); }
+  function arataStareCod(tip, text) { arataStare('cod-stare', tip, text); }
 
   // ----- Verificarea grupei ------------------------------------------------
   var ultimaGrupaVerificata = '';
@@ -606,6 +621,7 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
           el('grupa-eticheta').textContent = j.eticheta;
           if (stare.grupaDinLink) { el('grupa-fixa').hidden = false; el('grupa-libera').hidden = true; arataStareGrupa('', ''); }
           else arataStareGrupa('ok', j.eticheta + ': chestionarul este deschis.');
+          verificaCod();
         } else if (j && j.ok && !j.deschis) {
           arataStareGrupa('eroare', ETAPA === 'PRE'
             ? 'Evaluarea inițială nu este deschisă acum pentru această grupă. Întreabă psihologul.'
@@ -623,12 +639,45 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
   }
   function arataCampulGrupei() { el('grupa-fixa').hidden = true; el('grupa-libera').hidden = false; }
 
+  // ----- Verificarea codului de participant (doar la evaluarea finală) -------
+  var cerereCod = 0;
+  function verificaCod() {
+    if (!codInput) return;
+    var c = codCurent();
+    if (c.length < 7) { arataStareCod('', ''); return; }
+    if (!codValid(c)) { arataStareCod('eroare', MESAJE_COD.COD_INVALID); return; }
+    var g = grupaCurenta();
+    if (!CONFIGURAT || !g) { arataStareCod('', ''); return; }
+    var nr = ++cerereCod;
+    arataStareCod('', 'Se verifică codul…');
+    fetch(ENDPOINT + '?action=cod&g=' + encodeURIComponent(g) + '&c=' + encodeURIComponent(c), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (nr !== cerereCod) return;
+        if (j && j.ok) arataStareCod('ok', 'Cod recunoscut.');
+        else if (j && MESAJE_COD[j.cod]) arataStareCod('eroare', MESAJE_COD[j.cod]);
+        else arataStareCod('', 'Codul nu a putut fi verificat acum; se verifică la trimitere.');
+      })
+      .catch(function () {
+        if (nr === cerereCod) arataStareCod('', 'Codul nu a putut fi verificat acum; se verifică la trimitere.');
+      });
+  }
+
+  function seteazaFaraCod(valoare) {
+    stare.faraCod = !!valoare;
+    if (!ESTE_POST) return;
+    el('bloc-fara-cod').hidden = !stare.faraCod;
+    el('camp-cod').hidden = stare.faraCod;
+    actualizeazaProgres();
+    salveazaCiorna();
+  }
+
   // ----- Ciorna locală (păstrează răspunsurile dacă pagina se reîncarcă) -----
   function salveazaCiorna() {
     if (stare.trimis) return;
     try {
       localStorage.setItem(CHEIE_CIORNA, JSON.stringify({
-        salvat: Date.now(), grupa: grupaInput.value, m: codMama.value, z: codZiua.value, t: codTata.value, l: codLuna.value,
+        salvat: Date.now(), grupa: grupaInput.value, cod: codCurent(), faraCod: stare.faraCod,
         clasa: valoareRadio('clasa'), sex: valoareRadio('sex'), r: raspunsuri(), acord: el('acord').checked,
         start: stare.start, clientId: stare.clientId
       }));
@@ -645,21 +694,23 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     try { d = JSON.parse(localStorage.getItem(CHEIE_CIORNA) || 'null'); } catch (e) { d = null; }
     if (!d || !d.salvat || Date.now() - d.salvat > VALABILITATE_CIORNA) { stergeCiorna(); return; }
     if (!grupaDinLink && d.grupa) grupaInput.value = d.grupa;
-    codMama.value = d.m || ''; codZiua.value = d.z || ''; codTata.value = d.t || ''; codLuna.value = d.l || '';
+    if (codInput && d.cod) { codInput.value = formateazaCod(normCod(d.cod)); codInput.classList.toggle('plin', codValid(normCod(d.cod))); }
     bifeaza('clasa', d.clasa); bifeaza('sex', d.sex);
     (d.r || []).forEach(function (v, i) { bifeaza('i' + (i + 1), v); });
     el('acord').checked = !!d.acord;
     if (d.start) stare.start = d.start;
     if (d.clientId) stare.clientId = d.clientId;
+    if (ESTE_POST && d.faraCod) seteazaFaraCod(true);
   }
 
   // ----- Erorile dispar pe loc când sunt rezolvate --------------------------
-  function totulComplet() {
-    return el('acord').checked && !!grupaCurenta() && codComplet() && !!valoareRadio('clasa') && !!valoareRadio('sex') && nrRaspunsuri() === 15;
-  }
+  function totulComplet() { return el('acord').checked && dateComplete() && nrRaspunsuri() === 15; }
   function curataEroriRezolvate() {
     if (el('acord').checked) { el('acord-cutie').classList.remove('eroare'); el('eroare-acord').hidden = true; }
-    if (codComplet()) { el('cod').classList.remove('eroare'); el('eroare-cod').hidden = true; }
+    if (!ESTE_POST || stare.faraCod || codValid(codCurent())) {
+      if (el('camp-cod')) el('camp-cod').classList.remove('eroare');
+      if (el('eroare-cod')) el('eroare-cod').hidden = true;
+    }
     if (valoareRadio('clasa')) { el('camp-clasa').classList.remove('eroare'); el('eroare-clasa').hidden = true; }
     if (valoareRadio('sex')) { el('camp-sex').classList.remove('eroare'); el('eroare-sex').hidden = true; }
     if (stare.mesajValidare && totulComplet()) { el('mesaj').textContent = ''; stare.mesajValidare = false; }
@@ -667,10 +718,9 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
 
   // ----- Validarea înainte de trimitere -----------------------------------
   function curataErori() {
-    ['eroare-acord', 'eroare-cod', 'eroare-clasa', 'eroare-sex'].forEach(function (id) { el(id).hidden = true; });
+    ['eroare-acord', 'eroare-cod', 'eroare-clasa', 'eroare-sex'].forEach(function (id) { if (el(id)) el(id).hidden = true; });
     el('acord-cutie').classList.remove('eroare');
-    el('cod').classList.remove('eroare');
-    ['camp-clasa', 'camp-sex'].forEach(function (id) { el(id).classList.remove('eroare'); });
+    ['camp-cod', 'camp-clasa', 'camp-sex'].forEach(function (id) { if (el(id)) el(id).classList.remove('eroare'); });
     Array.prototype.forEach.call(document.querySelectorAll('.item.lipsa'), function (it) {
       it.classList.remove('lipsa'); var m = it.querySelector('.item__eroare'); if (m) m.remove();
     });
@@ -681,9 +731,16 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     function marcheazaPrimul(x) { if (!primul) primul = x; }
     if (!el('acord').checked) { el('acord-cutie').classList.add('eroare'); el('eroare-acord').hidden = false; marcheazaPrimul(el('acord-cutie')); }
     if (!grupaCurenta()) { arataCampulGrupei(); arataStareGrupa('eroare', 'Completează codul grupei.'); marcheazaPrimul(el('camp-grupa')); }
-    if (!codComplet()) { el('cod').classList.add('eroare'); el('eroare-cod').hidden = false; marcheazaPrimul(el('camp-cod')); }
-    if (!valoareRadio('clasa')) { el('camp-clasa').classList.add('eroare'); el('eroare-clasa').hidden = false; marcheazaPrimul(el('camp-clasa')); }
-    if (!valoareRadio('sex')) { el('camp-sex').classList.add('eroare'); el('eroare-sex').hidden = false; marcheazaPrimul(el('camp-sex')); }
+    if (ESTE_POST && !stare.faraCod && !codValid(codCurent())) {
+      var c = codCurent();
+      el('eroare-cod').textContent = !c ? 'Introdu codul tău de participant.'
+        : c.length < 7 ? 'Codul are 7 caractere. Verifică-l.' : MESAJE_COD.COD_INVALID;
+      el('camp-cod').classList.add('eroare'); el('eroare-cod').hidden = false; marcheazaPrimul(el('camp-cod'));
+    }
+    if (cereClasaSex()) {
+      if (!valoareRadio('clasa')) { el('camp-clasa').classList.add('eroare'); el('eroare-clasa').hidden = false; marcheazaPrimul(el('camp-clasa')); }
+      if (!valoareRadio('sex')) { el('camp-sex').classList.add('eroare'); el('eroare-sex').hidden = false; marcheazaPrimul(el('camp-sex')); }
+    }
     raspunsuri().forEach(function (v, i) {
       if (v !== null) return;
       var it = el('item-' + (i + 1));
@@ -730,41 +787,42 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     return incercare();
   }
 
-  function trimite(confirmFaraPereche) {
+  function trimite() {
     if (stare.ocupat || stare.trimis) return;
     el('mesaj').textContent = '';
     if (!CONFIGURAT) { el('mesaj').textContent = 'Formularul nu este legat de registrul de date. Anunță psihologul.'; return; }
     if (!valideaza()) return;
-    el('confirmare').hidden = true;
     stare.ocupat = true;
-    butonTrimite.disabled = true; el('confirmare-trimite').disabled = true;
+    butonTrimite.disabled = true;
     butonTrimite.textContent = 'Se trimit răspunsurile…';
     var date = {
-      etapa: ETAPA, grupa: grupaCurenta(), cod: codCurent(), clasa: valoareRadio('clasa'), sex: valoareRadio('sex'),
-      raspunsuri: raspunsuri(), durata: stare.start ? Math.round((Date.now() - stare.start) / 1000) : null,
-      clientId: stare.clientId, website: el('website').value, confirmFaraPereche: !!confirmFaraPereche
+      etapa: ETAPA, grupa: grupaCurenta(), raspunsuri: raspunsuri(),
+      durata: stare.start ? Math.round((Date.now() - stare.start) / 1000) : null,
+      clientId: stare.clientId, website: el('website').value
     };
+    if (ESTE_POST) date.faraCod = stare.faraCod;
+    if (ESTE_POST && !stare.faraCod) date.cod = codCurent();
+    if (cereClasaSex()) { date.clasa = valoareRadio('clasa'); date.sex = valoareRadio('sex'); }
     posteaza(date).then(function (rez) {
       stare.ocupat = false;
-      butonTrimite.disabled = false; el('confirmare-trimite').disabled = false;
+      butonTrimite.disabled = false;
       butonTrimite.textContent = 'Trimite răspunsurile';
-      if (rez && rez.ok) return reusit(rez);
-      if (rez && rez.cod === 'FARA_PERECHE') {
-        el('confirmare-cod').textContent = codCurent();
-        el('confirmare').hidden = false;
-        el('confirmare').scrollIntoView({ block: 'center' });
-        return;
-      }
+      if (rez && rez.ok && (ESTE_POST || rez.cod)) return reusit(rez);
       el('mesaj').textContent = mesajEroare(rez);
     });
   }
 
   function mesajEroare(rez) {
     if (!rez) return 'Răspunsurile nu au putut fi trimise. Ele sunt păstrate pe acest dispozitiv. Verifică conexiunea la internet și apasă din nou „Trimite răspunsurile”.';
+    if (rez.ok) return 'Registrul nu a întors codul de participant. Răspunsurile sunt păstrate pe acest dispozitiv; anunță psihologul și încearcă din nou peste un minut.';
     switch (rez.cod) {
-      case 'GRUPA_INEXISTENTA': arataCampulGrupei(); return 'Codul grupei nu este recunoscut. Verifică-l cu psihologul, corectează-l și trimite din nou.';
+      case 'GRUPA_INEXISTENTA': arataCampulGrupei(); return MESAJE_COD.GRUPA_INEXISTENTA + ' Corectează-l și trimite din nou.';
       case 'ETAPA_INCHISA': return (ETAPA === 'PRE' ? 'Evaluarea inițială' : 'Evaluarea finală') + ' nu este deschisă acum pentru această grupă. Anunță psihologul; răspunsurile tale rămân păstrate pe acest dispozitiv.';
       case 'LIMITA': return 'Registrul a primit foarte multe răspunsuri de la grupa ta în ultimele minute. Așteaptă un minut și apasă din nou „Trimite răspunsurile”.';
+      case 'COD_NECUNOSCUT': case 'COD_ALTA_GRUPA': case 'COD_FOLOSIT': case 'COD_INVALID':
+        arataStareCod('eroare', MESAJE_COD[rez.cod]);
+        if (el('camp-cod')) { el('camp-cod').classList.add('eroare'); el('camp-cod').scrollIntoView({ block: 'center' }); }
+        return MESAJE_COD[rez.cod];
       case 'VALIDARE': return 'Unele date nu au fost acceptate de registru. Verifică datele de la secțiunea „Datele tale” și trimite din nou.';
       default: return 'Registrul nu a putut salva răspunsurile. Ele sunt păstrate pe acest dispozitiv; anunță psihologul și încearcă din nou peste un minut.';
     }
@@ -774,13 +832,74 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     stare.trimis = true;
     stergeCiorna();
     el('final-chitanta').textContent = rez.chitanta || '';
-    var codFinal = el('final-cod');
-    if (codFinal) codFinal.textContent = codCurent();
+    if (ESTE_POST) {
+      el('final-legat').hidden = stare.faraCod;
+      el('final-fara-cod').hidden = !stare.faraCod;
+    } else {
+      stare.codFinal = rez.cod;
+      pregatesteCardulCodului(rez.cod);
+    }
     form.hidden = true;
     el('progres').hidden = true;
     el('final').hidden = false;
     window.scrollTo(0, 0);
     el('final').focus();
+  }
+
+  // ----- Ecranul final al evaluării inițiale: codul și cum îl păstrezi ------
+  function pregatesteCardulCodului(cod) {
+    el('final-cod').textContent = cod;
+    var mesaj = 'Codul meu RADAR AI: ' + cod + '. Îl folosesc la evaluarea finală SRED-15. Nu îl dau altcuiva.';
+    el('cod-sms').href = 'sms:?&body=' + encodeURIComponent(mesaj);
+    el('cod-email').href = 'mailto:?subject=' + encodeURIComponent('Codul meu RADAR AI') + '&body=' + encodeURIComponent(mesaj);
+    el('cod-whatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(mesaj);
+    el('din-nou').disabled = true;
+  }
+
+  function copiazaCodul() {
+    var text = stare.codFinal, b = el('cod-copiaza');
+    function gata() { b.textContent = 'Copiat ✓'; setTimeout(function () { b.textContent = 'Copiază codul'; }, 2200); }
+    function rezerva() {
+      var t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(t);
+      if (ok) gata(); else b.textContent = 'Selectează codul și copiază-l';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(gata, rezerva);
+    else rezerva();
+  }
+
+  function salveazaImagine() {
+    var cod = stare.codFinal;
+    var c = document.createElement('canvas'); c.width = 1080; c.height = 640;
+    var g = c.getContext('2d');
+    g.fillStyle = '#1F3864'; g.fillRect(0, 0, 1080, 640);
+    g.fillStyle = '#2A7F8A'; g.fillRect(0, 0, 1080, 16);
+    g.textBaseline = 'alphabetic';
+    g.fillStyle = '#DCE4F2'; g.font = '600 40px Montserrat, Arial, sans-serif'; g.fillText('RADAR AI · SRED-15', 70, 120);
+    g.font = '400 34px Inter, Arial, sans-serif'; g.fillText('Codul tău de participant', 70, 215);
+    g.fillStyle = '#FFFFFF'; g.font = '700 150px Montserrat, Arial, sans-serif'; g.fillText(cod, 70, 390);
+    g.fillStyle = '#DCE4F2'; g.font = '400 32px Inter, Arial, sans-serif';
+    g.fillText('Păstrează acest cod: îl introduci la evaluarea finală.', 70, 486);
+    g.fillText('Nu îl da altcuiva.', 70, 530);
+    var eticheta = el('grupa-eticheta').textContent;
+    if (eticheta) { g.font = '400 28px Inter, Arial, sans-serif'; g.fillStyle = '#9FB2D6'; g.fillText(eticheta, 70, 590); }
+    c.toBlob(function (blob) {
+      if (!blob) return;
+      var nume = 'cod-radar-ai-' + cod + '.png';
+      try {
+        if (window.File && navigator.canShare && navigator.share) {
+          var f = new File([blob], nume, { type: 'image/png' });
+          if (navigator.canShare({ files: [f] })) { navigator.share({ files: [f] }).catch(function () { /* anulat */ }); return; }
+        }
+      } catch (e) { /* se folosește descărcarea */ }
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = nume;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    }, 'image/png');
   }
 
   // ----- Evenimente --------------------------------------------------------
@@ -794,22 +913,19 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
       it.classList.remove('lipsa'); var m = it.querySelector('.item__eroare'); if (m) m.remove();
     }
   });
-  form.addEventListener('submit', function (e) { e.preventDefault(); trimite(false); });
+  form.addEventListener('submit', function (e) { e.preventDefault(); trimite(); });
 
-  [codMama, codTata].forEach(function (inp) {
-    inp.addEventListener('input', function () {
-      var v = normLitera(inp.value);
-      inp.value = v;
-      actualizeazaCod(); actualizeazaProgres();
-      if (v) (inp === codMama ? codZiua : codLuna).focus();
+  if (codInput) {
+    codInput.addEventListener('input', function () {
+      var c = normCod(codInput.value);
+      codInput.value = formateazaCod(c);
+      codInput.classList.toggle('plin', codValid(c));
+      verificaCod();
+      actualizeazaProgres();
     });
-  });
-  [codZiua, codLuna].forEach(function (s) {
-    s.addEventListener('change', function () {
-      actualizeazaCod();
-      if (s === codZiua && s.value && !codTata.value) codTata.focus();
-    });
-  });
+    el('fara-cod').addEventListener('click', function () { seteazaFaraCod(true); });
+    el('cu-cod').addEventListener('click', function () { seteazaFaraCod(false); codInput.focus(); });
+  }
 
   grupaInput.addEventListener('input', function () {
     var p = grupaInput.selectionStart, v = normGrupa(grupaInput.value);
@@ -824,14 +940,20 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     stare.grupaDinLink = false; arataCampulGrupei(); grupaInput.focus(); grupaInput.select();
   });
 
-  el('confirmare-verific').addEventListener('click', function () {
-    el('confirmare').hidden = true; el('camp-cod').scrollIntoView({ block: 'start' }); codMama.focus();
-  });
-  el('confirmare-trimite').addEventListener('click', function () { trimite(true); });
+  if (!ESTE_POST) {
+    el('cod-copiaza').addEventListener('click', copiazaCodul);
+    el('cod-imagine').addEventListener('click', salveazaImagine);
+    el('cod-salvat').addEventListener('change', function () { el('din-nou').disabled = !el('cod-salvat').checked; });
+  }
   el('din-nou').addEventListener('click', function () { window.location.reload(); });
 
   window.addEventListener('beforeunload', function (e) {
-    if (stare.trimis || stare.ocupat) return;
+    if (stare.ocupat) return;
+    if (stare.trimis) {
+      // După evaluarea inițială, nu lăsăm elevul să plece fără să confirme că și-a păstrat codul.
+      if (!ESTE_POST && stare.codFinal && !el('cod-salvat').checked) { e.preventDefault(); e.returnValue = ''; }
+      return;
+    }
     if (nrRaspunsuri() > 0) { e.preventDefault(); e.returnValue = ''; }
   });
 
@@ -846,7 +968,6 @@ input[type="text"].text:focus{outline:none;border-color:var(--accent);box-shadow
     el('grupa-eticheta').textContent = grupaLink;
     el('grupa-fixa').hidden = false; el('grupa-libera').hidden = true;
   }
-  actualizeazaCod();
   actualizeazaProgres();
   if (grupaCurenta()) verificaGrupa();
 })();
